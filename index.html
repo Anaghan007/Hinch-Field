@@ -2278,6 +2278,10 @@ function statusTimeline(order){
       Expected Delivery: 9:00 AM – 7:00 PM
     </p>
   `;
+  setTimeout(() => {
+  const tl = document.querySelector('.track-timeline');
+  if (tl) tl.scrollLeft = 0;
+}, 0); 
 
   return html;
 }
@@ -2651,7 +2655,7 @@ setInterval(() => {
   if (document.visibilityState === 'visible') {
     refreshOrderTrackingUI();
   }
-}, 3000);
+}, 1000);
 document.addEventListener('visibilitychange', () => {
 if (!document.hidden && (!RATES || Date.now() - RATES_AT > RATE_REFRESH_MS)) ensureLive(false);
 });
