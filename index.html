@@ -577,26 +577,26 @@ letterSpacing: { wide2:'.08em', luxe:'.25em' }
     }
 
     .track-line-bg {
-  position: absolute;
-  top: 15px;
-  left: 7.1%;
-  right: 7.1%;
-  height: 2px;
-  background: var(--line);
-  z-index: 0;
-  border-radius: 2px;
-}
+      position: absolute;
+      top: 15px;
+      left: 4%;
+      right: 4%;
+      height: 2px;
+      background: var(--line);
+      z-index: 0;
+      border-radius: 2px;
+    }
 
     .track-line-fill {
-  position: absolute;
-  top: 15px;
-  left: 7.1%;
-  height: 2px;
-  background: linear-gradient(90deg, var(--gold), #d4b981);
-  z-index: 1;
-  border-radius: 2px;
-  transition: width 1.8s cubic-bezier(.4, 0, .2, 1);
-}
+      position: absolute;
+      top: 15px;
+      left: 4%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--gold), #d4b981);
+      z-index: 1;
+      border-radius: 2px;
+      transition: width 1.8s cubic-bezier(.4, 0, .2, 1);
+    }
 
     .track-timeline {
       display: flex;
@@ -1689,16 +1689,16 @@ $('#footCats').innerHTML = CATKEYS.map(c => '<li><button class="hover:text-[#E2C
 }
 /* ---- Shop by Category ---- */
 function renderShopCats() {
-  $('#shopCats').innerHTML = CATKEYS.map(c => {
-    const prod = PRODUCTS.find(p => p.cat === c);
-    return `
-      <button class="group flex flex-col items-center gap-3 text-center" data-catpage="${c}">
-        <div class="relative w-full aspect-square rounded-full overflow-hidden border hairline shadow-none transition group-hover:-translate-y-2" style="background:var(--card); box-shadow:none;">
-          ${prod ? imgTag(prod, prod.colors[0][0], 0, 'w-full h-full object-contain transition') : ''}
-        </div>
-        <span class="text-base md:text-lg font-semibold leading-tight" style="color:var(--text);">${esc(CATMETA[c].name)}</span>
-      </button>`;
-  }).join('');
+$('#shopCats').innerHTML = CATKEYS.map(c => {
+const prod = PRODUCTS.find(p => p.cat === c);
+return `
+<button class="group flex flex-col items-center gap-3 text-center" data-catpage="${c}">
+  <div class="relative w-full aspect-square rounded-full overflow-hidden border hairline transition group-hover:-translate-y-2" style="background:var(--card);">
+    ${prod ? imgTag(prod, prod.colors[0][0], 0, 'w-full h-full object-contain transition') : ''}
+  </div>
+  <span class="text-base md:text-lg font-semibold leading-tight" style="color:var(--text);">${esc(CATMETA[c].name)}</span>
+</button>`;
+}).join('');
 }
 function renderInsta(){
 const ids = PRODUCTS.slice(0, 6).map(p => p.id);
