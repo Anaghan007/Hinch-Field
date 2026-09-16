@@ -601,6 +601,11 @@ letterSpacing: { wide2:'.08em', luxe:'.25em' }
       width: 100%;
     }
 
+    .track-line-bg,
+    .track-line-fill {
+      display: none !important;
+    }
+
     .track-timeline::-webkit-scrollbar {
       display: none;
     }
@@ -612,6 +617,18 @@ letterSpacing: { wide2:'.08em', luxe:'.25em' }
       text-align: center;
       flex: 1;
       min-width: 80px;
+      position: relative;
+    }
+
+    .track-step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      top: 15px;
+      left: calc(50% + 16px);
+      width: calc(100% - 32px);
+      height: 2px;
+      background: var(--line);
+      z-index: 1;
     }
 
     .track-icon {
@@ -2223,15 +2240,6 @@ function statusTimeline(order){
   const progress = progressPercent(order);
 
   let html = '<div class="track-wrap">';
-
-  html += `
-    <div class="track-line-bg"></div>
-    <div
-      class="track-line-fill"
-      style="width:${progress}%"
-    ></div>
-  `;
-
   html += '<div class="track-timeline">';
 
   html += STAGES.map((s, i) => {
