@@ -2659,11 +2659,6 @@ window.addEventListener('online', () => ensureLive(true));
 }
 function refreshOrderTrackingUI(){
 
-  if ($('#historyModal') &&
-      !$('#historyModal').classList.contains('hidden')) {
-    renderHistory();
-  }
-
   if ($('#trackModal') &&
       !$('#trackModal').classList.contains('hidden')) {
 
