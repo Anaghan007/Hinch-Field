@@ -573,16 +573,15 @@ letterSpacing: { wide2:'.08em', luxe:'.25em' }
     .track-wrap {
       position: relative;
       margin-top: 16px;
-      padding: 0 4%;
+      padding: 0;
     }
 
     .track-line-bg {
       position: absolute;
       top: 15px;
-      left: 7.1%;
-      right: 7.1%;
+      left: calc(100% / 14);
+      right: calc(100% / 14);
       height: 2px;
-      width: auto;
       background: var(--line);
       z-index: 0;
       border-radius: 2px;
@@ -591,8 +590,10 @@ letterSpacing: { wide2:'.08em', luxe:'.25em' }
     .track-line-fill {
       position: absolute;
       top: 15px;
-      left: 7.1%;
+      left: calc(100% / 14);
       height: 2px;
+      width: 0;
+      max-width: calc(100% - (100% / 7));
       background: linear-gradient(90deg, var(--gold), #d4b981);
       z-index: 1;
       border-radius: 2px;
@@ -607,6 +608,7 @@ letterSpacing: { wide2:'.08em', luxe:'.25em' }
       z-index: 2;
       overflow-x: auto;
       scrollbar-width: none;
+      width: 100%;
     }
 
     .track-timeline::-webkit-scrollbar {
@@ -996,7 +998,8 @@ Detecting…
           curated
           for the world.</p>
         <div class="flex gap-3 mt-6">
-          <a href="https://www.instagram.com/hinchfield_official?stkn=NHExem1hbnA2eGs=" target="_blank" rel="noopener" aria-label="Instagram"
+          <a href="https://www.instagram.com/hinchfield_official?stkn=NHExem1hbnA2eGs=" target="_blank" rel="noopener"
+            aria-label="Instagram"
             class="w-10 h-10 rounded-full border hairline flex items-center justify-center transition hover:border-[var(--gold)] hover:text-gld">
             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
               <rect x="3" y="3" width="18" height="18" rx="5" />
@@ -2199,8 +2202,11 @@ function statusTimeline(order){
   html += '<div class="track-line-bg"></div>';
 
   /* Line reaches each circle exactly */
-  html += '<div class="track-line-fill" style="width:' +
-    Math.min(100, progress) + '%;"></div>';
+  const fill = Math.min(100, progress);
+const usable = 100 - (100 / 7);
+
+html += '<div class="track-line-fill" style="width:' +
+  (fill * usable / 100) + '%;"></div>';
 
   html += '<div class="track-timeline">';
 
