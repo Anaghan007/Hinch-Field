@@ -1622,10 +1622,10 @@ $('#shopCats').innerHTML = CATKEYS.map(c => {
 const prod = PRODUCTS.find(p => p.cat === c);
 return `
 <button class="group flex flex-col items-center gap-3 text-center" data-catpage="${c}">
-<div class="relative w-full aspect-[4/5] rounded-2xl md:rounded-3xl overflow-hidden border hairline transition group-hover:-translate-y-2" style="background:var(--card);">
-${prod ? imgTag(prod, prod.colors[0][0], 0, 'w-full h-full object-cover transition group-hover:scale-110') : ''}
-</div>
-<span class="text-base md:text-lg font-semibold leading-tight" style="color:var(--text);">${esc(CATMETA[c].name)}</span>
+  <div class="relative w-full aspect-square rounded-full overflow-hidden border hairline transition group-hover:-translate-y-2" style="background:var(--card);">
+    ${prod ? imgTag(prod, prod.colors[0][0], 0, 'w-full h-full object-contain transition') : ''}
+  </div>
+  <span class="text-base md:text-lg font-semibold leading-tight" style="color:var(--text);">${esc(CATMETA[c].name)}</span>
 </button>`;
 }).join('');
 }
