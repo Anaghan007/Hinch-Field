@@ -1478,12 +1478,83 @@ const CATKEYS = Object.keys(CATMETA);
 const PRODUCTS = [];
 function generateProducts() {
 const names = {
-'graphic-tee': ['Urban Street Graphic','Retro Wave Print','Abstract Art T-Shirt','Graffiti Soul','Cosmic Dream','Wild Tiger Graphic','Sunset Vibes','Neon Nights','Acid Wash Graphic','Bootleg Vintage'],
-'minimal-tee': ['Micro Dot Minimal','Line Art T-Shirt','Pocket Hit','Typography T-Shirt','Chest Logo','Blank Canvas','Subtle Stripe','Tone-on-Tone','Small Crest','Essential Minimal'],
-'custom-tee': ['Custom Name T-Shirt','Photo Print T-Shirt','Couple Custom T-Shirt','Pet Photo T-Shirt','Custom Quote T-Shirt','Logo Custom T-Shirt','Signature T-Shirt','Memory Print T-Shirt','Custom Graphic T-Shirt','Initials T-Shirt'],
-'cropped-tee': ['Boxy Crop White','Black Boxy Crop','Olive Crop T-Shirt','Pastel Pink Crop','Grey Wash Crop','Ribbed Crop T-Shirt','Drop Shoulder Crop','Raw Hem Crop','Faded Black Crop','Beige Boxy Crop'],
-'polo-tee': ['Classic White Polo','Black Premium Polo','Navy Blue Polo','Olive Green Polo','Grey Melange Polo','Burgundy Polo','Pastel Blue Polo','Striped Polo','Contrast Collar Polo','Textured Polo'],
-'anime-tee': ['Ninja Scroll T-Shirt','Pirate King T-Shirt','Mecha Anime T-Shirt','Demon Slayer T-Shirt','Cyberpunk Anime','Retro Anime T-Shirt','Manga Panel T-Shirt','Spirit Animal T-Shirt','Gaming Logo T-Shirt','Pixel Art T-Shirt']
+  'graphic-tee': [
+    'Vintage Washed Graphic T-Shirt',
+    'Heavyweight Oversized Graphic T-Shirt',
+    'Retro Print Oversized T-Shirt',
+    'Boxy Street Graphic T-Shirt',
+    'Y2K Graphic Oversized T-Shirt',
+    'Acid Wash Graphic T-Shirt',
+    'Bold Back Print T-Shirt',
+    'Vintage College Graphic T-Shirt',
+    'Distressed Graphic T-Shirt',
+    'Statement Graphic T-Shirt'
+  ],
+
+  'minimal-tee': [
+    'Minimal Typography T-Shirt',
+    'Small Chest Logo T-Shirt',
+    'Clean Text T-Shirt',
+    'Minimal Serif T-Shirt',
+    'Tonal Logo T-Shirt',
+    'Essential Heavyweight T-Shirt',
+    'Premium Plain T-Shirt',
+    'Minimal Embroidered T-Shirt',
+    'Signature Text T-Shirt',
+    'Clean Street T-Shirt'
+  ],
+
+  'custom-tee': [
+    'Custom Name Print T-Shirt',
+    'Custom Photo Print T-Shirt',
+    'Custom Couple T-Shirt',
+    'Custom Pet Photo T-Shirt',
+    'Custom Quote T-Shirt',
+    'Custom Logo T-Shirt',
+    'Custom Initials T-Shirt',
+    'Custom Signature T-Shirt',
+    'Custom Memory Print T-Shirt',
+    'Custom Artwork T-Shirt'
+  ],
+
+  'cropped-tee': [
+    'Boxy Cropped T-Shirt',
+    'Cropped Oversized T-Shirt',
+    'Drop Shoulder Crop T-Shirt',
+    'Washed Boxy Crop T-Shirt',
+    'Raw Hem Crop T-Shirt',
+    'Ribbed Cropped T-Shirt',
+    'Vintage Wash Crop T-Shirt',
+    'Relaxed Fit Crop T-Shirt',
+    'Contrast Stitch Crop T-Shirt',
+    'Oversized Crop Tee'
+  ],
+
+  'polo-tee': [
+    'Oversized Polo T-Shirt',
+    'Boxy Fit Polo T-Shirt',
+    'Striped Polo T-Shirt',
+    'Contrast Collar Polo',
+    'Textured Knit Polo',
+    'Retro Rugby Polo',
+    'Relaxed Fit Polo',
+    'Vintage Wash Polo',
+    'Embroidered Polo T-Shirt',
+    'Premium Heavyweight Polo'
+  ],
+
+  'anime-tee': [
+    'Manga Panel Graphic T-Shirt',
+    'Japanese Graphic T-Shirt',
+    'Cyber Graphic T-Shirt',
+    'Pixel Art Gaming T-Shirt',
+    'Retro Arcade T-Shirt',
+    'Neo Tokyo Graphic T-Shirt',
+    'Anime-Inspired Graphic T-Shirt',
+    'Mecha Graphic T-Shirt',
+    'Gaming Typography T-Shirt',
+    'Japanese Street Graphic T-Shirt'
+  ]
 };
 let pid = 1;
 for (const cat of CATKEYS) {
