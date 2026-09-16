@@ -578,26 +578,25 @@ letterSpacing: { wide2:'.08em', luxe:'.25em' }
 
     .track-line-bg {
       position: absolute;
-      top: 15px;
-      left: calc(100% / 14);
-      right: calc(100% / 14);
+      top: 16px;
+      left: 8.333333%;
+      right: 8.333333%;
       height: 2px;
       background: var(--line);
       z-index: 0;
-      border-radius: 2px;
+      border-radius: 999px;
     }
 
     .track-line-fill {
       position: absolute;
-      top: 15px;
-      left: calc(100% / 14);
+      top: 16px;
+      left: 8.333333%;
       height: 2px;
       width: 0;
-      max-width: calc(100% - (100% / 7));
       background: linear-gradient(90deg, var(--gold), #d4b981);
       z-index: 1;
-      border-radius: 2px;
-      transition: width 1.8s cubic-bezier(.4, 0, .2, 1);
+      border-radius: 999px;
+      transition: width .6s cubic-bezier(.4, 0, .2, 1);
     }
 
     .track-timeline {
@@ -639,6 +638,7 @@ letterSpacing: { wide2:'.08em', luxe:'.25em' }
       margin-bottom: 8px;
       position: relative;
       z-index: 3;
+      flex-shrink: 0;
     }
 
     .track-step.done .track-icon {
@@ -2148,110 +2148,148 @@ const STAGES = [
 ];
 const STAGE_MINS = [0, 2, 120, 1440, 1800, 2160, 2880];
 function getOrderStatus(order){
-if (order.deliveredAt || order.manualStatus === 'Delivered') return { text:'Delivered', icon:'check', color:'#059669' };
-if (order.manualStatus === 'Cancelled') return { text:'Cancelled', icon:'cross', color:'#DC2626' };
-if (order.manualStatus) return { text:order.manualStatus, icon:'box', color:'var(--gold)' };
-const mins = (Date.now() - order.timestamp) / 60000;
-if (mins < 2) return { text:'Order Placed', icon:'check', color:'var(--mut)' };
-if (mins < 120) return { text:'Order Confirmed', icon:'chat', color:'#25D366' };
-if (mins < 1440) return { text:'In Process', icon:'gear', color:'var(--gold)' };
-if (mins < 1800) return { text:'Order Ready', icon:'box', color:'#B08D57' };
-if (mins < 2160) return { text:'Dispatched', icon:'truck', color:'#0284C7' };
-return { text:'Out For Delivery', icon:'truck', color:'#0284C7' };
+  const status = order.status || order.manualStatus || 'Order Placed';
+
+  const STATUS_MAP = {
+    'Order Placed': {
+      icon: 'check',
+      color: 'var(--mut)'
+    },
+    'Order Confirmed': {
+      icon: 'check',
+      color: '#25D366'
+    },
+    'In Process': {
+      icon: 'gear',
+      color: 'var(--gold)'
+    },
+    'Order Ready': {
+      icon: 'box',
+      color: '#B08D57'
+    },
+    'Dispatched': {
+      icon: 'truck',
+      color: '#0284C7'
+    },
+    'Out For Delivery': {
+      icon: 'truck',
+      color: '#0284C7'
+    },
+    'Delivered': {
+      icon: 'check',
+      color: '#059669'
+    },
+    'Cancelled': {
+      icon: 'cross',
+      color: '#DC2626'
+    }
+  };
+
+  const meta = STATUS_MAP[status] || STATUS_MAP['Order Placed'];
+
+  return {
+    text: status,
+    icon: meta.icon,
+    color: meta.color
+  };
 }
 function currentStageIdx(order){
-const st = getOrderStatus(order).text;
-const map = { 'Order Placed':0, 'Order Confirmed':1, 'In Process':2, 'Order Ready':3, 'Dispatched':4, 'Out For Delivery':5, 'Delivered':6, 'Cancelled':-1 };
-return map[st] !== undefined ? map[st] : 0;
+  const status = getOrderStatus(order).text;
+
+  const map = {
+    'Order Placed': 0,
+    'Order Confirmed': 1,
+    'In Process': 2,
+    'Order Ready': 3,
+    'Dispatched': 4,
+    'Out For Delivery': 5,
+    'Delivered': 6,
+    'Cancelled': -1
+  };
+
+  return map[status] ?? 0;
 }
 function progressPercent(order){
   const ci = currentStageIdx(order);
 
   if (ci < 0) return 0;
-  if (ci >= 6) return 100;
+  if (ci >= 6) return 83.333333;
 
-  const mins = (Date.now() - order.timestamp) / 60000;
-
-  const sStart = STAGE_MINS[ci];
-  const sEnd = STAGE_MINS[ci + 1];
-
-  const frac = sEnd > sStart
-    ? Math.max(0, Math.min(1, (mins - sStart) / (sEnd - sStart)))
-    : 1;
-
-  const stageSpan = 100 / 6;
-
-  /*
-    When fractional progress reaches 1,
-    line reaches the next circle completely.
-  */
-  return Math.min(100, (ci + frac) * stageSpan);
+  return (ci / 6) * 83.333333;
 }
 function statusTimeline(order){
   const ci = currentStageIdx(order);
 
   if (ci === -1) {
-    return '<p class="text-xs font-bold flex items-center gap-2" style="color:#DC2626;">' +
-      ic('cross','w-4 h-4') + ' Order Cancelled</p>';
+    return `
+      <p class="text-xs font-bold flex items-center gap-2" style="color:#DC2626;">
+        ${ic('cross','w-4 h-4')}
+        Order Cancelled
+      </p>
+    `;
   }
 
-  const delivered = ci >= 6;
   const progress = progressPercent(order);
 
   let html = '<div class="track-wrap">';
-  html += '<div class="track-line-bg"></div>';
 
-  /* Line reaches each circle exactly */
-  html += '<div class="track-line-fill" style="width:' +
-  Math.min(100, progress) + '%;"></div>';
+  html += `
+    <div class="track-line-bg"></div>
+    <div
+      class="track-line-fill"
+      style="width:${progress}%"
+    ></div>
+  `;
 
   html += '<div class="track-timeline">';
 
-  html += STAGES.map((s,i) => {
+  html += STAGES.map((s, i) => {
 
-    /*
-      Important:
-      Once progress reaches the current circle,
-      that circle also becomes DONE + CHECK.
-    */
-    const stagePoint = (i / (STAGES.length - 1)) * 100;
-
-    const done = delivered || progress >= stagePoint;
-    const active = !done && i === ci;
+    const done = i <= ci;
+    const active = i === ci;
 
     const cls = done ? 'done' : (active ? 'active' : '');
 
-    return '<div class="track-step ' + cls + '">' +
+    return `
+      <div class="track-step ${cls}">
 
-      '<div class="track-icon">' +
-        (done
-          ? ic('check','w-4 h-4')
-          : ic(s.icon,'w-4 h-4')
-        ) +
-      '</div>' +
+        <div class="track-icon">
+          ${
+            done
+              ? ic('check','w-4 h-4')
+              : ic(s.icon,'w-4 h-4')
+          }
+        </div>
 
-      '<div class="pt-1">' +
-        '<p class="text-[12px] font-bold" style="color:' +
-          ((done || active) ? 'var(--text)' : 'var(--mut)') +
-        ';">' +
-          s.t +
-        '</p>' +
+        <div class="pt-1">
+          <p
+            class="text-[12px] font-bold"
+            style="color:${done ? 'var(--text)' : 'var(--mut)'};"
+          >
+            ${s.t}
+          </p>
 
-        (done && i === 6
-          ? '<p class="text-[10px] mt-0.5" style="color:#059669;">Delivered</p>'
-          : ''
-        ) +
+          ${
+            active
+              ? `<p class="text-[10px] mt-0.5" style="color:var(--gold);">
+                   Current Status
+                 </p>`
+              : ''
+          }
 
-      '</div>' +
-    '</div>';
+        </div>
 
+      </div>
+    `;
   }).join('');
 
   html += '</div></div>';
 
-  html += '<p class="text-[11px] mt-4 text-center" style="color:var(--mut);">' +
-    'Expected Delivery: 9:00 AM – 7:00 PM' +
-  '</p>';
+  html += `
+    <p class="text-[11px] mt-4 text-center" style="color:var(--mut);">
+      Expected Delivery: 9:00 AM – 7:00 PM
+    </p>
+  `;
 
   return html;
 }
@@ -2282,7 +2320,30 @@ setTimeout(() => { lock = false; btn.disabled = false; }, 4000);
 const t = totals();
 const oid = 'HF' + String(Date.now()).slice(-6);
 const otp = String(Math.floor(1000 + Math.random() * 9000));
-const order = { id:oid, otp, timestamp:Date.now(), customer:{ name, phone, addr, country, city, state, pin }, items:JSON.parse(JSON.stringify(cart)), totals:t, manualStatus:null, deliveredAt:null };
+const order = {
+  id: oid,
+  otp,
+  timestamp: Date.now(),
+
+  // SINGLE SOURCE STATUS
+  status: 'Order Placed',
+  updatedAt: Date.now(),
+
+  customer: {
+    name,
+    phone,
+    addr,
+    country,
+    city,
+    state,
+    pin
+  },
+
+  items: JSON.parse(JSON.stringify(cart)),
+  totals: t,
+
+  deliveredAt: null
+};
 const orders = store.get('orders', []);
 orders.push(order);
 store.set('orders', orders);
@@ -2336,7 +2397,8 @@ const idx = orders.findIndex(o => o.id === orderId);
 if (idx === -1) return;
 if (Date.now() - orders[idx].timestamp < 24*60*60*1000){
 const order = orders[idx];
-order.manualStatus = 'Cancelled';
+order.status = 'Cancelled';
+order.updatedAt = Date.now();
 store.set('orders', orders);
 renderHistory();
 toast('Order Cancelled Successfully','cross');
@@ -2522,7 +2584,8 @@ const o = orders.find(x => x.id === id);
 if (!o) return toast('Order not found','cross');
 if (o.otp === otp){
 o.deliveredAt = Date.now();
-o.manualStatus = 'Delivered';
+o.status = 'Delivered';
+o.updatedAt = Date.now();
 store.set('orders', orders);
 toast('Delivery Confirmed!','check');
 $('#delOrderId').value = ''; $('#delOtp').value = '';
@@ -2556,14 +2619,20 @@ res.innerHTML =
 '</select>' +
 '<button id="adminUpdateBtn" class="pill btn-ink px-4 text-[10px]">Update</button>' +
 '</div></div>';
-$('#adminStatusSel').value = o.manualStatus || '';
+$('#adminStatusSel').value = o.status || 'Order Placed';
 $('#adminUpdateBtn').onclick = () => {
 const v = $('#adminStatusSel').value;
 const orders2 = store.get('orders', []);
 const idx = orders2.findIndex(x => x.id === o.id);
 if (idx !== -1){
-orders2[idx].manualStatus = v || null;
-if (v === 'Delivered') orders2[idx].deliveredAt = Date.now();
+orders2[idx].status = v || 'Order Placed';
+orders2[idx].updatedAt = Date.now();
+
+if (v === 'Delivered') {
+  orders2[idx].deliveredAt = Date.now();
+} else {
+  orders2[idx].deliveredAt = null;
+}
 store.set('orders', orders2);
 toast('Status Updated','check');
 $('#adminSearchId').dispatchEvent(new Event('input'));
@@ -2594,19 +2663,24 @@ setInterval(() => {
   if (document.visibilityState === 'visible') {
     refreshOrderTrackingUI();
   }
-}, 1000);
+}, 3000);
 document.addEventListener('visibilitychange', () => {
 if (!document.hidden && (!RATES || Date.now() - RATES_AT > RATE_REFRESH_MS)) ensureLive(false);
 });
 window.addEventListener('online', () => ensureLive(true));
 }
 function refreshOrderTrackingUI(){
-  if ($('#historyModal') && !$('#historyModal').classList.contains('hidden')) {
+
+  if ($('#historyModal') &&
+      !$('#historyModal').classList.contains('hidden')) {
     renderHistory();
   }
 
-  if ($('#trackModal') && !$('#trackModal').classList.contains('hidden')) {
+  if ($('#trackModal') &&
+      !$('#trackModal').classList.contains('hidden')) {
+
     const input = $('#trackInput');
+
     if (input && input.value.trim()) {
       track();
     }
