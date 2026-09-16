@@ -233,6 +233,106 @@ letterSpacing: { wide2:'.08em', luxe:'.25em' }
       font-weight: 700;
     }
 
+    /* ===== Premium Category Cards ===== */
+    .cat-card {
+      position: relative;
+      display: block;
+      width: 100%;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: var(--card);
+      text-align: left;
+      transition:
+        transform .45s cubic-bezier(.2, .8, .2, 1),
+        box-shadow .45s,
+        border-color .3s;
+    }
+
+    .cat-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 24px 50px -20px rgba(0, 0, 0, .22);
+      border-color: color-mix(in srgb, var(--gold) 45%, var(--line));
+    }
+
+    .cat-card-img {
+      position: relative;
+      aspect-ratio: 4 / 4.6;
+      overflow: hidden;
+      background: var(--bg2);
+    }
+
+    .cat-card-img img {
+      transition: transform .8s cubic-bezier(.2, .7, .2, 1), filter .5s;
+    }
+
+    .cat-card:hover .cat-card-img img {
+      transform: scale(1.08);
+      filter: brightness(1.04);
+    }
+
+    .cat-card-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top,
+          rgba(23, 20, 16, .72) 0%,
+          rgba(23, 20, 16, .15) 48%,
+          transparent 75%);
+      pointer-events: none;
+    }
+
+    .cat-card-content {
+      padding: 14px 15px 16px;
+    }
+
+    .cat-card-no {
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--gold);
+      background: color-mix(in srgb, var(--gold) 12%, transparent);
+      border: 1px solid color-mix(in srgb, var(--gold) 28%, var(--line));
+    }
+
+    .cat-card-arrow {
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--line);
+      color: var(--text);
+      background: var(--card);
+      transition: all .3s ease;
+    }
+
+    .cat-card:hover .cat-card-arrow {
+      background: var(--gold);
+      color: var(--on-gold);
+      border-color: var(--gold);
+      transform: translateX(2px);
+    }
+
+    @media(max-width:767px) {
+      .cat-card {
+        border-radius: 18px;
+      }
+
+      .cat-card-content {
+        padding: 12px;
+      }
+
+      .cat-card-img {
+        aspect-ratio: 1 / 1.18;
+      }
+    }
+
     .card {
       background: var(--card);
       border: 1px solid var(--line);
@@ -1701,16 +1801,73 @@ $('#footCats').innerHTML = CATKEYS.map(c => '<li><button class="hover:text-[#E2C
 }
 /* ---- Shop by Category ---- */
 function renderShopCats() {
-$('#shopCats').innerHTML = CATKEYS.map(c => {
-const prod = PRODUCTS.find(p => p.cat === c);
-return `
-<button class="group flex flex-col items-center gap-3 text-center" data-catpage="${c}">
-  <div class="relative w-28 md:w-32 lg:w-36 mx-auto aspect-square rounded-full overflow-hidden border hairline transition group-hover:-translate-y-2" style="background:var(--card);">
-    ${prod ? imgTag(prod, prod.colors[0][0], 0, 'w-full h-full object-contain transition') : ''}
-  </div>
-  <span class="text-base md:text-lg font-semibold leading-tight" style="color:var(--text);">${esc(CATMETA[c].name)}</span>
-</button>`;
-}).join('');
+  const shortNames = {
+    'graphic-tee': 'Graphic T-Shirts',
+    'minimal-tee': 'Minimal T-Shirts',
+    'custom-tee': 'Custom T-Shirts',
+    'cropped-tee': 'Cropped T-Shirts',
+    'polo-tee': 'Polo T-Shirts',
+    'anime-tee': 'Anime & Gaming'
+  };
+
+  $('#shopCats').innerHTML = CATKEYS.map((c, i) => {
+    const prod = PRODUCTS.find(p => p.cat === c);
+
+    return `
+      <button
+        class="cat-card group"
+        data-catpage="${c}"
+        aria-label="Shop ${esc(shortNames[c] || CATMETA[c].name)}"
+      >
+
+        <div class="cat-card-img">
+          ${
+            prod
+              ? imgTag(
+                  prod,
+                  prod.colors[0][0],
+                  0,
+                  'w-full h-full object-cover',
+                  '',
+                  true
+                )
+              : ''
+          }
+
+          <div class="cat-card-overlay"></div>
+
+          <div class="absolute top-3 left-3 z-10">
+            <span class="cat-card-no">
+              ${String(i + 1).padStart(2, '0')}
+            </span>
+          </div>
+        </div>
+
+        <div class="cat-card-content">
+          <div class="flex items-center justify-between gap-3">
+
+            <div class="min-w-0">
+              <p class="text-[14px] md:text-[15px] font-semibold leading-tight truncate"
+                 style="color:var(--text);">
+                ${esc(shortNames[c] || CATMETA[c].name)}
+              </p>
+
+              <p class="text-[10px] mt-1"
+                 style="color:var(--mut);">
+                Explore Collection
+              </p>
+            </div>
+
+            <span class="cat-card-arrow shrink-0">
+              →
+            </span>
+
+          </div>
+        </div>
+
+      </button>
+    `;
+  }).join('');
 }
 function renderInsta(){
 const ids = PRODUCTS.slice(0, 6).map(p => p.id);
