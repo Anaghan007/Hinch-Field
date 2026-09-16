@@ -1705,7 +1705,7 @@ $('#shopCats').innerHTML = CATKEYS.map(c => {
 const prod = PRODUCTS.find(p => p.cat === c);
 return `
 <button class="group flex flex-col items-center gap-3 text-center" data-catpage="${c}">
-  <div class="relative w-full aspect-square rounded-full overflow-hidden border hairline transition group-hover:-translate-y-2" style="background:var(--card);">
+  <div class="relative w-28 md:w-32 lg:w-36 mx-auto aspect-square rounded-full overflow-hidden border hairline transition group-hover:-translate-y-2" style="background:var(--card);">
     ${prod ? imgTag(prod, prod.colors[0][0], 0, 'w-full h-full object-contain transition') : ''}
   </div>
   <span class="text-base md:text-lg font-semibold leading-tight" style="color:var(--text);">${esc(CATMETA[c].name)}</span>
