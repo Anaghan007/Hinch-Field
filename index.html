@@ -2202,11 +2202,8 @@ function statusTimeline(order){
   html += '<div class="track-line-bg"></div>';
 
   /* Line reaches each circle exactly */
-  const fill = Math.min(100, progress);
-const usable = 100 - (100 / 7);
-
-html += '<div class="track-line-fill" style="width:' +
-  (fill * usable / 100) + '%;"></div>';
+  html += '<div class="track-line-fill" style="width:' +
+  Math.min(100, progress) + '%;"></div>';
 
   html += '<div class="track-timeline">';
 
