@@ -1714,7 +1714,7 @@ function heroImg(p,color){
 const h = hexOf(p,color);
 const svg = studio(p.cat, h, 0);
 const real = imgURLs(p)[0];
-return '<img class="w-full h-full object-cover hero-img" src="' + svg + '" data-upgrade="' + real + '" alt="' + esc(p.name) + '" fetchpriority="high" decoding="async" style="height:100%;width:100%;object-fit:cover;">';
+return '<img class="w-full h-full object-contain hero-img" src="' + svg + '" data-upgrade="' + real + '" alt="' + esc(p.name) + '" fetchpriority="high" decoding="async" style="height:100%;width:100%;object-fit:cover;">';
 }
 function upgradeHeroImgs(){
 $$('.hero-img').forEach(img => {
@@ -1743,7 +1743,7 @@ ${tag ? `<span class="absolute top-3 left-3 z-10 chip" style="${tag[1]}">${tag[0
 ${multi
 ? imgTag(p,p.colors[0][0],0,'swap front')
 + imgTag(p,p.colors[0][0],1,'swap back','',true)
-: imgTag(p,p.colors[0][0],0,'w-full h-full object-cover')}
+: imgTag(p,p.colors[0][0],0,'w-full h-full object-contain')}
 <span class="absolute inset-x-0 bottom-0 quickadd text-center py-3">${multi ? 'Front ⇄ Back' : 'Quick View'}</span>
 </div>
 <div class="p-3 md:p-4">
@@ -1835,7 +1835,7 @@ function renderShopCats() {
                   prod,
                   prod.colors[0][0],
                   0,
-                  'w-full h-full object-cover',
+                  'w-full h-full object-contain',
                   '',
                   true
                 )
@@ -1883,7 +1883,7 @@ function renderInsta(){
     const p = prodById(id);
     if (!p) return '';
     return '<a href="https://www.instagram.com/hinchfield_official?stkn=NHExem1hbnA2eGs=" target="_blank" rel="noopener" class="relative overflow-hidden group aspect-square">' 
-      + imgTag(p, p.colors[0][0], 0, 'w-full h-full object-cover group-hover:scale-105') 
+      + imgTag(p, p.colors[0][0], 0, 'w-full h-full object-contain group-hover:scale-105') 
       + '<span class="absolute inset-0 bg-black/45 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white">' 
       + ic('insta','w-7 h-7') 
       + '</span></a>';
@@ -2053,7 +2053,7 @@ box.innerHTML = cart.map(l => {
 const p = prodById(l.id);
 if (!p) return '';
 return '<div class="flex gap-3 border hairline p-3 a-up w-full" style="background:var(--card);">' +
-'<div class="w-20 h-24 overflow-hidden shrink-0 cursor-pointer" style="background:var(--bg2);" data-open-product="' + p.id + '">' + imgTag(p, l.color, 0, 'w-full h-full object-cover') + '</div>' +
+'<div class="w-20 h-24 overflow-hidden shrink-0 cursor-pointer" style="background:var(--bg2);" data-open-product="' + p.id + '">' + imgTag(p, l.color, 0, 'w-full h-full object-contain') + '</div>' +
 '<div class="flex-1 min-w-0">' +
 '<h4 class="text-xs font-medium truncate">' + esc(p.name) + '</h4>' +
 '<p class="text-[10px] mt-0.5 tracking-wide2 uppercase" style="color:var(--mut);">Size: ' + esc(l.size) + (l.colorChoice ? ' • ' + esc(l.colorChoice) : '') + (l.custom ? ' • Custom' : '') + '</p>' +
@@ -2091,7 +2091,7 @@ box.innerHTML = wish.map(id => {
 const p = prodById(id);
 if (!p) return '';
 return '<div class="flex gap-3 border hairline p-3 a-left w-full" style="background:var(--card);">' +
-'<div class="w-20 h-24 overflow-hidden cursor-pointer" style="background:var(--bg2);" data-open-product="' + p.id + '">' + imgTag(p, p.colors[0][0], 0, 'w-full h-full object-cover') + '</div>' +
+'<div class="w-20 h-24 overflow-hidden cursor-pointer" style="background:var(--bg2);" data-open-product="' + p.id + '">' + imgTag(p, p.colors[0][0], 0, 'w-full h-full object-contain') + '</div>' +
 '<div class="flex-1 min-w-0">' +
 '<h4 class="text-xs font-medium truncate">' + esc(p.name) + '</h4>' +
 '<b class="disp text-sm">' + fmt(p.price) + '</b> <s class="text-[10px]" style="color:var(--mut);">' + fmt(p.mrp) + '</s>' +
@@ -2121,11 +2121,11 @@ $('#productBody').innerHTML = `
 <div class="grid md:grid-cols-2 w-full">
 <div class="p-3 md:p-8" style="background:var(--bg2);">
 <div class="md:flex md:gap-4 w-full">
-${imgs.length > 1 ? '<div class="hidden md:flex flex-col gap-2 order-1">' + imgs.map((im,i) => '<button class="w-14 h-16 overflow-hidden border" style="border-color:' + (i===pm.angle ? 'var(--text)' : 'var(--line)') + ';" data-angle="' + i + '">' + imgTag(p, cn, i, 'w-full h-full object-cover') + '</button>').join('') + '</div>' : ''}
+${imgs.length > 1 ? '<div class="hidden md:flex flex-col gap-2 order-1">' + imgs.map((im,i) => '<button class="w-14 h-16 overflow-hidden border" style="border-color:' + (i===pm.angle ? 'var(--text)' : 'var(--line)') + ';" data-angle="' + i + '">' + imgTag(p, cn, i, 'w-full h-full object-contain') + '</button>').join('') + '</div>' : ''}
 <div class="relative flex-1 order-2 min-w-0">
 <span class="absolute top-3 left-3 z-10 chip" style="background:var(--text); color:var(--bg);">COD</span>
 <button class="absolute top-3 right-3 z-10 w-9 h-9 border hairline" style="background:var(--card);" data-share>${ic('share','w-4 h-4')}</button>
-<div class="overflow-hidden aspect-[4/5] w-full">${imgTag(p, cn, pm.angle, 'w-full h-full object-cover','id="pmMain"')}</div>
+<div class="overflow-hidden aspect-[4/5] w-full">${imgTag(p, cn, pm.angle, 'w-full h-full object-contain','id="pmMain"')}</div>
 ${imgs.length > 1 ? '<button class="absolute left-2 top-1/2 -translate-y-1/2 w-9 h-9 border hairline" style="background:var(--card);" data-angle="-1">‹</button><button class="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 border hairline" style="background:var(--card);" data-angle="1">›</button>' : ''}
 <p class="text-[10px] text-center mt-3 tracking-wide2 uppercase" style="color:var(--mut);">View ${pm.angle+1}/2 • ${['FRONT','BACK'][pm.angle]||''}</p>
 </div>
@@ -2438,7 +2438,7 @@ statusTimeline(o) +
 '<div class="border-t hairline pt-3 space-y-2">' + o.items.map(l => {
 const p = prodById(l.id);
 if (!p) return '';
-return '<div class="flex gap-3 items-center"><div class="w-12 h-14 overflow-hidden shrink-0" style="background:var(--bg2);">' + imgTag(p, l.color, 0, 'w-full h-full object-cover') + '</div>' +
+return '<div class="flex gap-3 items-center"><div class="w-12 h-14 overflow-hidden shrink-0" style="background:var(--bg2);">' + imgTag(p, l.color, 0, 'w-full h-full object-contain') + '</div>' +
 '<div class="flex-1 min-w-0"><p class="text-xs font-medium truncate">' + esc(p.name) + '</p>' +
 '<p class="text-[10px]" style="color:var(--mut);">Qty: ' + l.qty + ' • ' + fmt(p.price * l.qty) + '</p></div></div>';
 }).join('') + '</div>' +
@@ -2498,7 +2498,7 @@ if (q.length < 2){ drop.classList.add('hidden'); return; }
 const r = results(q);
 drop.innerHTML = r.length ? r.map(p =>
 '<button class="w-full flex items-center gap-3 px-4 py-3 text-left border-b hairline" style="color:var(--text);" data-open-product="' + p.id + '">' +
-'<span class="w-10 h-12 overflow-hidden shrink-0" style="background:var(--bg2);">' + imgTag(p, p.colors[0][0], 0, 'w-full h-full object-cover') + '</span>' +
+'<span class="w-10 h-12 overflow-hidden shrink-0" style="background:var(--bg2);">' + imgTag(p, p.colors[0][0], 0, 'w-full h-full object-contain') + '</span>' +
 '<span class="flex-1 min-w-0"><span class="block text-xs font-medium truncate">' + esc(p.name) + '</span><span class="text-[10px] tracking-wide2 uppercase" style="color:var(--mut);">' + esc(CATMETA[p.cat].name) + '</span></span>' +
 '<b class="text-xs">' + fmt(p.price) + '</b></button>'
 ).join('') : '<p class="p-5 text-sm" style="color:var(--mut);">No results for "' + esc(q) + '"</p>';
