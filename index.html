@@ -1680,10 +1680,30 @@ const offPct = p => Math.max(0, Math.round((1 - p.price / p.mrp) * 100));
 const stars = r => { const f = Math.max(0, Math.min(5, Math.round(r || 0))); return '<span style="color:var(--text);font-size:10px;letter-spacing:.15em;">' + '★'.repeat(f) + '☆'.repeat(5-f) + '</span>'; };
 const viewsOf = p => CATMETA[p.cat].views;
 function imgURLs(p){
-const pidNum = parseInt(p.id.replace('p',''),10) || 1;
-const imgIndex = ((pidNum - 1) % 20) + 1;
-const base = 'images/t' + imgIndex + '-';
-return Array.from({ length: viewsOf(p) }, (_,i) => base + (i+1) + '.jpeg');
+  const catPrefix = {
+    'graphic-tee': 'o',
+    'minimal-tee': 'm',
+    'custom-tee': 'c',
+    'cropped-tee': 'b',
+    'polo-tee': 'p',
+    'anime-tee': 'a'
+  };
+
+  const prefix = catPrefix[p.cat] || 'o';
+
+  // Category pramane product no index: 1,2,3...10
+  const catProducts = PRODUCTS.filter(x => x.cat === p.cat);
+  let imgIndex = catProducts.findIndex(x => x.id === p.id) + 1;
+
+  // Fallback safety
+  if (!imgIndex || imgIndex < 1) {
+    const pidNum = parseInt(p.id.replace('p',''),10) || 1;
+    imgIndex = ((pidNum - 1) % 10) + 1;
+  }
+
+  const base = 'images/' + prefix + imgIndex + '-';
+
+  return Array.from({ length: viewsOf(p) }, (_, i) => base + (i + 1) + '.jpeg');
 }
 const hexOf = (p,c) => { const f = p.colors.find(x => x[0] === c) || p.colors[0]; return f[1]; };
 function imgTag(p,color,a,cls,extra,eager){
