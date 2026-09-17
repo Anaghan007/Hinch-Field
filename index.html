@@ -352,7 +352,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       }
 
       .card:hover .cardimg img {
-        transform: scale(1.045);
+        transform: scale(1);
       }
 
       .card:hover .quickadd {
@@ -399,7 +399,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       inset: 0;
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      object-fit: contain;
       transition: opacity .6s ease, transform .9s cubic-bezier(.2, .7, .2, 1);
     }
 
@@ -1708,13 +1708,13 @@ function imgURLs(p){
 const hexOf = (p,c) => { const f = p.colors.find(x => x[0] === c) || p.colors[0]; return f[1]; };
 function imgTag(p,color,a,cls,extra,eager){
 const h = hexOf(p,color);
-return '<img ' + (extra||'') + ' class="' + cls + '" onerror="__imgfb(this)" onload="__imgld(this)" data-fbcat="' + p.cat + '" data-fbhex="' + h + '" data-fba="' + a + '" src="' + imgURLs(p)[a] + '" alt="' + esc(p.name) + ' ' + (['Front','Back'][a]||'') + '" loading="' + (eager?'eager':'lazy') + '" decoding="async" style="height:100%;width:100%;object-fit:cover;">';
+return '<img ' + (extra||'') + ' class="' + cls + '" onerror="__imgfb(this)" onload="__imgld(this)" data-fbcat="' + p.cat + '" data-fbhex="' + h + '" data-fba="' + a + '" src="' + imgURLs(p)[a] + '" alt="' + esc(p.name) + ' ' + (['Front','Back'][a]||'') + '" loading="' + (eager?'eager':'lazy') + '" decoding="async" style="height:100%;width:100%;object-fit:contain;">';
 }
 function heroImg(p,color){
 const h = hexOf(p,color);
 const svg = studio(p.cat, h, 0);
 const real = imgURLs(p)[0];
-return '<img class="w-full h-full object-contain hero-img" src="' + svg + '" data-upgrade="' + real + '" alt="' + esc(p.name) + '" fetchpriority="high" decoding="async" style="height:100%;width:100%;object-fit:cover;">';
+return '<img class="w-full h-full object-contain hero-img" src="' + svg + '" data-upgrade="' + real + '" alt="' + esc(p.name) + '" fetchpriority="high" decoding="async" style="height:100%;width:100%;object-fit:contain;">';
 }
 function upgradeHeroImgs(){
 $$('.hero-img').forEach(img => {
