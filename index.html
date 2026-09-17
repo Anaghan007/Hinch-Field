@@ -1746,7 +1746,7 @@ ${tag ? `<span class="absolute top-3 left-3 z-10 chip" style="${tag[1]}">${tag[0
 <button class="absolute top-3 right-3 z-10 w-8 h-8 flex items-center justify-center border hairline" style="background:var(--card);" data-wish="${p.id}" aria-label="Wishlist">
 <svg class="w-3.5 h-3.5" style="${wished ? 'color:#0A0A0A;' : 'color:var(--mut);'}" viewBox="0 0 24 24" fill="${wished ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="1.4"><path d="M12 21s-7.5-4.7-10-9.3C.5 8 2.6 4.5 6.2 4.5c2.2 0 3.7 1.2 4.6 2.6.9-1.4 2.4-2.6 4.6-2.6 3.6 0 5.7 3.5 4.2 7.2C19.5 16.3 12 21 12 21z"/></svg>
 </button>
-<div class="cardimg relative aspect-[3/4] overflow-hidden cursor-pointer" style="background:var(--bg2);" data-open-product="${p.id}">
+<div class="cardimg relative aspect-[9/16] overflow-hidden cursor-pointer" style="background:var(--bg2);" data-open-product="${p.id}">
 ${multi
 ? imgTag(p,p.colors[0][0],0,'swap front')
 + imgTag(p,p.colors[0][0],1,'swap back','',true)
