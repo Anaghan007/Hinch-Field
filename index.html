@@ -2573,7 +2573,13 @@ async function applyMemberFn(){
   } catch(e){toast('Verify failed','cross');}
 }
 if($('#memberApply'))$('#memberApply').onclick=applyMemberFn;
-if($('#memberRemove'))$('#memberRemove').onclick=()=>{appliedMembership=null;updateMemberUI();renderCart();toast('Membership removed','check');};
+if($('#memberRemove'))$('#memberRemove').onclick=()=>{
+  appliedMembership=null;
+  const mc = $('#memberCode'); if (mc) mc.value = '';
+  updateMemberUI();
+  renderCart();
+  toast('Membership removed','check');
+};
   
 $('#delVerify').onclick = () => {
 const id = $('#delOrderId').value.trim().toUpperCase();
