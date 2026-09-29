@@ -1605,6 +1605,7 @@ return '<div class="flex gap-3 border hairline p-3 a-up w-full" style="backgroun
 }).join('');
 }
 $('#sumSub').textContent = fmt(t.sub);
+if (t.discount > 0) $('#shipMsg').innerHTML = '<b style="color:var(--text);">⭐ Member Discount: −' + fmt(t.discount) + '</b>';
 $('#sumDel').innerHTML = t.del ? fmt(t.del) : '<span style="color:var(--text);">FREE</span>';
 $('#sumTotal').textContent = fmt(t.total);
 }
