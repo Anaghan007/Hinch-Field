@@ -2374,7 +2374,97 @@ $('#mSearchInput').addEventListener('input', doMSearch);
 $('#sortSel').onchange = e => { cp.sort = e.target.value; drawCatPage(); };
 $('#trackGo').onclick = track;
 $('#toTop').onclick = () => window.scrollTo({ top:0, behavior:'smooth' });
-$('#footAdmin').onclick = () => openAdmin();
+  
+let appliedMembership = store.get('membership', null);
+
+function showMemberView(){
+  const active = $('#memViewActive');
+  const buy = $('#memViewBuy');
+  const lookup = $('#memViewLookup');
+  const saved = store.get('membership_full', null);
+  if (!active || !buy || !lookup) return;
+  lookup.classList.add('hidden');
+  if (saved && saved.code && Date.now() < saved.expiresAt){
+    active.classList.remove('hidden');
+    buy.classList.add('hidden');
+    $('#memActiveCode').textContent = saved.code;
+    $('#memActiveName').textContent = saved.name || '';
+    $('#memActiveExpiry').textContent = 'Valid till: ' + new Date(saved.expiresAt).toLocaleDateString('en-IN');
+  } else {
+    active.classList.add('hidden');
+    buy.classList.remove('hidden');
+  }
+}
+
+function openMemberModal(){
+  $('#memBuyErr').classList.add('hidden');
+  $('#memLookupErr').classList.add('hidden');
+  showMemberView();
+  openModal('memberModal');
+}
+
+if ($('#openMembership')) $('#openMembership').onclick = openMemberModal;
+
+if ($('#memCopy')) $('#memCopy').onclick = () => {
+  const code = $('#memActiveCode').textContent.trim();
+  try { navigator.clipboard.writeText(code); toast('Code copied!', 'check'); }
+  catch(e){ toast('Copy failed', 'cross'); }
+};
+
+if ($('#memShare')) $('#memShare').onclick = () => {
+  const code = $('#memActiveCode').textContent.trim();
+  const txt = '⭐ HINCHFIELD Membership\n\nMy Code: ' + code + '\n\nFlat 50% OFF + Free delivery on hinchfield.store';
+  if (navigator.share){
+    navigator.share({ title:'HinchField Membership', text: txt }).catch(()=>{});
+  } else {
+    try { navigator.clipboard.writeText(txt); toast('Copied — share anywhere', 'check'); } catch(e){}
+  }
+};
+
+if ($('#memGoCart')) $('#memGoCart').onclick = () => {
+  closeAll(true);
+  openCatPage('', '', '');
+};
+
+if ($('#memLookupOpen')) $('#memLookupOpen').onclick = () => {
+  $('#memViewBuy').classList.add('hidden');
+  $('#memViewLookup').classList.remove('hidden');
+  $('#memLookupErr').classList.add('hidden');
+};
+if ($('#memLookupBack')) $('#memLookupBack').onclick = showMemberView;
+
+if ($('#memLookupBtn')) $('#memLookupBtn').onclick = async () => {
+  const phone = $('#memLookupPhone').value.trim();
+  const err = m => { const e=$('#memLookupErr'); e.textContent=m; e.classList.remove('hidden'); };
+  $('#memLookupErr').classList.add('hidden');
+  if (!/^\d{10,15}$/.test(phone.replace(/[^0-9]/g,''))) return err('Enter valid phone number');
+  const btn = $('#memLookupBtn');
+  if (btn.disabled) return;
+  btn.disabled = true; btn.textContent = 'Searching…';
+  try {
+    const r = await fetch(`${API_BASE}/api/membership-lookup`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ phone })
+    });
+    const d = await r.json();
+    if (d.success){
+      store.set('membership_full', { code: d.code, name: d.name, phone: d.phone, expiresAt: d.expiresAt });
+      appliedMembership = { code: d.code, name: d.name, expiresAt: d.expiresAt };
+      store.set('membership', appliedMembership);
+      $('#memLookupPhone').value = '';
+      toast('Code retrieved!', 'check');
+      showMemberView();
+      if (typeof renderCart === 'function') renderCart();
+    } else {
+      err(d.error || 'Not found');
+    }
+  } catch(e){
+    err('Network error');
+  } finally {
+    btn.disabled = false; btn.textContent = 'Retrieve Code';
+  }
+};
+
 if ($('#memBuyBtn')) $('#memBuyBtn').onclick = async () => {
   const btn = $('#memBuyBtn');
   if (btn.disabled) return;
@@ -2385,27 +2475,21 @@ if ($('#memBuyBtn')) $('#memBuyBtn').onclick = async () => {
   if (!/^[A-Za-z .]{3,60}$/.test(name)) return err('Enter valid name');
   if (!/^\d{10,15}$/.test(phone.replace(/[^0-9]/g,''))) return err('Enter valid WhatsApp number');
   if (typeof Razorpay === 'undefined') return err('Payment SDK missing');
-  btn.disabled = true;
-  btn.textContent = 'Creating Order…';
+  btn.disabled = true; btn.textContent = 'Creating Order…';
   try {
     const r = await fetch(`${API_BASE}/api/membership-order`, { method:'POST' });
     const d = await r.json();
     if (!d.success) throw new Error('Order create failed');
+
     const options = {
-      key: RAZORPAY_KEY_ID,
-      amount: d.amount,
-      currency: d.currency,
-      name: 'HinchField Membership',
-      description: 'Yearly Membership — Rs 1',
-      image: 'images/logo.png',
-      order_id: d.order_id,
-      prefill: { name, contact: phone },
-      theme: { color: '#0A0A0A' },
+      key: RAZORPAY_KEY_ID, amount: d.amount, currency: d.currency,
+      name: 'HinchField Membership', description: 'Yearly Membership — TEST Rs 1',
+      image: 'images/logo.png', order_id: d.order_id,
+      prefill: { name, contact: phone }, theme: { color: '#0A0A0A' },
       handler: async function(resp){
         try {
           const v = await fetch(`${API_BASE}/api/verify-payment`, {
-            method:'POST',
-            headers:{'Content-Type':'application/json'},
+            method:'POST', headers:{'Content-Type':'application/json'},
             body: JSON.stringify({
               razorpay_order_id: resp.razorpay_order_id,
               razorpay_payment_id: resp.razorpay_payment_id,
@@ -2414,16 +2498,30 @@ if ($('#memBuyBtn')) $('#memBuyBtn').onclick = async () => {
           });
           const vd = await v.json();
           if (!vd.success) throw new Error('Verify failed');
+
           const c = await fetch(`${API_BASE}/api/membership-create`, {
-            method:'POST',
-            headers:{'Content-Type':'application/json'},
+            method:'POST', headers:{'Content-Type':'application/json'},
             body: JSON.stringify({ name, phone })
           });
           const cd = await c.json();
           if (!cd.success) throw new Error('Code generation failed');
+
+          const full = { code: cd.code, name, phone, expiresAt: cd.expiresAt };
+          store.set('membership_full', full);
+          appliedMembership = { code: cd.code, name, expiresAt: cd.expiresAt };
+          store.set('membership', appliedMembership);
+
           closeAll(true);
           toast('Membership activated!', 'check');
-          goWA('HINCHFIELD MEMBERSHIP CONFIRMED\n\nName: ' + name + '\nPhone: ' + phone + '\n\nYOUR CODE: ' + cd.code + '\nValid till: ' + new Date(cd.expiresAt).toLocaleDateString('en-IN') + '\n\nBenefits:\n- Flat 50% OFF on all products\n- FREE delivery\n- Unlimited for 1 year\n\nHow to use:\n1. Add products to cart\n2. Open cart\n3. Enter code: ' + cd.code + '\n4. 50% off + Free delivery apply!');
+          showMemberView();
+          if (typeof renderCart === 'function') renderCart();
+
+          const clean = phone.replace(/[^0-9]/g, '');
+          const toNum = clean.length === 10 ? '91' + clean : clean;
+          const msg = '⭐ HINCHFIELD MEMBERSHIP CONFIRMED\n\n👤 ' + name + '\n\n🔑 YOUR CODE: ' + cd.code + '\n📅 Valid till: ' + new Date(cd.expiresAt).toLocaleDateString('en-IN') + '\n\nBenefits:\n✅ Flat 50% OFF\n✅ FREE delivery\n\nSave this code!';
+          setTimeout(() => {
+            window.location.href = 'https://wa.me/' + toNum + '?text=' + encodeURIComponent(msg);
+          }, 1200);
         } catch(e){ console.error(e); toast('Verification failed', 'cross'); }
       },
       modal: { ondismiss: () => toast('Payment cancelled', 'warn') }
@@ -2432,8 +2530,9 @@ if ($('#memBuyBtn')) $('#memBuyBtn').onclick = async () => {
     rzp.on('payment.failed', r => toast((r.error && r.error.description) || 'Payment failed', 'cross'));
     rzp.open();
   } catch(e){ console.error(e); err('Something went wrong'); }
-  finally { btn.disabled = false; btn.textContent = 'Pay Rs 1 — Get Membership'; }
+  finally { btn.disabled = false; btn.textContent = 'Pay ₹1 — Get Membership (TEST)'; }
 };
+  
 $('#delVerify').onclick = () => {
 const id = $('#delOrderId').value.trim().toUpperCase();
 const otp = $('#delOtp').value.trim();
