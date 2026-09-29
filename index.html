@@ -2188,36 +2188,65 @@ async function handleOnlinePayment(){
 
   // Build WhatsApp bill
   const items = order.items.map((l,i) => {
-    const p = prodById(l.id);
-    if (!p) return '';
-    return '#' + (i+1) + ' ' + p.name + '\n   Qty: ' + l.qty + ' × ' + fmt(p.price) + ' = ' + fmt(p.price * l.qty) + (l.colorChoice ? '\n   Colour: ' + l.colorChoice : '') + (l.custom ? '\n   Custom: ' + l.custom.pos + ' — ' + (l.custom.note||'') : '');
-  }).filter(Boolean).join('\n\n');
+  const p = prodById(l.id);
+  if (!p) return '';
+  let line = (i+1) + '. *' + p.name + '*\n';
+  line += '   • Qty: ' + l.qty + ' × ' + fmt(p.price) + '\n';
+  if (l.colorChoice) line += '   • Colour: ' + l.colorChoice + '\n';
+  if (l.custom) line += '   • Custom (' + l.custom.pos + '): ' + (l.custom.note || '') + '\n';
+  line += '   • Total: *' + fmt(p.price * l.qty) + '*';
+  return line;
+}).filter(Boolean).join('\n\n');
 
-  const clean = customer.phone.replace(/[^0-9]/g, '');
-  const toNum = clean.length === 10 ? '91' + clean : clean;
+const delivery = order.totals.del ? fmt(order.totals.del) : 'FREE';
 
-  const msg = '⭐ *HINCHFIELD — ORDER CONFIRMED*\n\n' +
-    '🧾 Order ID: *' + order.id + '*\n' +
-    '📅 Date: ' + new Date(order.timestamp).toLocaleString('en-IN') + '\n' +
-    '💳 Payment: *PAID ONLINE*\n' +
-    '🆔 Payment ID: ' + response.razorpay_payment_id + '\n\n' +
-    '*ITEMS*\n' + items + '\n\n' +
-    '*BILL*\n' +
-    'Subtotal: ' + fmt(order.totals.sub) + '\n' +
-    (order.totals.discount ? 'Member Discount: −' + fmt(order.totals.discount) + '\n' : '') +
-    'Delivery: ' + (order.totals.del ? fmt(order.totals.del) : 'FREE') + '\n' +
-    '*TOTAL PAID: ' + fmt(order.totals.total) + '*\n\n' +
-    '*DELIVERY TO*\n' +
-    customer.name + '\n' +
-    customer.phone + '\n' +
-    customer.addr + '\n' +
-    customer.city + ', ' + customer.state + ' — ' + customer.pin + '\n\n' +
-    '✅ Payment received. Your order will be processed within 24 hours.\n\n' +
-    'Thank you — *HinchField*';
+const msg =
+  '━━━━━━━━━━━━━━━━━━━━\n' +
+  '   ⭐ *HINCHFIELD* ⭐\n' +
+  '   Wear Your Story\n' +
+  '━━━━━━━━━━━━━━━━━━━━\n\n' +
 
-  setTimeout(() => {
-    window.location.href = 'https://wa.me/' + toNum + '?text=' + encodeURIComponent(msg);
-  }, 1200);
+  '📦 *ORDER CONFIRMED*\n\n' +
+
+  '*▬▬ ORDER DETAILS ▬▬*\n' +
+  '🧾 Order ID    : *' + order.id + '*\n' +
+  '📅 Date        : ' + new Date(order.timestamp).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }) + '\n' +
+  '⏰ Time        : ' + new Date(order.timestamp).toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit' }) + '\n' +
+  '💳 Payment     : ✅ *PAID ONLINE*\n' +
+  '🆔 Payment ID  : ' + response.razorpay_payment_id + '\n\n' +
+
+  '*▬▬ ITEMS ORDERED ▬▬*\n' +
+  items + '\n\n' +
+
+  '*▬▬ PRICE DETAILS ▬▬*\n' +
+  'Subtotal          : ' + fmt(order.totals.sub) + '\n' +
+  (order.totals.discount ? '⭐ Member Discount : −' + fmt(order.totals.discount) + '\n' : '') +
+  'Delivery          : ' + delivery + '\n' +
+  '────────────────────\n' +
+  '💰 *TOTAL PAID  : ' + fmt(order.totals.total) + '*\n\n' +
+
+  '*▬▬ DELIVERY ADDRESS ▬▬*\n' +
+  '👤 ' + customer.name + '\n' +
+  '📞 ' + customer.phone + '\n' +
+  '📍 ' + customer.addr + '\n' +
+  '🏙️ ' + customer.city + ', ' + customer.state + '\n' +
+  '📮 PIN: ' + customer.pin + '\n\n' +
+
+  '*▬▬ DELIVERY TIME ▬▬*\n' +
+  '🚚 Expected in *4-5 business days*\n' +
+  '📱 You will receive tracking details soon.\n\n' +
+
+  '*▬▬ SUPPORT ▬▬*\n' +
+  '💬 WhatsApp: 7434053550\n' +
+  '📧 support.hinchfield@gmail.com\n\n' +
+
+  '━━━━━━━━━━━━━━━━━━━━\n' +
+  'Thank you for shopping with us! 🛍️\n' +
+  '*HINCHFIELD* — Premium T-Shirts\n' +
+  '🌐 hinchfield.store\n' +
+  '━━━━━━━━━━━━━━━━━━━━';
+
+setTimeout(() => { openWA(customer.phone, msg); }, 1200);
 } else {
             toast('Payment verification failed. Contact support.', 'cross');
           }
