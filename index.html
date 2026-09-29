@@ -2385,7 +2385,7 @@ if ($('#memBuyBtn')) $('#memBuyBtn').onclick = async () => {
           if (!cd.success) throw new Error('Code generation failed');
           closeAll(true);
           toast('Membership activated!', 'check');
-          showMemberSuccess(name, phone, cd.code, cd.expiresAt);
+          goWA('HINCHFIELD MEMBERSHIP CONFIRMED\n\nName: ' + name + '\nPhone: ' + phone + '\n\nYOUR CODE: ' + cd.code + '\nValid till: ' + new Date(cd.expiresAt).toLocaleDateString('en-IN') + '\n\nBenefits:\n- Flat 50% OFF on all products\n- FREE delivery\n- Unlimited for 1 year\n\nHow to use:\n1. Add products to cart\n2. Open cart\n3. Enter code: ' + cd.code + '\n4. 50% off + Free delivery apply!');
         } catch(e){ console.error(e); toast('Verification failed', 'cross'); }
       },
       modal: { ondismiss: () => toast('Payment cancelled', 'warn') }
@@ -2485,76 +2485,6 @@ if (!document.hidden && (!RATES || Date.now() - RATES_AT > RATE_REFRESH_MS)) ens
 });
 window.addEventListener('online', () => ensureLive(true));
 }
-async function getClientIP(){
-  try {
-    const r = await fetch('https://ipapi.co/json/', { cache:'no-store' });
-    const d = await r.json();
-    if (d && d.ip) return d.ip;
-  } catch(e){}
-  try {
-    const r2 = await fetch('https://ipwho.is/');
-    const d2 = await r2.json();
-    if (d2 && d2.ip) return d2.ip;
-  } catch(e){}
-  return null;
-}
-
-function showMemberSuccess(name, phone, code, expiresAt){
-  const old = document.getElementById('memberSuccessModal');
-  if (old) old.remove();
-  const expiry = new Date(expiresAt).toLocaleDateString('en-IN');
-  const msg = 'HINCHFIELD MEMBERSHIP\n\nName: ' + name + '\nYOUR CODE: ' + code + '\nValid till: ' + expiry + '\n\nFlat 50% OFF + FREE delivery!\n\nUse code at cart: hinchfield.store';
-  const modal = document.createElement('div');
-  modal.id = 'memberSuccessModal';
-  modal.className = 'fixed inset-0 z-[95] flex items-center justify-center px-4';
-  modal.innerHTML = '<div class="absolute inset-0 bg-black/80 backdrop-blur-md"></div>' +
-    '<div class="modalcard relative p-6 md:p-8 max-w-md w-full text-center" style="background:var(--bg); color:var(--text); box-shadow:var(--shadow);">' +
-    '<div class="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center" style="background:var(--text); color:var(--bg);">' +
-    '<svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>' +
-    '</div>' +
-    '<p class="micro mb-2">CONGRATULATIONS</p>' +
-    '<h3 class="disp editorial-h font-luxe text-2xl mb-2">Membership Active!</h3>' +
-    '<p class="text-xs mb-5" style="color:var(--mut);">Welcome ' + name + ' — your yearly membership is live</p>' +
-    '<div class="border-2 border-dashed p-5 mb-5" style="border-color:var(--text); background:var(--bg2);">' +
-    '<p class="text-[10px] mb-2 tracking-wide2 uppercase" style="color:var(--mut);">YOUR CODE</p>' +
-    '<div class="flex items-center justify-center gap-3">' +
-    '<p class="disp font-luxe text-4xl tracking-luxe">' + code + '</p>' +
-    '<button id="copyCodeBtn" class="w-10 h-10 border hairline flex items-center justify-center">' +
-    '<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>' +
-    '</button></div>' +
-    '<p class="text-[10px] mt-3" style="color:var(--mut);">Valid till ' + expiry + '</p>' +
-    '</div>' +
-    '<div class="border hairline p-4 mb-5 text-left space-y-2" style="background:var(--bg2);">' +
-    '<p class="text-xs">✅ Flat 50% OFF on all products</p>' +
-    '<p class="text-xs">✅ FREE delivery on every order</p>' +
-    '<p class="text-xs">✅ Enter code at cart</p>' +
-    '</div>' +
-    '<button id="shareCodeBtn" class="pill btn-gold w-full py-3.5 mb-2 flex items-center justify-center gap-2">' +
-    '<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>' +
-    'Share Code</button>' +
-    '<button id="memberDoneBtn" class="pill btn-line w-full py-3">Start Shopping</button>' +
-    '</div>';
-  document.body.appendChild(modal);
-  document.body.style.overflow = 'hidden';
-
-  $('#copyCodeBtn').onclick = () => {
-    navigator.clipboard.writeText(code).then(() => toast('Code copied!', 'check')).catch(() => toast('Copy failed', 'cross'));
-  };
-
-  $('#shareCodeBtn').onclick = () => {
-    if (navigator.share){
-      navigator.share({ title: 'HinchField Membership', text: msg }).catch(()=>{});
-    } else {
-      navigator.clipboard.writeText(msg).then(() => toast('Copied — paste anywhere!', 'check')).catch(()=>{});
-    }
-  };
-
-  $('#memberDoneBtn').onclick = () => {
-    modal.remove();
-    document.body.style.overflow = '';
-  };
-}
-
 function refreshOrderTrackingUI(){
   if ($('#trackModal') && !$('#trackModal').classList.contains('hidden')) {
     const input = $('#trackInput');
