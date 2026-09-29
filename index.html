@@ -2555,9 +2555,12 @@ function updateMemberUI(){
 setTimeout(updateMemberUI, 100);
 
 async function applyMemberFn(){
-  if (cart.length === 0) return toast('First You Have To Add Product','warn');
+  if (cart.length === 0){
+    const mc = $('#memberCode'); if (mc) mc.value = '';
+    return toast('First You Have To Add Product','warn');
+  }
   const code = ($('#memberCode')?.value || '').trim();
-  if(!/^\d{4}$/.test(code)) return toast('4-digit code enter કરો','warn');
+  if(!/^\d{4}$/.test(code)) return toast('Enter 4-digit code','warn');
   
   try {
     const r = await fetch(`${API_BASE}/api/membership-verify`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code})});
