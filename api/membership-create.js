@@ -4,7 +4,7 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
 
   try {
-    const { name, phone } = req.body || {};
+    const { name, phone , ip } = req.body || {};
     if (!name || !phone) return res.status(400).json({ success: false, error: 'Name & phone required' });
 
     const URL = process.env.KV_REST_API_URL;
@@ -29,6 +29,14 @@ export default async function handler(req, res) {
       headers: { Authorization: `Bearer ${TOKEN}`, 'Content-Type': 'application/json' },
       body: JSON.stringify(m)
     });
+
+    if (ip && ip !== 'unknown') {
+  await fetch(`${URL}/set/ip:${ip}`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${TOKEN}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ code, name: String(name).trim(), phone: String(phone).trim(), expiresAt: m.expiresAt })
+  });
+    }
 
     return res.status(200).json({ success: true, code, expiresAt: m.expiresAt });
   } catch (e) {
