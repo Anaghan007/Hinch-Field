@@ -1509,12 +1509,15 @@ function totals(){
 const sub = cart.reduce((a,l) => { const p = prodById(l.id); return a + (p ? p.price * (Number(l.qty)||0) : 0); }, 0);
 const last = sub;
 let del = 0;
-if (cart.length > 0) {
+if (cart.length > 0 && !appliedMembership) {
 if (last >= 1499) del = 0;
 else if (last >= 999) del = 49;
 else del = 99;
 }
-return { sub, del, total: last + del, last };
+let discount = 0;
+if (appliedMembership && sub > 0) discount = Math.round(sub * 0.5);
+const finalSub = sub - discount;
+return { sub, discount, del, total: finalSub + del, last: finalSub, hasMember: !!appliedMembership };
 }
 function renderCart(){
 const n = cart.reduce((a,l) => a + (Number(l.qty)||0), 0);
