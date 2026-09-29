@@ -915,6 +915,34 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
     <div id="catPageGrid" class="wrap py-6 md:py-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6 w-full"></div>
   </div>
 
+  <div id="memberModal" class="fixed inset-0 z-[85] hidden flex items-center justify-center px-4 w-full">
+  <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" data-close="memberModal"></div>
+  <div class="modalcard relative p-6 md:p-8 max-w-md w-full max-h-[90vh] overflow-y-auto" style="background:var(--bg); color:var(--text); box-shadow:var(--shadow);">
+    <button class="absolute top-3 right-3 w-9 h-9 border hairline" data-close="memberModal" aria-label="Close">✕</button>
+    <div class="text-center mb-6">
+      <p class="micro mb-2">HINCHFIELD</p>
+      <h3 class="disp editorial-h font-luxe text-2xl mb-2">Yearly Membership</h3>
+      <div class="flex items-baseline justify-center gap-3 my-4">
+        <b class="disp text-3xl" style="font-weight:500;">₹599</b>
+        <s class="text-sm" style="color:var(--mut);">₹2,999</s>
+        <span class="chip" style="background:var(--text); color:var(--bg);">80% OFF</span>
+      </div>
+      <p class="text-xs" style="color:var(--mut);">1 year validity · Instant digital delivery</p>
+    </div>
+    <div class="border hairline p-4 space-y-2.5 mb-5" style="background:var(--bg2);">
+      <p class="text-xs">✅ <b>Flat 50% OFF</b> on ALL products</p>
+      <p class="text-xs">✅ <b>FREE delivery</b> on every order</p>
+      <p class="text-xs">✅ Unique 4-digit code via WhatsApp</p>
+      <p class="text-xs">✅ Valid for 365 days</p>
+    </div>
+    <input id="memBuyName" maxlength="60" class="field mb-3" placeholder="Full name *">
+    <input id="memBuyPhone" inputmode="numeric" maxlength="15" class="field mb-3" placeholder="WhatsApp number *">
+    <p id="memBuyErr" class="text-[11px] hidden mb-3" style="color:#DC2626;"></p>
+    <button id="memBuyBtn" class="pill btn-gold w-full py-4">Pay ₹599 — Get Membership</button>
+    <p class="text-[10px] text-center mt-3" style="color:var(--mut);">Secure payment · Code sent on WhatsApp</p>
+  </div>
+  </div>
+  
   <div id="toasts" class="fixed top-20 right-3 md:right-5 z-[99] space-y-3 w-[19rem] max-w-[92vw]"></div>
 
   <a id="waFloat" href="https://wa.me/917434053550?text=Hi%20HinchField!" target="_blank" rel="noopener" aria-label="WhatsApp" class="wa-float fixed bottom-6 right-6 z-[65] w-14 h-14 rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-lift transition hover:scale-110">
