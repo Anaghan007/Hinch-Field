@@ -2222,7 +2222,7 @@ try { history.back(); } catch(e){}
 }
 }
 function closeAll(skipHistory){
-['cartDrawer','wishDrawer','productModal','sizeModal','trackModal','catPage','mobileMenu','searchOverlay','historyModal','staffModal'].forEach(id => {
+['cartDrawer','wishDrawer','productModal','sizeModal','trackModal','catPage','mobileMenu','searchOverlay','historyModal','staffModal','memberModal'].forEach(id => {
 const el = $('#'+id); if (el) el.classList.add('hidden');
 });
 document.body.style.overflow = '';
