@@ -2140,13 +2140,45 @@ async function handleOnlinePayment(){
           const vData = await vRes.json();
 
           if (vData.success){
-            const order = savePaidOrder(customer, t, response);
-            cart = []; store.set('cart', []);
-            renderCart();
-            closeModal('cartDrawer', true);
-            toast('Payment successful — Order ' + order.id, 'check');
-            setTimeout(() => openHistory(), 800);
-          } else {
+  const order = savePaidOrder(customer, t, response);
+  cart = []; store.set('cart', []);
+  renderCart();
+  closeModal('cartDrawer', true);
+  toast('Payment successful — Order ' + order.id, 'check');
+
+  // Build WhatsApp bill
+  const items = order.items.map((l,i) => {
+    const p = prodById(l.id);
+    if (!p) return '';
+    return '#' + (i+1) + ' ' + p.name + '\n   Qty: ' + l.qty + ' × ' + fmt(p.price) + ' = ' + fmt(p.price * l.qty) + (l.colorChoice ? '\n   Colour: ' + l.colorChoice : '') + (l.custom ? '\n   Custom: ' + l.custom.pos + ' — ' + (l.custom.note||'') : '');
+  }).filter(Boolean).join('\n\n');
+
+  const clean = customer.phone.replace(/[^0-9]/g, '');
+  const toNum = clean.length === 10 ? '91' + clean : clean;
+
+  const msg = '⭐ *HINCHFIELD — ORDER CONFIRMED*\n\n' +
+    '🧾 Order ID: *' + order.id + '*\n' +
+    '📅 Date: ' + new Date(order.timestamp).toLocaleString('en-IN') + '\n' +
+    '💳 Payment: *PAID ONLINE*\n' +
+    '🆔 Payment ID: ' + response.razorpay_payment_id + '\n\n' +
+    '*ITEMS*\n' + items + '\n\n' +
+    '*BILL*\n' +
+    'Subtotal: ' + fmt(order.totals.sub) + '\n' +
+    (order.totals.discount ? 'Member Discount: −' + fmt(order.totals.discount) + '\n' : '') +
+    'Delivery: ' + (order.totals.del ? fmt(order.totals.del) : 'FREE') + '\n' +
+    '*TOTAL PAID: ' + fmt(order.totals.total) + '*\n\n' +
+    '*DELIVERY TO*\n' +
+    customer.name + '\n' +
+    customer.phone + '\n' +
+    customer.addr + '\n' +
+    customer.city + ', ' + customer.state + ' — ' + customer.pin + '\n\n' +
+    '✅ Payment received. Your order will be processed within 24 hours.\n\n' +
+    'Thank you — *HinchField*';
+
+  setTimeout(() => {
+    window.location.href = 'https://wa.me/' + toNum + '?text=' + encodeURIComponent(msg);
+  }, 1200);
+} else {
             toast('Payment verification failed. Contact support.', 'cross');
           }
         } catch (err){
