@@ -2385,7 +2385,7 @@ if ($('#memBuyBtn')) $('#memBuyBtn').onclick = async () => {
           if (!cd.success) throw new Error('Code generation failed');
           closeAll(true);
           toast('Membership activated!', 'check');
-          goWA('HINCHFIELD MEMBERSHIP CONFIRMED\n\nName: ' + name + '\nPhone: ' + phone + '\n\nYOUR CODE: ' + cd.code + '\nValid till: ' + new Date(cd.expiresAt).toLocaleDateString('en-IN') + '\n\nBenefits:\n- Flat 50% OFF on all products\n- FREE delivery\n- Unlimited for 1 year\n\nHow to use:\n1. Add products to cart\n2. Open cart\n3. Enter code: ' + cd.code + '\n4. 50% off + Free delivery apply!');
+          showMemberSuccess(name, phone, cd.code, cd.expiresAt);
         } catch(e){ console.error(e); toast('Verification failed', 'cross'); }
       },
       modal: { ondismiss: () => toast('Payment cancelled', 'warn') }
