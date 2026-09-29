@@ -1911,9 +1911,70 @@ L.push('POLICY');
 L.push('• No Return / No Exchange.');
 L.push('• India: COD at doorstep. Worldwide: confirmed on WhatsApp.');
 L.push('');
-L.push('Thank you — *HinchField*, India');
-L.push('7434053550');
-return { text: L.join('\n') };
+function buildBill(info,t,oid,otp){
+const now = new Date();
+const items = cart.map((l,i) => {
+  const p = prodById(l.id);
+  if (!p) return '';
+  let line = (i+1) + '. *' + p.name + '*\n';
+  line += '   • Qty: ' + l.qty + ' × ' + fmt(p.price) + '\n';
+  if (l.colorChoice) line += '   • Colour: ' + l.colorChoice + '\n';
+  if (l.custom) line += '   • Custom (' + l.custom.pos + '): ' + (l.custom.note || '') + '\n';
+  line += '   • Total: *' + fmt(p.price * l.qty) + '*';
+  return line;
+}).filter(Boolean).join('\n\n');
+
+const delivery = t.del ? fmt(t.del) : 'FREE';
+
+const text =
+  '━━━━━━━━━━━━━━━━━━━━\n' +
+  '   ⭐ *HINCHFIELD* ⭐\n' +
+  '   Wear Your Story\n' +
+  '━━━━━━━━━━━━━━━━━━━━\n\n' +
+
+  '📦 *ORDER PLACED (COD)*\n\n' +
+
+  '*▬▬ ORDER DETAILS ▬▬*\n' +
+  '🧾 Order ID    : *' + oid + '*\n' +
+  '🔐 Delivery OTP: *' + otp + '*\n' +
+  '📅 Date        : ' + now.toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }) + '\n' +
+  '⏰ Time        : ' + now.toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit' }) + '\n' +
+  '💳 Payment     : *Cash on Delivery*\n\n' +
+
+  '*▬▬ ITEMS ORDERED ▬▬*\n' +
+  items + '\n\n' +
+
+  '*▬▬ PRICE DETAILS ▬▬*\n' +
+  'Subtotal          : ' + fmt(t.sub) + '\n' +
+  (t.discount ? '⭐ Member Discount : −' + fmt(t.discount) + '\n' : '') +
+  'Delivery          : ' + delivery + '\n' +
+  '────────────────────\n' +
+  '💰 *TOTAL (COD) : ' + fmt(t.total) + '*\n\n' +
+
+  '*▬▬ DELIVERY ADDRESS ▬▬*\n' +
+  '👤 ' + info.name + '\n' +
+  '📞 ' + info.phone + '\n' +
+  '📍 ' + info.addr + '\n' +
+  '🏙️ ' + info.city + ', ' + info.state + '\n' +
+  '📮 PIN: ' + info.pin + '\n\n' +
+
+  '*▬▬ DELIVERY TIME ▬▬*\n' +
+  '🚚 Expected in *4-5 business days*\n' +
+  '💵 Keep *' + fmt(t.total) + '* ready at delivery\n' +
+  '🔐 Share OTP *' + otp + '* only after checking\n\n' +
+
+  '*▬▬ SUPPORT ▬▬*\n' +
+  '💬 WhatsApp: 7434053550\n' +
+  '📧 support.hinchfield@gmail.com\n\n' +
+
+  '━━━━━━━━━━━━━━━━━━━━\n' +
+  'Thank you for shopping with us! 🛍️\n' +
+  '*HINCHFIELD* — Premium T-Shirts\n' +
+  '🌐 hinchfield.store\n' +
+  '━━━━━━━━━━━━━━━━━━━━';
+
+return { text };
+}
 }
 /* ---- Order tracking ---- */
 const STAGES = [
