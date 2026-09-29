@@ -2535,7 +2535,29 @@ if ($('#memBuyBtn')) $('#memBuyBtn').onclick = async () => {
   finally { btn.disabled = false; btn.textContent = 'Pay ₹1 — Get Membership (TEST)'; }
 };
 
-if ($('#memberApply')) $('#memberApply').onclick = applyMember;
+function updateMemberUI(){
+  const na=$('#memberNotApplied'),ap=$('#memberApplied');
+  if(!na||!ap)return;
+  if(appliedMembership){na.classList.add('hidden');ap.classList.remove('hidden');$('#memCodeTxt').textContent=appliedMembership.code;}
+  else{na.classList.remove('hidden');ap.classList.add('hidden');}
+}
+setTimeout(updateMemberUI, 100);
+
+async function applyMemberFn(){
+  const code = ($('#memberCode')?.value || '').trim();
+  if(!/^\d{4}$/.test(code)) return toast('4-digit code enter કરો','warn');
+  try {
+    const r = await fetch(`${API_BASE}/api/membership-verify`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code})});
+    const d = await r.json();
+    if(d.success){
+      appliedMembership={code,name:d.name,expiresAt:d.expiresAt};
+      updateMemberUI(); renderCart();
+      toast('Member applied — 50% off!','check');
+    } else toast(d.error||'Invalid code','cross');
+  } catch(e){toast('Verify failed','cross');}
+}
+if($('#memberApply'))$('#memberApply').onclick=applyMemberFn;
+if($('#memberRemove'))$('#memberRemove').onclick=()=>{appliedMembership=null;updateMemberUI();renderCart();toast('Membership removed','check');};
   
 $('#delVerify').onclick = () => {
 const id = $('#delOrderId').value.trim().toUpperCase();
