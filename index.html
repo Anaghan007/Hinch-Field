@@ -545,7 +545,6 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
         <button class="text-[11px] font-medium tracking-wide2 uppercase hover:opacity-60 transition shrink-0" data-catpage="under699">Under ₹699</button>
         <button class="text-[11px] font-medium tracking-wide2 uppercase hover:opacity-60 transition shrink-0" data-catpage="">All Products</button>
         <button class="text-[11px] font-medium tracking-wide2 uppercase hover:opacity-60 transition shrink-0" data-openhistory>My Orders</button>
-        <button id="openMembership" class="text-[11px] font-medium tracking-wide2 uppercase hover:opacity-60 transition shrink-0" style="color:var(--text);">⭐ Membership</button>
         <a href="#contact" class="text-[11px] font-medium tracking-wide2 uppercase hover:opacity-60 transition shrink-0">Contact</a>
         <button id="curChip" class="chip border hairline shrink-0 hover:border-[var(--text)] gap-1.5 transition" style="color:var(--text);">
           <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
@@ -777,20 +776,6 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
             <input type="text" name="website" id="coHoney" class="hidden" tabindex="-1" autocomplete="off" aria-hidden="true">
             <p id="coErr" class="text-[11px] hidden" style="color:#DC2626;"></p>
 
-            <div class="border hairline p-4" style="background:var(--bg2);">
-<p class="micro mb-2" style="color:var(--text);">⭐ HINCHFIELD Membership Code</p>
-<div id="memberNotApplied">
-<div class="flex gap-2"><input id="memberCode" maxlength="4" inputmode="numeric" class="field flex-1" placeholder="4-digit code"><button id="memberApply" class="pill btn-ink px-5 text-[10px]">Apply</button></div>
-<p class="text-[10px] mt-2" style="color:var(--mut);">Flat 50% off + Free delivery</p>
-</div>
-<div id="memberApplied" class="hidden">
-<div class="flex items-center justify-between">
-<div><p class="text-xs font-medium">✅ Member Active</p><p class="text-[10px]" style="color:var(--mut);">Code: <b id="memCodeTxt"></b></p></div>
-<button id="memberRemove" class="text-[10px] underline" style="color:var(--mut);">Remove</button>
-</div>
-</div>
-            </div>
-            
             <!-- ===== PAYMENT METHOD SELECTION ===== -->
             <p class="micro pt-2" style="color:var(--text);">Payment Method</p>
             <div class="space-y-2">
@@ -928,35 +913,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
     </header>
     <div id="catPageGrid" class="wrap py-6 md:py-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6 w-full"></div>
   </div>
-  
-  <div id="memberModal" class="fixed inset-0 z-[85] hidden flex items-center justify-center px-4 w-full">
-  <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" data-close="memberModal"></div>
-  <div class="modalcard relative p-6 md:p-8 max-w-md w-full max-h-[90vh] overflow-y-auto" style="background:var(--bg); color:var(--text); box-shadow:var(--shadow);">
-    <button class="absolute top-3 right-3 w-9 h-9 border hairline" data-close="memberModal" aria-label="Close">✕</button>
-    <div class="text-center mb-6">
-      <p class="micro mb-2">⭐ HINCHFIELD</p>
-      <h3 class="disp editorial-h font-luxe text-2xl mb-2">Yearly Membership</h3>
-      <div class="flex items-baseline justify-center gap-3 my-4">
-        <b class="disp text-3xl" style="font-weight:500;">₹599</b>
-        <s class="text-sm" style="color:var(--mut);">₹2,999</s>
-        <span class="chip" style="background:var(--text); color:var(--bg);">80% OFF</span>
-      </div>
-      <p class="text-xs" style="color:var(--mut);">1 year validity · Instant digital delivery</p>
-    </div>
-    <div class="border hairline p-4 space-y-2.5 mb-5" style="background:var(--bg2);">
-      <p class="text-xs flex items-center gap-2">✅ <b>Flat 50% OFF</b> on ALL products</p>
-      <p class="text-xs flex items-center gap-2">✅ <b>FREE delivery</b> on every order</p>
-      <p class="text-xs flex items-center gap-2">✅ Unique 4-digit code via WhatsApp</p>
-      <p class="text-xs flex items-center gap-2">✅ Valid for 365 days</p>
-    </div>
-    <input id="memBuyName" maxlength="60" class="field mb-3" placeholder="Full name *">
-    <input id="memBuyPhone" inputmode="numeric" maxlength="15" class="field mb-3" placeholder="WhatsApp number *">
-    <p id="memBuyErr" class="text-[11px] hidden mb-3" style="color:#DC2626;"></p>
-    <button id="memBuyBtn" class="pill btn-gold w-full py-4">Pay ₹599 — Get Membership</button>
-    <p class="text-[10px] text-center mt-3" style="color:var(--mut);">Secure payment · Code sent on WhatsApp</p>
-  </div>
-  </div>
-  
+
   <div id="toasts" class="fixed top-20 right-3 md:right-5 z-[99] space-y-3 w-[19rem] max-w-[92vw]"></div>
 
   <a id="waFloat" href="https://wa.me/917434053550?text=Hi%20HinchField!" target="_blank" rel="noopener" aria-label="WhatsApp" class="wa-float fixed bottom-6 right-6 z-[65] w-14 h-14 rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-lift transition hover:scale-110">
@@ -1509,15 +1466,12 @@ function totals(){
 const sub = cart.reduce((a,l) => { const p = prodById(l.id); return a + (p ? p.price * (Number(l.qty)||0) : 0); }, 0);
 const last = sub;
 let del = 0;
-if (cart.length > 0 && !appliedMembership) {
+if (cart.length > 0) {
 if (last >= 1499) del = 0;
 else if (last >= 999) del = 49;
 else del = 99;
 }
-let discount = 0;
-if (appliedMembership && sub > 0) discount = Math.round(sub * 0.5);
-const finalSub = sub - discount;
-return { sub, discount, del, total: finalSub + del, last: finalSub, hasMember: !!appliedMembership };
+return { sub, del, total: last + del, last };
 }
 function renderCart(){
 const n = cart.reduce((a,l) => a + (Number(l.qty)||0), 0);
@@ -2352,79 +2306,6 @@ $('#sortSel').onchange = e => { cp.sort = e.target.value; drawCatPage(); };
 $('#trackGo').onclick = track;
 $('#toTop').onclick = () => window.scrollTo({ top:0, behavior:'smooth' });
 $('#footAdmin').onclick = () => openAdmin();
-// ⭐ MEMBERSHIP
-let appliedMembership = store.get('membership', null);
-
-function updateMemberUI(){
-  const na=$('#memberNotApplied'),ap=$('#memberApplied');
-  if(!na||!ap)return;
-  if(appliedMembership){na.classList.add('hidden');ap.classList.remove('hidden');$('#memCodeTxt').textContent=appliedMembership.code;}
-  else{na.classList.remove('hidden');ap.classList.add('hidden');}
-}
-updateMemberUI();
-
-if ($('#openMembership')) $('#openMembership').onclick = () => {
-  $('#memBuyErr').classList.add('hidden');
-  openModal('memberModal');
-};
-
-if ($('#memBuyBtn')) $('#memBuyBtn').onclick = async () => {
-  const btn = $('#memBuyBtn');
-  if (btn.disabled) return;
-  const err = m => { const e=$('#memBuyErr'); e.textContent=m; e.classList.remove('hidden'); return false; };
-  $('#memBuyErr').classList.add('hidden');
-  const name = $('#memBuyName').value.trim();
-  const phone = $('#memBuyPhone').value.trim();
-  if (!/^[A-Za-z .]{3,60}$/.test(name)) return err('Enter valid name');
-  if (!/^\d{10,15}$/.test(phone.replace(/[^0-9]/g,''))) return err('Enter valid WhatsApp number');
-  btn.disabled = true; btn.textContent = 'Creating Order…';
-  try {
-    const r = await fetch(`${API_BASE}/api/membership-order`, { method:'POST' });
-    const d = await r.json();
-    if (!d.success) throw new Error('Order create failed');
-    const options = {
-      key: RAZORPAY_KEY_ID, amount: d.amount, currency: d.currency,
-      name: 'HinchField Membership', description: 'Yearly Membership — ₹599',
-      image: 'images/logo.png', order_id: d.order_id,
-      prefill: { name, contact: phone }, theme: { color: '#0A0A0A' },
-      handler: async function(resp){
-        try {
-          const v = await fetch(`${API_BASE}/api/verify-payment`, {method:'POST',headers:{'Content-Type':'application/json'},body: JSON.stringify({razorpay_order_id: resp.razorpay_order_id,razorpay_payment_id: resp.razorpay_payment_id,razorpay_signature: resp.razorpay_signature})});
-          const vd = await v.json();
-          if (!vd.success) throw new Error('Verify failed');
-          const c = await fetch(`${API_BASE}/api/membership-create`, {method:'POST',headers:{'Content-Type':'application/json'},body: JSON.stringify({ name, phone })});
-          const cd = await c.json();
-          if (!cd.success) throw new Error('Code generation failed');
-          closeAll(true);
-          toast('Membership activated!', 'check');
-          goWA(`⭐ *HINCHFIELD MEMBERSHIP CONFIRMED*\n\n👤 Name: ${name}\n📞 Phone: ${phone}\n\n🔑 *YOUR CODE: ${cd.code}*\n📅 Valid till: ${new Date(cd.expiresAt).toLocaleDateString('en-IN')}\n\n*Benefits:*\n✅ Flat 50% OFF on all products\n✅ FREE delivery\n✅ Unlimited for 1 year\n\n*How to use:*\n1. Add products to cart\n2. Cart ખોલો\n3. Enter code: *${cd.code}*\n4. 50% off + Free delivery apply થશે!`);
-        } catch(e){ console.error(e); toast('Verification failed', 'cross'); }
-      },
-      modal: { ondismiss: () => toast('Payment cancelled', 'warn') }
-    };
-    const rzp = new Razorpay(options);
-    rzp.on('payment.failed', r => toast(r.error.description || 'Payment failed', 'cross'));
-    rzp.open();
-  } catch(e){ console.error(e); err('Something went wrong'); }
-  finally { btn.disabled = false; btn.textContent = 'Pay ₹599 — Get Membership'; }
-};
-
-const applyMember = async () => {
-  const code = $('#memberCode').value.trim();
-  if(!/^\d{4}$/.test(code)) return toast('4-digit code enter કરો','warn');
-  try {
-    const r = await fetch(`${API_BASE}/api/membership-verify`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code})});
-    const d = await r.json();
-    if(d.success){
-      appliedMembership={code,name:d.name,expiresAt:d.expiresAt};
-      store.set('membership',appliedMembership);
-      updateMemberUI(); renderCart();
-      toast('Member applied — 50% off!','check');
-    } else toast(d.error||'Invalid code','cross');
-  } catch(e){toast('Verify failed','cross');}
-};
-if($('#memberApply'))$('#memberApply').onclick=applyMember;
-if($('#memberRemove'))$('#memberRemove').onclick=()=>{appliedMembership=null;store.set('membership',null);updateMemberUI();renderCart();toast('Membership removed','check');};
 $('#delVerify').onclick = () => {
 const id = $('#delOrderId').value.trim().toUpperCase();
 const otp = $('#delOtp').value.trim();
