@@ -2556,7 +2556,7 @@ const applyMember = async () => {
 if($('#memberApply'))$('#memberApply').onclick=applyMember;
 if($('#memberRemove'))$('#memberRemove').onclick=()=>{appliedMembership=null;store.set('membership',null);updateMemberUI();renderCart();toast('Membership removed','check');};
 
-if ($('#delVerify').onclick = () => {
+$('#delVerify').onclick = () => {
 const id = $('#delOrderId').value.trim().toUpperCase();
 const otp = $('#delOtp').value.trim();
 const orders = store.get('orders', []);
