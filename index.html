@@ -777,6 +777,26 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
             <input type="text" name="website" id="coHoney" class="hidden" tabindex="-1" autocomplete="off" aria-hidden="true">
             <p id="coErr" class="text-[11px] hidden" style="color:#DC2626;"></p>
 
+            <div class="border hairline p-4" style="background:var(--bg2);">
+<p class="micro mb-2" style="color:var(--text);">👑 HINCHFIELD Membership Code</p>
+<div id="memberNotApplied">
+<div class="flex gap-2">
+<input id="memberCode" maxlength="4" inputmode="numeric" class="field flex-1" placeholder="4-digit code">
+<button id="memberApply" class="pill btn-ink px-5 text-[10px]">Apply</button>
+</div>
+<p class="text-[10px] mt-2" style="color:var(--mut);">Flat 50% off + FREE delivery</p>
+</div>
+<div id="memberApplied" class="hidden">
+<div class="flex items-center justify-between">
+<div>
+<p class="text-xs font-medium">✅ Member Active</p>
+<p class="text-[10px]" style="color:var(--mut);">Code: <b id="memCodeTxt"></b></p>
+</div>
+<button id="memberRemove" class="text-[10px] underline" style="color:var(--mut);">Remove</button>
+</div>
+</div>
+            </div>
+            
             <!-- ===== PAYMENT METHOD SELECTION ===== -->
             <p class="micro pt-2" style="color:var(--text);">Payment Method</p>
             <div class="space-y-2">
