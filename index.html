@@ -760,27 +760,6 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
             <div class="flex justify-between text-sm"><span style="color:var(--mut);">Delivery</span><b id="sumDel"></b></div>
             <div class="flex justify-between disp text-lg border-t hairline pt-3"><span>Total</span><b id="sumTotal"></b></div>
           </div>
-
-          <div class="border hairline p-4" style="background:var(--bg2);">
-<p class="micro mb-2" style="color:var(--text);">👑 HINCHFIELD Membership Code</p>
-<div id="memberNotApplied">
-<div class="flex gap-2">
-<input id="memberCode" maxlength="4" inputmode="numeric" class="field flex-1" placeholder="4-digit code">
-<button id="memberApply" class="pill btn-ink px-5 text-[10px]">Apply</button>
-</div>
-<p class="text-[10px] mt-2" style="color:var(--mut);">Flat 50% off + FREE delivery</p>
-</div>
-<div id="memberApplied" class="hidden">
-<div class="flex items-center justify-between">
-<div>
-<p class="text-xs font-medium">✅ Member Active</p>
-<p class="text-[10px]" style="color:var(--mut);">Code: <b id="memCodeTxt"></b></p>
-</div>
-<button id="memberRemove" class="text-[10px] underline" style="color:var(--mut);">Remove</button>
-</div>
-</div>
-          </div>
-          
           <div class="p-4 md:p-5 space-y-3 w-full">
             <p class="micro" style="color:var(--text);">Delivery Details</p>
             <div class="flex items-center justify-between gap-2 border hairline px-4 py-2" style="background:var(--bg2);">
@@ -1557,16 +1536,14 @@ toast(p.name + ' — added to cart', 'cart');
 }
 function totals(){
 const sub = cart.reduce((a,l) => { const p = prodById(l.id); return a + (p ? p.price * (Number(l.qty)||0) : 0); }, 0);
+const last = sub;
 let del = 0;
-let discount = 0;
-if (appliedMembership && sub > 0) discount = Math.round(sub * 0.5);
-const afterDisc = sub - discount;
-if (cart.length > 0 && !appliedMembership) {
-if (afterDisc >= 1499) del = 0;
-else if (afterDisc >= 999) del = 49;
+if (cart.length > 0) {
+if (last >= 1499) del = 0;
+else if (last >= 999) del = 49;
 else del = 99;
 }
-return { sub, discount, del, total: afterDisc + del, last: afterDisc, hasMember: !!appliedMembership };
+return { sub, del, total: last + del, last };
 }
 function renderCart(){
 const n = cart.reduce((a,l) => a + (Number(l.qty)||0), 0);
@@ -1610,15 +1587,6 @@ return '<div class="flex gap-3 border hairline p-3 a-up w-full" style="backgroun
 '<button class="self-start" style="color:var(--mut);" data-cr="' + l.key + '" aria-label="Remove">✕</button>' +
 '</div>';
 }).join('');
-}
-const memberRow = document.getElementById('memDiscRow');
-if (memberRow) memberRow.remove();
-if (t.discount > 0){
-const discRow = document.createElement('div');
-discRow.id = 'memDiscRow';
-discRow.className = 'flex justify-between text-sm';
-discRow.innerHTML = '<span style="color:var(--text);">👑 Member Discount (50%)</span><b style="color:var(--text);">−' + fmt(t.discount) + '</b>';
-$('#sumSub').parentElement.parentElement.insertBefore(discRow, $('#sumSub').parentElement);
 }
 $('#sumSub').textContent = fmt(t.sub);
 $('#sumDel').innerHTML = t.del ? fmt(t.del) : '<span style="color:var(--text);">FREE</span>';
