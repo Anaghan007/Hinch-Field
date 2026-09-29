@@ -1034,13 +1034,7 @@ set(k,v){
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 function goWA(text){
   try{
-    const encoded = encodeURIComponent(text);
-    const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
-    if (isMobile){
-      window.location.href = 'whatsapp://send?phone=' + WA + '&text=' + encoded;
-    } else {
-      window.open('https://wa.me/' + WA + '?text=' + encoded, '_blank');
-    }
+    window.location.href = 'https://wa.me/' + WA + '?text=' + encodeURIComponent(text);
   }catch(e){}
 }
 
@@ -1048,13 +1042,7 @@ function openWA(phone, text){
   try{
     const clean = String(phone).replace(/[^0-9]/g, '');
     const num = clean.length === 10 ? '91' + clean : clean;
-    const encoded = encodeURIComponent(text);
-    const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
-    if (isMobile){
-      window.location.href = 'whatsapp://send?phone=' + num + '&text=' + encoded;
-    } else {
-      window.open('https://wa.me/' + num + '?text=' + encoded, '_blank');
-    }
+    window.location.href = 'https://wa.me/' + num + '?text=' + encodeURIComponent(text);
   }catch(e){}
 }
 function shade(hex,p){
