@@ -16,6 +16,8 @@
     href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap"
     rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Razorpay Checkout SDK -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   <script>
     tailwind.config = {
 theme: { extend: {
@@ -55,22 +57,18 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       }
     }
 
-    html,
-    body {
+    html, body {
       overflow-x: hidden;
       overflow-x: clip;
       max-width: 100%;
     }
 
-    *,
-    *::before,
-    *::after {
+    *, *::before, *::after {
       box-sizing: border-box;
       min-width: 0;
     }
 
-    img,
-    svg {
+    img, svg {
       max-width: 100%;
       height: auto;
       display: block;
@@ -81,9 +79,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       transition: opacity .5s ease, transform .9s cubic-bezier(.2, .7, .2, 1);
     }
 
-    html {
-      scroll-behavior: smooth;
-    }
+    html { scroll-behavior: smooth; }
 
     body {
       font-family: 'Inter', system-ui, sans-serif;
@@ -95,34 +91,16 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       letter-spacing: -0.005em;
     }
 
-    ::selection {
-      background: var(--text);
-      color: var(--bg);
-    }
+    ::selection { background: var(--text); color: var(--bg); }
 
-    html,
-    body {
+    html, body {
       scrollbar-width: none;
       -ms-overflow-style: none;
     }
+    html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; }
 
-    html::-webkit-scrollbar,
-    body::-webkit-scrollbar {
-      display: none;
-    }
-
-    input,
-    select,
-    textarea,
-    button {
-      font-family: inherit;
-    }
-
-    input,
-    select,
-    textarea {
-      outline: none;
-    }
+    input, select, textarea, button { font-family: inherit; }
+    input, select, textarea { outline: none; }
 
     .wrap {
       width: 100%;
@@ -131,14 +109,8 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       padding-inline: var(--pad);
     }
 
-    .no-scrollbar::-webkit-scrollbar {
-      display: none;
-    }
-
-    .no-scrollbar {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-    }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
     .micro {
       font-size: .62rem;
@@ -148,20 +120,12 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       color: var(--mut);
     }
 
-    .micro-gold {
-      color: var(--text);
-    }
+    .micro-gold { color: var(--text); }
 
-    .disp {
-      font-weight: 500;
-      letter-spacing: -0.01em;
-    }
+    .disp { font-weight: 500; letter-spacing: -0.01em; }
 
-    .hairline {
-      border-color: var(--line);
-    }
+    .hairline { border-color: var(--line); }
 
-    /* Refined Button System — Zara/LV style */
     .pill {
       display: inline-flex;
       align-items: center;
@@ -179,36 +143,12 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       position: relative;
     }
 
-    .btn-gold {
-      background: var(--text);
-      color: var(--bg);
-    }
-
-    .btn-gold:hover {
-      background: #262626;
-      transform: translateY(-1px);
-    }
-
-    .btn-ink {
-      background: var(--text);
-      color: var(--bg);
-    }
-
-    .btn-ink:hover {
-      background: #262626;
-      color: var(--bg);
-    }
-
-    .btn-line {
-      border: 1px solid var(--text);
-      background: transparent;
-      color: var(--text);
-    }
-
-    .btn-line:hover {
-      background: var(--text);
-      color: var(--bg);
-    }
+    .btn-gold { background: var(--text); color: var(--bg); }
+    .btn-gold:hover { background: #262626; transform: translateY(-1px); }
+    .btn-ink { background: var(--text); color: var(--bg); }
+    .btn-ink:hover { background: #262626; color: var(--bg); }
+    .btn-line { border: 1px solid var(--text); background: transparent; color: var(--text); }
+    .btn-line:hover { background: var(--text); color: var(--bg); }
 
     .field {
       width: 100%;
@@ -221,17 +161,8 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       letter-spacing: 0;
       transition: border .25s;
     }
-
-    .field:focus {
-      border-color: var(--text);
-      box-shadow: none;
-    }
-
-    .field::placeholder {
-      color: var(--mut);
-      opacity: .7;
-      letter-spacing: .02em;
-    }
+    .field:focus { border-color: var(--text); box-shadow: none; }
+    .field::placeholder { color: var(--mut); opacity: .7; letter-spacing: .02em; }
 
     .chip {
       display: inline-flex;
@@ -245,7 +176,6 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       text-transform: uppercase;
     }
 
-    /* ===== Editorial Category Cards ===== */
     .cat-card {
       position: relative;
       display: block;
@@ -255,45 +185,28 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       border-radius: 0;
       background: var(--card);
       text-align: left;
-      transition:
-        border-color .3s;
+      transition: border-color .3s;
     }
-
-    .cat-card:hover {
-      border-color: var(--text);
-    }
-
+    .cat-card:hover { border-color: var(--text); }
     .cat-card-img {
       position: relative;
       aspect-ratio: 4 / 4.8;
       overflow: hidden;
       background: var(--bg2);
     }
-
     .cat-card-img img {
       transition: transform .9s cubic-bezier(.2, .7, .2, 1), filter .5s;
     }
-
-    .cat-card:hover .cat-card-img img {
-      transform: scale(1.04);
-    }
-
+    .cat-card:hover .cat-card-img img { transform: scale(1.04); }
     .cat-card-overlay {
       position: absolute;
       inset: 0;
-      background: linear-gradient(to top,
-          rgba(10, 10, 10, .18) 0%,
-          transparent 55%);
+      background: linear-gradient(to top, rgba(10, 10, 10, .18) 0%, transparent 55%);
       pointer-events: none;
     }
-
-    .cat-card-content {
-      padding: 14px 14px 16px;
-    }
-
+    .cat-card-content { padding: 14px 14px 16px; }
     .cat-card-no {
-      width: 26px;
-      height: 26px;
+      width: 26px; height: 26px;
       border-radius: 0;
       display: inline-flex;
       align-items: center;
@@ -305,10 +218,8 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       background: var(--card);
       border: 1px solid var(--line);
     }
-
     .cat-card-arrow {
-      width: 26px;
-      height: 26px;
+      width: 26px; height: 26px;
       border-radius: 0;
       display: inline-flex;
       align-items: center;
@@ -319,7 +230,6 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       transition: all .3s ease;
       font-size: 12px;
     }
-
     .cat-card:hover .cat-card-arrow {
       background: var(--text);
       color: var(--bg);
@@ -327,16 +237,10 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
     }
 
     @media(max-width:767px) {
-      .cat-card-content {
-        padding: 11px 11px 13px;
-      }
-
-      .cat-card-img {
-        aspect-ratio: 1 / 1.2;
-      }
+      .cat-card-content { padding: 11px 11px 13px; }
+      .cat-card-img { aspect-ratio: 1 / 1.2; }
     }
 
-    /* Product card — editorial minimal */
     .card {
       background: var(--card);
       border: 1px solid var(--line);
@@ -347,31 +251,13 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
     }
 
     @media(hover:hover) {
-      .card:hover {
-        border-color: var(--text);
-      }
-
-      .cardimg img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center 25%;
-}
-
-      .card:hover .cardimg img {
-        transform: scale(1);
-      }
-
-      .card:hover .quickadd {
-        transform: translateY(0);
-        opacity: 1;
-      }
+      .card:hover { border-color: var(--text); }
+      .cardimg img { width: 100%; height: 100%; object-fit: cover; object-position: center 25%; }
+      .card:hover .cardimg img { transform: scale(1); }
+      .card:hover .quickadd { transform: translateY(0); opacity: 1; }
     }
 
-    .cardimg {
-      position: relative;
-      overflow: hidden;
-    }
+    .cardimg { position: relative; overflow: hidden; }
 
     .quickadd {
       transform: translateY(100%);
@@ -387,19 +273,11 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
     }
 
     @media(hover:none) {
-      .quickadd {
-        transform: translateY(0);
-        opacity: 1;
-      }
+      .quickadd { transform: translateY(0); opacity: 1; }
     }
 
-    .card button[data-wish] {
-      transition: transform .2s, background .2s;
-    }
-
-    .card button[data-wish]:hover {
-      transform: scale(1.08);
-    }
+    .card button[data-wish] { transition: transform .2s, background .2s; }
+    .card button[data-wish]:hover { transform: scale(1.08); }
 
     .cardimg .swap {
       position: absolute;
@@ -409,19 +287,11 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       object-fit: contain;
       transition: opacity .6s ease, transform .9s cubic-bezier(.2, .7, .2, 1);
     }
-
-    .cardimg .swap.back {
-      opacity: 0;
-    }
+    .cardimg .swap.back { opacity: 0; }
 
     @media(hover:hover) {
-      .card:hover .cardimg .swap.front {
-        opacity: 0;
-      }
-
-      .card:hover .cardimg .swap.back {
-        opacity: 1;
-      }
+      .card:hover .cardimg .swap.front { opacity: 0; }
+      .card:hover .cardimg .swap.back { opacity: 1; }
     }
 
     .swatch {
@@ -433,11 +303,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       transition: all .25s;
       flex: none;
     }
-
-    .swatch.active {
-      border-color: var(--text);
-      transform: scale(1.05);
-    }
+    .swatch.active { border-color: var(--text); transform: scale(1.05); }
 
     .sizechip {
       border: 1px solid var(--line);
@@ -453,12 +319,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       transition: all .25s;
       min-width: 52px;
     }
-
-    .sizechip.active {
-      background: var(--text);
-      color: var(--bg);
-      border-color: var(--text);
-    }
+    .sizechip.active { background: var(--text); color: var(--bg); border-color: var(--text); }
 
     .qtybtn {
       width: 2.1rem;
@@ -474,22 +335,10 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       align-items: center;
       justify-content: center;
     }
+    .qtybtn:hover { background: var(--text); color: var(--bg); border-color: var(--text); }
 
-    .qtybtn:hover {
-      background: var(--text);
-      color: var(--bg);
-      border-color: var(--text);
-    }
-
-    .sheet-wrap {
-      position: absolute;
-      inset: 0;
-      padding: 0;
-    }
-
-    .sheet {
-      width: min(100%, 28rem);
-    }
+    .sheet-wrap { position: absolute; inset: 0; padding: 0; }
+    .sheet { width: min(100%, 28rem); }
 
     .glassbar {
       background: var(--glass);
@@ -497,177 +346,35 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       -webkit-backdrop-filter: blur(16px);
     }
 
-    @keyframes fadeUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+    @keyframes fadeLeft { from { opacity: 0; transform: translateX(-24px); } to { opacity: 1; transform: none; } }
+    @keyframes fadeRight { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: none; } }
+    @keyframes zoomIn { from { opacity: 0; transform: scale(.97); } to { opacity: 1; transform: scale(1); } }
+    @keyframes slideR { from { transform: translateX(100%); } to { transform: none; } }
+    @keyframes slideL { from { transform: translateX(-100%); } to { transform: none; } }
+    @keyframes popIn { 0% { opacity: 0; transform: scale(.9); } 100% { opacity: 1; transform: scale(1); } }
+    @keyframes floaty { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+    @keyframes pulseWa { 0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, .35); } 100% { box-shadow: 0 0 0 18px rgba(37, 211, 102, 0); } }
 
-      to {
-        opacity: 1;
-        transform: none;
-      }
-    }
+    .a-up { animation: fadeUp .7s both; }
+    .a-left { animation: fadeLeft .7s both; }
+    .a-right { animation: fadeRight .7s both; }
+    .a-zoom { animation: zoomIn .6s both; }
+    .a-pop { animation: popIn .4s both; }
+    .a-float { animation: floaty 6s ease-in-out infinite; }
+    .ha-up { animation: fadeUp .6s cubic-bezier(.2, .7, .2, 1) both; }
+    .ha-zoom { animation: zoomIn .6s cubic-bezier(.2, .7, .2, 1) both; }
 
-    @keyframes fadeLeft {
-      from {
-        opacity: 0;
-        transform: translateX(-24px);
-      }
+    [data-reveal] { opacity: 0; transition: all .9s cubic-bezier(.2, .7, .2, 1); }
+    [data-reveal="up"] { transform: translateY(30px); }
+    [data-reveal="left"] { transform: translateX(-30px); }
+    [data-reveal="right"] { transform: translateX(30px); }
+    [data-reveal="zoom"] { transform: scale(.94); }
+    [data-reveal].revealed { opacity: 1; transform: none; }
 
-      to {
-        opacity: 1;
-        transform: none;
-      }
-    }
-
-    @keyframes fadeRight {
-      from {
-        opacity: 0;
-        transform: translateX(24px);
-      }
-
-      to {
-        opacity: 1;
-        transform: none;
-      }
-    }
-
-    @keyframes zoomIn {
-      from {
-        opacity: 0;
-        transform: scale(.97);
-      }
-
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
-
-    @keyframes slideR {
-      from {
-        transform: translateX(100%);
-      }
-
-      to {
-        transform: none;
-      }
-    }
-
-    @keyframes slideL {
-      from {
-        transform: translateX(-100%);
-      }
-
-      to {
-        transform: none;
-      }
-    }
-
-    @keyframes popIn {
-      0% {
-        opacity: 0;
-        transform: scale(.9);
-      }
-
-      100% {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
-
-    @keyframes floaty {
-
-      0%,
-      100% {
-        transform: translateY(0);
-      }
-
-      50% {
-        transform: translateY(-6px);
-      }
-    }
-
-    @keyframes pulseWa {
-      0% {
-        box-shadow: 0 0 0 0 rgba(37, 211, 102, .35);
-      }
-
-      100% {
-        box-shadow: 0 0 0 18px rgba(37, 211, 102, 0);
-      }
-    }
-
-    .a-up {
-      animation: fadeUp .7s both;
-    }
-
-    .a-left {
-      animation: fadeLeft .7s both;
-    }
-
-    .a-right {
-      animation: fadeRight .7s both;
-    }
-
-    .a-zoom {
-      animation: zoomIn .6s both;
-    }
-
-    .a-pop {
-      animation: popIn .4s both;
-    }
-
-    .a-float {
-      animation: floaty 6s ease-in-out infinite;
-    }
-
-    .ha-up {
-      animation: fadeUp .6s cubic-bezier(.2, .7, .2, 1) both;
-    }
-
-    .ha-zoom {
-      animation: zoomIn .6s cubic-bezier(.2, .7, .2, 1) both;
-    }
-
-    [data-reveal] {
-      opacity: 0;
-      transition: all .9s cubic-bezier(.2, .7, .2, 1);
-    }
-
-    [data-reveal="up"] {
-      transform: translateY(30px);
-    }
-
-    [data-reveal="left"] {
-      transform: translateX(-30px);
-    }
-
-    [data-reveal="right"] {
-      transform: translateX(30px);
-    }
-
-    [data-reveal="zoom"] {
-      transform: scale(.94);
-    }
-
-    [data-reveal].revealed {
-      opacity: 1;
-      transform: none;
-    }
-
-    .modalcard {
-      animation: zoomIn .35s both;
-    }
-
-    .toast {
-      animation: popIn .35s both;
-    }
-
-    .wa-float {
-      animation: pulseWa 2s infinite;
-    }
+    .modalcard { animation: zoomIn .35s both; }
+    .toast { animation: popIn .35s both; }
+    .wa-float { animation: pulseWa 2s infinite; }
 
     .hero-slide {
       display: flex;
@@ -682,15 +389,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       min-height: calc(100dvh - 120px);
     }
 
-    /* Timeline */
-    .track-wrap {
-      position: relative;
-      margin-top: 16px;
-      padding: 0 1px;
-      width: 100%;
-      overflow: visible;
-    }
-
+    .track-wrap { position: relative; margin-top: 16px; padding: 0 1px; width: 100%; overflow: visible; }
     .track-timeline {
       display: flex;
       flex-direction: row;
@@ -701,21 +400,8 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       scrollbar-width: none;
       width: 100%;
     }
-
-    .track-timeline::-webkit-scrollbar {
-      display: none;
-    }
-
-    .track-step {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      flex: 1;
-      min-width: 80px;
-      position: relative;
-    }
-
+    .track-timeline::-webkit-scrollbar { display: none; }
+    .track-step { display: flex; flex-direction: column; align-items: center; text-align: center; flex: 1; min-width: 80px; position: relative; }
     .track-step:not(:last-child)::after {
       content: '';
       position: absolute;
@@ -726,10 +412,8 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       background: var(--line);
       z-index: 1;
     }
-
     .track-icon {
-      width: 32px;
-      height: 32px;
+      width: 32px; height: 32px;
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -743,102 +427,36 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       z-index: 3;
       flex-shrink: 0;
     }
-
-    .track-step.done .track-icon {
-      background: var(--text);
-      border-color: var(--text);
-      color: var(--bg);
-    }
-
-    .track-step.active .track-icon {
-      background: var(--text);
-      border-color: var(--text);
-      color: var(--bg);
-    }
+    .track-step.done .track-icon { background: var(--text); border-color: var(--text); color: var(--bg); }
+    .track-step.active .track-icon { background: var(--text); border-color: var(--text); color: var(--bg); }
 
     @media(max-width:767px) {
-      body {
-        padding-bottom: 4.6rem;
-      }
-
-      #waFloat {
-        display: none;
-      }
-
-      #productModal .pm-wrap {
-        padding: 0;
-        margin: 0;
-        max-width: 100%;
-      }
-
-      #productModal .modalcard {
-        border-radius: 0;
-        min-height: 100dvh;
-      }
-
-      .sheet {
-        width: 100%;
-        max-width: 100%;
-      }
-
-      .hero-slide {
-        padding-bottom: 2.75rem;
-      }
+      body { padding-bottom: 4.6rem; }
+      #waFloat { display: none; }
+      #productModal .pm-wrap { padding: 0; margin: 0; max-width: 100%; }
+      #productModal .modalcard { border-radius: 0; min-height: 100dvh; }
+      .sheet { width: 100%; max-width: 100%; }
+      .hero-slide { padding-bottom: 2.75rem; }
     }
 
     @media(min-width:768px) {
-      #bottomNav {
-        display: none;
-      }
-
-      body {
-        padding-bottom: 0 !important;
-      }
-
-      #heroSec {
-        min-height: calc(100vh - 140px);
-      }
+      #bottomNav { display: none; }
+      body { padding-bottom: 0 !important; }
+      #heroSec { min-height: calc(100vh - 140px); }
     }
 
     @media(prefers-reduced-motion:reduce) {
-
-      *,
-      *::before,
-      *::after {
-        animation-duration: .01ms !important;
-        transition-duration: .15s !important;
-      }
-
-      html {
-        scroll-behavior: auto;
-      }
+      *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .15s !important; }
+      html { scroll-behavior: auto; }
     }
 
-    details.faq summary {
-      list-style: none;
-      cursor: pointer;
-    }
+    details.faq summary { list-style: none; cursor: pointer; }
+    details.faq summary::-webkit-details-marker { display: none; }
+    details.faq[open] .faqicon { transform: rotate(45deg); }
+    .faqicon { transition: transform .3s; }
 
-    details.faq summary::-webkit-details-marker {
-      display: none;
-    }
+    .editorial-h { font-weight: 400; letter-spacing: -0.01em; line-height: 1.1; }
 
-    details.faq[open] .faqicon {
-      transform: rotate(45deg);
-    }
-
-    .faqicon {
-      transition: transform .3s;
-    }
-
-    /* Editorial headings */
-    .editorial-h {
-      font-weight: 400;
-      letter-spacing: -0.01em;
-      line-height: 1.1;
-    }
-
-    /* Elegant underline link */
     .link-u {
       position: relative;
       display: inline-block;
@@ -847,23 +465,32 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       font-size: 11px;
       font-weight: 500;
     }
-
     .link-u::after {
       content: '';
       position: absolute;
-      left: 0;
-      right: 0;
-      bottom: -4px;
+      left: 0; right: 0; bottom: -4px;
       height: 1px;
       background: currentColor;
       transform: scaleX(0);
       transform-origin: left;
       transition: transform .4s cubic-bezier(.2, .7, .2, 1);
     }
+    .link-u:hover::after { transform: scaleX(1); }
 
-    .link-u:hover::after {
-      transform: scaleX(1);
+    /* Payment Method Radio Cards */
+    .pay-radio {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      background: var(--card);
+      cursor: pointer;
+      transition: border-color .25s, background .25s;
     }
+    .pay-radio:hover { border-color: var(--text); }
+    .pay-radio.active { border-color: var(--text); background: var(--bg2); }
+    .pay-radio input[type="radio"] { accent-color: var(--text); }
   </style>
 </head>
 
@@ -872,8 +499,8 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
     <div class="wrap grid grid-cols-[auto_1fr_auto] items-center gap-6 py-3 md:py-4">
       <div class="flex items-center gap-2 min-w-0">
         <button id="menuOpen" class="md:hidden p-2 -ml-1" aria-label="Menu">
-<svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M4 7h16M4 12h10M4 17h16"/></svg>
-</button>
+          <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M4 7h16M4 12h10M4 17h16"/></svg>
+        </button>
         <a href="#home" class="flex items-center shrink-0" aria-label="HinchField home">
           <img src="images/logo.png" class="h-12 md:h-14 w-auto object-contain" alt="HinchField" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
           <span class="h-12 items-center font-luxe text-xl md:text-2xl font-medium tracking-luxe" style="display:none;color:var(--text);">HINCHFIELD</span>
@@ -883,37 +510,34 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
         <div class="flex items-center border-b hairline w-full" style="background:transparent;">
           <input id="searchInput" type="search" maxlength="60" placeholder="Search" class="flex-1 bg-transparent px-2 py-2.5 text-sm min-w-0 uppercase tracking-wide2" style="color:var(--text);" autocomplete="off">
           <button id="searchBtn" class="px-2" style="color:var(--text);" aria-label="Search">
-<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-</button>
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          </button>
         </div>
-        <div id="searchDrop"
-          class="absolute left-1/2 -translate-x-1/2 w-full top-[112%] border hairline shadow-lift overflow-hidden hidden z-50"
-          style="background:var(--card);"></div>
+        <div id="searchDrop" class="absolute left-1/2 -translate-x-1/2 w-full top-[112%] border hairline shadow-lift overflow-hidden hidden z-50" style="background:var(--card);"></div>
       </div>
       <div class="flex items-center gap-1 md:gap-4 justify-end min-w-0">
         <button id="mSearchOpen" class="md:hidden p-2" aria-label="Search">
-<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-</button>
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        </button>
         <button id="wishOpen" class="relative flex flex-col items-center justify-center px-2 md:px-3" style="color:var(--text);" aria-label="Wishlist">
-<div class="relative">
-<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M12 21s-7.5-4.7-10-9.3C.5 8 2.6 4.5 6.2 4.5c2.2 0 3.7 1.2 4.6 2.6.9-1.4 2.4-2.6 4.6-2.6 3.6 0 5.7 3.5 4.2 7.2C19.5 16.3 12 21 12 21z"/></svg>
-<span id="wishCount" class="absolute -top-1.5 -right-2 min-w-[16px] h-4 px-1 text-white text-[9px] font-bold flex items-center justify-center" style="background:var(--text);">0</span>
-</div>
-<span class="micro mt-1 hidden md:block">Wishlist</span>
-</button>
+          <div class="relative">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M12 21s-7.5-4.7-10-9.3C.5 8 2.6 4.5 6.2 4.5c2.2 0 3.7 1.2 4.6 2.6.9-1.4 2.4-2.6 4.6-2.6 3.6 0 5.7 3.5 4.2 7.2C19.5 16.3 12 21 12 21z"/></svg>
+            <span id="wishCount" class="absolute -top-1.5 -right-2 min-w-[16px] h-4 px-1 text-white text-[9px] font-bold flex items-center justify-center" style="background:var(--text);">0</span>
+          </div>
+          <span class="micro mt-1 hidden md:block">Wishlist</span>
+        </button>
         <button id="cartOpen" class="relative flex flex-col items-center justify-center px-2 md:px-3" style="color:var(--text);" aria-label="Cart">
-<div class="relative">
-<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M6 7h12l1.5 13h-15L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>
-<span id="cartCount" class="absolute -top-1.5 -right-2 min-w-[16px] h-4 px-1 text-[9px] font-bold flex items-center justify-center" style="background:var(--text); color:var(--bg);">0</span>
-</div>
-<span class="micro mt-1 hidden md:block">Cart</span>
-</button>
+          <div class="relative">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M6 7h12l1.5 13h-15L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>
+            <span id="cartCount" class="absolute -top-1.5 -right-2 min-w-[16px] h-4 px-1 text-[9px] font-bold flex items-center justify-center" style="background:var(--text); color:var(--bg);">0</span>
+          </div>
+          <span class="micro mt-1 hidden md:block">Cart</span>
+        </button>
       </div>
     </div>
     <nav class="hidden md:block border-t hairline w-full">
       <div class="wrap flex items-center justify-center gap-8 py-3 overflow-x-auto no-scrollbar">
-        <a href="#home" class="text-[11px] font-medium tracking-wide2 uppercase hover:opacity-60 transition shrink-0"
-          style="color:var(--text);">Home</a>
+        <a href="#home" class="text-[11px] font-medium tracking-wide2 uppercase hover:opacity-60 transition shrink-0" style="color:var(--text);">Home</a>
         <button class="text-[11px] font-medium tracking-wide2 uppercase hover:opacity-60 transition shrink-0" data-catpage="new">New Drops</button>
         <button class="text-[11px] font-medium tracking-wide2 uppercase hover:opacity-60 transition shrink-0" data-catpage="best">Best Sell</button>
         <button class="text-[11px] font-medium tracking-wide2 uppercase hover:opacity-60 transition shrink-0" data-catpage="under499">Under ₹499</button>
@@ -921,20 +545,19 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
         <button class="text-[11px] font-medium tracking-wide2 uppercase hover:opacity-60 transition shrink-0" data-catpage="under699">Under ₹699</button>
         <button class="text-[11px] font-medium tracking-wide2 uppercase hover:opacity-60 transition shrink-0" data-catpage="">All Products</button>
         <button class="text-[11px] font-medium tracking-wide2 uppercase hover:opacity-60 transition shrink-0" data-openhistory>My Orders</button>
-        <a href="#contact"
-          class="text-[11px] font-medium tracking-wide2 uppercase hover:opacity-60 transition shrink-0">Contact</a>
+        <a href="#contact" class="text-[11px] font-medium tracking-wide2 uppercase hover:opacity-60 transition shrink-0">Contact</a>
         <button id="curChip" class="chip border hairline shrink-0 hover:border-[var(--text)] gap-1.5 transition" style="color:var(--text);">
-<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-Detecting…
-</button>
+          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          Detecting…
+        </button>
       </div>
     </nav>
   </header>
+
   <!-- Mobile Menu -->
   <div id="mobileMenu" class="fixed inset-0 z-[60] hidden w-full">
     <div class="absolute inset-0 bg-black/70 backdrop-blur-md" data-close="mobileMenu"></div>
-    <div class="absolute left-0 top-0 h-full w-[88%] max-w-sm overflow-y-auto flex flex-col border-r hairline"
-      style="background:var(--bg); animation:slideL .4s cubic-bezier(0.2,0.8,0.2,1) both;">
+    <div class="absolute left-0 top-0 h-full w-[88%] max-w-sm overflow-y-auto flex flex-col border-r hairline" style="background:var(--bg); animation:slideL .4s cubic-bezier(0.2,0.8,0.2,1) both;">
       <div class="relative p-6 pb-5 border-b hairline overflow-hidden">
         <div class="flex items-center relative">
           <img src="images/logo.png" class="h-14 w-auto object-contain" alt="HinchField" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
@@ -944,17 +567,14 @@ Detecting…
       <nav class="flex-1 p-4 space-y-2.5" id="mobileNav"></nav>
       <div class="p-5 border-t hairline text-center">
         <p class="micro mb-3" style="color:var(--mut);">Need Assistance?</p>
-        <a href="https://wa.me/917434053550" target="_blank" rel="noopener"
-          class="pill btn-gold w-full py-4 text-[11px] flex justify-center items-center gap-2">
-          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-            <path
-              d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-          </svg>
+        <a href="https://wa.me/917434053550" target="_blank" rel="noopener" class="pill btn-gold w-full py-4 text-[11px] flex justify-center items-center gap-2">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
           Premium Support
         </a>
       </div>
     </div>
   </div>
+
   <div id="searchOverlay" class="fixed inset-0 z-[60] hidden w-full" style="background:var(--bg); color:var(--text);">
     <div class="p-3 border-b hairline flex gap-2 items-center">
       <input id="mSearchInput" maxlength="60" class="field" placeholder="Search HinchField…" autocomplete="off">
@@ -962,14 +582,15 @@ Detecting…
     </div>
     <div id="mResults" class="p-3 grid grid-cols-2 gap-3 overflow-y-auto w-full"></div>
   </div>
+
   <main class="w-full">
     <section id="heroSec" class="relative overflow-hidden w-full" aria-label="Hero" style="background:var(--bg);">
       <div id="heroSlides" class="w-full"></div>
       <button id="heroPrev" class="absolute left-2 md:left-6 top-1/2 -translate-y-1/2 z-10 w-10 h-10 md:w-11 md:h-11 border hairline glassbar transition hover:bg-[var(--text)] hover:text-[var(--bg)]" aria-label="Previous slide">‹</button>
       <button id="heroNext" class="absolute right-2 md:right-6 top-1/2 -translate-y-1/2 z-10 w-10 h-10 md:w-11 md:h-11 border hairline glassbar transition hover:bg-[var(--text)] hover:text-[var(--bg)]" aria-label="Next slide">›</button>
-      <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 z-10 flex-wrap justify-center px-4 w-full"
-        id="heroDots"></div>
+      <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 z-10 flex-wrap justify-center px-4 w-full" id="heroDots"></div>
     </section>
+
     <!-- Shop by Category -->
     <section class="py-12 md:py-20 w-full" style="background:var(--bg2);" id="shopCatSec">
       <div class="wrap text-center mb-10">
@@ -978,10 +599,12 @@ Detecting…
       </div>
       <div class="wrap grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6" id="shopCats"></div>
     </section>
+
     <!-- Featured -->
     <section class="py-12 md:py-20 w-full" style="background:var(--bg);" id="sec-featured">
       <div class="wrap space-y-16 md:space-y-24" id="featuredCats"></div>
     </section>
+
     <section class="wrap py-12 md:py-20 w-full max-w-6xl mx-auto" id="faq">
       <div class="text-center mb-10">
         <p class="micro mb-3">Help · Support</p>
@@ -989,84 +612,56 @@ Detecting…
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-start">
         <details class="faq card p-5">
-          <summary class="flex justify-between items-center font-medium text-sm">Where to buy premium oversized
-            graphic t-shirts online?<span class="faqicon text-[var(--text)] text-lg">+</span></summary>
-          <p class="text-xs mt-3 leading-relaxed" style="color:var(--mut);">HinchField offers a curated
-            collection of heavyweight oversized graphic T-Shirt with streetwear and retro aesthetics. COD available
-            across
-            India.</p>
+          <summary class="flex justify-between items-center font-medium text-sm">Where to buy premium oversized graphic t-shirts online?<span class="faqicon text-[var(--text)] text-lg">+</span></summary>
+          <p class="text-xs mt-3 leading-relaxed" style="color:var(--mut);">HinchField offers a curated collection of heavyweight oversized graphic T-Shirt with streetwear and retro aesthetics. COD available across India.</p>
         </details>
         <details class="faq card p-5">
-          <summary class="flex justify-between items-center font-medium text-sm">How do I order custom name or photo
-            t-shirts?<span class="faqicon text-[var(--text)] text-lg">+</span></summary>
-          <p class="text-xs mt-3 leading-relaxed" style="color:var(--mut);">Select any T-Shirt from our Custom Category,
-            add
-            your text or upload instructions in the notes, and checkout. We confirm the design on WhatsApp before
-            printing.</p>
+          <summary class="flex justify-between items-center font-medium text-sm">How do I order custom name or photo t-shirts?<span class="faqicon text-[var(--text)] text-lg">+</span></summary>
+          <p class="text-xs mt-3 leading-relaxed" style="color:var(--mut);">Select any T-Shirt from our Custom Category, add your text or upload instructions in the notes, and checkout. We confirm the design on WhatsApp before printing.</p>
         </details>
         <details class="faq card p-5">
-          <summary class="flex justify-between items-center font-medium text-sm">Do you offer minimalist text
-            t-shirts?<span class="faqicon text-[var(--text)] text-lg">+</span></summary>
-          <p class="text-xs mt-3 leading-relaxed" style="color:var(--mut);">Yes, our Minimalist collection features
-            clean typography, micro-dots, and subtle chest hits.</p>
+          <summary class="flex justify-between items-center font-medium text-sm">Do you offer minimalist text t-shirts?<span class="faqicon text-[var(--text)] text-lg">+</span></summary>
+          <p class="text-xs mt-3 leading-relaxed" style="color:var(--mut);">Yes, our Minimalist collection features clean typography, micro-dots, and subtle chest hits.</p>
         </details>
         <details class="faq card p-5">
-          <summary class="flex justify-between items-center font-medium text-sm">Are cropped boxy t-shirts available
-            for women?<span class="faqicon text-[var(--text)] text-lg">+</span></summary>
-          <p class="text-xs mt-3 leading-relaxed" style="color:var(--mut);">Absolutely. Our Cropped Boxy collection is
-            tailored specifically for women with a relaxed silhouette.</p>
+          <summary class="flex justify-between items-center font-medium text-sm">Are cropped boxy t-shirts available for women?<span class="faqicon text-[var(--text)] text-lg">+</span></summary>
+          <p class="text-xs mt-3 leading-relaxed" style="color:var(--mut);">Absolutely. Our Cropped Boxy collection is tailored specifically for women with a relaxed silhouette.</p>
         </details>
         <details class="faq card p-5">
-          <summary class="flex justify-between items-center font-medium text-sm">Do you sell premium polo
-            t-shirts?<span class="faqicon text-[var(--text)] text-lg">+</span></summary>
-          <p class="text-xs mt-3 leading-relaxed" style="color:var(--mut);">Yes, we offer premium polo T-Shirt with
-            structured collars and breathable fabrics.</p>
+          <summary class="flex justify-between items-center font-medium text-sm">Do you sell premium polo t-shirts?<span class="faqicon text-[var(--text)] text-lg">+</span></summary>
+          <p class="text-xs mt-3 leading-relaxed" style="color:var(--mut);">Yes, we offer premium polo T-Shirt with structured collars and breathable fabrics.</p>
         </details>
         <details class="faq card p-5">
-          <summary class="flex justify-between items-center font-medium text-sm">Where to buy anime and gaming T-Shirt
-            in
-            India?<span class="faqicon text-[var(--text)] text-lg">+</span></summary>
-          <p class="text-xs mt-3 leading-relaxed" style="color:var(--mut);">Our Anime &amp; Gaming category features
-            officially inspired streetwear graphics.</p>
+          <summary class="flex justify-between items-center font-medium text-sm">Where to buy anime and gaming T-Shirt in India?<span class="faqicon text-[var(--text)] text-lg">+</span></summary>
+          <p class="text-xs mt-3 leading-relaxed" style="color:var(--mut);">Our Anime &amp; Gaming category features officially inspired streetwear graphics.</p>
         </details>
         <details class="faq card p-5">
-          <summary class="flex justify-between items-center font-medium text-sm">What is the delivery time and
-            tracking process?<span class="faqicon text-[var(--text)] text-lg">+</span></summary>
-          <p class="text-xs mt-3 leading-relaxed" style="color:var(--mut);">Orders are processed within 24 hours and
-            delivered within 48 hours. Track live via My Orders.</p>
+          <summary class="flex justify-between items-center font-medium text-sm">What is the delivery time and tracking process?<span class="faqicon text-[var(--text)] text-lg">+</span></summary>
+          <p class="text-xs mt-3 leading-relaxed" style="color:var(--mut);">Orders are processed within 24 hours and delivered within 48 hours. Track live via My Orders.</p>
         </details>
         <details class="faq card p-5">
-          <summary class="flex justify-between items-center font-medium text-sm">What are your shipping and delivery
-            charges?<span class="faqicon text-[var(--text)] text-lg">+</span></summary>
-          <p class="text-xs mt-3 leading-relaxed" style="color:var(--mut);">Below ₹999: ₹99. ₹999-₹1499: ₹49. Above
-            ₹1499: FREE across India.</p>
+          <summary class="flex justify-between items-center font-medium text-sm">What are your shipping and delivery charges?<span class="faqicon text-[var(--text)] text-lg">+</span></summary>
+          <p class="text-xs mt-3 leading-relaxed" style="color:var(--mut);">Below ₹999: ₹99. ₹999-₹1499: ₹49. Above ₹1499: FREE across India.</p>
         </details>
         <details class="faq card p-5">
-          <summary class="flex justify-between items-center font-medium text-sm">Do you offer Cash on Delivery
-            (COD)?<span class="faqicon text-[var(--text)] text-lg">+</span></summary>
-          <p class="text-xs mt-3 leading-relaxed" style="color:var(--mut);">Yes, COD is available across India. Pay at
-            your doorstep after verifying the 4-digit OTP.</p>
+          <summary class="flex justify-between items-center font-medium text-sm">Do you offer Cash on Delivery (COD)?<span class="faqicon text-[var(--text)] text-lg">+</span></summary>
+          <p class="text-xs mt-3 leading-relaxed" style="color:var(--mut);">Yes, COD is available across India. Pay at your doorstep after verifying the 4-digit OTP.</p>
         </details>
         <details class="faq card p-5">
-          <summary class="flex justify-between items-center font-medium text-sm">Is there a return or exchange
-            policy?<span class="faqicon text-[var(--text)] text-lg">+</span></summary>
-          <p class="text-xs mt-3 leading-relaxed" style="color:var(--mut);">Strict No Return / No Exchange policy due to
-            customisation options.</p>
+          <summary class="flex justify-between items-center font-medium text-sm">Is there a return or exchange policy?<span class="faqicon text-[var(--text)] text-lg">+</span></summary>
+          <p class="text-xs mt-3 leading-relaxed" style="color:var(--mut);">Strict No Return / No Exchange policy due to customisation options.</p>
         </details>
         <details class="faq card p-5">
-          <summary class="flex justify-between items-center font-medium text-sm">Do you ship
-            worldwide?<span class="faqicon text-[var(--text)] text-lg">+</span></summary>
-          <p class="text-xs mt-3 leading-relaxed" style="color:var(--mut);">Yes, worldwide shipping. International
-            orders confirmed via WhatsApp with live currency.</p>
+          <summary class="flex justify-between items-center font-medium text-sm">Do you ship worldwide?<span class="faqicon text-[var(--text)] text-lg">+</span></summary>
+          <p class="text-xs mt-3 leading-relaxed" style="color:var(--mut);">Yes, worldwide shipping. International orders confirmed via WhatsApp with live currency.</p>
         </details>
         <details class="faq card p-5">
-          <summary class="flex justify-between items-center font-medium text-sm">How do I track my HinchField
-            order?<span class="faqicon text-[var(--text)] text-lg">+</span></summary>
-          <p class="text-xs mt-3 leading-relaxed" style="color:var(--mut);">Use "My Orders" or "Track" from the menu to
-            see real-time stages.</p>
+          <summary class="flex justify-between items-center font-medium text-sm">How do I track my HinchField order?<span class="faqicon text-[var(--text)] text-lg">+</span></summary>
+          <p class="text-xs mt-3 leading-relaxed" style="color:var(--mut);">Use "My Orders" or "Track" from the menu to see real-time stages.</p>
         </details>
       </div>
     </section>
+
     <section class="py-12 md:py-20 w-full" style="background:var(--bg2);" id="instagram">
       <div class="wrap">
         <div class="text-center mb-10">
@@ -1075,19 +670,15 @@ Detecting…
         </div>
         <div id="instaRow" class="grid grid-cols-3 md:grid-cols-6 gap-2 md:gap-4"></div>
         <p class="text-center mt-8 md:mt-10">
-          <a href="https://www.instagram.com/hinchfield_official?stkn=NHExem1hbnA2eGs=" target="_blank" rel="noopener"
-            class="pill btn-line px-8 py-3">
-            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3">
-              <rect x="3" y="3" width="18" height="18" rx="5" />
-              <circle cx="12" cy="12" r="4" />
-              <circle cx="17.2" cy="6.8" r="1" fill="currentColor" stroke="none" />
-            </svg>
+          <a href="https://www.instagram.com/hinchfield_official?stkn=NHExem1hbnA2eGs=" target="_blank" rel="noopener" class="pill btn-line px-8 py-3">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.2" cy="6.8" r="1" fill="currentColor" stroke="none" /></svg>
             Follow Us
           </a>
         </p>
       </div>
     </section>
   </main>
+
   <footer class="w-full border-t hairline" style="background:var(--bg); color:var(--text);" id="contact">
     <div class="wrap py-14 md:py-16 grid sm:grid-cols-2 md:grid-cols-4 gap-8 md:gap-10">
       <div>
@@ -1095,25 +686,13 @@ Detecting…
           <img src="images/logo.png" class="h-14 w-auto object-contain mb-5" alt="HinchField" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
           <span class="h-12 items-center font-luxe text-xl font-medium tracking-luxe" style="display:none;color:var(--text);">HINCHFIELD</span>
         </a>
-        <p class="text-sm leading-relaxed" style="color:var(--mut);">Premium Oversized, Custom &amp; Anime T-Shirt,
-          curated
-          for the world.</p>
+        <p class="text-sm leading-relaxed" style="color:var(--mut);">Premium Oversized, Custom &amp; Anime T-Shirt, curated for the world.</p>
         <div class="flex gap-3 mt-6">
-          <a href="https://www.instagram.com/hinchfield_official?stkn=NHExem1hbnA2eGs=" target="_blank" rel="noopener"
-            aria-label="Instagram"
-            class="w-10 h-10 border hairline flex items-center justify-center transition hover:bg-[var(--text)] hover:text-[var(--bg)]">
-            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3">
-              <rect x="3" y="3" width="18" height="18" rx="5" />
-              <circle cx="12" cy="12" r="4" />
-              <circle cx="17.2" cy="6.8" r="1" fill="currentColor" stroke="none" />
-            </svg>
+          <a href="https://www.instagram.com/hinchfield_official?stkn=NHExem1hbnA2eGs=" target="_blank" rel="noopener" aria-label="Instagram" class="w-10 h-10 border hairline flex items-center justify-center transition hover:bg-[var(--text)] hover:text-[var(--bg)]">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.2" cy="6.8" r="1" fill="currentColor" stroke="none" /></svg>
           </a>
-          <a href="https://wa.me/917434053550" target="_blank" rel="noopener" aria-label="WhatsApp"
-            class="w-10 h-10 border hairline flex items-center justify-center transition hover:bg-[var(--text)] hover:text-[var(--bg)]">
-            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-              <path
-                d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-            </svg>
+          <a href="https://wa.me/917434053550" target="_blank" rel="noopener" aria-label="WhatsApp" class="w-10 h-10 border hairline flex items-center justify-center transition hover:bg-[var(--text)] hover:text-[var(--bg)]">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
           </a>
         </div>
       </div>
@@ -1134,74 +713,56 @@ Detecting…
       <div>
         <p class="micro mb-4" style="color:var(--text);">Reach Us</p>
         <ul class="space-y-3 text-sm">
-          <li><a href="tel:7434053550"
-              class="flex items-center gap-3 hover:opacity-60 transition"><span class="text-[var(--text)]"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>7434053550</a>
-          </li>
-          <li><a href="mailto:support.hinchfield@gmail.com"
-              class="flex items-center gap-3 hover:opacity-60 transition"><span class="text-[var(--text)]"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></span>support.hinchfield@gmail.com</a>
-          </li>
-          <li>
-            <button id="footAdmin" class="hover:opacity-60 transition text-[10px] tracking-widest uppercase" style="color:var(--mut);">Staff / Admin Portal</button>
-          </li>
+          <li><a href="tel:7434053550" class="flex items-center gap-3 hover:opacity-60 transition"><span class="text-[var(--text)]"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>7434053550</a></li>
+          <li><a href="mailto:support.hinchfield@gmail.com" class="flex items-center gap-3 hover:opacity-60 transition"><span class="text-[var(--text)]"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></span>support.hinchfield@gmail.com</a></li>
+          <li><button id="footAdmin" class="hover:opacity-60 transition text-[10px] tracking-widest uppercase" style="color:var(--mut);">Staff / Admin Portal</button></li>
         </ul>
       </div>
     </div>
     <div class="border-t hairline w-full">
-      <div class="wrap py-6 flex flex-col md:flex-row items-center justify-between gap-3 text-[11px]"
-        style="color:var(--mut);">
+      <div class="wrap py-6 flex flex-col md:flex-row items-center justify-between gap-3 text-[11px]" style="color:var(--mut);">
         <p>© 2026 HinchField. All rights reserved.</p>
         <p class="flex gap-4 items-center font-medium tracking-wide2 uppercase" style="color:var(--text);">
-          <span>COD India</span>•<span>Worldwide</span>•<span>No Return</span>
+          <span>COD India</span>•<span>Online Payment</span>•<span>Worldwide</span>•<span>No Return</span>
         </p>
       </div>
     </div>
   </footer>
-  <nav id="bottomNav"
-    class="fixed bottom-0 inset-x-0 z-50 glassbar border-t hairline shadow-bar grid grid-cols-5 w-full">
+
+  <nav id="bottomNav" class="fixed bottom-0 inset-x-0 z-50 glassbar border-t hairline shadow-bar grid grid-cols-5 w-full">
     <button class="flex flex-col items-center py-2.5" style="color:var(--text);" data-bnav="home"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 11l9-8 9 8v10h-6v-6H9v6H3z"/></svg><span class="micro mt-1">Home</span></button>
     <button class="flex flex-col items-center py-2.5" style="color:var(--mut);" data-bnav="shop"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 7h16M4 12h16M4 17h16"/></svg><span class="micro mt-1">Shop</span></button>
     <button class="flex flex-col items-center py-2.5" style="color:var(--mut);" data-bnav="orders"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"/></svg><span class="micro mt-1">Orders</span></button>
     <button class="flex flex-col items-center py-2.5" style="color:var(--mut);" data-bnav="track"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="10" r="3"/><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span class="micro mt-1">Track</span></button>
-    <a href="https://wa.me/917434053550" target="_blank" rel="noopener" class="flex flex-col items-center py-2.5"
-      style="color:var(--mut);"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-        <path
-          d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-      </svg><span class="micro mt-1">Chat</span></a>
+    <a href="https://wa.me/917434053550" target="_blank" rel="noopener" class="flex flex-col items-center py-2.5" style="color:var(--mut);"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg><span class="micro mt-1">Chat</span></a>
   </nav>
+
+  <!-- Cart Drawer with Payment Method Selection -->
   <div id="cartDrawer" class="fixed inset-0 z-[70] hidden w-full">
     <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" data-close="cartDrawer"></div>
     <aside class="sheet-wrap absolute right-0 top-0 h-full w-full flex justify-end pointer-events-none">
-      <div class="sheet h-full flex flex-col pointer-events-auto border-l hairline"
-        style="background:var(--bg); color:var(--text); animation:slideR .45s both;">
+      <div class="sheet h-full flex flex-col pointer-events-auto border-l hairline" style="background:var(--bg); color:var(--text); animation:slideR .45s both;">
         <div class="flex items-center justify-between p-4 md:p-5 border-b hairline" style="background:var(--card);">
-          <h3 class="disp editorial-h font-luxe text-xl">Your Cart
-            <span id="cartN" class="text-[var(--mut)] text-sm"></span></h3>
+          <h3 class="disp editorial-h font-luxe text-xl">Your Cart <span id="cartN" class="text-[var(--mut)] text-sm"></span></h3>
           <button data-close="cartDrawer" class="w-9 h-9 border hairline transition" aria-label="Close">✕</button>
         </div>
         <div class="flex-1 overflow-y-auto w-full">
           <div class="px-4 md:px-5 py-3 border-b hairline" style="background:var(--bg2);">
             <p id="shipMsg" class="text-[11px] mb-2" style="color:var(--mut);"></p>
             <div class="h-1 overflow-hidden" style="background:var(--line);">
-              <div id="shipBar" class="h-full transition-all duration-700" style="width:0%; background:var(--text);">
-              </div>
+              <div id="shipBar" class="h-full transition-all duration-700" style="width:0%; background:var(--text);"></div>
             </div>
           </div>
           <div id="cartItems" class="p-4 md:p-5 space-y-3 md:space-y-4 w-full"></div>
           <div class="px-4 md:px-5 pb-4 space-y-3 border-b hairline w-full">
-            <div class="flex justify-between text-sm"><span style="color:var(--mut);">Subtotal</span><b id="sumSub"></b>
-            </div>
-            <div class="flex justify-between text-sm"><span style="color:var(--mut);">Delivery</span><b id="sumDel"></b>
-            </div>
-            <div class="flex justify-between disp text-lg border-t hairline pt-3">
-              <span>Total (COD)</span><b id="sumTotal"></b>
-            </div>
+            <div class="flex justify-between text-sm"><span style="color:var(--mut);">Subtotal</span><b id="sumSub"></b></div>
+            <div class="flex justify-between text-sm"><span style="color:var(--mut);">Delivery</span><b id="sumDel"></b></div>
+            <div class="flex justify-between disp text-lg border-t hairline pt-3"><span>Total</span><b id="sumTotal"></b></div>
           </div>
           <div class="p-4 md:p-5 space-y-3 w-full">
-            <p class="micro" style="color:var(--text);">Delivery Details — Cash on Delivery</p>
-            <div class="flex items-center justify-between gap-2 border hairline px-4 py-2"
-              style="background:var(--bg2);">
-              <p class="text-[11px] font-medium" style="color:var(--text);"><span id="coCountryTxt">Detecting…</span>
-              </p>
+            <p class="micro" style="color:var(--text);">Delivery Details</p>
+            <div class="flex items-center justify-between gap-2 border hairline px-4 py-2" style="background:var(--bg2);">
+              <p class="text-[11px] font-medium" style="color:var(--text);"><span id="coCountryTxt">Detecting…</span></p>
               <button id="coDetect" class="pill btn-line px-3 py-1.5 text-[10px]" style="padding:6px 12px;">Re-detect</button>
             </div>
             <input id="coName" maxlength="60" class="field" placeholder="Full name *">
@@ -1214,18 +775,44 @@ Detecting…
             <input id="coPin" maxlength="10" class="field" placeholder="PIN / ZIP *">
             <input type="text" name="website" id="coHoney" class="hidden" tabindex="-1" autocomplete="off" aria-hidden="true">
             <p id="coErr" class="text-[11px] hidden" style="color:#DC2626;"></p>
+
+            <!-- ===== PAYMENT METHOD SELECTION ===== -->
+            <p class="micro pt-2" style="color:var(--text);">Payment Method</p>
+            <div class="space-y-2">
+              <label class="pay-radio active" id="payRadCod">
+                <input type="radio" name="payMethod" value="cod" checked>
+                <div class="flex-1">
+                  <p class="text-xs font-medium">Cash on Delivery</p>
+                  <p class="text-[10px]" style="color:var(--mut);">Pay at your doorstep (India only)</p>
+                </div>
+                <span class="chip" style="background:var(--text); color:var(--bg);">COD</span>
+              </label>
+              <label class="pay-radio" id="payRadOnline">
+                <input type="radio" name="payMethod" value="online">
+                <div class="flex-1">
+                  <p class="text-xs font-medium">Pay Online</p>
+                  <p class="text-[10px]" style="color:var(--mut);">UPI · Cards · Netbanking · Wallets</p>
+                </div>
+                <span class="chip" style="background:#0A0A0A; color:#fff;">Secure</span>
+              </label>
+            </div>
+
+            <!-- COD button (default) -->
             <button id="placeOrder" class="pill btn-gold w-full py-4">Place Order on WhatsApp — COD</button>
-            <p class="text-[10px] text-center" style="color:var(--mut);">No Return / No Exchange • Bill opens in
-              WhatsApp.</p>
+            <!-- Online payment button (hidden by default) -->
+            <button id="payOnline" class="pill btn-gold w-full py-4 hidden">Pay Online — Razorpay</button>
+
+            <p class="text-[10px] text-center" style="color:var(--mut);">No Return / No Exchange • Secure checkout</p>
           </div>
         </div>
+      </div>
     </aside>
   </div>
+
   <div id="wishDrawer" class="fixed inset-0 z-[70] hidden w-full">
     <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" data-close="wishDrawer"></div>
     <aside class="sheet-wrap absolute left-0 top-0 h-full w-full flex justify-start pointer-events-none">
-      <div class="sheet h-full flex flex-col pointer-events-auto border-r hairline"
-        style="background:var(--bg); color:var(--text); animation:slideL .45s both;">
+      <div class="sheet h-full flex flex-col pointer-events-auto border-r hairline" style="background:var(--bg); color:var(--text); animation:slideL .45s both;">
         <div class="flex items-center justify-between p-4 md:p-5 border-b hairline" style="background:var(--card);">
           <h3 class="disp editorial-h font-luxe text-xl">Wishlist</h3>
           <button data-close="wishDrawer" class="w-9 h-9 border hairline" aria-label="Close">✕</button>
@@ -1234,17 +821,17 @@ Detecting…
       </div>
     </aside>
   </div>
+
   <div id="productModal" class="fixed inset-0 z-[80] hidden overflow-y-auto w-full">
     <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" data-close="productModal"></div>
     <div class="pm-wrap relative max-w-6xl mx-auto my-0 md:my-8 px-0 md:px-4 w-full">
-      <div class="modalcard overflow-hidden md:rounded-none"
-        style="background:var(--bg); color:var(--text); box-shadow:var(--shadow);" id="productBody"></div>
+      <div class="modalcard overflow-hidden md:rounded-none" style="background:var(--bg); color:var(--text); box-shadow:var(--shadow);" id="productBody"></div>
     </div>
   </div>
+
   <div id="trackModal" class="fixed inset-0 z-[85] hidden flex items-center justify-center px-4 w-full">
     <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" data-close="trackModal"></div>
-    <div class="modalcard relative rounded-none p-6 md:p-8 max-w-md w-full"
-      style="background:var(--bg); color:var(--text); box-shadow:var(--shadow);">
+    <div class="modalcard relative rounded-none p-6 md:p-8 max-w-md w-full" style="background:var(--bg); color:var(--text); box-shadow:var(--shadow);">
       <div class="flex justify-between items-center mb-4">
         <h3 class="disp editorial-h font-luxe text-xl">Track Order</h3>
         <button data-close="trackModal" class="w-9 h-9 border hairline" aria-label="Close">✕</button>
@@ -1256,6 +843,7 @@ Detecting…
       <div id="trackResult" class="mt-6"></div>
     </div>
   </div>
+
   <div id="historyModal" class="fixed inset-0 z-[85] hidden flex flex-col w-full" style="background:var(--bg);">
     <header class="shrink-0 glassbar border-b hairline w-full">
       <div class="wrap flex items-center gap-3 py-3">
@@ -1265,10 +853,10 @@ Detecting…
     </header>
     <div id="historyList" class="flex-1 overflow-y-auto overflow-x-hidden wrap py-6 space-y-4 w-full"></div>
   </div>
+
   <div id="staffModal" class="fixed inset-0 z-[95] hidden flex items-center justify-center px-4 w-full">
     <div class="absolute inset-0 bg-black/80 backdrop-blur-md" data-close="staffModal"></div>
-    <div class="modalcard relative rounded-none p-6 md:p-8 max-w-lg w-full max-h-[90vh] overflow-y-auto"
-      style="background:var(--bg); color:var(--text); box-shadow:var(--shadow);">
+    <div class="modalcard relative rounded-none p-6 md:p-8 max-w-lg w-full max-h-[90vh] overflow-y-auto" style="background:var(--bg); color:var(--text); box-shadow:var(--shadow);">
       <div class="flex justify-between items-center mb-6">
         <h3 class="disp editorial-h font-luxe text-xl">Staff &amp; Admin Portal</h3>
         <button data-close="staffModal" class="w-9 h-9 border hairline" aria-label="Close">✕</button>
@@ -1292,63 +880,47 @@ Detecting…
       </div>
     </div>
   </div>
+
   <div id="sizeModal" class="fixed inset-0 z-[85] hidden flex items-center justify-center px-4 w-full">
     <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" data-close="sizeModal"></div>
-    <div class="modalcard relative rounded-none p-6 md:p-8 max-w-md w-full"
-      style="background:var(--bg); color:var(--text); box-shadow:var(--shadow);">
+    <div class="modalcard relative rounded-none p-6 md:p-8 max-w-md w-full" style="background:var(--bg); color:var(--text); box-shadow:var(--shadow);">
       <div class="flex justify-between items-center mb-4">
         <h3 class="disp editorial-h font-luxe text-xl">Size Guide</h3>
         <button data-close="sizeModal" class="w-9 h-9 border hairline" aria-label="Close">✕</button>
       </div>
       <table class="w-full text-xs">
         <thead>
-          <tr class="border-b hairline text-left micro">
-            <th class="py-2">Item</th>
-            <th>Size</th>
-            <th>Note</th>
-          </tr>
+          <tr class="border-b hairline text-left micro"><th class="py-2">Item</th><th>Size</th><th>Note</th></tr>
         </thead>
         <tbody>
-          <tr class="border-b hairline">
-            <td class="py-2 font-medium">T-Shirts</td>
-            <td>Free Size</td>
-            <td>Relaxed oversized fit (S–XL)</td>
-          </tr>
-          <tr>
-            <td class="py-2 font-medium">Cropped T-Shirt</td>
-            <td>Free Size</td>
-            <td>Boxy relaxed fit</td>
-          </tr>
+          <tr class="border-b hairline"><td class="py-2 font-medium">T-Shirts</td><td>Free Size</td><td>Relaxed oversized fit (S–XL)</td></tr>
+          <tr><td class="py-2 font-medium">Cropped T-Shirt</td><td>Free Size</td><td>Boxy relaxed fit</td></tr>
         </tbody>
       </table>
       <p class="text-[11px] mt-4" style="color:var(--mut);">No S/M/L — no return hassles. No Return / No Exchange.</p>
     </div>
   </div>
-  <div id="catPage" class="fixed inset-0 z-[75] hidden overflow-y-auto w-full"
-    style="background:var(--bg); color:var(--text);">
+
+  <div id="catPage" class="fixed inset-0 z-[75] hidden overflow-y-auto w-full" style="background:var(--bg); color:var(--text);">
     <header class="sticky top-0 z-10 glassbar border-b hairline w-full">
       <div class="wrap flex items-center gap-3 py-3">
         <button data-close="catPage" class="w-10 h-10 border hairline transition" aria-label="Back">←</button>
         <h3 id="catPageTitle" class="disp editorial-h font-luxe text-lg md:text-xl flex-1 truncate">Category</h3>
         <select id="sortSel" class="field text-xs py-2" style="width:auto;">
-<option value="feat">Featured</option><option value="low">Price ↑</option><option value="high">Price ↓</option><option value="rate">Top Rated</option><option value="off">Max Discount</option>
-</select>
+          <option value="feat">Featured</option><option value="low">Price ↑</option><option value="high">Price ↓</option><option value="rate">Top Rated</option><option value="off">Max Discount</option>
+        </select>
       </div>
     </header>
-    <div id="catPageGrid"
-      class="wrap py-6 md:py-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6 w-full">
-    </div>
+    <div id="catPageGrid" class="wrap py-6 md:py-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6 w-full"></div>
   </div>
+
   <div id="toasts" class="fixed top-20 right-3 md:right-5 z-[99] space-y-3 w-[19rem] max-w-[92vw]"></div>
-  <a id="waFloat" href="https://wa.me/917434053550?text=Hi%20HinchField!" target="_blank" rel="noopener"
-    aria-label="WhatsApp"
-    class="wa-float fixed bottom-6 right-6 z-[65] w-14 h-14 rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-lift transition hover:scale-110">
-    <svg class="w-7 h-7" viewBox="0 0 24 24" fill="currentColor">
-      <path
-        d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-    </svg>
+
+  <a id="waFloat" href="https://wa.me/917434053550?text=Hi%20HinchField!" target="_blank" rel="noopener" aria-label="WhatsApp" class="wa-float fixed bottom-6 right-6 z-[65] w-14 h-14 rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-lift transition hover:scale-110">
+    <svg class="w-7 h-7" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
   </a>
   <button id="toTop" class="fixed bottom-24 md:bottom-6 left-4 md:left-6 z-[65] w-11 h-11 border hairline shadow-lift opacity-0 pointer-events-none transition hover:bg-[var(--text)] hover:text-[var(--bg)]" style="background:var(--card); color:var(--text);" aria-label="Top">↑</button>
+
   <script>
     'use strict';
 /* ---- Safe helpers ---- */
@@ -1585,83 +1157,12 @@ const CATKEYS = Object.keys(CATMETA);
 const PRODUCTS = [];
 function generateProducts() {
 const names = {
-  'graphic-tee': [
-    'Vintage Washed Graphic T-Shirt',
-    'Heavyweight Oversized Graphic T-Shirt',
-    'Retro Print Oversized T-Shirt',
-    'Boxy Street Graphic T-Shirt',
-    'Y2K Graphic Oversized T-Shirt',
-    'Acid Wash Graphic T-Shirt',
-    'Bold Back Print T-Shirt',
-    'Vintage College Graphic T-Shirt',
-    'Distressed Graphic T-Shirt',
-    'Statement Graphic T-Shirt'
-  ],
-
-  'minimal-tee': [
-    'Minimal Typography T-Shirt',
-    'Small Chest Logo T-Shirt',
-    'Clean Text T-Shirt',
-    'Minimal Serif T-Shirt',
-    'Tonal Logo T-Shirt',
-    'Essential Heavyweight T-Shirt',
-    'Premium Plain T-Shirt',
-    'Minimal Embroidered T-Shirt',
-    'Signature Text T-Shirt',
-    'Clean Street T-Shirt'
-  ],
-
-  'custom-tee': [
-    'Custom Name Print T-Shirt',
-    'Custom Photo Print T-Shirt',
-    'Custom Couple T-Shirt',
-    'Custom Pet Photo T-Shirt',
-    'Custom Quote T-Shirt',
-    'Custom Logo T-Shirt',
-    'Custom Initials T-Shirt',
-    'Custom Signature T-Shirt',
-    'Custom Memory Print T-Shirt',
-    'Custom Artwork T-Shirt'
-  ],
-
-  'cropped-tee': [
-    'Boxy Cropped T-Shirt',
-    'Cropped Oversized T-Shirt',
-    'Drop Shoulder Crop T-Shirt',
-    'Washed Boxy Crop T-Shirt',
-    'Raw Hem Crop T-Shirt',
-    'Ribbed Cropped T-Shirt',
-    'Vintage Wash Crop T-Shirt',
-    'Relaxed Fit Crop T-Shirt',
-    'Contrast Stitch Crop T-Shirt',
-    'Oversized Crop Tee'
-  ],
-
-  'polo-tee': [
-    'Oversized Polo T-Shirt',
-    'Boxy Fit Polo T-Shirt',
-    'Striped Polo T-Shirt',
-    'Contrast Collar Polo',
-    'Textured Knit Polo',
-    'Retro Rugby Polo',
-    'Relaxed Fit Polo',
-    'Vintage Wash Polo',
-    'Embroidered Polo T-Shirt',
-    'Premium Heavyweight Polo'
-  ],
-
-  'anime-tee': [
-    'Manga Panel Graphic T-Shirt',
-    'Japanese Graphic T-Shirt',
-    'Cyber Graphic T-Shirt',
-    'Pixel Art Gaming T-Shirt',
-    'Retro Arcade T-Shirt',
-    'Neo Tokyo Graphic T-Shirt',
-    'Anime-Inspired Graphic T-Shirt',
-    'Mecha Graphic T-Shirt',
-    'Gaming Typography T-Shirt',
-    'Japanese Street Graphic T-Shirt'
-  ]
+  'graphic-tee': ['Vintage Washed Graphic T-Shirt','Heavyweight Oversized Graphic T-Shirt','Retro Print Oversized T-Shirt','Boxy Street Graphic T-Shirt','Y2K Graphic Oversized T-Shirt','Acid Wash Graphic T-Shirt','Bold Back Print T-Shirt','Vintage College Graphic T-Shirt','Distressed Graphic T-Shirt','Statement Graphic T-Shirt'],
+  'minimal-tee': ['Minimal Typography T-Shirt','Small Chest Logo T-Shirt','Clean Text T-Shirt','Minimal Serif T-Shirt','Tonal Logo T-Shirt','Essential Heavyweight T-Shirt','Premium Plain T-Shirt','Minimal Embroidered T-Shirt','Signature Text T-Shirt','Clean Street T-Shirt'],
+  'custom-tee': ['Custom Name Print T-Shirt','Custom Photo Print T-Shirt','Custom Couple T-Shirt','Custom Pet Photo T-Shirt','Custom Quote T-Shirt','Custom Logo T-Shirt','Custom Initials T-Shirt','Custom Signature T-Shirt','Custom Memory Print T-Shirt','Custom Artwork T-Shirt'],
+  'cropped-tee': ['Boxy Cropped T-Shirt','Cropped Oversized T-Shirt','Drop Shoulder Crop T-Shirt','Washed Boxy Crop T-Shirt','Raw Hem Crop T-Shirt','Ribbed Cropped T-Shirt','Vintage Wash Crop T-Shirt','Relaxed Fit Crop T-Shirt','Contrast Stitch Crop T-Shirt','Oversized Crop Tee'],
+  'polo-tee': ['Oversized Polo T-Shirt','Boxy Fit Polo T-Shirt','Striped Polo T-Shirt','Contrast Collar Polo','Textured Knit Polo','Retro Rugby Polo','Relaxed Fit Polo','Vintage Wash Polo','Embroidered Polo T-Shirt','Premium Heavyweight Polo'],
+  'anime-tee': ['Manga Panel Graphic T-Shirt','Japanese Graphic T-Shirt','Cyber Graphic T-Shirt','Pixel Art Gaming T-Shirt','Retro Arcade T-Shirt','Neo Tokyo Graphic T-Shirt','Anime-Inspired Graphic T-Shirt','Mecha Graphic T-Shirt','Gaming Typography T-Shirt','Japanese Street Graphic T-Shirt']
 };
 let pid = 1;
 for (const cat of CATKEYS) {
@@ -1687,29 +1188,15 @@ const offPct = p => Math.max(0, Math.round((1 - p.price / p.mrp) * 100));
 const stars = r => { const f = Math.max(0, Math.min(5, Math.round(r || 0))); return '<span style="color:var(--text);font-size:10px;letter-spacing:.15em;">' + '★'.repeat(f) + '☆'.repeat(5-f) + '</span>'; };
 const viewsOf = p => CATMETA[p.cat].views;
 function imgURLs(p){
-  const catPrefix = {
-    'graphic-tee': 'o',
-    'minimal-tee': 'm',
-    'custom-tee': 'c',
-    'cropped-tee': 'b',
-    'polo-tee': 'p',
-    'anime-tee': 'a'
-  };
-
+  const catPrefix = {'graphic-tee':'o','minimal-tee':'m','custom-tee':'c','cropped-tee':'b','polo-tee':'p','anime-tee':'a'};
   const prefix = catPrefix[p.cat] || 'o';
-
-  // Category pramane product no index: 1,2,3...10
   const catProducts = PRODUCTS.filter(x => x.cat === p.cat);
   let imgIndex = catProducts.findIndex(x => x.id === p.id) + 1;
-
-  // Fallback safety
   if (!imgIndex || imgIndex < 1) {
     const pidNum = parseInt(p.id.replace('p',''),10) || 1;
     imgIndex = ((pidNum - 1) % 10) + 1;
   }
-
   const base = 'images/' + prefix + imgIndex + '-';
-
   return Array.from({ length: viewsOf(p) }, (_, i) => base + (i + 1) + '.jpeg');
 }
 const hexOf = (p,c) => { const f = p.colors.find(x => x[0] === c) || p.colors[0]; return f[1]; };
@@ -1772,7 +1259,7 @@ if (!Array.isArray(cart)) cart = [];
 if (!Array.isArray(wish)) wish = [];
 cart = cart.filter(l => l && prodById(l.id));
 store.set('cart', cart);
-/* ---- Home: 6 categories × 5 products ---- */
+
 function renderFeatured(){
 const html = CATKEYS.map((cat, ci) => {
 const prods = PRODUCTS.filter(p => p.cat === cat).slice(0, 5);
@@ -1814,74 +1301,27 @@ $('#mobileNav').innerHTML = top.map((it,idx) => `
 </a>`).join('');
 $('#footCats').innerHTML = CATKEYS.map(c => '<li><button class="hover:opacity-60 transition" data-catpage="' + c + '">' + esc(CATMETA[c].name) + '</button></li>').join('');
 }
-/* ---- Shop by Category ---- */
 function renderShopCats() {
-  const shortNames = {
-    'graphic-tee': 'Graphic T-Shirts',
-    'minimal-tee': 'Minimal T-Shirts',
-    'custom-tee': 'Custom T-Shirts',
-    'cropped-tee': 'Cropped T-Shirts',
-    'polo-tee': 'Polo T-Shirts',
-    'anime-tee': 'Anime & Gaming'
-  };
-
+  const shortNames = {'graphic-tee':'Graphic T-Shirts','minimal-tee':'Minimal T-Shirts','custom-tee':'Custom T-Shirts','cropped-tee':'Cropped T-Shirts','polo-tee':'Polo T-Shirts','anime-tee':'Anime & Gaming'};
   $('#shopCats').innerHTML = CATKEYS.map((c, i) => {
     const prod = PRODUCTS.find(p => p.cat === c);
-
     return `
-      <button
-        class="cat-card group"
-        data-catpage="${c}"
-        aria-label="Shop ${esc(shortNames[c] || CATMETA[c].name)}"
-      >
-
+      <button class="cat-card group" data-catpage="${c}" aria-label="Shop ${esc(shortNames[c] || CATMETA[c].name)}">
         <div class="cat-card-img">
-          ${
-            prod
-              ? imgTag(
-                  prod,
-                  prod.colors[0][0],
-                  0,
-                  'w-full h-full object-contain',
-                  '',
-                  true
-                )
-              : ''
-          }
-
+          ${prod ? imgTag(prod, prod.colors[0][0], 0, 'w-full h-full object-contain', '', true) : ''}
           <div class="cat-card-overlay"></div>
-
-          <div class="absolute top-3 left-3 z-10">
-            <span class="cat-card-no">
-              ${String(i + 1).padStart(2, '0')}
-            </span>
-          </div>
+          <div class="absolute top-3 left-3 z-10"><span class="cat-card-no">${String(i + 1).padStart(2, '0')}</span></div>
         </div>
-
         <div class="cat-card-content">
           <div class="flex items-center justify-between gap-3">
-
             <div class="min-w-0">
-              <p class="text-[13px] md:text-[14px] font-normal leading-tight truncate tracking-tight"
-                 style="color:var(--text);">
-                ${esc(shortNames[c] || CATMETA[c].name)}
-              </p>
-
-              <p class="text-[10px] mt-1 tracking-wide2 uppercase"
-                 style="color:var(--mut);">
-                Explore
-              </p>
+              <p class="text-[13px] md:text-[14px] font-normal leading-tight truncate tracking-tight" style="color:var(--text);">${esc(shortNames[c] || CATMETA[c].name)}</p>
+              <p class="text-[10px] mt-1 tracking-wide2 uppercase" style="color:var(--mut);">Explore</p>
             </div>
-
-            <span class="cat-card-arrow shrink-0">
-              →
-            </span>
-
+            <span class="cat-card-arrow shrink-0">→</span>
           </div>
         </div>
-
-      </button>
-    `;
+      </button>`;
   }).join('');
 }
 function renderInsta(){
@@ -1896,7 +1336,6 @@ function renderInsta(){
       + '</span></a>';
   }).join('');
 }
-/* ---- Hero Slider ---- */
 let sIdx = 0, sTimer;
 function buildSlides(){
 const S = [];
@@ -2351,12 +1790,6 @@ function currentStageIdx(order){
   };
   return map[status] ?? 0;
 }
-function progressPercent(order){
-  const ci = currentStageIdx(order);
-  if (ci < 0) return 0;
-  if (ci >= 6) return 83.333333;
-  return (ci / 6) * 83.333333;
-}
 function statusTimeline(order){
   const ci = currentStageIdx(order);
   if (ci === -1) {
@@ -2377,7 +1810,7 @@ function statusTimeline(order){
   html += '<p class="text-[11px] mt-4 text-center" style="color:var(--mut);">Expected Delivery: 9:00 AM – 7:00 PM</p>';
   return html;
 }
-/* ---- Place Order ---- */
+/* ---- Place Order (COD) ---- */
 let lock = false;
 function placeOrder(){
 if (lock) return;
@@ -2409,7 +1842,8 @@ const order = {
   status: 'Order Placed', updatedAt: Date.now(),
   customer: { name, phone, addr, country, city, state, pin },
   items: JSON.parse(JSON.stringify(cart)),
-  totals: t, deliveredAt: null
+  totals: t, deliveredAt: null,
+  payment: { method: 'cod' }
 };
 const orders = store.get('orders', []);
 orders.push(order);
@@ -2421,6 +1855,212 @@ renderCart();
 closeModal('cartDrawer', true);
 goWA(bill.text);
 }
+
+/* ============================================================
+   RAZORPAY ONLINE PAYMENT
+   ============================================================ */
+const RAZORPAY_KEY_ID = 'rzp_test_ThqcJ6GTUMyOdf';
+// Auto-detect API base: same origin if served from backend, else localhost in dev
+const API_BASE = (window.location.port === '3000' || window.location.port === '')
+  ? '' 
+  : (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ? 'http://localhost:3000'
+    : '';
+
+let selectedPayMethod = 'cod';
+
+// Toggle payment method UI
+function updatePayMethodUI(){
+  const codBtn = $('#placeOrder');
+  const onlineBtn = $('#payOnline');
+  const codRad = $('#payRadCod');
+  const onlineRad = $('#payRadOnline');
+  if (!codBtn || !onlineBtn) return;
+  if (selectedPayMethod === 'cod'){
+    codBtn.classList.remove('hidden');
+    onlineBtn.classList.add('hidden');
+    if (codRad) codRad.classList.add('active');
+    if (onlineRad) onlineRad.classList.remove('active');
+  } else {
+    codBtn.classList.add('hidden');
+    onlineBtn.classList.remove('hidden');
+    if (codRad) codRad.classList.remove('active');
+    if (onlineRad) onlineRad.classList.add('active');
+  }
+}
+
+function validateCheckoutForm(){
+  const err = m => { const e = $('#coErr'); e.textContent = m; e.classList.remove('hidden'); return false; };
+  $('#coErr').classList.add('hidden');
+  if (!cart.length) return err('Cart is empty — add products first.');
+  if ($('#coHoney').value) return false;
+  const name = $('#coName').value.trim();
+  const phone = $('#coPhone').value.trim();
+  const addr = $('#coAddr').value.trim();
+  const city = $('#coCity').value.trim();
+  const state = $('#coState').value.trim();
+  const pin = $('#coPin').value.trim();
+  if (!/^[A-Za-z .]{3,60}$/.test(name)) return err('Please enter a valid full name.');
+  if (!/^\d{7,15}$/.test(phone.replace(/[^0-9]/g,''))) return err('Please enter a valid mobile / WhatsApp number.');
+  if (addr.length < 10) return err('Please enter your complete address.');
+  if (!/^[A-Za-z .]{2,40}$/.test(city)) return err('Please enter a valid city.');
+  if (!state) return err('Please enter your state / province.');
+  if (!/^[A-Za-z0-9 -]{4,10}$/.test(pin)) return err('Please enter a valid PIN / ZIP.');
+  return true;
+}
+
+function readCustomer(){
+  return {
+    name: $('#coName').value.trim(),
+    phone: $('#coPhone').value.trim(),
+    addr: $('#coAddr').value.trim(),
+    city: $('#coCity').value.trim(),
+    state: $('#coState').value.trim(),
+    pin: $('#coPin').value.trim(),
+    country,
+  };
+}
+
+// Save a paid order to local history
+function savePaidOrder(customer, t, razorpayResponse){
+  const oid = 'HF' + String(Date.now()).slice(-6);
+  const otp = String(Math.floor(1000 + Math.random() * 9000));
+  const order = {
+    id: oid, otp, timestamp: Date.now(),
+    status: 'Order Confirmed', updatedAt: Date.now(),
+    customer: { ...customer },
+    items: JSON.parse(JSON.stringify(cart)),
+    totals: t, deliveredAt: null,
+    payment: {
+      method: 'online',
+      razorpay_order_id: razorpayResponse.razorpay_order_id,
+      razorpay_payment_id: razorpayResponse.razorpay_payment_id,
+      verified: true
+    }
+  };
+  const orders = store.get('orders', []);
+  orders.push(order);
+  store.set('orders', orders);
+  store.set('user', { name: customer.name, phone: customer.phone });
+  return order;
+}
+
+async function handleOnlinePayment(){
+  const btn = $('#payOnline');
+  if (!btn || btn.disabled) return;
+  if (!validateCheckoutForm()) return;
+  if (typeof Razorpay === 'undefined'){
+    toast('Payment SDK not loaded. Refresh and try again.', 'cross');
+    return;
+  }
+
+  const t = totals();
+  const amountPaise = Math.round(t.total * 100);
+
+  if (amountPaise < 100){
+    toast('Minimum online payment is ₹1', 'warn');
+    return;
+  }
+
+  btn.disabled = true;
+  const origText = btn.textContent;
+  btn.textContent = 'Creating Order…';
+
+  try {
+    // STEP 1 — Create order on backend
+    const res = await fetch(`${API_BASE}/api/create-order`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        amount: amountPaise,
+        currency: 'INR',
+        receipt: 'hf_' + Date.now(),
+      }),
+    });
+
+    if (!res.ok) {
+      throw new Error('Server error ' + res.status + '. Is backend running?');
+    }
+
+    const orderData = await res.json();
+    if (!orderData.success) {
+      throw new Error(orderData.error || 'Order creation failed');
+    }
+
+    // STEP 2 — Open Razorpay Checkout
+    const customer = readCustomer();
+
+    const options = {
+      key: RAZORPAY_KEY_ID,
+      amount: orderData.amount,
+      currency: orderData.currency,
+      name: 'HinchField',
+      description: 'Premium T-Shirt Order',
+      image: 'images/logo.png',
+      order_id: orderData.order_id,
+      prefill: { name: customer.name, contact: customer.phone },
+      notes: {
+        address: customer.addr,
+        city: customer.city,
+        state: customer.state,
+        pin: customer.pin,
+        country: customer.country,
+      },
+      theme: { color: '#0A0A0A' },
+      handler: async function (response){
+        // STEP 3 — Verify signature on backend
+        try {
+          const vRes = await fetch(`${API_BASE}/api/verify-payment`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+            }),
+          });
+          const vData = await vRes.json();
+
+          if (vData.success){
+            const order = savePaidOrder(customer, t, response);
+            cart = []; store.set('cart', []);
+            renderCart();
+            closeModal('cartDrawer', true);
+            toast('Payment successful — Order ' + order.id, 'check');
+            setTimeout(() => openHistory(), 800);
+          } else {
+            toast('Payment verification failed. Contact support.', 'cross');
+          }
+        } catch (err){
+          console.error('Verify error:', err);
+          toast('Verification failed. Share payment ID with support.', 'cross');
+        }
+      },
+      modal: {
+        ondismiss: function (){
+          toast('Payment cancelled', 'warn');
+        }
+      }
+    };
+
+    const rzp = new Razorpay(options);
+
+    rzp.on('payment.failed', function (resp){
+      const desc = (resp && resp.error && resp.error.description) || 'Payment failed';
+      toast(desc, 'cross');
+      console.error('Payment failed:', resp);
+    });
+
+    rzp.open();
+  } catch (err){
+    console.error('Payment error:', err);
+    toast(err.message || 'Something went wrong. Try again.', 'cross');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = origText;
+  }
+}
+
 /* ---- History ---- */
 function openHistory(){ renderHistory(); openModal('historyModal'); history.pushState({ modal: 'historyModal' }, '', '#orders'); }
 function renderHistory(){
@@ -2436,11 +2076,15 @@ return;
 }
 box.innerHTML = orders.map(o => {
 const st = getOrderStatus(o);
-const canCancel = (Date.now() - o.timestamp < 24*60*60*1000) && st.text !== 'Cancelled' && st.text !== 'Delivered';
+const canCancel = (Date.now() - o.timestamp < 24*60*60*1000) && st.text !== 'Cancelled' && st.text !== 'Delivered' && (!o.payment || o.payment.method !== 'online');
 const date = new Date(o.timestamp).toLocaleString('en-IN');
+const payBadge = o.payment && o.payment.method === 'online'
+  ? '<span class="chip" style="background:#0A0A0A; color:#fff;">PAID ONLINE</span>'
+  : '<span class="chip border hairline" style="color:var(--text);">COD</span>';
 return '<div class="card p-4 md:p-5 space-y-4">' +
-'<div class="flex justify-between items-start gap-3"><div><b class="disp text-sm">' + o.id + '</b><p class="text-[10px] mt-1" style="color:var(--mut);">' + date + '</p></div>' +
-'<span class="chip border hairline" style="color:' + st.color + ';">' + ic(st.icon,'w-3 h-3') + ' ' + st.text + '</span></div>' +
+'<div class="flex justify-between items-start gap-3 flex-wrap"><div><b class="disp text-sm">' + o.id + '</b><p class="text-[10px] mt-1" style="color:var(--mut);">' + date + '</p></div>' +
+'<div class="flex gap-2 flex-wrap items-center">' + payBadge +
+'<span class="chip border hairline" style="color:' + st.color + ';">' + ic(st.icon,'w-3 h-3') + ' ' + st.text + '</span></div></div>' +
 statusTimeline(o) +
 '<div class="border-t hairline pt-3 space-y-2">' + o.items.map(l => {
 const p = prodById(l.id);
@@ -2449,12 +2093,13 @@ return '<div class="flex gap-3 items-center"><div class="w-12 h-14 overflow-hidd
 '<div class="flex-1 min-w-0"><p class="text-xs font-medium truncate">' + esc(p.name) + '</p>' +
 '<p class="text-[10px]" style="color:var(--mut);">Qty: ' + l.qty + ' • ' + fmt(p.price * l.qty) + '</p></div></div>';
 }).join('') + '</div>' +
-'<div class="flex justify-between items-center pt-3 border-t hairline"><b class="disp text-sm">Total: ' + fmt(o.totals.total) + '</b>' +
+'<div class="flex justify-between items-center pt-3 border-t hairline flex-wrap gap-2"><b class="disp text-sm">Total: ' + fmt(o.totals.total) + '</b>' +
 '<div class="flex gap-2">' +
 (st.text !== 'Cancelled' && st.text !== 'Delivered' ? '<button class="chip border hairline text-[10px]" data-track-wa="' + o.id + '">Track on WA</button>' : '') +
 (canCancel ? '<button class="chip border hairline text-[10px]" style="color:#DC2626;" data-cancel-order="' + o.id + '">Cancel</button>' : '') +
 '</div></div>' +
 (o.otp && st.text !== 'Cancelled' ? '<p class="text-[10px] font-medium text-center py-2 tracking-wide2 uppercase" style="background:var(--bg2); color:var(--text);">Delivery OTP: ' + o.otp + '</p>' : '') +
+(o.payment && o.payment.razorpay_payment_id ? '<p class="text-[10px] text-center" style="color:var(--mut);">Payment ID: ' + o.payment.razorpay_payment_id + '</p>' : '') +
 '</div>';
 }).join('');
 }
@@ -2633,6 +2278,24 @@ $('#mSearchOpen').onclick = () => { openModal('searchOverlay'); try{ history.pus
 $('#trackOpen2').onclick = () => { openModal('trackModal'); try{ history.pushState({ modal: 'trackModal' }, '', '#track'); }catch(e){} };
 $('#sizeOpen').onclick = () => { openModal('sizeModal'); try{ history.pushState({ modal: 'sizeModal' }, '', '#size'); }catch(e){} };
 $('#placeOrder').onclick = placeOrder;
+$('#payOnline').onclick = handleOnlinePayment;
+
+// Payment method radio toggles
+document.querySelectorAll('input[name="payMethod"]').forEach(radio => {
+  radio.addEventListener('change', (ev) => {
+    selectedPayMethod = ev.target.value;
+    updatePayMethodUI();
+  });
+});
+// Make the whole label clickable & toggle active class
+$$('#payRadCod, #payRadOnline').forEach(lbl => {
+  lbl.addEventListener('click', () => {
+    const val = lbl.querySelector('input').value;
+    selectedPayMethod = val;
+    updatePayMethodUI();
+  });
+});
+
 $('#coDetect').onclick = () => { detectCountry(true).then(() => refreshPrices()); ensureLive(true); };
 $('#curChip').onclick = () => { detectCountry(true).then(() => refreshPrices()); ensureLive(true); };
 $('#heroPrev').onclick = () => { goSlide(sIdx-1); clearInterval(sTimer); startSlider(); };
@@ -2757,6 +2420,7 @@ safe(renderWish, 'renderWish');
 reveal();
 startSlider();
 wire();
+updatePayMethodUI();
 const heroSec = $('#heroSec');
 let touchStartX = 0;
 if (heroSec){
