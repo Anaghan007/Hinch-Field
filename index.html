@@ -1565,6 +1565,13 @@ return { sub, discount, del, total: discountedSub + del, last: discountedSub };
 }
 function renderCart(){
 const n = cart.reduce((a,l) => a + (Number(l.qty)||0), 0);
+if (cart.length === 0 && appliedMembership){
+  appliedMembership = null;
+  const mc = $('#memberCode'); if (mc) mc.value = '';
+  const na=$('#memberNotApplied'),ap=$('#memberApplied');
+  if (na) na.classList.remove('hidden');
+  if (ap) ap.classList.add('hidden');
+}
 $('#cartCount').textContent = n;
 $('#cartN').textContent = n ? '(' + n + ')' : '';
 const t = totals();
