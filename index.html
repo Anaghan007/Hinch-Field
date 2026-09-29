@@ -2560,18 +2560,32 @@ async function applyMemberFn(){
     return toast('First You Have To Add Product','warn');
   }
   const code = ($('#memberCode')?.value || '').trim();
-  if(!/^\d{4}$/.test(code)) return toast('Enter 4-digit code','warn');
-  
+  if(!/^\d{4}$/.test(code)) return toast('Enter Your 4-Digit Code','warn');
+
+  // ⚡ INSTANT — જો device પર saved code હોય
+  const saved = store.get('membership_full', null);
+  if (saved && saved.code === code && Date.now() < saved.expiresAt){
+    appliedMembership = { code, name: saved.name, expiresAt: saved.expiresAt };
+    updateMemberUI();
+    renderCart();
+    toast('Member applied — 50% off!','check');
+    return;
+  }
+
+  // 🌐 Server verify (જો saved ના હોય)
   try {
     const r = await fetch(`${API_BASE}/api/membership-verify`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code})});
     const d = await r.json();
     if(d.success){
       appliedMembership={code,name:d.name,expiresAt:d.expiresAt};
+      // Save for future instant
+      store.set('membership_full', { code, name: d.name, expiresAt: d.expiresAt });
       updateMemberUI(); renderCart();
       toast('Member applied — 50% off!','check');
     } else toast(d.error||'Invalid code','cross');
   } catch(e){toast('Verify failed','cross');}
 }
+  
 if($('#memberApply'))$('#memberApply').onclick=applyMemberFn;
 if($('#memberRemove'))$('#memberRemove').onclick=()=>{
   appliedMembership=null;
