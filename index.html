@@ -2444,8 +2444,6 @@ async function autoLookup(phone){
     const d = await r.json();
     if (d.success){
       store.set('membership_full', { code: d.code, name: d.name, phone: d.phone, expiresAt: d.expiresAt });
-      appliedMembership = { code: d.code, name: d.name, expiresAt: d.expiresAt };
-      store.set('membership', appliedMembership);
       showMemberView();
       if (typeof renderCart === 'function') renderCart();
       toast('Welcome back!', 'check');
