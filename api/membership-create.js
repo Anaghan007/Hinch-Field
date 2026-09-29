@@ -31,11 +31,11 @@ export default async function handler(req, res) {
     });
 
     if (ip && ip !== 'unknown') {
-  await fetch(`${URL}/set/ip:${ip}`, {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${TOKEN}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ code, name: String(name).trim(), phone: String(phone).trim(), expiresAt: m.expiresAt })
-  });
+    await fetch(`${URL}/set/phone:${m.phone.replace(/[^0-9]/g,'')}`, {
+  method: 'POST',
+  headers: { Authorization: `Bearer ${TOKEN}`, 'Content-Type': 'application/json' },
+  body: JSON.stringify(code)
+});
     }
 
     return res.status(200).json({ success: true, code, expiresAt: m.expiresAt });
