@@ -2498,16 +2498,10 @@ if ($('#memBuyBtn')) $('#memBuyBtn').onclick = async () => {
           appliedMembership = { code: cd.code, name, expiresAt: cd.expiresAt };
           store.set('membership', appliedMembership);
 
-          closeAll(true);
           toast('Membership activated!', 'check');
           showMemberView();
           if (typeof renderCart === 'function') renderCart();
-
-          const toNum = clean.length === 10 ? '91' + clean : clean;
-          const msg = '⭐ HINCHFIELD MEMBERSHIP CONFIRMED\n\n👤 ' + name + '\n\n🔑 YOUR CODE: ' + cd.code + '\n📅 Valid till: ' + new Date(cd.expiresAt).toLocaleDateString('en-IN') + '\n\nBenefits:\n✅ Flat 50% OFF\n✅ FREE delivery\n\nSave this code!';
-          setTimeout(() => {
-            window.location.href = 'https://wa.me/' + toNum + '?text=' + encodeURIComponent(msg);
-          }, 1200);
+          
         } catch(e){ console.error(e); toast('Verification failed', 'cross'); }
       },
       modal: { ondismiss: () => toast('Payment cancelled', 'warn') }
