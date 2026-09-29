@@ -2417,8 +2417,6 @@ $$('#payRadCod, #payRadOnline').forEach(lbl => {
 
 $('#coDetect').onclick = () => { detectCountry(true).then(() => refreshPrices()); ensureLive(true); };
 $('#curChip').onclick = () => { detectCountry(true).then(() => refreshPrices()); ensureLive(true); };
-$('#heroPrev').onclick = () => { goSlide(sIdx-1); clearInterval(sTimer); startSlider(); };
-$('#heroNext').onclick = () => { goSlide(sIdx+1); clearInterval(sTimer); startSlider(); };
 $('#searchInput').addEventListener('input', doSearch);
 $('#mSearchInput').addEventListener('input', doMSearch);
 $('#sortSel').onchange = e => { cp.sort = e.target.value; drawCatPage(); };
