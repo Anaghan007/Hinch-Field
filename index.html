@@ -2394,7 +2394,7 @@ if ($('#memBuyBtn')) $('#memBuyBtn').onclick = async () => {
     rzp.on('payment.failed', r => toast((r.error && r.error.description) || 'Payment failed', 'cross'));
     rzp.open();
   } catch(e){ console.error(e); err('Something went wrong'); }
-  finally { btn.disabled = false; btn.textContent = 'Pay Rs 599 — Get Membership'; }
+  finally { btn.disabled = false; btn.textContent = 'Pay Rs 1 — Get Membership'; }
 };
 $('#delVerify').onclick = () => {
 const id = $('#delOrderId').value.trim().toUpperCase();
