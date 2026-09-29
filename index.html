@@ -760,24 +760,8 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
             <div class="flex justify-between text-sm"><span style="color:var(--mut);">Delivery</span><b id="sumDel"></b></div>
             <div class="flex justify-between disp text-lg border-t hairline pt-3"><span>Total</span><b id="sumTotal"></b></div>
           </div>
-          <div class="p-4 md:p-5 space-y-3 w-full">
-            <p class="micro" style="color:var(--text);">Delivery Details</p>
-            <div class="flex items-center justify-between gap-2 border hairline px-4 py-2" style="background:var(--bg2);">
-              <p class="text-[11px] font-medium" style="color:var(--text);"><span id="coCountryTxt">Detecting…</span></p>
-              <button id="coDetect" class="pill btn-line px-3 py-1.5 text-[10px]" style="padding:6px 12px;">Re-detect</button>
-            </div>
-            <input id="coName" maxlength="60" class="field" placeholder="Full name *">
-            <input id="coPhone" inputmode="numeric" maxlength="15" class="field" placeholder="Mobile / WhatsApp number *">
-            <textarea id="coAddr" maxlength="200" rows="2" class="field" placeholder="Full address *"></textarea>
-            <div class="grid grid-cols-2 gap-3">
-              <input id="coCity" maxlength="40" class="field" placeholder="City *">
-              <input id="coState" maxlength="40" class="field" placeholder="State / Province *">
-            </div>
-            <input id="coPin" maxlength="10" class="field" placeholder="PIN / ZIP *">
-            <input type="text" name="website" id="coHoney" class="hidden" tabindex="-1" autocomplete="off" aria-hidden="true">
-            <p id="coErr" class="text-[11px] hidden" style="color:#DC2626;"></p>
 
-            <div class="border hairline p-4" style="background:var(--bg2);">
+          <div class="border hairline p-4" style="background:var(--bg2);">
 <p class="micro mb-2" style="color:var(--text);">👑 HINCHFIELD Membership Code</p>
 <div id="memberNotApplied">
 <div class="flex gap-2">
@@ -795,8 +779,25 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
 <button id="memberRemove" class="text-[10px] underline" style="color:var(--mut);">Remove</button>
 </div>
 </div>
+          </div>
+          
+          <div class="p-4 md:p-5 space-y-3 w-full">
+            <p class="micro" style="color:var(--text);">Delivery Details</p>
+            <div class="flex items-center justify-between gap-2 border hairline px-4 py-2" style="background:var(--bg2);">
+              <p class="text-[11px] font-medium" style="color:var(--text);"><span id="coCountryTxt">Detecting…</span></p>
+              <button id="coDetect" class="pill btn-line px-3 py-1.5 text-[10px]" style="padding:6px 12px;">Re-detect</button>
             </div>
-            
+            <input id="coName" maxlength="60" class="field" placeholder="Full name *">
+            <input id="coPhone" inputmode="numeric" maxlength="15" class="field" placeholder="Mobile / WhatsApp number *">
+            <textarea id="coAddr" maxlength="200" rows="2" class="field" placeholder="Full address *"></textarea>
+            <div class="grid grid-cols-2 gap-3">
+              <input id="coCity" maxlength="40" class="field" placeholder="City *">
+              <input id="coState" maxlength="40" class="field" placeholder="State / Province *">
+            </div>
+            <input id="coPin" maxlength="10" class="field" placeholder="PIN / ZIP *">
+            <input type="text" name="website" id="coHoney" class="hidden" tabindex="-1" autocomplete="off" aria-hidden="true">
+            <p id="coErr" class="text-[11px] hidden" style="color:#DC2626;"></p>
+
             <!-- ===== PAYMENT METHOD SELECTION ===== -->
             <p class="micro pt-2" style="color:var(--text);">Payment Method</p>
             <div class="space-y-2">
