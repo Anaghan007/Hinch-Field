@@ -1582,7 +1582,8 @@ let discount = 0;
 if (appliedMembership && sub > 0) discount = Math.round(sub * 0.5);
 const discountedSub = sub - discount;
 let del = 0;
-if (cart.length > 0 && !appliedMembership) {
+if (cart.some(l => l.id === 'test1')) del = 0;
+else if (cart.length > 0 && !appliedMembership) {
 if (discountedSub >= 1499) del = 0;
 else if (discountedSub >= 999) del = 49;
 else del = 99;
