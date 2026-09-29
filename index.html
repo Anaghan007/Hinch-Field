@@ -1341,6 +1341,7 @@ ${multi
 }
 let cart = store.get('cart', []);
 let wish = store.get('wish', []);
+let appliedMembership = store.get('membership', null);
 if (!Array.isArray(cart)) cart = [];
 if (!Array.isArray(wish)) wish = [];
 cart = cart.filter(l => l && prodById(l.id));
