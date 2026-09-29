@@ -4,7 +4,7 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
 
   try {
-    const { name, phone , ip } = req.body || {};
+    const { name, phone } = req.body || {};
     if (!name || !phone) return res.status(400).json({ success: false, error: 'Name & phone required' });
 
     const URL = process.env.KV_REST_API_URL;
@@ -22,21 +22,22 @@ export default async function handler(req, res) {
     if (tries >= 30) return res.status(500).json({ success: false, error: 'Try again' });
 
     const now = Date.now();
-    const m = { code, name: String(name).trim(), phone: String(phone).trim(), purchasedAt: now, expiresAt: now + 365*24*60*60*1000, isActive: true };
+    const clean = String(phone).replace(/[^0-9]/g, '');
+    const m = { code, name: String(name).trim(), phone: clean, purchasedAt: now, expiresAt: now + 365*24*60*60*1000, isActive: true };
 
+    // Save member by code
     await fetch(`${URL}/set/member:${code}`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${TOKEN}`, 'Content-Type': 'application/json' },
       body: JSON.stringify(m)
     });
 
-    if (ip && ip !== 'unknown') {
-    await fetch(`${URL}/set/phone:${m.phone.replace(/[^0-9]/g,'')}`, {
-  method: 'POST',
-  headers: { Authorization: `Bearer ${TOKEN}`, 'Content-Type': 'application/json' },
-  body: JSON.stringify(code)
-});
-    }
+    // Save phone index → code
+    await fetch(`${URL}/set/phone:${clean}`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${TOKEN}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify(code)
+    });
 
     return res.status(200).json({ success: true, code, expiresAt: m.expiresAt });
   } catch (e) {
