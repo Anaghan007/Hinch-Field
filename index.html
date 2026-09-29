@@ -2336,6 +2336,10 @@ $('#sortSel').onchange = e => { cp.sort = e.target.value; drawCatPage(); };
 $('#trackGo').onclick = track;
 $('#toTop').onclick = () => window.scrollTo({ top:0, behavior:'smooth' });
 $('#footAdmin').onclick = () => openAdmin();
+if ($('#openMembership')) $('#openMembership').onclick = () => {
+  $('#memBuyErr').classList.add('hidden');
+  openModal('memberModal');
+};
 $('#delVerify').onclick = () => {
 const id = $('#delOrderId').value.trim().toUpperCase();
 const otp = $('#delOtp').value.trim();
