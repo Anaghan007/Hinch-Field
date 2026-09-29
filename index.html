@@ -2374,16 +2374,14 @@ $('#mSearchInput').addEventListener('input', doMSearch);
 $('#sortSel').onchange = e => { cp.sort = e.target.value; drawCatPage(); };
 $('#trackGo').onclick = track;
 $('#toTop').onclick = () => window.scrollTo({ top:0, behavior:'smooth' });
-  
+
 let appliedMembership = store.get('membership', null);
 
 function showMemberView(){
   const active = $('#memViewActive');
   const buy = $('#memViewBuy');
-  const lookup = $('#memViewLookup');
+  if (!active || !buy) return;
   const saved = store.get('membership_full', null);
-  if (!active || !buy || !lookup) return;
-  lookup.classList.add('hidden');
   if (saved && saved.code && Date.now() < saved.expiresAt){
     active.classList.remove('hidden');
     buy.classList.add('hidden');
@@ -2398,9 +2396,31 @@ function showMemberView(){
 
 function openMemberModal(){
   $('#memBuyErr').classList.add('hidden');
-  $('#memLookupErr').classList.add('hidden');
   showMemberView();
   openModal('memberModal');
+  const saved = store.get('membership_full', null);
+  if (!saved || !saved.code){
+    const lastPhone = store.get('last_phone', null);
+    if (lastPhone) autoLookup(lastPhone);
+  }
+}
+
+async function autoLookup(phone){
+  try {
+    const r = await fetch(`${API_BASE}/api/membership-lookup`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ phone })
+    });
+    const d = await r.json();
+    if (d.success){
+      store.set('membership_full', { code: d.code, name: d.name, phone: d.phone, expiresAt: d.expiresAt });
+      appliedMembership = { code: d.code, name: d.name, expiresAt: d.expiresAt };
+      store.set('membership', appliedMembership);
+      showMemberView();
+      if (typeof renderCart === 'function') renderCart();
+      toast('Welcome back!', 'check');
+    }
+  } catch(e){ console.error(e); }
 }
 
 if ($('#openMembership')) $('#openMembership').onclick = openMemberModal;
@@ -2424,45 +2444,6 @@ if ($('#memShare')) $('#memShare').onclick = () => {
 if ($('#memGoCart')) $('#memGoCart').onclick = () => {
   closeAll(true);
   openCatPage('', '', '');
-};
-
-if ($('#memLookupOpen')) $('#memLookupOpen').onclick = () => {
-  $('#memViewBuy').classList.add('hidden');
-  $('#memViewLookup').classList.remove('hidden');
-  $('#memLookupErr').classList.add('hidden');
-};
-if ($('#memLookupBack')) $('#memLookupBack').onclick = showMemberView;
-
-if ($('#memLookupBtn')) $('#memLookupBtn').onclick = async () => {
-  const phone = $('#memLookupPhone').value.trim();
-  const err = m => { const e=$('#memLookupErr'); e.textContent=m; e.classList.remove('hidden'); };
-  $('#memLookupErr').classList.add('hidden');
-  if (!/^\d{10,15}$/.test(phone.replace(/[^0-9]/g,''))) return err('Enter valid phone number');
-  const btn = $('#memLookupBtn');
-  if (btn.disabled) return;
-  btn.disabled = true; btn.textContent = 'Searching…';
-  try {
-    const r = await fetch(`${API_BASE}/api/membership-lookup`, {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ phone })
-    });
-    const d = await r.json();
-    if (d.success){
-      store.set('membership_full', { code: d.code, name: d.name, phone: d.phone, expiresAt: d.expiresAt });
-      appliedMembership = { code: d.code, name: d.name, expiresAt: d.expiresAt };
-      store.set('membership', appliedMembership);
-      $('#memLookupPhone').value = '';
-      toast('Code retrieved!', 'check');
-      showMemberView();
-      if (typeof renderCart === 'function') renderCart();
-    } else {
-      err(d.error || 'Not found');
-    }
-  } catch(e){
-    err('Network error');
-  } finally {
-    btn.disabled = false; btn.textContent = 'Retrieve Code';
-  }
 };
 
 if ($('#memBuyBtn')) $('#memBuyBtn').onclick = async () => {
@@ -2506,8 +2487,10 @@ if ($('#memBuyBtn')) $('#memBuyBtn').onclick = async () => {
           const cd = await c.json();
           if (!cd.success) throw new Error('Code generation failed');
 
-          const full = { code: cd.code, name, phone, expiresAt: cd.expiresAt };
+          const clean = phone.replace(/[^0-9]/g, '');
+          const full = { code: cd.code, name, phone: clean, expiresAt: cd.expiresAt };
           store.set('membership_full', full);
+          store.set('last_phone', clean);
           appliedMembership = { code: cd.code, name, expiresAt: cd.expiresAt };
           store.set('membership', appliedMembership);
 
@@ -2516,7 +2499,6 @@ if ($('#memBuyBtn')) $('#memBuyBtn').onclick = async () => {
           showMemberView();
           if (typeof renderCart === 'function') renderCart();
 
-          const clean = phone.replace(/[^0-9]/g, '');
           const toNum = clean.length === 10 ? '91' + clean : clean;
           const msg = '⭐ HINCHFIELD MEMBERSHIP CONFIRMED\n\n👤 ' + name + '\n\n🔑 YOUR CODE: ' + cd.code + '\n📅 Valid till: ' + new Date(cd.expiresAt).toLocaleDateString('en-IN') + '\n\nBenefits:\n✅ Flat 50% OFF\n✅ FREE delivery\n\nSave this code!';
           setTimeout(() => {
