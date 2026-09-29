@@ -2521,9 +2521,7 @@ if ($('#memBuyBtn')) $('#memBuyBtn').onclick = async () => {
           const full = { code: cd.code, name, phone: clean, expiresAt: cd.expiresAt };
           store.set('membership_full', full);
           store.set('last_phone', clean);
-          appliedMembership = { code: cd.code, name, expiresAt: cd.expiresAt };
-          store.set('membership', appliedMembership);
-
+          
           toast('Membership activated!', 'check');
           showMemberView();
           if (typeof renderCart === 'function') renderCart();
