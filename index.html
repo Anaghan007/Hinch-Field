@@ -2535,6 +2535,8 @@ if ($('#memBuyBtn')) $('#memBuyBtn').onclick = async () => {
   finally { btn.disabled = false; btn.textContent = 'Pay ₹1 — Get Membership (TEST)'; }
 };
 
+if ($('#memberApply')) $('#memberApply').onclick = applyMember;
+  
 $('#delVerify').onclick = () => {
 const id = $('#delOrderId').value.trim().toUpperCase();
 const otp = $('#delOtp').value.trim();
