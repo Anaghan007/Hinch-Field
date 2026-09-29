@@ -768,9 +768,13 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
 <p class="text-[10px] mt-2" style="color:var(--mut);">Flat 50% off + Free delivery</p>
 </div>
 <div id="memberApplied" class="hidden">
-<div class="flex items-center justify-between">
-<div><p class="text-xs font-medium">✅ Member Active</p><p class="text-[10px]" style="color:var(--mut);">Code: <b id="memCodeTxt"></b></p></div>
-<button id="memberRemove" class="text-[10px] underline" style="color:var(--mut);">Remove</button>
+<div class="flex items-center justify-between gap-3 p-3" style="background:var(--text); color:var(--bg);">
+<div class="min-w-0">
+<p class="text-[10px] tracking-wide2 uppercase opacity-80">⭐ Member Active</p>
+<p class="disp" style="font-size:1.5rem;letter-spacing:.25em;font-weight:500;line-height:1.2;" id="memCodeTxt"></p>
+<p class="text-[10px] opacity-70 mt-0.5">50% OFF + FREE delivery</p>
+</div>
+<button id="memberRemove" class="text-[10px] underline shrink-0 opacity-80">Remove</button>
 </div>
 </div>
           </div>
