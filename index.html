@@ -2394,8 +2394,6 @@ $('#sortSel').onchange = e => { cp.sort = e.target.value; drawCatPage(); };
 $('#trackGo').onclick = track;
 $('#toTop').onclick = () => window.scrollTo({ top:0, behavior:'smooth' });
 
-let appliedMembership = store.get('membership', null);
-
 function showMemberView(){
   const active = $('#memViewActive');
   const buy = $('#memViewBuy');
