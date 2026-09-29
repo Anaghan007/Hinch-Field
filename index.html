@@ -2555,14 +2555,17 @@ function updateMemberUI(){
 setTimeout(updateMemberUI, 100);
 
 async function applyMemberFn(){
+  const btn = $('#memberApply');
+  if (btn && btn.disabled) return;
+
   if (cart.length === 0){
     const mc = $('#memberCode'); if (mc) mc.value = '';
-    return toast('First You Have To Add Product','warn');
+    return toast('First You Have To Add Your Product','warn');
   }
   const code = ($('#memberCode')?.value || '').trim();
-  if(!/^\d{4}$/.test(code)) return toast('Enter Your 4-Digit Code','warn');
+  if(!/^\d{4}$/.test(code)) return toast('Enter Your 4-digit code','warn');
 
-  // ⚡ INSTANT — જો device પર saved code હોય
+  // ⚡ INSTANT — device પર saved code
   const saved = store.get('membership_full', null);
   if (saved && saved.code === code && Date.now() < saved.expiresAt){
     appliedMembership = { code, name: saved.name, expiresAt: saved.expiresAt };
@@ -2572,18 +2575,40 @@ async function applyMemberFn(){
     return;
   }
 
-  // 🌐 Server verify (જો saved ના હોય)
-  try {
-    const r = await fetch(`${API_BASE}/api/membership-verify`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code})});
-    const d = await r.json();
-    if(d.success){
-      appliedMembership={code,name:d.name,expiresAt:d.expiresAt};
-      // Save for future instant
-      store.set('membership_full', { code, name: d.name, expiresAt: d.expiresAt });
-      updateMemberUI(); renderCart();
-      toast('Member applied — 50% off!','check');
-    } else toast(d.error||'Invalid code','cross');
-  } catch(e){toast('Verify failed','cross');}
+  // Button લોડિંગ state (તરત visual response)
+  if (btn){
+    btn.disabled = true;
+    const orig = btn.textContent;
+    btn.textContent = '…';
+    try {
+      const ctl = new AbortController();
+      const to = setTimeout(() => ctl.abort(), 6000);
+      const r = await fetch(`${API_BASE}/api/membership-verify`,{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({code}),
+        signal: ctl.signal
+      });
+      clearTimeout(to);
+      const d = await r.json();
+      if(d.success){
+        appliedMembership={code,name:d.name,expiresAt:d.expiresAt};
+        store.set('membership_full', { code, name: d.name, expiresAt: d.expiresAt });
+        updateMemberUI();
+        renderCart();
+        toast('Member applied — 50% off!','check');
+      } else {
+        toast(d.error || 'Invalid code','cross');
+        const mc = $('#memberCode'); if (mc) mc.value = '';
+      }
+    } catch(e){
+      toast('Invalid code','cross');
+      const mc = $('#memberCode'); if (mc) mc.value = '';
+    } finally {
+      btn.disabled = false;
+      btn.textContent = orig;
+    }
+  }
 }
   
 if($('#memberApply'))$('#memberApply').onclick=applyMemberFn;
