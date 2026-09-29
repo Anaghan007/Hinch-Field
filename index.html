@@ -1611,6 +1611,15 @@ return '<div class="flex gap-3 border hairline p-3 a-up w-full" style="backgroun
 '</div>';
 }).join('');
 }
+const memberRow = document.getElementById('memDiscRow');
+if (memberRow) memberRow.remove();
+if (t.discount > 0){
+const discRow = document.createElement('div');
+discRow.id = 'memDiscRow';
+discRow.className = 'flex justify-between text-sm';
+discRow.innerHTML = '<span style="color:var(--text);">👑 Member Discount (50%)</span><b style="color:var(--text);">−' + fmt(t.discount) + '</b>';
+$('#sumSub').parentElement.parentElement.insertBefore(discRow, $('#sumSub').parentElement);
+}
 $('#sumSub').textContent = fmt(t.sub);
 $('#sumDel').innerHTML = t.del ? fmt(t.del) : '<span style="color:var(--text);">FREE</span>';
 $('#sumTotal').textContent = fmt(t.total);
