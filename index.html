@@ -2255,6 +2255,7 @@ const t = e.target.closest('[data-open-product],[data-add],[data-wish],[data-clo
 if (!t){ const sd = $('#searchDrop'); if (sd) sd.classList.add('hidden'); return; }
 if (t.hasAttribute('data-close')){ closeModal(t.getAttribute('data-close')); return; }
 if (t.hasAttribute('data-openhistory')){ closeAll(true); openHistory(); return; }
+if (t.hasAttribute('data-membership')){ closeAll(true); $('#memBuyErr').classList.add('hidden'); openModal('memberModal'); return; }
 if (t.hasAttribute('data-open-product')){ const id = t.getAttribute('data-open-product'); closeAll(true); openProduct(id); return; }
 if (t.hasAttribute('data-add')){ const id = t.getAttribute('data-add'); addToCart(id); closeAll(true); try{ history.pushState({ modal:'cartDrawer' }, '', '#cart'); handleRoute(); }catch(err){} return; }
 if (t.hasAttribute('data-wish')){ toggleWish(t.getAttribute('data-wish')); return; }
