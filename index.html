@@ -2352,6 +2352,79 @@ $('#sortSel').onchange = e => { cp.sort = e.target.value; drawCatPage(); };
 $('#trackGo').onclick = track;
 $('#toTop').onclick = () => window.scrollTo({ top:0, behavior:'smooth' });
 $('#footAdmin').onclick = () => openAdmin();
+// ⭐ MEMBERSHIP
+let appliedMembership = store.get('membership', null);
+
+function updateMemberUI(){
+  const na=$('#memberNotApplied'),ap=$('#memberApplied');
+  if(!na||!ap)return;
+  if(appliedMembership){na.classList.add('hidden');ap.classList.remove('hidden');$('#memCodeTxt').textContent=appliedMembership.code;}
+  else{na.classList.remove('hidden');ap.classList.add('hidden');}
+}
+updateMemberUI();
+
+if ($('#openMembership')) $('#openMembership').onclick = () => {
+  $('#memBuyErr').classList.add('hidden');
+  openModal('memberModal');
+};
+
+if ($('#memBuyBtn')) $('#memBuyBtn').onclick = async () => {
+  const btn = $('#memBuyBtn');
+  if (btn.disabled) return;
+  const err = m => { const e=$('#memBuyErr'); e.textContent=m; e.classList.remove('hidden'); return false; };
+  $('#memBuyErr').classList.add('hidden');
+  const name = $('#memBuyName').value.trim();
+  const phone = $('#memBuyPhone').value.trim();
+  if (!/^[A-Za-z .]{3,60}$/.test(name)) return err('Enter valid name');
+  if (!/^\d{10,15}$/.test(phone.replace(/[^0-9]/g,''))) return err('Enter valid WhatsApp number');
+  btn.disabled = true; btn.textContent = 'Creating Order…';
+  try {
+    const r = await fetch(`${API_BASE}/api/membership-order`, { method:'POST' });
+    const d = await r.json();
+    if (!d.success) throw new Error('Order create failed');
+    const options = {
+      key: RAZORPAY_KEY_ID, amount: d.amount, currency: d.currency,
+      name: 'HinchField Membership', description: 'Yearly Membership — ₹599',
+      image: 'images/logo.png', order_id: d.order_id,
+      prefill: { name, contact: phone }, theme: { color: '#0A0A0A' },
+      handler: async function(resp){
+        try {
+          const v = await fetch(`${API_BASE}/api/verify-payment`, {method:'POST',headers:{'Content-Type':'application/json'},body: JSON.stringify({razorpay_order_id: resp.razorpay_order_id,razorpay_payment_id: resp.razorpay_payment_id,razorpay_signature: resp.razorpay_signature})});
+          const vd = await v.json();
+          if (!vd.success) throw new Error('Verify failed');
+          const c = await fetch(`${API_BASE}/api/membership-create`, {method:'POST',headers:{'Content-Type':'application/json'},body: JSON.stringify({ name, phone })});
+          const cd = await c.json();
+          if (!cd.success) throw new Error('Code generation failed');
+          closeAll(true);
+          toast('Membership activated!', 'check');
+          goWA(`⭐ *HINCHFIELD MEMBERSHIP CONFIRMED*\n\n👤 Name: ${name}\n📞 Phone: ${phone}\n\n🔑 *YOUR CODE: ${cd.code}*\n📅 Valid till: ${new Date(cd.expiresAt).toLocaleDateString('en-IN')}\n\n*Benefits:*\n✅ Flat 50% OFF on all products\n✅ FREE delivery\n✅ Unlimited for 1 year\n\n*How to use:*\n1. Add products to cart\n2. Cart ખોલો\n3. Enter code: *${cd.code}*\n4. 50% off + Free delivery apply થશે!`);
+        } catch(e){ console.error(e); toast('Verification failed', 'cross'); }
+      },
+      modal: { ondismiss: () => toast('Payment cancelled', 'warn') }
+    };
+    const rzp = new Razorpay(options);
+    rzp.on('payment.failed', r => toast(r.error.description || 'Payment failed', 'cross'));
+    rzp.open();
+  } catch(e){ console.error(e); err('Something went wrong'); }
+  finally { btn.disabled = false; btn.textContent = 'Pay ₹599 — Get Membership'; }
+};
+
+const applyMember = async () => {
+  const code = $('#memberCode').value.trim();
+  if(!/^\d{4}$/.test(code)) return toast('4-digit code enter કરો','warn');
+  try {
+    const r = await fetch(`${API_BASE}/api/membership-verify`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code})});
+    const d = await r.json();
+    if(d.success){
+      appliedMembership={code,name:d.name,expiresAt:d.expiresAt};
+      store.set('membership',appliedMembership);
+      updateMemberUI(); renderCart();
+      toast('Member applied — 50% off!','check');
+    } else toast(d.error||'Invalid code','cross');
+  } catch(e){toast('Verify failed','cross');}
+};
+if($('#memberApply'))$('#memberApply').onclick=applyMember;
+if($('#memberRemove'))$('#memberRemove').onclick=()=>{appliedMembership=null;store.set('membership',null);updateMemberUI();renderCart();toast('Membership removed','check');};
 $('#delVerify').onclick = () => {
 const id = $('#delOrderId').value.trim().toUpperCase();
 const otp = $('#delOtp').value.trim();
