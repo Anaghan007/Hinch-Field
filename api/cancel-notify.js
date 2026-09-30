@@ -14,123 +14,144 @@ export default async function handler(req, res) {
     const c = order.customer;
     const t = order.totals;
     const isOnline = order.payment && order.payment.method === 'online';
+    const dateStr = new Date().toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
 
     const itemsHtml = order.items.map((l, i) => {
-      const price = l.price || 0;
       return '<tr>' +
-        '<td style="padding:16px 12px;border-bottom:1px solid #E6E4E0;font-size:13px;color:#0A0A0A;">' +
-          '<b style="font-weight:600;">' + (i+1) + '. ' + (l.name || 'Product') + '</b>' +
-        '</td>' +
-        '<td style="padding:16px 12px;border-bottom:1px solid #E6E4E0;text-align:center;font-size:13px;color:#0A0A0A;">' + l.qty + '</td>' +
-        '<td style="padding:16px 12px;border-bottom:1px solid #E6E4E0;text-align:right;font-size:13px;color:#0A0A0A;">₹' + price.toLocaleString('en-IN') + '</td>' +
-        '<td style="padding:16px 12px;border-bottom:1px solid #E6E4E0;text-align:right;font-size:13px;color:#0A0A0A;font-weight:600;">₹' + (price * l.qty).toLocaleString('en-IN') + '</td>' +
+        '<td style="padding:16px 10px;border-bottom:1px solid #E6E4E0;font-size:13px;color:#0A0A0A;font-weight:500;">' + (i+1) + '. ' + (l.name || 'Product') + '</td>' +
+        '<td style="padding:16px 10px;border-bottom:1px solid #E6E4E0;text-align:center;font-size:13px;color:#0A0A0A;">' + l.qty + '</td>' +
+        '<td style="padding:16px 10px;border-bottom:1px solid #E6E4E0;text-align:right;font-size:13px;color:#0A0A0A;">₹' + (l.price || 0).toLocaleString('en-IN') + '</td>' +
+        '<td style="padding:16px 10px;border-bottom:1px solid #E6E4E0;text-align:right;font-size:13px;color:#0A0A0A;font-weight:700;">₹' + ((l.price || 0) * l.qty).toLocaleString('en-IN') + '</td>' +
       '</tr>';
     }).join('');
 
     const html =
-    '<!DOCTYPE html><html><head><meta charset="utf-8"></head>' +
-    '<body style="margin:0;padding:20px;background:#F5F4F2;font-family:-apple-system,BlinkMacSystemFont,\'Segoe UI\',Arial,sans-serif;">' +
+    '<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>' +
+    '<body style="margin:0;padding:0;background:#F5F4F2;font-family:-apple-system,BlinkMacSystemFont,\'Segoe UI\',Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;">' +
 
-    '<div style="max-width:680px;margin:0 auto;background:#FFFFFF;padding:40px 36px 0;">' +
+    '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#F5F4F2;padding:20px 0;">' +
+    '<tr><td align="center">' +
 
-      // ─── Logo Header ───
-      '<div style="text-align:center;padding-bottom:24px;border-bottom:2px solid #0A0A0A;">' +
-        '<div style="font-family:Georgia,serif;font-size:34px;letter-spacing:12px;font-weight:600;color:#0A0A0A;line-height:1;margin-bottom:8px;">HINCHFIELD</div>' +
-        '<div style="font-size:10px;letter-spacing:8px;color:#7C7C7C;text-transform:uppercase;">— Wear Your Story —</div>' +
-      '</div>' +
+    '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="640" style="max-width:640px;background:#FFFFFF;">' +
 
-      // ─── Alert Title Bar ───
-      '<div style="padding:24px 0 8px;">' +
-        '<div style="font-size:10px;letter-spacing:3px;color:#DC2626;text-transform:uppercase;font-weight:600;">CANCELLATION NOTICE</div>' +
-        '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-top:12px;flex-wrap:wrap;">' +
-          '<div>' +
-            '<div style="font-family:Georgia,serif;font-size:28px;color:#0A0A0A;font-weight:500;letter-spacing:1px;">Order Cancelled</div>' +
-            '<div style="font-size:12px;color:#7C7C7C;margin-top:6px;letter-spacing:1px;">' + order.id + '</div>' +
-          '</div>' +
-          '<div style="text-align:right;">' +
-            '<div style="font-size:10px;letter-spacing:2px;color:#7C7C7C;text-transform:uppercase;">Date</div>' +
-            '<div style="font-size:13px;font-weight:600;color:#0A0A0A;margin-top:4px;">' + new Date().toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }) + '</div>' +
-            '<div style="display:inline-block;background:#FEF2F2;color:#DC2626;border:1px solid #DC2626;padding:5px 10px;font-size:10px;letter-spacing:1.5px;margin-top:8px;font-weight:600;">CANCELLED</div>' +
-          '</div>' +
-        '</div>' +
-      '</div>' +
+      // ═══ HEADER ═══
+      '<tr><td style="padding:36px 40px 24px;text-align:center;border-bottom:1px solid #0A0A0A;">' +
+        '<img src="https://hinchfield.store/images/logo.png" alt="HINCHFIELD" width="180" style="display:block;margin:0 auto;max-width:180px;height:auto;">' +
+        '<div style="font-size:10px;letter-spacing:5px;color:#7C7C7C;text-transform:uppercase;margin-top:8px;">WEAR YOUR STORY</div>' +
+      '</td></tr>' +
 
-      // ─── Divider ───
-      '<div style="height:1px;background:#E6E4E0;margin:24px 0 0;"></div>' +
+      // ═══ CANCELLED BANNER ═══
+      '<tr><td style="background:#0A0A0A;padding:20px 40px;text-align:center;">' +
+        '<div style="font-size:11px;letter-spacing:5px;color:#FFFFFF;text-transform:uppercase;opacity:0.7;">ORDER CANCELLED</div>' +
+      '</td></tr>' +
 
-      // ─── Items Table ───
-      '<table style="width:100%;border-collapse:collapse;margin-top:24px;">' +
-        '<thead>' +
-          '<tr style="background:#0A0A0A;">' +
-            '<th style="padding:12px;text-align:left;font-size:10px;letter-spacing:2px;color:#FFFFFF;text-transform:uppercase;font-weight:500;">Item</th>' +
-            '<th style="padding:12px;text-align:center;font-size:10px;letter-spacing:2px;color:#FFFFFF;text-transform:uppercase;font-weight:500;width:60px;">Qty</th>' +
-            '<th style="padding:12px;text-align:right;font-size:10px;letter-spacing:2px;color:#FFFFFF;text-transform:uppercase;font-weight:500;width:90px;">Price</th>' +
-            '<th style="padding:12px;text-align:right;font-size:10px;letter-spacing:2px;color:#FFFFFF;text-transform:uppercase;font-weight:500;width:90px;">Total</th>' +
+      // ═══ ORDER INFO ═══
+      '<tr><td style="padding:32px 40px 8px;">' +
+        '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">' +
+          '<tr>' +
+            '<td style="vertical-align:top;">' +
+              '<div style="font-size:10px;letter-spacing:3px;color:#7C7C7C;text-transform:uppercase;">Order ID</div>' +
+              '<div style="font-family:Georgia,serif;font-size:24px;font-weight:500;color:#0A0A0A;letter-spacing:1px;margin-top:8px;">' + order.id + '</div>' +
+            '</td>' +
+            '<td style="vertical-align:top;text-align:right;">' +
+              '<div style="font-size:10px;letter-spacing:3px;color:#7C7C7C;text-transform:uppercase;">Date</div>' +
+              '<div style="font-size:13px;font-weight:600;color:#0A0A0A;margin-top:8px;">' + dateStr + '</div>' +
+            '</td>' +
           '</tr>' +
-        '</thead>' +
-        '<tbody>' + itemsHtml + '</tbody>' +
-      '</table>' +
+        '</table>' +
+      '</td></tr>' +
 
-      // ─── Totals ───
-      '<table style="width:100%;margin-top:20px;margin-left:auto;max-width:340px;float:right;">' +
-        '<tr>' +
-          '<td style="padding:6px 12px;text-align:right;font-size:13px;color:#7C7C7C;">Subtotal</td>' +
-          '<td style="padding:6px 12px;text-align:right;font-size:13px;color:#0A0A0A;width:100px;">₹' + (t ? t.sub : 0).toLocaleString('en-IN') + '</td>' +
-        '</tr>' +
-        (t && t.discount ? '<tr><td style="padding:6px 12px;text-align:right;font-size:13px;color:#0A0A0A;">Member Discount</td><td style="padding:6px 12px;text-align:right;font-size:13px;color:#0A0A0A;">−₹' + t.discount.toLocaleString('en-IN') + '</td></tr>' : '') +
-        '<tr>' +
-          '<td style="padding:6px 12px;text-align:right;font-size:13px;color:#7C7C7C;">Delivery</td>' +
-          '<td style="padding:6px 12px;text-align:right;font-size:13px;color:#0A0A0A;">' + (t && t.del ? '₹' + t.del.toLocaleString('en-IN') : 'FREE') + '</td>' +
-        '</tr>' +
-        '<tr>' +
-          '<td style="padding:16px 12px 6px;text-align:right;font-size:12px;color:#0A0A0A;letter-spacing:2px;border-top:2px solid #0A0A0A;">TOTAL ' + (isOnline ? 'PAID' : 'COD') + '</td>' +
-          '<td style="padding:16px 12px 6px;text-align:right;font-family:Georgia,serif;font-size:26px;color:#0A0A0A;font-weight:600;border-top:2px solid #0A0A0A;">₹' + (t ? t.total : 0).toLocaleString('en-IN') + '</td>' +
-        '</tr>' +
-      '</table>' +
-      '<div style="clear:both;"></div>' +
-
-      // ─── Divider ───
-      '<div style="height:1px;background:#E6E4E0;margin:32px 0 0;"></div>' +
-
-      // ─── Customer Section ───
-      '<div style="padding:24px 0 8px;">' +
-        '<div style="font-size:10px;letter-spacing:3px;color:#7C7C7C;text-transform:uppercase;margin-bottom:14px;">Customer Details</div>' +
-        '<div style="font-size:13px;line-height:1.9;color:#0A0A0A;">' +
-          '<b style="color:#0A0A0A;">' + c.name + '</b><br>' +
-          '<span style="color:#7C7C7C;">' + c.phone + '</span><br>' +
-          '<span style="color:#7C7C7C;">' + c.addr + '<br>' + c.city + ', ' + c.state + ' — ' + c.pin + '</span>' +
+      // ═══ STATUS BAR ═══
+      '<tr><td style="padding:20px 40px 28px;">' +
+        '<div style="background:#F5F4F2;padding:14px 18px;border-left:3px solid #0A0A0A;">' +
+          '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%"><tr>' +
+            '<td style="font-size:12px;color:#7C7C7C;letter-spacing:1px;">STATUS</td>' +
+            '<td style="text-align:right;font-size:12px;font-weight:700;color:#0A0A0A;letter-spacing:1px;">CANCELLED</td>' +
+          '</tr></table>' +
         '</div>' +
-      '</div>' +
-
-      // ─── Action Banner ───
-      '<div style="background:#FEF2F2;border-left:4px solid #DC2626;padding:18px 20px;margin:24px 0 8px;">' +
-        '<div style="font-size:10px;letter-spacing:3px;color:#DC2626;text-transform:uppercase;font-weight:600;margin-bottom:6px;">Action Required</div>' +
-        '<div style="font-size:14px;color:#0A0A0A;line-height:1.6;">' +
-          (isOnline
-            ? 'Refund <b>₹' + (t ? t.total : 0).toLocaleString('en-IN') + '</b> via Razorpay Dashboard'
-            : 'Do <b>NOT</b> ship this order') +
+        '<div style="margin-top:10px;text-align:center;">' +
+          '<span style="display:inline-block;font-size:10px;letter-spacing:2px;padding:6px 14px;border:1px solid ' + (isOnline ? '#DC2626' : '#E6E4E0') + ';color:' + (isOnline ? '#DC2626' : '#7C7C7C') + ';text-transform:uppercase;">' + (isOnline ? 'PAID ONLINE' : 'CASH ON DELIVERY') + '</span>' +
         '</div>' +
-      '</div>' +
+      '</td></tr>' +
 
-      // ─── Payment Info ───
-      '<div style="padding:16px 0 8px;font-size:12px;color:#7C7C7C;line-height:1.9;">' +
-        '<b style="color:#0A0A0A;font-size:11px;letter-spacing:1px;">PAYMENT INFO</b><br>' +
-        'Method: ' + (isOnline ? 'Paid Online (Razorpay)' : 'Cash on Delivery') + '<br>' +
-        (order.payment && order.payment.razorpay_payment_id ? 'Payment ID: ' + order.payment.razorpay_payment_id + '<br>' : '') +
-        'Cancelled At: ' + new Date().toLocaleString('en-IN', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' }) +
-      '</div>' +
+      // ═══ ITEMS TABLE ═══
+      '<tr><td style="padding:0 40px;">' +
+        '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse:collapse;">' +
+          '<thead>' +
+            '<tr style="background:#0A0A0A;">' +
+              '<th style="padding:12px 10px;text-align:left;font-size:11px;letter-spacing:2px;color:#FFFFFF;text-transform:uppercase;font-weight:500;">ITEM</th>' +
+              '<th style="padding:12px 10px;text-align:center;font-size:11px;letter-spacing:2px;color:#FFFFFF;text-transform:uppercase;font-weight:500;width:60px;">QTY</th>' +
+              '<th style="padding:12px 10px;text-align:right;font-size:11px;letter-spacing:2px;color:#FFFFFF;text-transform:uppercase;font-weight:500;width:90px;">PRICE</th>' +
+              '<th style="padding:12px 10px;text-align:right;font-size:11px;letter-spacing:2px;color:#FFFFFF;text-transform:uppercase;font-weight:500;width:100px;">TOTAL</th>' +
+            '</tr>' +
+          '</thead>' +
+          '<tbody>' + itemsHtml + '</tbody>' +
+        '</table>' +
+      '</td></tr>' +
 
-    '</div>' +
+      // ═══ TOTALS ═══
+      '<tr><td style="padding:24px 40px 24px;">' +
+        '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width:320px;margin-left:auto;">' +
+          '<tr>' +
+            '<td style="padding:8px 0;text-align:right;font-size:13px;color:#7C7C7C;">Subtotal</td>' +
+            '<td style="padding:8px 0 8px 20px;text-align:right;font-size:13px;color:#0A0A0A;width:110px;">₹' + (t && t.sub ? t.sub.toLocaleString('en-IN') : 0) + '</td>' +
+          '</tr>' +
+          (t && t.discount ? '<tr><td style="padding:8px 0;text-align:right;font-size:13px;color:#7C7C7C;">Member Discount</td><td style="padding:8px 0 8px 20px;text-align:right;font-size:13px;color:#0A0A0A;">−₹' + t.discount.toLocaleString('en-IN') + '</td></tr>' : '') +
+          '<tr>' +
+            '<td style="padding:8px 0;text-align:right;font-size:13px;color:#7C7C7C;">Delivery</td>' +
+            '<td style="padding:8px 0 8px 20px;text-align:right;font-size:13px;color:#0A0A0A;">' + (t && t.del ? '₹' + t.del.toLocaleString('en-IN') : 'FREE') + '</td>' +
+          '</tr>' +
+          '<tr><td colspan="2" style="padding:0;"><div style="border-top:2px solid #0A0A0A;margin:8px 0 0;"></div></td></tr>' +
+          '<tr>' +
+            '<td style="padding:14px 0 0;text-align:right;font-size:11px;letter-spacing:2px;color:#0A0A0A;text-transform:uppercase;font-weight:600;">TOTAL ' + (isOnline ? 'PAID' : 'COD') + '</td>' +
+            '<td style="padding:14px 0 0 20px;text-align:right;font-family:Georgia,serif;font-size:24px;font-weight:600;color:#0A0A0A;">₹' + (t && t.total ? t.total.toLocaleString('en-IN') : 0) + '</td>' +
+          '</tr>' +
+        '</table>' +
+      '</td></tr>' +
 
-    // ─── Footer (outside white card) ───
-    '<div style="max-width:680px;margin:0 auto;">' +
-      '<div style="background:#0A0A0A;padding:24px;text-align:center;">' +
-        '<div style="font-family:Georgia,serif;font-size:16px;letter-spacing:6px;color:#FFFFFF;font-weight:500;">HINCHFIELD</div>' +
-        '<div style="font-size:11px;color:#FFFFFF;opacity:0.6;margin-top:12px;letter-spacing:1px;">WhatsApp 7434053550 · support.hinchfield@gmail.com</div>' +
-        '<div style="font-size:11px;color:#FFFFFF;opacity:0.4;margin-top:6px;letter-spacing:2px;">HINCHFIELD.STORE</div>' +
-      '</div>' +
-      '<div style="text-align:center;padding:16px;font-size:10px;color:#7C7C7C;letter-spacing:2px;">© 2026 HINCHFIELD · ALL RIGHTS RESERVED</div>' +
-    '</div>' +
+      // ═══ DELIVERY ADDRESS ═══
+      '<tr><td style="padding:8px 40px 24px;">' +
+        '<div style="border-top:1px solid #E6E4E0;padding-top:24px;">' +
+          '<div style="font-size:10px;letter-spacing:3px;color:#7C7C7C;text-transform:uppercase;margin-bottom:14px;">Delivery Address</div>' +
+          '<div style="font-size:13px;line-height:1.9;color:#0A0A0A;">' +
+            '<b style="font-weight:700;">' + c.name + '</b><br>' +
+            '<a href="tel:' + c.phone + '" style="color:#0A0A0A;text-decoration:none;">' + c.phone + '</a><br>' +
+            c.addr + '<br>' +
+            c.city + ', ' + c.state + ' — ' + c.pin +
+          '</div>' +
+        '</div>' +
+      '</td></tr>' +
+
+      // ═══ ACTION BOX ═══
+      '<tr><td style="padding:0 40px 32px;">' +
+        '<div style="border:1px solid ' + (isOnline ? '#DC2626' : '#0A0A0A') + ';padding:20px;text-align:center;' + (isOnline ? 'background:#FEF2F2;' : '') + '">' +
+          '<div style="font-size:10px;letter-spacing:3px;color:' + (isOnline ? '#DC2626' : '#7C7C7C') + ';text-transform:uppercase;margin-bottom:8px;">Action Required</div>' +
+          '<div style="font-family:Georgia,serif;font-size:16px;color:' + (isOnline ? '#DC2626' : '#0A0A0A') + ';line-height:1.6;font-weight:500;">' +
+            (isOnline
+              ? 'Refund <b>₹' + (t && t.total ? t.total.toLocaleString('en-IN') : 0) + '</b><br><span style="font-size:12px;color:#7C7C7C;font-family:Arial,sans-serif;font-weight:400;">via Razorpay Dashboard</span>'
+              : 'Do NOT ship this order') +
+          '</div>' +
+        '</div>' +
+      '</td></tr>' +
+
+      // ═══ FOOTER ═══
+      '<tr><td style="background:#0A0A0A;padding:24px 40px;text-align:center;">' +
+        '<div style="font-family:Georgia,serif;font-size:16px;letter-spacing:6px;color:#FFFFFF;margin-bottom:8px;">HINCHFIELD</div>' +
+        '<div style="font-size:11px;color:#FFFFFF;opacity:0.6;line-height:1.9;letter-spacing:1px;">' +
+          'WhatsApp: 7434053550<br>' +
+          'support.hinchfield@gmail.com<br>' +
+          '<a href="https://hinchfield.store" style="color:#FFFFFF;text-decoration:none;opacity:0.8;">hinchfield.store</a>' +
+        '</div>' +
+      '</td></tr>' +
+
+      // ═══ LEGAL BAR ═══
+      '<tr><td style="background:#F5F4F2;padding:16px 40px;text-align:center;">' +
+        '<div style="font-size:10px;letter-spacing:2px;color:#7C7C7C;text-transform:uppercase;">© 2026 HINCHFIELD · NO RETURN / NO EXCHANGE</div>' +
+      '</td></tr>' +
+
+    '</table>' +
+
+    '</td></tr></table>' +
 
     '</body></html>';
 
@@ -140,7 +161,7 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         from: 'HinchField <orders@hinchfield.store>',
         to: ['support.hinchfield@gmail.com'],
-        subject: 'Order Cancelled — ' + order.id + ' — ₹' + (t ? t.total : 0),
+        subject: '⚠️ Order Cancelled — ' + order.id + ' — ₹' + (t ? t.total : 0),
         html
       })
     });
