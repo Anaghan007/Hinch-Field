@@ -2905,33 +2905,26 @@ order.updatedAt = Date.now();
 store.set('orders', orders);
 renderHistory();
 toast('Order Cancelled Successfully','cross');
-// Notify admin via WhatsApp (Clean & Professional)
+// Notify admin via WhatsApp
 try {
-  const itemsList = order.items.map(l => {
+  const items = order.items.map((l,i) => {
     const p = prodById(l.id);
-    return `▫️ ${p ? p.name : 'Item'} (×${l.qty})`;
+    return (i+1) + '. ' + (p ? p.name : 'Item') + ' × ' + l.qty;
   }).join('\n');
 
-  const payStatus = (order.payment && order.payment.method === 'online') ? '✅ Online Paid' : '💵 COD';
-  const location = `${order.customer.city}, ${order.customer.state}`;
-
-  const msg = 
-    `🚫 *ORDER CANCELLED*\n` +
-    `━━━━━━━━━━━━━━━━━━━━\n` +
-    `🧾 *Order:* ${order.id}\n` +
-    `👤 *Customer:* ${order.customer.name}\n` +
-    `📱 *Contact:* ${order.customer.phone}\n` +
-    `📍 *Location:* ${location}\n` +
-    `💰 *Amount:* ${fmt(order.totals.total)}\n` +
-    `💳 *Mode:* ${payStatus}\n\n` +
-    `📦 *Products:*\n${itemsList}\n\n` +
-    `⚠️ *ACTION:* Please halt processing & do NOT ship.`;
+  const msg = '🚨 *ORDER CANCELLED*\n\n' +
+    'Order ID: *' + order.id + '*\n' +
+    'Customer: ' + order.customer.name + '\n' +
+    'Phone: ' + order.customer.phone + '\n' +
+    'City: ' + order.customer.city + ', ' + order.customer.state + '\n' +
+    'Total: ' + fmt(order.totals.total) + '\n' +
+    'Payment: ' + (order.payment && order.payment.method === 'online' ? 'PAID ONLINE' : 'COD') + '\n\n' +
+    'Items:\n' + items + '\n\n' +
+    '⚠️ Please do NOT ship this order.';
 
   const encoded = encodeURIComponent(msg);
   window.open('https://wa.me/' + WA + '?text=' + encoded, '_blank');
-} catch(e) {
-  console.error('WhatsApp notify error:', e);
-}
+} catch(e){}
 /* ---- Admin ---- */
 let adminAuth = false;
 function openAdmin(skipRoute){
