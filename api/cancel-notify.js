@@ -44,9 +44,6 @@ export default async function handler(req, res) {
         '<table style="width:100%;"><tr>' +
           '<td style="vertical-align:middle;">' +
             '<table><tr>' +
-              '<td style="vertical-align:middle;padding-right:12px;">' +
-                '<div style="font-family:Georgia,serif;font-size:38px;font-weight:700;color:#0A0A0A;line-height:1;letter-spacing:-2px;">H</div>' +
-              '</td>' +
               '<td style="vertical-align:middle;">' +
                 '<div style="font-family:Arial,sans-serif;font-size:22px;font-weight:800;letter-spacing:2px;color:#0A0A0A;line-height:1;">HINCHFIELD</div>' +
                 '<div style="font-family:Arial,sans-serif;font-size:9px;letter-spacing:5px;color:#7C7C7C;margin-top:4px;">— WEAR YOUR STORY —</div>' +
@@ -98,7 +95,6 @@ export default async function handler(req, res) {
               '<th style="padding:12px 8px;text-align:left;font-size:11px;letter-spacing:2px;color:#FFFFFF;text-transform:uppercase;font-weight:600;">Item</th>' +
               '<th style="padding:12px 8px;text-align:center;font-size:11px;letter-spacing:2px;color:#FFFFFF;text-transform:uppercase;font-weight:600;width:60px;">Qty</th>' +
               '<th style="padding:12px 8px;text-align:right;font-size:11px;letter-spacing:2px;color:#FFFFFF;text-transform:uppercase;font-weight:600;width:90px;">Price</th>' +
-              '<th style="padding:12px 8px;text-align:right;font-size:11px;letter-spacing:2px;color:#FFFFFF;text-transform:uppercase;font-weight:600;width:90px;">Total</th>' +
             '</tr>' +
           '</thead>' +
           '<tbody>' + itemsHtml + '</tbody>' +
