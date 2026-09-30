@@ -38,15 +38,6 @@ export default async function handler(req, res) {
 
     '<div style="max-width:620px;margin:0 auto;background:#FFFFFF;">' +
 
-      // Logo - Centered
-      '<div style="padding:44px 40px 28px;text-align:center;">' +
-        '<div style="font-family:Arial,sans-serif;font-size:26px;font-weight:800;letter-spacing:6px;color:#0A0A0A;line-height:1;">HINCHFIELD</div>' +
-        '<div style="font-family:Arial,sans-serif;font-size:10px;letter-spacing:6px;color:#7C7C7C;margin-top:8px;">— WEAR YOUR STORY —</div>' +
-      '</div>' +
-
-      // Top Border
-      '<div style="border-top:2px solid #0A0A0A;margin:0 40px;"></div>' +
-
       // Order Info Section
       '<div style="padding:28px 40px 0;">' +
         '<table style="width:100%;">' +
