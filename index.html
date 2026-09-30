@@ -2006,6 +2006,53 @@ ${prods.map((p,i) => card(p, 'a-up', i * 50)).join('')}
 }).join('');
 $('#featuredCats').innerHTML = html;
 }
+
+// ═══ INVOICE SYSTEM ═══
+function showInvoice(order){
+  const t = order.totals;
+  const c = order.customer;
+
+  $('#invId').textContent = order.id;
+  $('#invDate').textContent = new Date(order.timestamp).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
+
+  const isOnline = order.payment && order.payment.method === 'online';
+  $('#invPayBadge').textContent = isOnline ? 'PAID ONLINE' : 'CASH ON DELIVERY';
+  $('#invPayBadge').style.background = isOnline ? '#0A0A0A' : '#f5f4f2';
+  $('#invPayBadge').style.color = isOnline ? '#fff' : '#0A0A0A';
+  $('#invPayBadge').style.border = isOnline ? 'none' : '1px solid #E6E4E0';
+
+  if (isOnline && order.payment.razorpay_payment_id){
+    $('#invPayIdBox').style.display = 'block';
+    $('#invPayId').textContent = order.payment.razorpay_payment_id;
+  } else {
+    $('#invPayIdBox').style.display = 'none';
+  }
+
+  $('#invItems').innerHTML = order.items.map((l, i) => {
+    const p = prodById(l.id);
+    const name = p ? p.name : 'Product';
+    const price = p ? p.price : 0;
+    const extras = (l.colorChoice ? '<br><span style="font-size:11px;color:#7C7C7C;">Colour: ' + l.colorChoice + '</span>' : '')
+                 + (l.custom ? '<br><span style="font-size:11px;color:#7C7C7C;">Custom (' + l.custom.pos + '): ' + (l.custom.note || '') + '</span>' : '');
+    return '<tr>' +
+      '<td style="padding:14px 10px;border-bottom:1px solid #E6E4E0;font-size:13px;"><b>' + (i+1) + '. ' + name + '</b>' + extras + '</td>' +
+      '<td style="padding:14px 10px;border-bottom:1px solid #E6E4E0;text-align:center;font-size:13px;">' + l.qty + '</td>' +
+      '<td style="padding:14px 10px;border-bottom:1px solid #E6E4E0;text-align:right;font-size:13px;">₹' + price.toLocaleString('en-IN') + '</td>' +
+      '<td style="padding:14px 10px;border-bottom:1px solid #E6E4E0;text-align:right;font-size:13px;font-weight:600;">₹' + (price * l.qty).toLocaleString('en-IN') + '</td>' +
+    '</tr>';
+  }).join('');
+
+  let totalsHtml = '<tr><td style="padding:8px 10px;text-align:right;font-size:13px;color:#7C7C7C;">Subtotal</td><td style="padding:8px 10px;text-align:right;font-size:13px;width:120px;">₹' + t.sub.toLocaleString('en-IN') + '</td></tr>';
+  if (t.discount) totalsHtml += '<tr><td style="padding:8px 10px;text-align:right;font-size:13px;">⭐ Member Discount (50%)</td><td style="padding:8px 10px;text-align:right;font-size:13px;">−₹' + t.discount.toLocaleString('en-IN') + '</td></tr>';
+  totalsHtml += '<tr><td style="padding:8px 10px;text-align:right;font-size:13px;color:#7C7C7C;">Delivery</td><td style="padding:8px 10px;text-align:right;font-size:13px;">' + (t.del ? '₹' + t.del.toLocaleString('en-IN') : 'FREE') + '</td></tr>';
+  totalsHtml += '<tr style="border-top:2px solid #0A0A0A;"><td style="padding:14px 10px;text-align:right;font-size:13px;letter-spacing:1.5px;">TOTAL ' + (isOnline ? 'PAID' : 'COD') + '</td><td style="padding:14px 10px;text-align:right;font-size:22px;font-weight:700;">₹' + t.total.toLocaleString('en-IN') + '</td></tr>';
+  $('#invTotals').innerHTML = totalsHtml;
+
+  $('#invAddress').innerHTML = '<b>' + c.name + '</b><br>' + c.phone + '<br>' + c.addr + '<br>' + c.city + ', ' + c.state + ' — ' + c.pin;
+
+  openModal('invoiceModal');
+}
+    
 function renderMobileNav(){
 const top = [
 { l:'New Drops', a:'data-catpage="new"', i:ic('sparkle') },
@@ -3178,52 +3225,6 @@ if($('#memberRemove'))$('#memberRemove').onclick=()=>{
   renderCart();
   toast('Membership removed','check');
 };
-
-// ═══ INVOICE SYSTEM ═══
-function showInvoice(order){
-  const t = order.totals;
-  const c = order.customer;
-
-  $('#invId').textContent = order.id;
-  $('#invDate').textContent = new Date(order.timestamp).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
-
-  const isOnline = order.payment && order.payment.method === 'online';
-  $('#invPayBadge').textContent = isOnline ? 'PAID ONLINE' : 'CASH ON DELIVERY';
-  $('#invPayBadge').style.background = isOnline ? '#0A0A0A' : '#f5f4f2';
-  $('#invPayBadge').style.color = isOnline ? '#fff' : '#0A0A0A';
-  $('#invPayBadge').style.border = isOnline ? 'none' : '1px solid #E6E4E0';
-
-  if (isOnline && order.payment.razorpay_payment_id){
-    $('#invPayIdBox').style.display = 'block';
-    $('#invPayId').textContent = order.payment.razorpay_payment_id;
-  } else {
-    $('#invPayIdBox').style.display = 'none';
-  }
-
-  $('#invItems').innerHTML = order.items.map((l, i) => {
-    const p = prodById(l.id);
-    const name = p ? p.name : 'Product';
-    const price = p ? p.price : 0;
-    const extras = (l.colorChoice ? '<br><span style="font-size:11px;color:#7C7C7C;">Colour: ' + l.colorChoice + '</span>' : '')
-                 + (l.custom ? '<br><span style="font-size:11px;color:#7C7C7C;">Custom (' + l.custom.pos + '): ' + (l.custom.note || '') + '</span>' : '');
-    return '<tr>' +
-      '<td style="padding:14px 10px;border-bottom:1px solid #E6E4E0;font-size:13px;"><b>' + (i+1) + '. ' + name + '</b>' + extras + '</td>' +
-      '<td style="padding:14px 10px;border-bottom:1px solid #E6E4E0;text-align:center;font-size:13px;">' + l.qty + '</td>' +
-      '<td style="padding:14px 10px;border-bottom:1px solid #E6E4E0;text-align:right;font-size:13px;">₹' + price.toLocaleString('en-IN') + '</td>' +
-      '<td style="padding:14px 10px;border-bottom:1px solid #E6E4E0;text-align:right;font-size:13px;font-weight:600;">₹' + (price * l.qty).toLocaleString('en-IN') + '</td>' +
-    '</tr>';
-  }).join('');
-
-  let totalsHtml = '<tr><td style="padding:8px 10px;text-align:right;font-size:13px;color:#7C7C7C;">Subtotal</td><td style="padding:8px 10px;text-align:right;font-size:13px;width:120px;">₹' + t.sub.toLocaleString('en-IN') + '</td></tr>';
-  if (t.discount) totalsHtml += '<tr><td style="padding:8px 10px;text-align:right;font-size:13px;">⭐ Member Discount (50%)</td><td style="padding:8px 10px;text-align:right;font-size:13px;">−₹' + t.discount.toLocaleString('en-IN') + '</td></tr>';
-  totalsHtml += '<tr><td style="padding:8px 10px;text-align:right;font-size:13px;color:#7C7C7C;">Delivery</td><td style="padding:8px 10px;text-align:right;font-size:13px;">' + (t.del ? '₹' + t.del.toLocaleString('en-IN') : 'FREE') + '</td></tr>';
-  totalsHtml += '<tr style="border-top:2px solid #0A0A0A;"><td style="padding:14px 10px;text-align:right;font-size:13px;letter-spacing:1.5px;">TOTAL ' + (isOnline ? 'PAID' : 'COD') + '</td><td style="padding:14px 10px;text-align:right;font-size:22px;font-weight:700;">₹' + t.total.toLocaleString('en-IN') + '</td></tr>';
-  $('#invTotals').innerHTML = totalsHtml;
-
-  $('#invAddress').innerHTML = '<b>' + c.name + '</b><br>' + c.phone + '<br>' + c.addr + '<br>' + c.city + ', ' + c.state + ' — ' + c.pin;
-
-  openModal('invoiceModal');
-}
   
 $('#delVerify').onclick = () => {
 const id = $('#delOrderId').value.trim().toUpperCase();
