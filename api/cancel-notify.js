@@ -22,14 +22,13 @@ export default async function handler(req, res) {
         '<td style="padding:14px 8px;border-bottom:1px solid #E6E4E0;font-size:13px;color:#0A0A0A;font-weight:500;">' +
           (i+1) + '. ' + (l.name || 'Product') + extras +
         '</td>' +
-        '<td style="padding:14px 8px;border-bottom:1px solid #E6E4E0;text-align:center;font-size:13px;color:#0A0A0A;">' + l.qty + '</td>' +
-        '<td style="padding:14px 8px;border-bottom:1px solid #E6E4E0;text-align:right;font-size:13px;color:#0A0A0A;">₹' + (l.price||0).toLocaleString('en-IN') + '</td>' +
-        '<td style="padding:14px 8px;border-bottom:1px solid #E6E4E0;text-align:right;font-size:13px;color:#0A0A0A;font-weight:600;">₹' + ((l.price||0) * l.qty).toLocaleString('en-IN') + '</td>' +
+        '<td style="padding:14px 8px;border-bottom:1px solid #E6E4E0;text-align:center;font-size:13px;color:#0A0A0A;width:70px;">' + l.qty + '</td>' +
+        '<td style="padding:14px 8px;border-bottom:1px solid #E6E4E0;text-align:right;font-size:13px;color:#0A0A0A;width:100px;">₹' + (l.price||0).toLocaleString('en-IN') + '</td>' +
       '</tr>';
     }).join('');
 
     const discountRow = (t && t.discount) ? '<tr>' +
-      '<td colspan="3" style="padding:8px 8px;text-align:right;font-size:13px;color:#0A0A0A;">⭐ Member Discount (50%)</td>' +
+      '<td colspan="2" style="padding:8px 8px;text-align:right;font-size:13px;color:#0A0A0A;">⭐ Member Discount (50%)</td>' +
       '<td style="padding:8px 8px;text-align:right;font-size:13px;color:#0A0A0A;">−₹' + t.discount.toLocaleString('en-IN') + '</td>' +
     '</tr>' : '';
 
@@ -39,18 +38,10 @@ export default async function handler(req, res) {
 
     '<div style="max-width:620px;margin:0 auto;background:#FFFFFF;">' +
 
-      // Header with Logo
-      '<div style="padding:32px 40px 24px;">' +
-        '<table style="width:100%;"><tr>' +
-          '<td style="vertical-align:middle;">' +
-            '<table><tr>' +
-              '<td style="vertical-align:middle;">' +
-                '<div style="font-family:Arial,sans-serif;font-size:22px;font-weight:800;letter-spacing:2px;color:#0A0A0A;line-height:1;">HINCHFIELD</div>' +
-                '<div style="font-family:Arial,sans-serif;font-size:9px;letter-spacing:5px;color:#7C7C7C;margin-top:4px;">— WEAR YOUR STORY —</div>' +
-              '</td>' +
-            '</tr></table>' +
-          '</td>' +
-        '</tr></table>' +
+      // Logo - Centered
+      '<div style="padding:44px 40px 28px;text-align:center;">' +
+        '<div style="font-family:Arial,sans-serif;font-size:26px;font-weight:800;letter-spacing:6px;color:#0A0A0A;line-height:1;">HINCHFIELD</div>' +
+        '<div style="font-family:Arial,sans-serif;font-size:10px;letter-spacing:6px;color:#7C7C7C;margin-top:8px;">— WEAR YOUR STORY —</div>' +
       '</div>' +
 
       // Top Border
@@ -87,14 +78,14 @@ export default async function handler(req, res) {
         '</div>' +
       '</div>' +
 
-      // Items Table
+      // Items Table - Only Item, Qty, Price
       '<div style="padding:28px 40px 0;">' +
         '<table style="width:100%;border-collapse:collapse;">' +
           '<thead>' +
             '<tr style="background:#0A0A0A;">' +
               '<th style="padding:12px 8px;text-align:left;font-size:11px;letter-spacing:2px;color:#FFFFFF;text-transform:uppercase;font-weight:600;">Item</th>' +
-              '<th style="padding:12px 8px;text-align:center;font-size:11px;letter-spacing:2px;color:#FFFFFF;text-transform:uppercase;font-weight:600;width:60px;">Qty</th>' +
-              '<th style="padding:12px 8px;text-align:right;font-size:11px;letter-spacing:2px;color:#FFFFFF;text-transform:uppercase;font-weight:600;width:90px;">Price</th>' +
+              '<th style="padding:12px 8px;text-align:center;font-size:11px;letter-spacing:2px;color:#FFFFFF;text-transform:uppercase;font-weight:600;width:70px;">Qty</th>' +
+              '<th style="padding:12px 8px;text-align:right;font-size:11px;letter-spacing:2px;color:#FFFFFF;text-transform:uppercase;font-weight:600;width:100px;">Price</th>' +
             '</tr>' +
           '</thead>' +
           '<tbody>' + itemsHtml + '</tbody>' +
