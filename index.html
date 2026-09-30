@@ -1270,7 +1270,6 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
               <input id="coCity" maxlength="40" class="field" placeholder="City *">
               <input id="coState" maxlength="40" class="field" placeholder="State / Province *">
             </div>
-            <input id="coEmail" type="email" maxlength="80" class="field" placeholder="Email (for bill) *">
             <input id="coPin" maxlength="10" class="field" placeholder="PIN / ZIP *">
             <input type="text" name="website" id="coHoney" class="hidden" tabindex="-1" autocomplete="off" aria-hidden="true">
             <p id="coErr" class="text-[11px] hidden" style="color:#DC2626;"></p>
@@ -2407,8 +2406,6 @@ if (addr.length < 10) return err('Please enter your complete address.');
 if (!/^[A-Za-z .]{2,40}$/.test(city)) return err('Please enter a valid city.');
 if (!state) return err('Please enter your state / province.');
 if (!/^[A-Za-z0-9 -]{4,10}$/.test(pin)) return err('Please enter a valid PIN / ZIP.');
-const email = $('#coEmail').value.trim();
-if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return err('Please enter a valid email.');
 lock = true;
 const btn = $('#placeOrder'); btn.disabled = true;
 setTimeout(() => { lock = false; btn.disabled = false; }, 4000);
@@ -2427,31 +2424,6 @@ const orders = store.get('orders', []);
 orders.push(order);
 store.set('orders', orders);
 store.set('user', { name, phone });
-const emailPayload = {
-  id: order.id,
-  timestamp: order.timestamp,
-  customer: order.customer,
-  items: order.items.map(l => {
-    const p = prodById(l.id);
-    return {
-      name: p ? p.name : 'Product',
-      qty: l.qty,
-      price: p ? p.price : 0,
-      colorChoice: l.colorChoice || '',
-      custom: l.custom || null
-    };
-  }),
-  totals: order.totals,
-  payment: { method: 'cod' }
-};
-
-fetch(`${API_BASE}/api/send-bill`, {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ order: emailPayload })
-}).then(r => r.json()).then(d => {
-  if (d && d.success) toast('Bill sent to email', 'check');
-}).catch(() => {});
 
 cart = []; store.set('cart', []);
 renderCart();
@@ -2510,8 +2482,6 @@ function validateCheckoutForm(){
   if (!/^[A-Za-z .]{2,40}$/.test(city)) return err('Please enter a valid city.');
   if (!state) return err('Please enter your state / province.');
   if (!/^[A-Za-z0-9 -]{4,10}$/.test(pin)) return err('Please enter a valid PIN / ZIP.');
-  const email = $('#coEmail').value.trim();
-if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return err('Please enter a valid email.');
   return true;
 }
 
@@ -2523,7 +2493,6 @@ function readCustomer(){
     city: $('#coCity').value.trim(),
     state: $('#coState').value.trim(),
     pin: $('#coPin').value.trim(),
-    email: $('#coEmail').value.trim(),
     country,
   };
 }
@@ -2634,32 +2603,6 @@ async function handleOnlinePayment(){
   renderCart();
   closeModal('cartDrawer', true);
   toast('Payment successful — Order ' + order.id, 'check');
-
-  const emailPayload = {
-    id: order.id,
-    timestamp: order.timestamp,
-    customer: order.customer,
-    items: order.items.map(l => {
-      const p = prodById(l.id);
-      return {
-        name: p ? p.name : 'Product',
-        qty: l.qty,
-        price: p ? p.price : 0,
-        colorChoice: l.colorChoice || '',
-        custom: l.custom || null
-      };
-    }),
-    totals: order.totals,
-    payment: order.payment
-  };
-
-  fetch(`${API_BASE}/api/send-bill`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ order: emailPayload })
-  }).then(r => r.json()).then(d => {
-    if (d && d.success) toast('Bill sent to email', 'check');
-  }).catch(() => {});
 
   setTimeout(() => openHistory(), 800);
 } else {
