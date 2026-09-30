@@ -2905,6 +2905,26 @@ order.updatedAt = Date.now();
 store.set('orders', orders);
 renderHistory();
 toast('Order Cancelled Successfully','cross');
+// Notify admin via WhatsApp
+try {
+  const items = order.items.map((l,i) => {
+    const p = prodById(l.id);
+    return (i+1) + '. ' + (p ? p.name : 'Item') + ' × ' + l.qty;
+  }).join('\n');
+
+  const msg = '🚨 *ORDER CANCELLED*\n\n' +
+    'Order ID: *' + order.id + '*\n' +
+    'Customer: ' + order.customer.name + '\n' +
+    'Phone: ' + order.customer.phone + '\n' +
+    'City: ' + order.customer.city + ', ' + order.customer.state + '\n' +
+    'Total: ' + fmt(order.totals.total) + '\n' +
+    'Payment: ' + (order.payment && order.payment.method === 'online' ? 'PAID ONLINE' : 'COD') + '\n\n' +
+    'Items:\n' + items + '\n\n' +
+    '⚠️ Please do NOT ship this order.';
+
+  const encoded = encodeURIComponent(msg);
+  window.open('https://wa.me/' + WA + '?text=' + encoded, '_blank');
+} catch(e){}
 } else {
 toast('Cannot cancel after 24 hours','warn');
 }
