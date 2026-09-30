@@ -2905,25 +2905,24 @@ order.updatedAt = Date.now();
 store.set('orders', orders);
 renderHistory();
 toast('Order Cancelled Successfully','cross');
-// Notify admin via WhatsApp
+// 📧 Notify admin via email
 try {
-  const items = order.items.map((l,i) => {
-    const p = prodById(l.id);
-    return (i+1) + '. ' + (p ? p.name : 'Item') + ' × ' + l.qty;
-  }).join('\n');
-
-  const msg = '🚨 *ORDER CANCELLED*\n\n' +
-    'Order ID: *' + order.id + '*\n' +
-    'Customer: ' + order.customer.name + '\n' +
-    'Phone: ' + order.customer.phone + '\n' +
-    'City: ' + order.customer.city + ', ' + order.customer.state + '\n' +
-    'Total: ' + fmt(order.totals.total) + '\n' +
-    'Payment: ' + (order.payment && order.payment.method === 'online' ? 'PAID ONLINE' : 'COD') + '\n\n' +
-    'Items:\n' + items + '\n\n' +
-    '⚠️ Please do NOT ship this order.';
-
-  const encoded = encodeURIComponent(msg);
-  window.open('https://wa.me/' + WA + '?text=' + encoded, '_blank');
+  fetch(`${API_BASE}/api/cancel-notify`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      order: {
+        id: order.id,
+        customer: order.customer,
+        items: order.items.map(l => {
+          const p = prodById(l.id);
+          return { name: p ? p.name : 'Product', qty: l.qty, price: p ? p.price : 0 };
+        }),
+        totals: order.totals,
+        payment: order.payment
+      }
+    })
+  }).catch(() => {});
 } catch(e){}
 } else {
 toast('Cannot cancel after 24 hours','warn');
