@@ -2889,6 +2889,7 @@ return '<div class="flex gap-3 items-center"><div class="w-12 h-14 overflow-hidd
 }).join('') + '</div>' +
 '<div class="flex justify-between items-center pt-3 border-t hairline flex-wrap gap-2"><b class="disp text-sm">Total: ' + fmt(o.totals.total) + '</b>' +
 '<div class="flex gap-2">' +
+'<button class="chip border hairline text-[10px]" style="color:var(--text);" data-download-invoice="' + o.id + '">Download Invoice</button>' +
 (canCancel ? '<button class="chip border hairline text-[10px]" style="color:#DC2626;" data-cancel-order="' + o.id + '">Cancel</button>' : '') +
 '</div></div>' +
 (o.otp && st.text !== 'Cancelled' ? '<p class="text-[10px] font-medium text-center py-2 tracking-wide2 uppercase" style="background:var(--bg2); color:var(--text);">Delivery OTP: ' + o.otp + '</p>' : '') +
@@ -3001,7 +3002,7 @@ else if (hash === '#search') { openModal('searchOverlay'); }
 }
 window.addEventListener('popstate', handleRoute);
 document.addEventListener('click', e => {
-const t = e.target.closest('[data-open-product],[data-add],[data-wish],[data-close],[data-slide-go],[data-catpage],[data-angle],[data-psize],[data-pq],[data-pm-add],[data-pm-buy],[data-pm-wa],[data-cq],[data-cr],[data-bnav],[data-share],[data-sizeopen],[data-cancel-order],[data-track-wa],[data-openhistory],[data-membership]');
+const t = e.target.closest('[data-open-product],[data-add],[data-wish],[data-close],[data-slide-go],[data-catpage],[data-angle],[data-psize],[data-pq],[data-pm-add],[data-pm-buy],[data-pm-wa],[data-cq],[data-cr],[data-bnav],[data-share],[data-sizeopen],[data-cancel-order],[data-download-invoice],[data-track-wa],[data-openhistory],[data-membership]');
 if (!t){ const sd = $('#searchDrop'); if (sd) sd.classList.add('hidden'); return; }
 if (t.hasAttribute('data-close')){ closeModal(t.getAttribute('data-close')); return; }
 if (t.hasAttribute('data-openhistory')){ closeAll(true); openHistory(); return; }
@@ -3045,6 +3046,16 @@ if (t.hasAttribute('data-pm-add')){ const p = prodById(pm.id); if (!p) return; a
 if (t.hasAttribute('data-pm-buy')){ const p = prodById(pm.id); if (!p) return; addToCart(p.id, p.colors[pm.color][0], p.sizes[pm.size], pm.qty, readExtras(p)); closeAll(true); try{ history.pushState({ modal:'cartDrawer' }, '', '#cart'); handleRoute(); }catch(e){} return; }
 if (t.hasAttribute('data-cq')){ const l = cart.find(x => x.key === t.getAttribute('data-cq')); if (!l) return; l.qty = Math.min(9, Math.max(1, l.qty + (+t.getAttribute('data-d')))); store.set('cart', cart); renderCart(); return; }
 if (t.hasAttribute('data-cr')){ cart = cart.filter(x => x.key !== t.getAttribute('data-cr')); store.set('cart', cart); renderCart(); return; }
+if (t.hasAttribute('data-download-invoice')){
+    const id = t.getAttribute('data-download-invoice');
+    const orders = store.get('orders', []);
+    const order = orders.find(o => o.id === id);
+    if (order) {
+        showInvoice(order);
+        setTimeout(() => window.print(), 600);
+    }
+    return;
+}
 if (t.hasAttribute('data-cancel-order')){ cancelOrder(t.getAttribute('data-cancel-order')); return; }
 });
 /* ---- Wire top-level handlers ---- */
