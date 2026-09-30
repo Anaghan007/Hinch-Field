@@ -46,15 +46,6 @@ export default async function handler(req, res) {
 
     '<table width="620" cellpadding="0" cellspacing="0" border="0" style="max-width:620px;width:100%;background-color:#FFFFFF;color:#0A0A0A;">' +
 
-      // Logo - Centered
-      '<tr><td style="padding:44px 40px 28px;text-align:center;background-color:#FFFFFF;">' +
-        '<div style="font-family:Arial,sans-serif;font-size:26px;font-weight:800;letter-spacing:6px;color:#0A0A0A;line-height:1;">HINCHFIELD</div>' +
-        '<div style="font-family:Arial,sans-serif;font-size:10px;letter-spacing:6px;color:#7C7C7C;margin-top:8px;">— WEAR YOUR STORY —</div>' +
-      '</td></tr>' +
-
-      // Top Border
-      '<tr><td style="padding:0 40px;background-color:#FFFFFF;"><div style="border-top:2px solid #0A0A0A;"></div></td></tr>' +
-
       // Order Info
       '<tr><td style="padding:28px 40px 0;background-color:#FFFFFF;">' +
         '<table width="100%" cellpadding="0" cellspacing="0" border="0">' +
