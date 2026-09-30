@@ -1531,22 +1531,6 @@ set(k,v){
 }
 };
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
-function goWA(text){
-  try{
-    const encoded = encodeURIComponent(text);
-    // Use wa.me HTTPS — opens WhatsApp directly without "Continue?" popup
-    window.location.href = 'https://wa.me/' + WA + '?text=' + encoded;
-  }catch(e){}
-}
-
-function openWA(phone, text){
-  try{
-    const clean = String(phone).replace(/[^0-9]/g, '');
-    const num = clean.length === 10 ? '91' + clean : clean;
-    const encoded = encodeURIComponent(text);
-    window.location.href = 'https://wa.me/' + num + '?text=' + encoded;
-  }catch(e){}
-}
 function shade(hex,p){
 try{
 const n = parseInt(String(hex||'#0A0A0A').slice(1),16) || 0;
@@ -2283,15 +2267,13 @@ Customise this T-Shirt (own text / design)
 <p class="text-sm leading-relaxed mt-4" style="color:var(--mut);">${esc(p.desc)}</p>
 <div class="hidden md:grid grid-cols-2 gap-3 mt-6">
 <button class="pill btn-line py-3.5" data-pm-add>Add to Cart</button>
-<button class="pill btn-gold py-3.5" data-pm-buy>Buy Now — COD</button>
+<button class="pill btn-gold py-3.5" data-pm-buy>Buy Now</button>
 </div>
-<button class="hidden md:flex pill btn-line w-full mt-3 py-3" data-pm-wa>Ask on WhatsApp</button>
 </div>
 </div>
 <div class="md:hidden sticky bottom-0 border-t hairline p-3 flex gap-2 glassbar w-full">
 <button class="pill btn-line flex-1 py-3.5" data-pm-add>Add</button>
 <button class="pill btn-gold flex-1 py-3.5" data-pm-buy>Buy</button>
-<button class="pill btn-line w-12 py-3.5" data-pm-wa>${ic('chat','w-4 h-4')}</button>
 </div>`;
 const on = $('#pmCustomOn');
 if (on){ on.addEventListener('change', () => { pm.customOn = on.checked; $('#pmCustomBox').classList.toggle('hidden', !on.checked); }); }
@@ -2347,124 +2329,6 @@ else if (cp.special === 'under699') title = 'Under ₹699';
 else if (cp.cat && CATMETA[cp.cat]) title = CATMETA[cp.cat].name;
 $('#catPageTitle').textContent = title + ' (' + items.length + ')';
 $('#catPageGrid').innerHTML = items.map((p,i) => card(p,'a-up',(i%8)*50)).join('') || '<p class="col-span-full text-center py-20" style="color:var(--mut);">No products found.</p>';
-}
-/* ---- Bill ---- */
-function buildBill(info,t,oid,otp){
-const now = new Date();
-const c = curCode();
-const L = [];
-L.push('*HINCHFIELD*');
-L.push('Order Bill');
-L.push('─────────────────────');
-L.push('');
-L.push('ORDER META');
-L.push('• Order ID .....: *' + oid + '*');
-L.push('• Delivery OTP .: *' + otp + '*');
-L.push('• Date .........: ' + now.toLocaleDateString('en-IN'));
-L.push('• Time .........: ' + now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}));
-L.push('• Currency .....: ' + c + ' (' + (COUNTRY_NAME[info.country] || info.country) + ')');
-L.push('');
-L.push('ITEMS');
-cart.forEach((l,i) => {
-const p = prodById(l.id);
-if (!p) return;
-L.push('#' + (i+1) + ' ' + p.name);
-L.push('   • Category ..: ' + CATMETA[p.cat].name);
-if (l.colorChoice) L.push('   • Colour ....: *' + l.colorChoice + '*');
-L.push('   • Size ......: ' + l.size);
-L.push('   • Qty .......: ' + l.qty);
-L.push('   • Unit Price : ' + fmt(p.price));
-L.push('   • Line Total : ' + fmt(p.price * l.qty));
-if (l.custom){
-L.push('   • CUSTOMISATION: YES');
-L.push('     - Position: ' + l.custom.pos);
-L.push('     - Note : "' + (l.custom.note || '(none)') + '"');
-}
-L.push('');
-});
-L.push('TOTALS');
-L.push('• Subtotal .....: ' + fmt(t.sub));
-L.push('• Delivery .....: ' + (t.del ? fmt(t.del) : 'FREE'));
-L.push('• *GRAND TOTAL : ' + fmt(t.total) + '*');
-L.push('• Payment ......: *Cash on Delivery*');
-L.push('');
-L.push('CUSTOMER');
-L.push('• Name ....: ' + info.name);
-L.push('• Mobile ..: ' + info.phone);
-L.push('• Country .: ' + (COUNTRY_NAME[info.country] || info.country));
-L.push('• State ...: ' + info.state);
-L.push('• City ....: ' + info.city);
-L.push('• Address .: ' + info.addr);
-L.push('• PIN/ZIP .: ' + info.pin);
-L.push('');
-L.push('POLICY');
-L.push('• No Return / No Exchange.');
-L.push('• India: COD at doorstep. Worldwide: confirmed on WhatsApp.');
-L.push('');
-function buildBill(info,t,oid,otp){
-const now = new Date();
-const items = cart.map((l,i) => {
-  const p = prodById(l.id);
-  if (!p) return '';
-  let line = (i+1) + '. *' + p.name + '*\n';
-  line += '   • Qty: ' + l.qty + ' × ' + fmt(p.price) + '\n';
-  if (l.colorChoice) line += '   • Colour: ' + l.colorChoice + '\n';
-  if (l.custom) line += '   • Custom (' + l.custom.pos + '): ' + (l.custom.note || '') + '\n';
-  line += '   • Total: *' + fmt(p.price * l.qty) + '*';
-  return line;
-}).filter(Boolean).join('\n\n');
-
-const delivery = t.del ? fmt(t.del) : 'FREE';
-
-const text =
-  '━━━━━━━━━━━━━━━━━━━━\n' +
-  '   ⭐ *HINCHFIELD* ⭐\n' +
-  '   Wear Your Story\n' +
-  '━━━━━━━━━━━━━━━━━━━━\n\n' +
-
-  '📦 *ORDER PLACED (COD)*\n\n' +
-
-  '*▬▬ ORDER DETAILS ▬▬*\n' +
-  '🧾 Order ID    : *' + oid + '*\n' +
-  '🔐 Delivery OTP: *' + otp + '*\n' +
-  '📅 Date        : ' + now.toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }) + '\n' +
-  '⏰ Time        : ' + now.toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit' }) + '\n' +
-  '💳 Payment     : *Cash on Delivery*\n\n' +
-
-  '*▬▬ ITEMS ORDERED ▬▬*\n' +
-  items + '\n\n' +
-
-  '*▬▬ PRICE DETAILS ▬▬*\n' +
-  'Subtotal          : ' + fmt(t.sub) + '\n' +
-  (t.discount ? '⭐ Member Discount : −' + fmt(t.discount) + '\n' : '') +
-  'Delivery          : ' + delivery + '\n' +
-  '────────────────────\n' +
-  '💰 *TOTAL (COD) : ' + fmt(t.total) + '*\n\n' +
-
-  '*▬▬ DELIVERY ADDRESS ▬▬*\n' +
-  '👤 ' + info.name + '\n' +
-  '📞 ' + info.phone + '\n' +
-  '📍 ' + info.addr + '\n' +
-  '🏙️ ' + info.city + ', ' + info.state + '\n' +
-  '📮 PIN: ' + info.pin + '\n\n' +
-
-  '*▬▬ DELIVERY TIME ▬▬*\n' +
-  '🚚 Expected in *4-5 business days*\n' +
-  '💵 Keep *' + fmt(t.total) + '* ready at delivery\n' +
-  '🔐 Share OTP *' + otp + '* only after checking\n\n' +
-
-  '*▬▬ SUPPORT ▬▬*\n' +
-  '💬 WhatsApp: 7434053550\n' +
-  '📧 support.hinchfield@gmail.com\n\n' +
-
-  '━━━━━━━━━━━━━━━━━━━━\n' +
-  'Thank you for shopping with us! 🛍️\n' +
-  '*HINCHFIELD* — Premium T-Shirts\n' +
-  '🌐 hinchfield.store\n' +
-  '━━━━━━━━━━━━━━━━━━━━';
-
-return { text };
-}
 }
 /* ---- Order tracking ---- */
 const STAGES = [
@@ -2558,11 +2422,11 @@ const orders = store.get('orders', []);
 orders.push(order);
 store.set('orders', orders);
 store.set('user', { name, phone });
-const bill = buildBill({ name, phone, addr, country, city, state, pin }, t, oid, otp);
 cart = []; store.set('cart', []);
 renderCart();
 closeModal('cartDrawer', true);
-goWA(bill.text);
+toast('Order placed — ' + oid, 'check');
+setTimeout(() => openHistory(), 800);
 }
 
 /* ============================================================
@@ -2736,68 +2600,6 @@ async function handleOnlinePayment(){
   renderCart();
   closeModal('cartDrawer', true);
   toast('Payment successful — Order ' + order.id, 'check');
-
-  // Build WhatsApp bill
-  const items = order.items.map((l,i) => {
-  const p = prodById(l.id);
-  if (!p) return '';
-  let line = (i+1) + '. *' + p.name + '*\n';
-  line += '   • Qty: ' + l.qty + ' × ' + fmt(p.price) + '\n';
-  if (l.colorChoice) line += '   • Colour: ' + l.colorChoice + '\n';
-  if (l.custom) line += '   • Custom (' + l.custom.pos + '): ' + (l.custom.note || '') + '\n';
-  line += '   • Total: *' + fmt(p.price * l.qty) + '*';
-  return line;
-}).filter(Boolean).join('\n\n');
-
-const delivery = order.totals.del ? fmt(order.totals.del) : 'FREE';
-
-const msg =
-  '━━━━━━━━━━━━━━━━━━━━\n' +
-  '   ⭐ *HINCHFIELD* ⭐\n' +
-  '   Wear Your Story\n' +
-  '━━━━━━━━━━━━━━━━━━━━\n\n' +
-
-  '📦 *ORDER CONFIRMED*\n\n' +
-
-  '*▬▬ ORDER DETAILS ▬▬*\n' +
-  '🧾 Order ID    : *' + order.id + '*\n' +
-  '📅 Date        : ' + new Date(order.timestamp).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }) + '\n' +
-  '⏰ Time        : ' + new Date(order.timestamp).toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit' }) + '\n' +
-  '💳 Payment     : ✅ *PAID ONLINE*\n' +
-  '🆔 Payment ID  : ' + response.razorpay_payment_id + '\n\n' +
-
-  '*▬▬ ITEMS ORDERED ▬▬*\n' +
-  items + '\n\n' +
-
-  '*▬▬ PRICE DETAILS ▬▬*\n' +
-  'Subtotal          : ' + fmt(order.totals.sub) + '\n' +
-  (order.totals.discount ? '⭐ Member Discount : −' + fmt(order.totals.discount) + '\n' : '') +
-  'Delivery          : ' + delivery + '\n' +
-  '────────────────────\n' +
-  '💰 *TOTAL PAID  : ' + fmt(order.totals.total) + '*\n\n' +
-
-  '*▬▬ DELIVERY ADDRESS ▬▬*\n' +
-  '👤 ' + customer.name + '\n' +
-  '📞 ' + customer.phone + '\n' +
-  '📍 ' + customer.addr + '\n' +
-  '🏙️ ' + customer.city + ', ' + customer.state + '\n' +
-  '📮 PIN: ' + customer.pin + '\n\n' +
-
-  '*▬▬ DELIVERY TIME ▬▬*\n' +
-  '🚚 Expected in *4-5 business days*\n' +
-  '📱 You will receive tracking details soon.\n\n' +
-
-  '*▬▬ SUPPORT ▬▬*\n' +
-  '💬 WhatsApp: 7434053550\n' +
-  '📧 support.hinchfield@gmail.com\n\n' +
-
-  '━━━━━━━━━━━━━━━━━━━━\n' +
-  'Thank you for shopping with us! 🛍️\n' +
-  '*HINCHFIELD* — Premium T-Shirts\n' +
-  '🌐 hinchfield.store\n' +
-  '━━━━━━━━━━━━━━━━━━━━';
-
-setTimeout(() => { goWA(msg); }, 800);
 } else {
             toast('Payment verification failed. Contact support.', 'cross');
           }
@@ -2865,7 +2667,6 @@ return '<div class="flex gap-3 items-center"><div class="w-12 h-14 overflow-hidd
 }).join('') + '</div>' +
 '<div class="flex justify-between items-center pt-3 border-t hairline flex-wrap gap-2"><b class="disp text-sm">Total: ' + fmt(o.totals.total) + '</b>' +
 '<div class="flex gap-2">' +
-(st.text !== 'Cancelled' && st.text !== 'Delivered' ? '<button class="chip border hairline text-[10px]" data-track-wa="' + o.id + '">Track on WA</button>' : '') +
 (canCancel ? '<button class="chip border hairline text-[10px]" style="color:#DC2626;" data-cancel-order="' + o.id + '">Cancel</button>' : '') +
 '</div></div>' +
 (o.otp && st.text !== 'Cancelled' ? '<p class="text-[10px] font-medium text-center py-2 tracking-wide2 uppercase" style="background:var(--bg2); color:var(--text);">Delivery OTP: ' + o.otp + '</p>' : '') +
@@ -2884,19 +2685,6 @@ order.updatedAt = Date.now();
 store.set('orders', orders);
 renderHistory();
 toast('Order Cancelled Successfully','cross');
-const cancelMsg = [
-'ORDER CANCELLED','','─────────────',
-'• Order ID : *' + order.id + '*',
-'• Customer : ' + order.customer.name,
-'• Phone    : ' + order.customer.phone,
-'• City     : ' + order.customer.city + ', ' + order.customer.state,
-'• Total    : ' + fmt(order.totals.total),'',
-'• Items:',
-...order.items.map((l,i) => { const p = prodById(l.id); return '  ' + (i+1) + '. ' + (p ? p.name : 'Item') + ' × ' + l.qty; }),
-'','• Cancelled At: ' + new Date().toLocaleString('en-IN'),
-'─────────────','','This Order Is Cancelled By Customer','Please Do NOT Ship This Order.'
-].join('\n');
-goWA(cancelMsg);
 } else {
 toast('Cannot cancel after 24 hours','warn');
 }
@@ -3020,7 +2808,6 @@ const p = prodById(pm.id);
 if (!p) return;
 const txt = p.name + ' — ' + fmt(p.price) + ' on HinchField';
 if (navigator.share){ navigator.share({ title:'HinchField', text:txt, url:location.href }).catch(()=>{}); }
-else goWA(txt);
 return;
 }
 if (t.hasAttribute('data-angle')){
@@ -3034,11 +2821,9 @@ if (t.hasAttribute('data-psize')){ pm.size = +t.getAttribute('data-psize'); $$('
 if (t.hasAttribute('data-pq')){ pm.qty = Math.min(9, Math.max(1, pm.qty + (+t.getAttribute('data-pq')))); const q = $('#pmQty'); if (q) q.textContent = pm.qty; return; }
 if (t.hasAttribute('data-pm-add')){ const p = prodById(pm.id); if (!p) return; addToCart(p.id, p.colors[pm.color][0], p.sizes[pm.size], pm.qty, readExtras(p)); closeAll(true); try{ history.pushState({ modal:'cartDrawer' }, '', '#cart'); handleRoute(); }catch(e){} return; }
 if (t.hasAttribute('data-pm-buy')){ const p = prodById(pm.id); if (!p) return; addToCart(p.id, p.colors[pm.color][0], p.sizes[pm.size], pm.qty, readExtras(p)); closeAll(true); try{ history.pushState({ modal:'cartDrawer' }, '', '#cart'); handleRoute(); }catch(e){} return; }
-if (t.hasAttribute('data-pm-wa')){ const p = prodById(pm.id); if (!p) return; goWA('Hi HinchField! Question about:\n*' + p.name + '*\nPrice: ' + fmt(p.price)); return; }
 if (t.hasAttribute('data-cq')){ const l = cart.find(x => x.key === t.getAttribute('data-cq')); if (!l) return; l.qty = Math.min(9, Math.max(1, l.qty + (+t.getAttribute('data-d')))); store.set('cart', cart); renderCart(); return; }
 if (t.hasAttribute('data-cr')){ cart = cart.filter(x => x.key !== t.getAttribute('data-cr')); store.set('cart', cart); renderCart(); return; }
 if (t.hasAttribute('data-cancel-order')){ cancelOrder(t.getAttribute('data-cancel-order')); return; }
-if (t.hasAttribute('data-track-wa')){ goWA('Hi HinchField! Please update me on my order:\n*' + t.getAttribute('data-track-wa') + '*'); return; }
 });
 /* ---- Wire top-level handlers ---- */
 function wire(){
