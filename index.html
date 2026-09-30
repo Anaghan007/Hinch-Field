@@ -2895,16 +2895,47 @@ return '<div class="flex gap-3 items-center"><div class="w-12 h-14 overflow-hidd
 }).join('');
 }
 function cancelOrder(orderId){
-const orders = store.get('orders', []);
-const idx = orders.findIndex(o => o.id === orderId);
-if (idx === -1) return;
-if (Date.now() - orders[idx].timestamp < 24*60*60*1000){
-const order = orders[idx];
-order.status = 'Cancelled';
-order.updatedAt = Date.now();
-store.set('orders', orders);
-renderHistory();
-toast('Order Cancelled Successfully','cross');
+  const orders = store.get('orders', []);
+  const idx = orders.findIndex(o => o.id === orderId);
+  if (idx === -1) return;
+
+  const order = orders[idx];
+
+  // 24 hours check
+  if (Date.now() - order.timestamp > 24*60*60*1000){
+    toast('Cannot cancel after 24 hours','warn');
+    return;
+  }
+
+  // Confirm
+  if (!confirm('Cancel order ' + order.id + '?')) return;
+
+  // Update status
+  order.status = 'Cancelled';
+  order.updatedAt = Date.now();
+  store.set('orders', orders);
+  renderHistory();
+  toast('Order Cancelled','cross');
+
+  // 📧 Send cancel email to admin
+  const notifyPayload = {
+    id: order.id,
+    customer: order.customer,
+    items: order.items.map(l => {
+      const p = prodById(l.id);
+      return { name: p ? p.name : 'Product', qty: l.qty, price: p ? p.price : 0 };
+    }),
+    totals: order.totals,
+    payment: order.payment
+  };
+
+  fetch(`${API_BASE}/api/cancel-notify`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ order: notifyPayload })
+  }).then(r => r.json()).then(d => {
+    if (d && d.success) toast('Admin notified','check');
+  }).catch(() => {});
 } else {
 toast('Cannot cancel after 24 hours','warn');
 }
