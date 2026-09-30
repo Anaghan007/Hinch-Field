@@ -1534,11 +1534,8 @@ const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 function goWA(text){
   try{
     const encoded = encodeURIComponent(text);
-    const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
-    const url = isMobile
-      ? 'whatsapp://send?phone=' + WA + '&text=' + encoded
-      : 'https://wa.me/' + WA + '?text=' + encoded;
-    window.location.href = url;
+    // Use wa.me HTTPS — opens WhatsApp directly without "Continue?" popup
+    window.location.href = 'https://wa.me/' + WA + '?text=' + encoded;
   }catch(e){}
 }
 
@@ -1547,11 +1544,7 @@ function openWA(phone, text){
     const clean = String(phone).replace(/[^0-9]/g, '');
     const num = clean.length === 10 ? '91' + clean : clean;
     const encoded = encodeURIComponent(text);
-    const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
-    const url = isMobile
-      ? 'whatsapp://send?phone=' + num + '&text=' + encoded
-      : 'https://wa.me/' + num + '?text=' + encoded;
-    window.location.href = url;
+    window.location.href = 'https://wa.me/' + num + '?text=' + encoded;
   }catch(e){}
 }
 function shade(hex,p){
