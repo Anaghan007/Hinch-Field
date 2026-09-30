@@ -795,6 +795,38 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       }
     }
 
+    /* Invoice Print */
+    @media print {
+      body * {
+        visibility: hidden !important;
+      }
+
+      #invoiceModal,
+      #invoiceModal * {
+        visibility: visible !important;
+      }
+
+      #invoiceModal {
+        position: absolute !important;
+        inset: 0 !important;
+        background: #fff !important;
+      }
+
+      .invoice-buttons {
+        display: none !important;
+      }
+
+      .invoice-wrap {
+        box-shadow: none !important;
+        margin: 0 !important;
+        max-width: 100% !important;
+      }
+
+      @page {
+        margin: 12mm;
+      }
+    }
+
     @media(prefers-reduced-motion:reduce) {
 
       *,
@@ -1485,6 +1517,87 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
         <button id="memBuyBtn" class="pill btn-gold w-full py-4">Pay ₹599 — Get Membership</button>
         <p class="text-[10px] text-center mt-3" style="color:var(--mut);">Secure payment · Code sent on WhatsApp</p>
       </div>
+    </div>
+  </div>
+
+  <!-- ═══ INVOICE MODAL ═══ -->
+  <div id="invoiceModal" class="fixed inset-0 z-[90] hidden overflow-y-auto w-full" style="background:var(--bg);">
+    <div class="invoice-wrap max-w-3xl mx-auto my-4 md:my-8"
+      style="background:#fff;color:#0A0A0A;padding:32px 24px;box-shadow:0 10px 40px rgba(0,0,0,.08);">
+
+      <div style="text-align:center;padding-bottom:20px;border-bottom:2px solid #0A0A0A;">
+        <h1 style="margin:0;font-family:Georgia,serif;font-size:32px;letter-spacing:8px;font-weight:500;">HINCHFIELD
+        </h1>
+        <p style="margin:8px 0 0;font-size:10px;letter-spacing:3px;color:#7C7C7C;text-transform:uppercase;">Wear Your
+          Story</p>
+      </div>
+
+      <div
+        style="display:flex;justify-content:space-between;align-items:flex-start;margin:24px 0;flex-wrap:wrap;gap:12px;">
+        <div>
+          <p style="margin:0;font-size:11px;letter-spacing:2px;color:#7C7C7C;text-transform:uppercase;">Invoice</p>
+          <p id="invId" style="margin:6px 0 0;font-size:22px;font-weight:600;letter-spacing:1px;"></p>
+        </div>
+        <div style="text-align:right;">
+          <p style="margin:0;font-size:11px;letter-spacing:2px;color:#7C7C7C;text-transform:uppercase;">Date</p>
+          <p id="invDate" style="margin:6px 0 0;font-size:13px;font-weight:500;"></p>
+          <p id="invPayBadge"
+            style="margin:8px 0 0;font-size:10px;letter-spacing:1.5px;padding:5px 10px;display:inline-block;background:#0A0A0A;color:#fff;">
+          </p>
+        </div>
+      </div>
+
+      <div id="invPayIdBox"
+        style="background:#f5f4f2;padding:10px 14px;margin-bottom:24px;font-size:11px;display:none;">
+        <span style="color:#7C7C7C;">Payment ID: </span><b id="invPayId"></b>
+      </div>
+
+      <table style="width:100%;border-collapse:collapse;margin-bottom:24px;">
+        <thead>
+          <tr style="background:#0A0A0A;color:#fff;">
+            <th style="padding:12px 10px;text-align:left;font-size:11px;letter-spacing:1.5px;font-weight:500;">ITEM</th>
+            <th style="padding:12px 10px;text-align:center;font-size:11px;letter-spacing:1.5px;font-weight:500;">QTY
+            </th>
+            <th style="padding:12px 10px;text-align:right;font-size:11px;letter-spacing:1.5px;font-weight:500;">PRICE
+            </th>
+            <th style="padding:12px 10px;text-align:right;font-size:11px;letter-spacing:1.5px;font-weight:500;">TOTAL
+            </th>
+          </tr>
+        </thead>
+        <tbody id="invItems"></tbody>
+      </table>
+
+      <table style="width:100%;margin-left:auto;max-width:340px;margin-bottom:24px;">
+        <tbody id="invTotals"></tbody>
+      </table>
+
+      <div style="border-top:1px solid #E6E4E0;padding-top:20px;margin-top:8px;">
+        <p style="margin:0 0 10px;font-size:11px;letter-spacing:2px;color:#7C7C7C;text-transform:uppercase;">Delivery
+          Address</p>
+        <p id="invAddress" style="margin:0;font-size:13px;line-height:1.8;"></p>
+      </div>
+
+      <div
+        style="background:#0A0A0A;color:#fff;padding:16px;margin-top:24px;text-align:center;font-size:12px;letter-spacing:1.5px;">
+        🚚 Expected Delivery: 4-5 Business Days
+      </div>
+
+      <div style="text-align:center;padding:24px 0 8px;font-size:12px;color:#7C7C7C;line-height:1.7;">
+        <b style="color:#0A0A0A;">HINCHFIELD</b><br>
+      WhatsApp: 7434053550 · support.hinchfield@gmail.com<br>
+      hinchfield.store
+      </div>
+
+      <div
+        style="border-top:1px solid #E6E4E0;padding-top:14px;margin-top:8px;text-align:center;font-size:10px;letter-spacing:1.5px;color:#7C7C7C;text-transform:uppercase;">
+        No Return / No Exchange · Thank you for shopping
+      </div>
+    </div>
+
+    <div class="invoice-buttons"
+      style="position:sticky;bottom:0;background:#fff;border-top:1px solid #E6E4E0;padding:14px 16px;display:flex;gap:10px;max-width:768px;margin:0 auto;">
+      <button onclick="window.print()" class="pill btn-gold" style="flex:1;padding:14px;">Download PDF</button>
+      <button onclick="closeModal('invoiceModal'); if(typeof openHistory==='function') openHistory();" class="pill btn-line" style="flex:1;padding:14px;">Close</button>
     </div>
   </div>
 
@@ -2429,7 +2542,7 @@ cart = []; store.set('cart', []);
 renderCart();
 closeModal('cartDrawer', true);
 toast('Order placed — ' + oid, 'check');
-setTimeout(() => openHistory(), 800);
+setTimeout(() => showInvoice(order), 400);
 }
 
 /* ============================================================
@@ -2602,9 +2715,8 @@ async function handleOnlinePayment(){
   cart = []; store.set('cart', []);
   renderCart();
   closeModal('cartDrawer', true);
-  toast('Payment successful — Order ' + order.id, 'check');
-
-  setTimeout(() => openHistory(), 800);
+  toast('Payment successful — ' + order.id, 'check');
+  setTimeout(() => showInvoice(order), 400);
 } else {
             toast('Payment verification failed. Contact support.', 'cross');
           }
@@ -3066,6 +3178,52 @@ if($('#memberRemove'))$('#memberRemove').onclick=()=>{
   renderCart();
   toast('Membership removed','check');
 };
+
+// ═══ INVOICE SYSTEM ═══
+function showInvoice(order){
+  const t = order.totals;
+  const c = order.customer;
+
+  $('#invId').textContent = order.id;
+  $('#invDate').textContent = new Date(order.timestamp).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
+
+  const isOnline = order.payment && order.payment.method === 'online';
+  $('#invPayBadge').textContent = isOnline ? 'PAID ONLINE' : 'CASH ON DELIVERY';
+  $('#invPayBadge').style.background = isOnline ? '#0A0A0A' : '#f5f4f2';
+  $('#invPayBadge').style.color = isOnline ? '#fff' : '#0A0A0A';
+  $('#invPayBadge').style.border = isOnline ? 'none' : '1px solid #E6E4E0';
+
+  if (isOnline && order.payment.razorpay_payment_id){
+    $('#invPayIdBox').style.display = 'block';
+    $('#invPayId').textContent = order.payment.razorpay_payment_id;
+  } else {
+    $('#invPayIdBox').style.display = 'none';
+  }
+
+  $('#invItems').innerHTML = order.items.map((l, i) => {
+    const p = prodById(l.id);
+    const name = p ? p.name : 'Product';
+    const price = p ? p.price : 0;
+    const extras = (l.colorChoice ? '<br><span style="font-size:11px;color:#7C7C7C;">Colour: ' + l.colorChoice + '</span>' : '')
+                 + (l.custom ? '<br><span style="font-size:11px;color:#7C7C7C;">Custom (' + l.custom.pos + '): ' + (l.custom.note || '') + '</span>' : '');
+    return '<tr>' +
+      '<td style="padding:14px 10px;border-bottom:1px solid #E6E4E0;font-size:13px;"><b>' + (i+1) + '. ' + name + '</b>' + extras + '</td>' +
+      '<td style="padding:14px 10px;border-bottom:1px solid #E6E4E0;text-align:center;font-size:13px;">' + l.qty + '</td>' +
+      '<td style="padding:14px 10px;border-bottom:1px solid #E6E4E0;text-align:right;font-size:13px;">₹' + price.toLocaleString('en-IN') + '</td>' +
+      '<td style="padding:14px 10px;border-bottom:1px solid #E6E4E0;text-align:right;font-size:13px;font-weight:600;">₹' + (price * l.qty).toLocaleString('en-IN') + '</td>' +
+    '</tr>';
+  }).join('');
+
+  let totalsHtml = '<tr><td style="padding:8px 10px;text-align:right;font-size:13px;color:#7C7C7C;">Subtotal</td><td style="padding:8px 10px;text-align:right;font-size:13px;width:120px;">₹' + t.sub.toLocaleString('en-IN') + '</td></tr>';
+  if (t.discount) totalsHtml += '<tr><td style="padding:8px 10px;text-align:right;font-size:13px;">⭐ Member Discount (50%)</td><td style="padding:8px 10px;text-align:right;font-size:13px;">−₹' + t.discount.toLocaleString('en-IN') + '</td></tr>';
+  totalsHtml += '<tr><td style="padding:8px 10px;text-align:right;font-size:13px;color:#7C7C7C;">Delivery</td><td style="padding:8px 10px;text-align:right;font-size:13px;">' + (t.del ? '₹' + t.del.toLocaleString('en-IN') : 'FREE') + '</td></tr>';
+  totalsHtml += '<tr style="border-top:2px solid #0A0A0A;"><td style="padding:14px 10px;text-align:right;font-size:13px;letter-spacing:1.5px;">TOTAL ' + (isOnline ? 'PAID' : 'COD') + '</td><td style="padding:14px 10px;text-align:right;font-size:22px;font-weight:700;">₹' + t.total.toLocaleString('en-IN') + '</td></tr>';
+  $('#invTotals').innerHTML = totalsHtml;
+
+  $('#invAddress').innerHTML = '<b>' + c.name + '</b><br>' + c.phone + '<br>' + c.addr + '<br>' + c.city + ', ' + c.state + ' — ' + c.pin;
+
+  openModal('invoiceModal');
+}
   
 $('#delVerify').onclick = () => {
 const id = $('#delOrderId').value.trim().toUpperCase();
