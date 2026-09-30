@@ -797,33 +797,91 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
 
     /* Invoice Print */
     @media print {
-      body * {
-        visibility: hidden !important;
+
+      /* બધા એલિમેન્ટ્સ છુપાવો */
+      body>*:not(#invoiceModal) {
+        display: none !important;
       }
 
-      #invoiceModal,
-      #invoiceModal * {
-        visibility: visible !important;
-      }
-
+      /* ઇન્વોઇસ મોડલને નોર્મલ document flow માં લાવો */
       #invoiceModal {
-        position: absolute !important;
-        inset: 0 !important;
+        position: static !important;
+        inset: auto !important;
+        height: auto !important;
+        width: 100% !important;
+        overflow: visible !important;
         background: #fff !important;
+        z-index: 1 !important;
+        display: block !important;
       }
 
+      /* પ્રિન્ટ બટન્સ છુપાવો */
       .invoice-buttons {
         display: none !important;
       }
 
+      /* ઇન્વોઇસ રેપરને પેજ પર ફિટ કરો */
       .invoice-wrap {
         box-shadow: none !important;
         margin: 0 !important;
+        padding: 20px !important;
         max-width: 100% !important;
+        page-break-inside: avoid !important;
       }
 
+      /* ટેબલ હેડરનો બ્લેક બેકગ્રાઉન્ડ પ્રિન્ટ કરો */
+      .invoice-wrap table thead tr {
+        background: #0A0A0A !important;
+        color: #fff !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+      }
+
+      .invoice-wrap table thead th {
+        background: #0A0A0A !important;
+        color: #fff !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+      }
+
+      /* બધા બેકગ્રાઉન્ડ કલર્સ ફોર્સ કરો */
+      .invoice-wrap * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+      }
+
+      /* ડિલિવરી બેનરનો બ્લેક બેકગ્રાઉન્ડ */
+      .invoice-wrap div[style*="background:#0A0A0A"],
+      .invoice-wrap div[style*="background: #0A0A0A"] {
+        background: #0A0A0A !important;
+        color: #fff !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      /* CASH ON DELIVERY બેજ */
+      .invoice-wrap p[style*="background:#f5f4f2"],
+      .invoice-wrap p[style*="background: #f5f4f2"] {
+        background: #f5f4f2 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      /* ટેબલ રોને વચ્ચેથી તૂટતા અટકાવો */
+      .invoice-wrap table,
+      .invoice-wrap tr,
+      .invoice-wrap td,
+      .invoice-wrap th {
+        page-break-inside: avoid !important;
+      }
+
+      /* પેજ માર્જિન */
       @page {
-        margin: 12mm;
+        margin: 10mm;
+        size: A4 portrait;
       }
     }
 
