@@ -102,14 +102,47 @@ export default async function handler(req, res) {
         '</table>' +
       '</div>' +
 
-      // Customer Section
-      '<div style="padding:32px 40px 0;border-top:1px solid #E6E4E0;margin-top:24px;">' +
-        '<div style="font-size:10px;letter-spacing:3px;color:#7C7C7C;text-transform:uppercase;margin-bottom:14px;">Customer Details</div>' +
-        '<div style="font-size:14px;color:#0A0A0A;line-height:1.8;">' +
-          '<b style="font-weight:600;">' + c.name + '</b><br>' +
-          '<span style="color:#7C7C7C;">' + c.phone + '</span><br>' +
-          c.addr + '<br>' +
-          c.city + ', ' + c.state + ' — ' + c.pin +
+            // Customer Section - Card Style
+      '<div style="padding:32px 40px 0;">' +
+        '<div style="border:1px solid #E6E4E0;padding:24px 28px;background:#FAFAF9;">' +
+          '<div style="text-align:center;padding-bottom:18px;border-bottom:1px solid #E6E4E0;margin-bottom:20px;">' +
+            '<div style="font-size:10px;letter-spacing:4px;color:#7C7C7C;text-transform:uppercase;">Delivery Details</div>' +
+          '</div>' +
+
+          '<table style="width:100%;font-size:13px;">' +
+            '<tr>' +
+              '<td style="padding:8px 0;vertical-align:top;width:100px;">' +
+                '<div style="font-size:9px;letter-spacing:2px;color:#7C7C7C;text-transform:uppercase;">Name</div>' +
+              '</td>' +
+              '<td style="padding:8px 0;vertical-align:top;">' +
+                '<div style="font-size:14px;font-weight:600;color:#0A0A0A;letter-spacing:0.3px;">' + c.name + '</div>' +
+              '</td>' +
+            '</tr>' +
+            '<tr>' +
+              '<td style="padding:8px 0;vertical-align:top;">' +
+                '<div style="font-size:9px;letter-spacing:2px;color:#7C7C7C;text-transform:uppercase;">Phone</div>' +
+              '</td>' +
+              '<td style="padding:8px 0;vertical-align:top;">' +
+                '<div style="font-size:14px;color:#0A0A0A;font-weight:500;">' + c.phone + '</div>' +
+              '</td>' +
+            '</tr>' +
+            '<tr>' +
+              '<td style="padding:8px 0;vertical-align:top;">' +
+                '<div style="font-size:9px;letter-spacing:2px;color:#7C7C7C;text-transform:uppercase;">Address</div>' +
+              '</td>' +
+              '<td style="padding:8px 0;vertical-align:top;">' +
+                '<div style="font-size:13px;color:#0A0A0A;line-height:1.7;">' + c.addr + '</div>' +
+              '</td>' +
+            '</tr>' +
+            '<tr>' +
+              '<td style="padding:8px 0;vertical-align:top;">' +
+                '<div style="font-size:9px;letter-spacing:2px;color:#7C7C7C;text-transform:uppercase;">City</div>' +
+              '</td>' +
+              '<td style="padding:8px 0;vertical-align:top;">' +
+                '<div style="font-size:13px;color:#0A0A0A;">' + c.city + ', ' + c.state + ' <span style="color:#7C7C7C;">— ' + c.pin + '</span></div>' +
+              '</td>' +
+            '</tr>' +
+          '</table>' +
         '</div>' +
       '</div>' +
 
