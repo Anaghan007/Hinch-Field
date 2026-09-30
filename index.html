@@ -2905,6 +2905,10 @@ order.updatedAt = Date.now();
 store.set('orders', orders);
 renderHistory();
 toast('Order Cancelled Successfully','cross');
+} else {
+toast('Cannot cancel after 24 hours','warn');
+}
+}
 /* ---- Admin ---- */
 let adminAuth = false;
 function openAdmin(skipRoute){
