@@ -35,7 +35,7 @@ export default async function handler(req, res) {
 
       // ─── Logo ───
       '<div style="text-align:center;padding-bottom:24px;border-bottom:2px solid #0A0A0A;">' +
-  '<img src="https://hinchfield.store/images/logo.png" alt="HINCHFIELD" style="height:56px;width:auto;display:block;margin:0 auto;" />' +
+  '<img src="https://hinchfield.store/images/logo2.png" alt="HINCHFIELD" style="height:56px;width:auto;display:block;margin:0 auto;" />' +
 '</div>' +
 
       // ─── Cancelled Notice Bar ───
