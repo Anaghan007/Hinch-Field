@@ -13,6 +13,7 @@ export default async function handler(req, res) {
 
     const c = order.customer;
     const t = order.totals;
+    const isOnline = order.payment && order.payment.method === 'online';
 
     const itemsHtml = order.items.map((l, i) => {
       return '<tr>' +
@@ -21,11 +22,6 @@ export default async function handler(req, res) {
         '<td style="padding:8px;border-bottom:1px solid #eee;text-align:right;font-size:13px;">₹' + (l.price * l.qty).toLocaleString('en-IN') + '</td>' +
       '</tr>';
     }).join('');
-
-    const isOnline = order.payment && order.payment.method === 'online';
-    const action = isOnline
-      ? 'Refund ₹' + (t ? t.total : 0) + ' via Razorpay Dashboard'
-      : 'Do NOT ship this order';
 
     const html =
     '<div style="font-family:Arial;padding:20px;background:#fff;max-width:600px;">' +
@@ -48,7 +44,7 @@ export default async function handler(req, res) {
         '<h3 style="font-size:12px;letter-spacing:1.5px;color:#666;text-transform:uppercase;margin-top:20px;">Items</h3>' +
         '<table style="width:100%;border-collapse:collapse;">' + itemsHtml + '</table>' +
         '<div style="margin-top:24px;padding:14px;background:#FEF2F2;border-left:4px solid #DC2626;">' +
-          '<p style="margin:0;font-size:13px;color:#DC2626;"><b>Action:</b> ' + action + '</p>' +
+          '<p style="margin:0;font-size:13px;color:#DC2626;"><b>Action:</b> ' + (isOnline ? 'Refund ₹' + (t ? t.total : 0) + ' via Razorpay Dashboard' : 'Do NOT ship this order') + '</p>' +
         '</div>' +
       '</div>' +
     '</div>';
