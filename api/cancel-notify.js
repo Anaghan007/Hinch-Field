@@ -95,18 +95,11 @@ export default async function handler(req, res) {
         <tr><td style="padding:40px 36px 36px;">
 
           <!-- ─── LOGO (emblem + wordmark, left aligned like invoice) ─── -->
-          <table role="presentation" cellpadding="0" cellspacing="0">
-            <tr>
-              <td style="vertical-align:middle;">
-                <img src="${LOGO_URL}" alt="Hinchfield" width="52" height="52" style="display:block;border:0;outline:none;">
-              </td>
-              <td style="padding-left:14px;vertical-align:middle;">
-                <div style="font-size:26px;font-weight:800;letter-spacing:3px;color:#0A0A0A;line-height:1;">HINCHFIELD</div>
-                <div style="font-size:9px;letter-spacing:4px;color:#0A0A0A;text-transform:uppercase;margin-top:7px;">—&nbsp;&nbsp;Wear Your Story&nbsp;&nbsp;—</div>
-              </td>
-            </tr>
-          </table>
-          <div style="border-top:2px solid #0A0A0A;margin-top:22px;"></div>
+          <!-- ─── LOGO (text only, centred) ─── -->
+<div style="text-align:center;padding-bottom:24px;border-bottom:2px solid #0A0A0A;">
+  <div style="font-size:30px;font-weight:800;letter-spacing:6px;color:#0A0A0A;line-height:1;margin-right:-6px;">HINCHFIELD</div>
+  <div style="font-size:9px;letter-spacing:4px;color:#0A0A0A;text-transform:uppercase;margin-top:10px;margin-right:-4px;">—&nbsp;&nbsp;Wear Your Story&nbsp;&nbsp;—</div>
+</div>
 
           <!-- ─── META ROW: ref left / date + badges right ─── -->
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:26px;">
