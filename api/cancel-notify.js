@@ -34,14 +34,8 @@ export default async function handler(req, res) {
     '<div style="max-width:640px;margin:0 auto;background:#FFFFFF;padding:32px 28px;">' +
 
       // ─── Logo ───
-      '<div style="text-align:center;padding:24px;border-bottom:2px solid #0A0A0A;background-color:#FFFFFF !important;">' +
-  '<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 auto;background-color:#FFFFFF !important;">' +
-    '<tr>' +
-      '<td style="background-color:#FFFFFF !important;padding:8px 20px;text-align:center;">' +
-        '<img src="https://hinchfield.store/images/logo.png" alt="HINCHFIELD" width="200" style="display:block;height:auto;max-width:200px;width:200px;background-color:#FFFFFF;" />' +
-      '</td>' +
-    '</tr>' +
-  '</table>' +
+      '<div style="text-align:center;padding-bottom:24px;border-bottom:2px solid #0A0A0A;">' +
+  '<img src="https://hinchfield.store/images/logo.png" alt="HINCHFIELD" style="height:56px;width:auto;display:block;margin:0 auto;" />' +
 '</div>' +
 
       // ─── Cancelled Notice Bar ───
