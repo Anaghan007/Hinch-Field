@@ -2542,7 +2542,7 @@ cart = []; store.set('cart', []);
 renderCart();
 closeModal('cartDrawer', true);
 toast('Order placed — ' + oid, 'check');
-setTimeout(() => showInvoice(order), 400);
+setTimeout(() => { try { showInvoice(order); } catch(e){ console.error('Invoice error:', e); alert('Invoice error: ' + e.message); } }, 400);
 }
 
 /* ============================================================
@@ -2716,7 +2716,7 @@ async function handleOnlinePayment(){
   renderCart();
   closeModal('cartDrawer', true);
   toast('Payment successful — ' + order.id, 'check');
-  setTimeout(() => showInvoice(order), 400);
+  setTimeout(() => { try { showInvoice(order); } catch(e){ console.error('Invoice error:', e); alert('Invoice error: ' + e.message); } }, 400);
 } else {
             toast('Payment verification failed. Contact support.', 'cross');
           }
