@@ -122,27 +122,64 @@ export default async function handler(req, res) {
         '</table>' +
       '</td></tr>' +
 
-            // Customer - Items Table Style
+      // Customer - Option 9 Receipt Style
       '<tr><td class="bg-card" style="padding:28px 40px 0;">' +
         '<table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">' +
-          // Black header
-          '<thead><tr class="bg-dark">' +
-            '<th class="bg-dark text-white" style="padding:12px 20px;text-align:left;font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:600;">Delivery Details</th>' +
-          '</tr></thead>' +
-          // Body
-          '<tbody>' +
-            '<tr>' +
-              '<td class="bg-card" style="padding:24px 20px 8px;">' +
-                '<div class="text-main" style="font-size:15px;font-weight:600;letter-spacing:0.3px;">' + c.name + '</div>' +
-                '<div style="margin-top:8px;">' +
-                  '<span class="text-main" style="font-size:14px;font-weight:500;">' + c.phone + '</span>' +
-                '</div>' +
-                '<div style="margin:16px 0;border-top:1px solid #E6E4E0;"></div>' +
-                '<div class="text-main" style="font-size:14px;line-height:1.7;">' + c.addr + '</div>' +
-                '<div class="text-main" style="font-size:14px;line-height:1.7;margin-top:2px;">' + c.city + ', ' + c.state + ' <span class="text-muted">— ' + c.pin + '</span></div>' +
-              '</td>' +
-            '</tr>' +
-          '</tbody>' +
+
+          // Top double border
+          '<tr><td class="bg-card" style="padding:0;">' +
+            '<div style="border-top:2px solid #0A0A0A;"></div>' +
+            '<div style="border-top:1px solid #0A0A0A;margin-top:2px;"></div>' +
+          '</td></tr>' +
+
+          // Header
+          '<tr><td class="bg-card text-main" style="padding:14px 4px;font-size:11px;letter-spacing:4px;text-transform:uppercase;font-weight:700;">' +
+            'Delivery'
+          '</td></tr>' +
+
+          // Divider
+          '<tr><td class="bg-card" style="padding:0 4px;">' +
+            '<div style="border-top:1px solid #0A0A0A;"></div>' +
+          '</td></tr>' +
+
+          // Content rows
+          '<tr><td class="bg-card" style="padding:16px 4px 0;">' +
+            '<table width="100%" cellpadding="0" cellspacing="0" border="0" style="font-size:13px;font-family:Arial,Helvetica,sans-serif;">' +
+
+              '<tr>' +
+                '<td class="text-muted" style="padding:6px 0;vertical-align:top;width:90px;font-size:10px;letter-spacing:2px;text-transform:uppercase;">Name</td>' +
+                '<td class="text-main" style="padding:6px 0;vertical-align:top;font-weight:600;font-size:14px;">' + c.name + '</td>' +
+              '</tr>' +
+
+              '<tr>' +
+                '<td class="text-muted" style="padding:6px 0;vertical-align:top;font-size:10px;letter-spacing:2px;text-transform:uppercase;">Phone</td>' +
+                '<td class="text-main" style="padding:6px 0;vertical-align:top;font-weight:500;">' + c.phone + '</td>' +
+              '</tr>' +
+
+              '<tr>' +
+                '<td class="text-muted" style="padding:6px 0;vertical-align:top;font-size:10px;letter-spacing:2px;text-transform:uppercase;">Addr</td>' +
+                '<td class="text-main" style="padding:6px 0;vertical-align:top;line-height:1.6;">' + c.addr + '</td>' +
+              '</tr>' +
+
+              '<tr>' +
+                '<td class="text-muted" style="padding:6px 0;vertical-align:top;font-size:10px;letter-spacing:2px;text-transform:uppercase;">City</td>' +
+                '<td class="text-main" style="padding:6px 0;vertical-align:top;">' + c.city + ', ' + c.state + '</td>' +
+              '</tr>' +
+
+              '<tr>' +
+                '<td class="text-muted" style="padding:6px 0;vertical-align:top;font-size:10px;letter-spacing:2px;text-transform:uppercase;">Pin</td>' +
+                '<td class="text-main" style="padding:6px 0;vertical-align:top;font-weight:500;">' + c.pin + '</td>' +
+              '</tr>' +
+
+            '</table>' +
+          '</td></tr>' +
+
+          // Bottom double border
+          '<tr><td class="bg-card" style="padding:16px 0 0;">' +
+            '<div style="border-top:1px solid #0A0A0A;"></div>' +
+            '<div style="border-top:2px solid #0A0A0A;margin-top:2px;"></div>' +
+          '</td></tr>' +
+
         '</table>' +
       '</td></tr>' +
 
