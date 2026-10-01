@@ -3230,7 +3230,7 @@ if (t.hasAttribute('data-cancel-order')){ askCancelOrder(t.getAttribute('data-ca
 });
 /* ---- Wire top-level handlers ---- */
 function wire(){
-$('#cartOpen').onclick = () => { closeAll(true); renderCart(); try{ history.pushState({ modal:'cartDrawer' }, '', ); }catch(e){} handleRoute(); };
+$('#cartOpen').onclick = () => { closeAll(true); renderCart(); try{ history.pushState({ modal:'cartDrawer' }, '', '#cart'); }catch(e){} handleRoute(); };
 $('#wishOpen').onclick = () => { closeAll(true); renderWish(); try{ history.pushState({ modal:'wishDrawer' }, '', '#wishlist'); }catch(e){} handleRoute(); };
 $('#menuOpen').onclick = () => { openModal('mobileMenu'); try{ history.pushState({ modal: 'mobileMenu' }, '', '#menu'); }catch(e){} };
 $('#mSearchOpen').onclick = () => { openModal('searchOverlay'); try{ history.pushState({ modal: 'searchOverlay' }, '', '#search'); }catch(e){} };
