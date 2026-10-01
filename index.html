@@ -1559,7 +1559,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
           <p class="micro mb-2">HINCHFIELD</p>
           <h3 class="disp editorial-h font-luxe text-2xl mb-2">Yearly Membership</h3>
           <div class="flex items-baseline justify-center gap-3 my-4">
-            <b class="disp text-3xl" id="memPrice" style="font-weight:500;">₹599</b>
+            <b class="disp text-3xl" id="memPrice" style="font-weight:500;">₹1</b>
             <s class="text-sm" id="memMrp" style="color:var(--mut);">₹1,199</s>
             <span class="chip" style="background:var(--text); color:var(--bg);">50%</span>
           </div>
@@ -1574,7 +1574,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
         <input id="memBuyName" maxlength="60" class="field mb-3" placeholder="Full Name *">
         <input id="memBuyPhone" inputmode="numeric" maxlength="15" class="field mb-3" placeholder="Number *">
         <p id="memBuyErr" class="text-[11px] hidden mb-3" style="color:#DC2626;"></p>
-        <button id="memBuyBtn" class="pill btn-gold w-full py-4">Pay ₹599 — Get Membership</button>
+        <button id="memBuyBtn" class="pill btn-gold w-full py-4">Pay ₹1 — Get Membership</button>
         <p class="text-[10px] text-center mt-3" style="color:var(--mut);">Secure payment</p>
       </div>
     </div>
@@ -3383,7 +3383,7 @@ if ($('#memBuyBtn')) $('#memBuyBtn').onclick = async () => {
 
     const options = {
       key: RAZORPAY_KEY_ID, amount: d.amount, currency: d.currency,
-      name: 'HinchField Membership', description: 'Yearly Membership — ₹599',
+      name: 'HinchField Membership', description: 'Yearly Membership — ₹1',
       image: 'images/logo.png', order_id: d.order_id,
       prefill: { name, contact: phone }, theme: { color: '#0A0A0A' },
       handler: async function(resp){
@@ -3425,7 +3425,7 @@ if ($('#memBuyBtn')) $('#memBuyBtn').onclick = async () => {
     rzp.on('payment.failed', r => toast((r.error && r.error.description) || 'Payment failed', 'cross'));
     rzp.open();
   } catch(e){ console.error(e); err('Something went wrong'); }
-  finally { btn.disabled = false; btn.textContent = 'Pay ' + fmt(599) + ' — Get Membership'; }
+  finally { btn.disabled = false; btn.textContent = 'Pay ' + fmt(1) + ' — Get Membership'; }
 };
 
 function updateMemberUI(){
