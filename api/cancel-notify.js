@@ -122,63 +122,33 @@ export default async function handler(req, res) {
         '</table>' +
       '</td></tr>' +
 
-      // Customer - Option 9 Receipt Style
+      // Customer - Receipt Style (Name + Phone only)
       '<tr><td class="bg-card" style="padding:28px 40px 0;">' +
         '<table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">' +
 
-          // Top double border
-          '<tr><td class="bg-card" style="padding:0;">' +
-            '<div style="border-top:2px solid #0A0A0A;"></div>' +
-            '<div style="border-top:1px solid #0A0A0A;margin-top:2px;"></div>' +
-          '</td></tr>' +
+          // Receipt top border
+          '<tr><td style="border-top:1px solid #E6E4E0;padding:0;"></td></tr>' +
 
           // Header
-          '<tr><td class="bg-card text-main" style="padding:14px 4px;font-size:11px;letter-spacing:4px;text-transform:uppercase;font-weight:700;">' +
-            'Delivery'
+          '<tr><td class="bg-card" style="padding:16px 0 12px;">' +
+            '<div class="text-muted" style="font-size:10px;letter-spacing:4px;text-transform:uppercase;font-weight:600;">Customer</div>' +
           '</td></tr>' +
 
           // Divider
-          '<tr><td class="bg-card" style="padding:0 4px;">' +
-            '<div style="border-top:1px solid #0A0A0A;"></div>' +
+          '<tr><td style="border-top:1px solid #E6E4E0;padding:0;"></td></tr>' +
+
+          // Name - Big Bold
+          '<tr><td class="bg-card" style="padding:20px 0 0;">' +
+            '<div class="text-main" style="font-size:20px;font-weight:700;letter-spacing:0.5px;line-height:1.3;">' + c.name + '</div>' +
           '</td></tr>' +
 
-          // Content rows
-          '<tr><td class="bg-card" style="padding:16px 4px 0;">' +
-            '<table width="100%" cellpadding="0" cellspacing="0" border="0" style="font-size:13px;font-family:Arial,Helvetica,sans-serif;">' +
-
-              '<tr>' +
-                '<td class="text-muted" style="padding:6px 0;vertical-align:top;width:90px;font-size:10px;letter-spacing:2px;text-transform:uppercase;">Name</td>' +
-                '<td class="text-main" style="padding:6px 0;vertical-align:top;font-weight:600;font-size:14px;">' + c.name + '</td>' +
-              '</tr>' +
-
-              '<tr>' +
-                '<td class="text-muted" style="padding:6px 0;vertical-align:top;font-size:10px;letter-spacing:2px;text-transform:uppercase;">Phone</td>' +
-                '<td class="text-main" style="padding:6px 0;vertical-align:top;font-weight:500;">' + c.phone + '</td>' +
-              '</tr>' +
-
-              '<tr>' +
-                '<td class="text-muted" style="padding:6px 0;vertical-align:top;font-size:10px;letter-spacing:2px;text-transform:uppercase;">Addr</td>' +
-                '<td class="text-main" style="padding:6px 0;vertical-align:top;line-height:1.6;">' + c.addr + '</td>' +
-              '</tr>' +
-
-              '<tr>' +
-                '<td class="text-muted" style="padding:6px 0;vertical-align:top;font-size:10px;letter-spacing:2px;text-transform:uppercase;">City</td>' +
-                '<td class="text-main" style="padding:6px 0;vertical-align:top;">' + c.city + ', ' + c.state + '</td>' +
-              '</tr>' +
-
-              '<tr>' +
-                '<td class="text-muted" style="padding:6px 0;vertical-align:top;font-size:10px;letter-spacing:2px;text-transform:uppercase;">Pin</td>' +
-                '<td class="text-main" style="padding:6px 0;vertical-align:top;font-weight:500;">' + c.pin + '</td>' +
-              '</tr>' +
-
-            '</table>' +
+          // Phone - Small Muted
+          '<tr><td class="bg-card" style="padding:6px 0 20px;">' +
+            '<div class="text-muted" style="font-size:12px;letter-spacing:1.5px;font-weight:400;">' + c.phone + '</div>' +
           '</td></tr>' +
 
-          // Bottom double border
-          '<tr><td class="bg-card" style="padding:16px 0 0;">' +
-            '<div style="border-top:1px solid #0A0A0A;"></div>' +
-            '<div style="border-top:2px solid #0A0A0A;margin-top:2px;"></div>' +
-          '</td></tr>' +
+          // Receipt bottom border
+          '<tr><td style="border-top:1px solid #E6E4E0;padding:0;"></td></tr>' +
 
         '</table>' +
       '</td></tr>' +
@@ -193,15 +163,6 @@ export default async function handler(req, res) {
             '</div>' +
           '</td></tr>' +
         '</table>' +
-      '</td></tr>' +
-
-      // Footer
-      '<tr><td class="bg-card" style="padding:32px 40px 24px;text-align:center;">' +
-        '<div class="text-main" style="font-size:11px;font-weight:600;letter-spacing:2px;margin-bottom:10px;">HINCHFIELD</div>' +
-        '<div class="text-muted" style="font-size:11px;line-height:1.8;">' +
-          'WhatsApp: <b class="text-main">7434053550</b> · <a href="mailto:support.hinchfield@gmail.com" class="text-main" style="text-decoration:none;">support.hinchfield@gmail.com</a><br>' +
-          '<a href="https://hinchfield.store" class="text-muted" style="text-decoration:none;">hinchfield.store</a>' +
-        '</div>' +
       '</td></tr>' +
 
     '</table>' +
