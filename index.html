@@ -1355,6 +1355,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
             </div>
             <input id="coName" maxlength="60" class="field" placeholder="Full name *">
             <input id="coPhone" inputmode="numeric" maxlength="15" class="field" placeholder="Mobile / WhatsApp number *">
+            <input id="coEmail" type="email" maxlength="60" class="field" placeholder="Email address * (for order updates)">
             <textarea id="coAddr" maxlength="200" rows="2" class="field" placeholder="Full address *"></textarea>
             <div class="grid grid-cols-2 gap-3">
               <input id="coCity" maxlength="40" class="field" placeholder="City *">
@@ -2632,12 +2633,14 @@ if (country !== 'IN' && (!RATES || Number(RATES[curCode()]) <= 0)) return err('C
 if ($('#coHoney').value) return;
 const name = $('#coName').value.trim();
 const phone = $('#coPhone').value.trim();
+const email = $('#coEmail').value.trim();
 const addr = $('#coAddr').value.trim();
 const city = $('#coCity').value.trim();
 const state = $('#coState').value.trim();
 const pin = $('#coPin').value.trim();
 if (!/^[A-Za-z .]{3,60}$/.test(name)) return err('Please enter a valid full name.');
 if (!/^\d{7,15}$/.test(phone.replace(/[^0-9]/g,''))) return err('Please enter a valid mobile / WhatsApp number.');
+if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return err('Please enter a valid email address.');
 if (addr.length < 10) return err('Please enter your complete address.');
 if (!/^[A-Za-z .]{2,40}$/.test(city)) return err('Please enter a valid city.');
 if (!state) return err('Please enter your state / province.');
@@ -2651,7 +2654,7 @@ const otp = String(Math.floor(1000 + Math.random() * 9000));
 const order = {
   id: oid, otp, timestamp: Date.now(),
   status: 'Order Placed', updatedAt: Date.now(),
-  customer: { name, phone, addr, country, city, state, pin },
+  customer: { name, phone, email, addr, country, city, state, pin },
   items: JSON.parse(JSON.stringify(cart)),
   totals: t, deliveredAt: null,
   payment: { method: 'cod' }
@@ -2709,12 +2712,14 @@ function validateCheckoutForm(){
   if ($('#coHoney').value) return false;
   const name = $('#coName').value.trim();
   const phone = $('#coPhone').value.trim();
+  const email = $('#coEmail').value.trim();
   const addr = $('#coAddr').value.trim();
   const city = $('#coCity').value.trim();
   const state = $('#coState').value.trim();
   const pin = $('#coPin').value.trim();
   if (!/^[A-Za-z .]{3,60}$/.test(name)) return err('Please enter a valid full name.');
   if (!/^\d{7,15}$/.test(phone.replace(/[^0-9]/g,''))) return err('Please enter a valid mobile / WhatsApp number.');
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return err('Please enter a valid email address.');
   if (addr.length < 10) return err('Please enter your complete address.');
   if (!/^[A-Za-z .]{2,40}$/.test(city)) return err('Please enter a valid city.');
   if (!state) return err('Please enter your state / province.');
@@ -2726,6 +2731,7 @@ function readCustomer(){
   return {
     name: $('#coName').value.trim(),
     phone: $('#coPhone').value.trim(),
+    email: $('#coEmail').value.trim(),
     addr: $('#coAddr').value.trim(),
     city: $('#coCity').value.trim(),
     state: $('#coState').value.trim(),
