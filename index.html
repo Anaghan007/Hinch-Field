@@ -3256,6 +3256,7 @@ async function autoLookup(phone){
 }
 
 if ($('#openMembership')) $('#openMembership').onclick = () => openMemberModal();
+if ($('#footAdmin')) $('#footAdmin').onclick = () => { openAdmin(); };
 
 if ($('#memCopy')) $('#memCopy').onclick = () => {
   const code = $('#memActiveCode').textContent.trim();
