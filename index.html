@@ -1656,6 +1656,19 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
     </div>
   </div>
 
+  <!-- CONFIRM MODAL -->
+<div id="confirmModal" class="fixed inset-0 z-[95] hidden flex items-center justify-center px-4 w-full">
+  <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" data-close="confirmModal"></div>
+  <div class="modalcard relative p-6 max-w-sm w-full" style="background:var(--bg); color:var(--text); box-shadow:var(--shadow);">
+    <h3 id="confirmTitle" class="disp editorial-h font-luxe text-xl mb-3">Are you sure?</h3>
+    <p id="confirmMsg" class="text-sm mb-6" style="color:var(--mut); line-height:1.6;">This action cannot be undone.</p>
+    <div class="flex gap-3">
+      <button id="confirmNo" class="pill btn-line flex-1 py-3">No</button>
+      <button id="confirmYes" class="pill btn-gold flex-1 py-3">Yes</button>
+    </div>
+  </div>
+</div>
+  
   <div id="toasts" class="fixed top-20 right-3 md:right-5 z-[99] space-y-3 w-[19rem] max-w-[92vw]"></div>
 
   <a id="waFloat" href="https://wa.me/917434053550?text=Hi%20HinchField!" target="_blank" rel="noopener"
@@ -2867,7 +2880,7 @@ return;
 }
 box.innerHTML = orders.map(o => {
 const st = getOrderStatus(o);
-const canCancel = (Date.now() - o.timestamp < 24*60*60*1000) && st.text !== 'Cancelled' && st.text !== 'Delivered' && (!o.payment || o.payment.method !== 'online');
+const canCancel = (Date.now() - o.timestamp < 24*60*60*1000) && st.text !== 'Cancelled' && st.text !== 'Delivered';
 const date = new Date(o.timestamp).toLocaleString('en-IN');
 const payBadge = o.payment && o.payment.method === 'online'
   ? '<span class="chip" style="background:#0A0A0A; color:#fff;">PAID ONLINE</span>'
@@ -2895,35 +2908,80 @@ return '<div class="flex gap-3 items-center"><div class="w-12 h-14 overflow-hidd
 }).join('');
 }
 function cancelOrder(orderId){
-const orders = store.get('orders', []);
-const idx = orders.findIndex(o => o.id === orderId);
-if (idx === -1) return;
-if (Date.now() - orders[idx].timestamp < 24*60*60*1000){
-const order = orders[idx];
-order.status = 'Cancelled';
-order.updatedAt = Date.now();
-store.set('orders', orders);
-renderHistory();
-toast('Order Cancelled Successfully','cross');
-// 📧 Notify admin via email
-try {
-  fetch(`${API_BASE}/api/cancel-notify`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      order: {
-        id: order.id,
-        customer: order.customer,
-        items: order.items.map(l => {
-          const p = prodById(l.id);
-          return { name: p ? p.name : 'Product', qty: l.qty, price: p ? p.price : 0 };
-        }),
-        totals: order.totals,
-        payment: order.payment
+  const orders = store.get('orders', []);
+  const idx = orders.findIndex(o => o.id === orderId);
+  if (idx === -1) return;
+  const order = orders[idx];
+  if (Date.now() - order.timestamp >= 24*60*60*1000){
+    return toast('Cannot cancel after 24 hours','warn');
+  }
+  const isOnline = order.payment && order.payment.method === 'online';
+  const msg = isOnline
+    ? 'Your paid amount of ₹' + order.totals.total.toLocaleString('en-IN') + ' will be refunded to your original payment method within 5-7 business days.'
+    : 'This order will be cancelled permanently and will not be shipped.';
+  showConfirm('Cancel this order?', msg, () => doCancelOrder(orderId));
+}
+
+async function doCancelOrder(orderId){
+  const orders = store.get('orders', []);
+  const idx = orders.findIndex(o => o.id === orderId);
+  if (idx === -1) return;
+  const order = orders[idx];
+  const isOnline = order.payment && order.payment.method === 'online';
+
+  // 💰 AUTO REFUND for paid orders
+  if (isOnline && order.payment.razorpay_payment_id){
+    try {
+      toast('Processing refund…','gear');
+      const r = await fetch(`${API_BASE}/api/refund`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          payment_id: order.payment.razorpay_payment_id,
+          amount: Math.round(order.totals.total * 100)
+        })
+      });
+      const d = await r.json();
+      if (d.success){
+        order.refund = { id: d.refund_id, amount: d.amount, status: d.status, at: Date.now() };
+        toast('Refund initiated ✓','check');
+      } else {
+        toast('Refund failed: ' + (d.error || 'Try again'),'cross');
+        return;
       }
-    })
-  }).catch(() => {});
-} catch(e){}
+    } catch(e){
+      console.error(e);
+      toast('Refund failed — try again','cross');
+      return;
+    }
+  }
+
+  order.status = 'Cancelled';
+  order.updatedAt = Date.now();
+  store.set('orders', orders);
+  renderHistory();
+  toast('Order Cancelled','cross');
+
+  // 📧 Email admin
+  try {
+    fetch(`${API_BASE}/api/cancel-notify`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        order: {
+          id: order.id,
+          customer: order.customer,
+          items: order.items.map(l => {
+            const p = prodById(l.id);
+            return { name: p ? p.name : 'Product', qty: l.qty, price: p ? p.price : 0 };
+          }),
+          totals: order.totals,
+          payment: order.payment,
+          refund: order.refund || null
+        }
+      })
+    }).catch(() => {});
+  } catch(e){}
 } else {
 toast('Cannot cancel after 24 hours','warn');
 }
@@ -3308,6 +3366,25 @@ if($('#memberRemove'))$('#memberRemove').onclick=()=>{
   updateMemberUI();
   renderCart();
   toast('Membership removed','check');
+};
+
+// ═══ CONFIRMATION MODAL ═══
+let confirmAction = null;
+function showConfirm(title, msg, onYes){
+  $('#confirmTitle').textContent = title;
+  $('#confirmMsg').textContent = msg;
+  confirmAction = onYes;
+  openModal('confirmModal');
+}
+if ($('#confirmYes')) $('#confirmYes').onclick = () => {
+  closeModal('confirmModal');
+  const fn = confirmAction;
+  confirmAction = null;
+  if (fn) fn();
+};
+if ($('#confirmNo')) $('#confirmNo').onclick = () => {
+  closeModal('confirmModal');
+  confirmAction = null;
 };
   
 $('#delVerify').onclick = () => {
