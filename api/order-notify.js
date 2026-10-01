@@ -136,9 +136,6 @@ export default async function handler(req, res) {
           '<tr><td class="bg-card" style="padding:6px 0 6px;">' +
             '<div class="text-muted" style="font-size:12px;letter-spacing:1.5px;font-weight:400;">' + (c.phone || '') + '</div>' +
           '</td></tr>' +
-          '<tr><td class="bg-card" style="padding:0 0 12px;">' +
-            '<div class="text-muted" style="font-size:12px;line-height:1.6;">' + (c.addr || '') + ', ' + (c.city || '') + ', ' + (c.state || '') + ' — ' + (c.pin || '') + '</div>' +
-          '</td></tr>' +
           (order.otp ?
           '<tr><td class="bg-card" style="padding:0 0 20px;">' +
             '<div class="text-muted" style="font-size:11px;letter-spacing:1.5px;">🔐 Delivery OTP: <b class="text-main" style="letter-spacing:3px;">' + order.otp + '</b></div>' +
