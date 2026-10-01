@@ -2893,9 +2893,11 @@ async function handleOnlinePayment(){
 function openHistory(){
   renderHistory();
   openModal('historyModal');
-  if (window.location.hash !== '#orders') {
-    try { history.pushState({ modal: 'historyModal' }, '', '#orders'); } catch(e){}
-  }
+  try {
+    if (window.location.hash === '#orders') return;
+    if (window.location.hash) history.replaceState(null, '', window.location.pathname + window.location.search);
+    history.pushState({ modal: 'historyModal' }, '', '#orders');
+  } catch(e){}
 }
 function renderHistory(){
 let orders = store.get('orders', []).sort((a,b) => b.timestamp - a.timestamp);
