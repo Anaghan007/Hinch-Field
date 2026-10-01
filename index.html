@@ -1674,7 +1674,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
     <div class="invoice-buttons"
       style="position:sticky;bottom:0;background:#fff;border-top:1px solid #E6E4E0;padding:14px 16px;display:flex;gap:10px;max-width:768px;margin:0 auto;">
       <button onclick="window.print()" class="pill btn-gold" style="flex:1;padding:14px;">Download PDF</button>
-      <button onclick="closeModal('invoiceModal'); if(typeof openHistory==='function') openHistory();" class="pill btn-line" style="flex:1;padding:14px;">Close</button>
+      <button onclick="closeModal('invoiceModal', true); if(typeof openHistory==='function') openHistory();" class="pill btn-line" style="flex:1;padding:14px;">Close</button>
     </div>
   </div>
 
@@ -2890,7 +2890,13 @@ async function handleOnlinePayment(){
 }
 
 /* ---- History ---- */
-function openHistory(){ renderHistory(); openModal('historyModal'); history.pushState({ modal: 'historyModal' }, '', '#orders'); }
+function openHistory(){
+  renderHistory();
+  openModal('historyModal');
+  if (window.location.hash !== '#orders') {
+    try { history.pushState({ modal: 'historyModal' }, '', '#orders'); } catch(e){}
+  }
+}
 function renderHistory(){
 let orders = store.get('orders', []).sort((a,b) => b.timestamp - a.timestamp);
 orders = orders.filter(o => {
