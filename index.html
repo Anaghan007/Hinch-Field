@@ -3299,16 +3299,25 @@ async function openMemberModal(skipRoute){
   $('#memBuyErr').classList.add('hidden');
   if (typeof updateMembershipPrices === 'function') updateMembershipPrices();
 
-  // 1. તરત જ Modal ખોલો (ડિફોલ્ટ: Buy screen દેખાશે) → કોઈ ડિલે નહીં!
+  // 1. તરત જ Modal ખોલો (ડિફોલ્ટ: Buy screen દેખાશે)
   openModal('memberModal');
   $('#memViewActive').classList.add('hidden');
   $('#memViewBuy').classList.remove('hidden');
 
+  // 2. History મેનેજમેન્ટ (Mobile Menu fix)
   if (!skipRoute) {
-    try { history.pushState({ modal:'memberModal' }, '', '#membership'); } catch(e){}
+    try { 
+      // જો Mobile Menu (#menu) માંથી આવ્યા હોઈએ, તો history replace કરો (push નહીં)
+      if (window.location.hash === '#menu') {
+        history.replaceState({ modal:'memberModal' }, '', '#membership');
+      } else {
+        // સામાન્ય રીતે ખોલ્યું હોય તો push કરો
+        history.pushState({ modal:'memberModal' }, '', '#membership');
+      }
+    } catch(e){}
   }
 
-  // 2. Background માં Device Check કરો (UI અટકશે નહીં, સ્મૂથ લાગશે)
+  // 3. Background માં Device Check કરો (UI અટકશે નહીં)
   try {
     const deviceId = await getDeviceId();
     const r = await fetch(`${API_BASE}/api/membership-check-device`, {
@@ -3329,7 +3338,7 @@ async function openMemberModal(skipRoute){
     }
   } catch(e){ console.error(e); }
 
-  // 3. જો કોઈ saved membership હોય તો auto lookup
+  // 4. જો કોઈ saved membership હોય તો auto lookup
   const saved = store.get('membership_full', null);
   if (!saved || !saved.code){
     const lastPhone = store.get('last_phone', null);
