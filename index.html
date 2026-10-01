@@ -2978,7 +2978,7 @@ function cancelOrder(orderId){
     pendingCancelId = null;
     renderHistory();
     toast('Order Cancelled Successfully','cross');
-    // 📧 COD + PAID — બંને માટે તારે (admin ને) email જાય
+    // 📧 ફક્ત આ એક જ call — email + refund બધું backend માં થશે
     try {
       fetch(`${API_BASE}/api/cancel-notify`, {
         method: 'POST',
@@ -2992,7 +2992,7 @@ function cancelOrder(orderId){
               return { name: p ? p.name : 'Product', qty: l.qty, price: p ? p.price : 0 };
             }),
             totals: order.totals,
-            payment: order.payment   // 👈 COD છે કે PAID — એ માહિતી email માટે જાય છે
+            payment: order.payment
           }
         })
       }).catch(() => {});
