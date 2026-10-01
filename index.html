@@ -1656,6 +1656,20 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
     </div>
   </div>
 
+  <!-- CANCEL CONFIRM MODAL -->
+<div id="cancelModal" class="fixed inset-0 z-[95] hidden flex items-center justify-center px-4 w-full">
+  <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" data-close="cancelModal"></div>
+  <div class="modalcard relative p-6 md:p-8 max-w-sm w-full text-center" style="background:var(--bg); color:var(--text); box-shadow:var(--shadow);">
+    <div style="width:56px;height:56px;border:2px solid var(--text);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:24px;">⚠</div>
+    <h3 class="disp editorial-h font-luxe text-xl mb-2">Cancel Order?</h3>
+    <p class="text-xs mb-6" style="color:var(--mut);">Do you really want to cancel this order? This action cannot be undone.</p>
+    <div class="flex gap-3">
+      <button id="cancelModalNo" class="pill btn-line flex-1 py-3.5">No, Keep It</button>
+      <button id="cancelModalYes" class="pill btn-gold flex-1 py-3.5">Yes, Cancel</button>
+    </div>
+  </div>
+</div>
+  
   <div id="toasts" class="fixed top-20 right-3 md:right-5 z-[99] space-y-3 w-[19rem] max-w-[92vw]"></div>
 
   <a id="waFloat" href="https://wa.me/917434053550?text=Hi%20HinchField!" target="_blank" rel="noopener"
@@ -2867,7 +2881,7 @@ return;
 }
 box.innerHTML = orders.map(o => {
 const st = getOrderStatus(o);
-const canCancel = (Date.now() - o.timestamp < 24*60*60*1000) && st.text !== 'Cancelled' && st.text !== 'Delivered' && (!o.payment || o.payment.method !== 'online');
+const canCancel = (Date.now() - o.timestamp < 24*60*60*1000) && st.text !== 'Cancelled' && st.text !== 'Delivered';
 const date = new Date(o.timestamp).toLocaleString('en-IN');
 const payBadge = o.payment && o.payment.method === 'online'
   ? '<span class="chip" style="background:#0A0A0A; color:#fff;">PAID ONLINE</span>'
@@ -2895,35 +2909,46 @@ return '<div class="flex gap-3 items-center"><div class="w-12 h-14 overflow-hidd
 }).join('');
 }
 function cancelOrder(orderId){
-const orders = store.get('orders', []);
-const idx = orders.findIndex(o => o.id === orderId);
-if (idx === -1) return;
-if (Date.now() - orders[idx].timestamp < 24*60*60*1000){
-const order = orders[idx];
-order.status = 'Cancelled';
-order.updatedAt = Date.now();
-store.set('orders', orders);
-renderHistory();
-toast('Order Cancelled Successfully','cross');
-// 📧 Notify admin via email
-try {
-  fetch(`${API_BASE}/api/cancel-notify`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      order: {
-        id: order.id,
-        customer: order.customer,
-        items: order.items.map(l => {
-          const p = prodById(l.id);
-          return { name: p ? p.name : 'Product', qty: l.qty, price: p ? p.price : 0 };
-        }),
-        totals: order.totals,
-        payment: order.payment
-      }
-    })
-  }).catch(() => {});
-} catch(e){}
+  const orders = store.get('orders', []);
+  const idx = orders.findIndex(o => o.id === orderId);
+  if (idx === -1) return;
+
+  if (Date.now() - orders[idx].timestamp >= 24*60*60*1000){
+    return toast('Cannot cancel after 24 hours','warn');
+  }
+
+  const order = orders[idx];
+  const wasOnline = order.payment && order.payment.method === 'online';
+  order.status = 'Cancelled';
+  order.updatedAt = Date.now();
+  store.set('orders', orders);
+  renderHistory();
+
+  if (wasOnline){
+    toast('Order Cancelled — Refund will be processed', 'warn');
+  } else {
+    toast('Order Cancelled Successfully', 'cross');
+  }
+
+  // 📧 Email — works for both COD & Online
+  try {
+    fetch(`${API_BASE}/api/cancel-notify`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        order: {
+          id: order.id,
+          customer: order.customer,
+          items: order.items.map(l => {
+            const p = prodById(l.id);
+            return { name: p ? p.name : 'Product', qty: l.qty, price: p ? p.price : 0 };
+          }),
+          totals: order.totals,
+          payment: order.payment || { method: 'cod' }
+        }
+      })
+    }).catch(() => {});
+  } catch(e){}
 } else {
 toast('Cannot cancel after 24 hours','warn');
 }
@@ -2989,7 +3014,7 @@ try { history.back(); } catch(e){}
 }
 }
 function closeAll(skipHistory){
-['cartDrawer','wishDrawer','productModal','sizeModal','trackModal','catPage','mobileMenu','searchOverlay','historyModal','staffModal','memberModal'].forEach(id => {
+['cartDrawer','wishDrawer','productModal','sizeModal','trackModal','catPage','mobileMenu','searchOverlay','historyModal','staffModal','memberModal','cancelModal'].forEach(id => {
 const el = $('#'+id); if (el) el.classList.add('hidden');
 });
 document.body.style.overflow = '';
@@ -3071,7 +3096,23 @@ if (t.hasAttribute('data-download-invoice')){
     }
     return;
 }
-if (t.hasAttribute('data-cancel-order')){ cancelOrder(t.getAttribute('data-cancel-order')); return; }
+if (t.hasAttribute('data-cancel-order')){ 
+  const oid = t.getAttribute('data-cancel-order');
+  const order = store.get('orders', []).find(o => o.id === oid);
+  if (!order) return;
+  
+  // Show confirm popup
+  openModal('cancelModal');
+  const yesBtn = $('#cancelModalYes');
+  const noBtn = $('#cancelModalNo');
+  const newYes = yesBtn.cloneNode(true);
+  const newNo = noBtn.cloneNode(true);
+  yesBtn.replaceWith(newYes);
+  noBtn.replaceWith(newNo);
+  newYes.onclick = () => { closeModal('cancelModal', true); cancelOrder(oid); };
+  newNo.onclick = () => { closeModal('cancelModal', true); };
+  return; 
+}
 });
 /* ---- Wire top-level handlers ---- */
 function wire(){
