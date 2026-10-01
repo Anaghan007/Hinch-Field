@@ -1578,6 +1578,28 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
     </div>
   </div>
 
+  <!-- ═══ CANCEL CONFIRMATION POPUP ═══ -->
+<div id="confirmCancelModal" class="fixed inset-0 z-[96] hidden flex items-center justify-center px-4 w-full">
+  <div id="confirmCancelBackdrop" class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
+  <div class="modalcard relative p-6 md:p-8 max-w-sm w-full" style="background:var(--bg); color:var(--text); box-shadow:var(--shadow);">
+    <div class="text-center mb-6">
+      <span class="w-14 h-14 mx-auto mb-4 flex items-center justify-center" style="background:#FEE2E2; color:#DC2626;">
+        <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </span>
+      <p class="micro mb-2" style="color:var(--mut);">Confirm Cancellation</p>
+      <h3 class="disp editorial-h font-luxe text-xl leading-snug mb-2">Do You Really Want To<br>Cancel Order?</h3>
+      <p class="text-xs" style="color:var(--mut);">Order ID: <b id="cancelOrderIdTxt" style="color:var(--text);"></b></p>
+      <p id="cancelOrderPayTxt" class="text-[10px] font-semibold mt-2 tracking-wide2 uppercase"></p>
+      <p id="cancelPayNote" class="text-[10px] mt-3 p-2.5 border hairline leading-relaxed" style="background:var(--bg2); color:var(--mut);"></p>
+    </div>
+    <div class="grid grid-cols-2 gap-3">
+      <button id="confirmCancelNo" class="pill btn-line py-3.5">No</button>
+      <button id="confirmCancelYes" class="pill py-3.5" style="background:#DC2626;color:#fff;">Yes, Cancel</button>
+    </div>
+    <p class="text-[10px] text-center mt-4" style="color:var(--mut);">This action cannot be undone</p>
+  </div>
+</div>
+  
   <!-- ═══ INVOICE MODAL ═══ -->
   <div id="invoiceModal" class="fixed inset-0 z-[90] hidden overflow-y-auto w-full" style="background:var(--bg);">
     <div class="invoice-wrap max-w-3xl mx-auto my-4 md:my-8"
@@ -2867,7 +2889,7 @@ return;
 }
 box.innerHTML = orders.map(o => {
 const st = getOrderStatus(o);
-const canCancel = (Date.now() - o.timestamp < 24*60*60*1000) && st.text !== 'Cancelled' && st.text !== 'Delivered' && (!o.payment || o.payment.method !== 'online');
+const canCancel = (Date.now() - o.timestamp < 24*60*60*1000) && st.text !== 'Cancelled' && st.text !== 'Delivered';
 const date = new Date(o.timestamp).toLocaleString('en-IN');
 const payBadge = o.payment && o.payment.method === 'online'
   ? '<span class="chip" style="background:#0A0A0A; color:#fff;">PAID ONLINE</span>'
@@ -2894,40 +2916,66 @@ return '<div class="flex gap-3 items-center"><div class="w-12 h-14 overflow-hidd
 '</div>';
 }).join('');
 }
+/* ---- Cancel Order with Confirmation Popup ---- */
+let pendingCancelId = null;
+
+// STEP A — Cancel button દબાવે એટલે POPUP ખુલે (હજી cancel થતું નથી)
+function askCancelOrder(orderId){
+  const orders = store.get('orders', []);
+  const order = orders.find(o => o.id === orderId);
+  if (!order) return;
+  pendingCancelId = orderId;
+  const isOnline = order.payment && order.payment.method === 'online';
+  $('#cancelOrderIdTxt').textContent = orderId;
+  const payTxt = $('#cancelOrderPayTxt');
+  payTxt.textContent = isOnline ? '💳 PAID ONLINE ORDER' : '📦 CASH ON DELIVERY (COD) ORDER';
+  payTxt.style.color = isOnline ? '#0A0A0A' : 'var(--mut)';
+  $('#cancelPayNote').innerHTML = isOnline
+    ? 'This is a <b>PAID</b> order — admin ને cancellation ની <b>email જશે</b>. Refund માટે અમારો સંપર્ક કરવો.'
+    : 'This is a <b>COD</b> order — admin ને cancellation ની <b>email જશે</b>.';
+  openModal('confirmCancelModal');
+}
+
+// STEP B — ફક્ત "Yes" દબાવે ત્યારે જ અહીં આવે
 function cancelOrder(orderId){
-const orders = store.get('orders', []);
-const idx = orders.findIndex(o => o.id === orderId);
-if (idx === -1) return;
-if (Date.now() - orders[idx].timestamp < 24*60*60*1000){
-const order = orders[idx];
-order.status = 'Cancelled';
-order.updatedAt = Date.now();
-store.set('orders', orders);
-renderHistory();
-toast('Order Cancelled Successfully','cross');
-// 📧 Notify admin via email
-try {
-  fetch(`${API_BASE}/api/cancel-notify`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      order: {
-        id: order.id,
-        customer: order.customer,
-        items: order.items.map(l => {
-          const p = prodById(l.id);
-          return { name: p ? p.name : 'Product', qty: l.qty, price: p ? p.price : 0 };
-        }),
-        totals: order.totals,
-        payment: order.payment
-      }
-    })
-  }).catch(() => {});
-} catch(e){}
-} else {
-toast('Cannot cancel after 24 hours','warn');
+  const orders = store.get('orders', []);
+  const idx = orders.findIndex(o => o.id === orderId);
+  if (idx === -1) return;
+  const order = orders[idx];
+  if (Date.now() - order.timestamp < 24*60*60*1000){
+    order.status = 'Cancelled';
+    order.updatedAt = Date.now();
+    store.set('orders', orders);
+    closeModal('confirmCancelModal', true);
+    pendingCancelId = null;
+    renderHistory();
+    toast('Order Cancelled Successfully','cross');
+    // 📧 COD + PAID — બંને માટે તારે (admin ને) email જાય
+    try {
+      fetch(`${API_BASE}/api/cancel-notify`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          order: {
+            id: order.id,
+            customer: order.customer,
+            items: order.items.map(l => {
+              const p = prodById(l.id);
+              return { name: p ? p.name : 'Product', qty: l.qty, price: p ? p.price : 0 };
+            }),
+            totals: order.totals,
+            payment: order.payment   // 👈 COD છે કે PAID — એ માહિતી email માટે જાય છે
+          }
+        })
+      }).catch(() => {});
+    } catch(e){}
+  } else {
+    closeModal('confirmCancelModal', true);
+    pendingCancelId = null;
+    toast('Cannot cancel after 24 hours','warn');
+  }
 }
-}
+    
 /* ---- Admin ---- */
 let adminAuth = false;
 function openAdmin(skipRoute){
@@ -2989,7 +3037,7 @@ try { history.back(); } catch(e){}
 }
 }
 function closeAll(skipHistory){
-['cartDrawer','wishDrawer','productModal','sizeModal','trackModal','catPage','mobileMenu','searchOverlay','historyModal','staffModal','memberModal'].forEach(id => {
+['cartDrawer','wishDrawer','productModal','sizeModal','trackModal','catPage','mobileMenu','searchOverlay','historyModal','staffModal','memberModal','confirmCancelModal'].forEach(id => {
 const el = $('#'+id); if (el) el.classList.add('hidden');
 });
 document.body.style.overflow = '';
@@ -3071,7 +3119,7 @@ if (t.hasAttribute('data-download-invoice')){
     }
     return;
 }
-if (t.hasAttribute('data-cancel-order')){ cancelOrder(t.getAttribute('data-cancel-order')); return; }
+if (t.hasAttribute('data-cancel-order')){ askCancelOrder(t.getAttribute('data-cancel-order')); return; }
 });
 /* ---- Wire top-level handlers ---- */
 function wire(){
@@ -3083,6 +3131,10 @@ $('#trackOpen2').onclick = () => { openModal('trackModal'); try{ history.pushSta
 $('#sizeOpen').onclick = () => { openModal('sizeModal'); try{ history.pushState({ modal: 'sizeModal' }, '', '#size'); }catch(e){} };
 $('#placeOrder').onclick = placeOrder;
 $('#payOnline').onclick = handleOnlinePayment;
+// Cancel confirmation popup — Yes / No / Backdrop
+if ($('#confirmCancelNo')) $('#confirmCancelNo').onclick = () => { pendingCancelId = null; closeModal('confirmCancelModal', true); };
+if ($('#confirmCancelBackdrop')) $('#confirmCancelBackdrop').onclick = () => { pendingCancelId = null; closeModal('confirmCancelModal', true); };
+if ($('#confirmCancelYes')) $('#confirmCancelYes').onclick = () => { if (pendingCancelId) cancelOrder(pendingCancelId); };
 
 // Payment method radio toggles
 document.querySelectorAll('input[name="payMethod"]').forEach(radio => {
