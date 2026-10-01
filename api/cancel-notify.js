@@ -67,15 +67,6 @@ export default async function handler(req, res) {
 
     '<table width="620" cellpadding="0" cellspacing="0" border="0" bgcolor="#FFFFFF" class="force-light" style="max-width:620px;width:100%;background-color:#FFFFFF !important;color:#0A0A0A !important;">' +
 
-      // Logo
-      '<tr><td class="force-light" style="padding:44px 40px 28px;text-align:center;background-color:#FFFFFF !important;">' +
-        '<div style="font-family:Arial,sans-serif;font-size:26px;font-weight:800;letter-spacing:6px;color:#0A0A0A !important;line-height:1;">HINCHFIELD</div>' +
-        '<div class="muted" style="font-family:Arial,sans-serif;font-size:10px;letter-spacing:6px;color:#7C7C7C !important;margin-top:8px;">— WEAR YOUR STORY —</div>' +
-      '</td></tr>' +
-
-      // Top Border
-      '<tr><td class="force-light" style="padding:0 40px;background-color:#FFFFFF !important;"><div style="border-top:2px solid #0A0A0A !important;"></div></td></tr>' +
-
       // Order Info
       '<tr><td class="force-light" style="padding:28px 40px 0;background-color:#FFFFFF !important;">' +
         '<table width="100%" cellpadding="0" cellspacing="0" border="0">' +
@@ -115,21 +106,25 @@ export default async function handler(req, res) {
         '</table>' +
       '</td></tr>' +
 
-      // Totals
-      '<tr><td class="force-light" style="padding:0 40px;background-color:#FFFFFF !important;">' +
-        '<table cellpadding="0" cellspacing="0" border="0" style="margin-left:auto;margin-top:8px;width:320px;">' +
+           // Totals - with nowrap to prevent wrapping
+      '<tr><td class="force-light" style="padding:0 40px 8px;background-color:#FFFFFF !important;">' +
+        '<table cellpadding="0" cellspacing="0" border="0" style="margin-left:auto;margin-top:8px;width:100%;max-width:340px;">' +
           '<tr>' +
-            '<td class="force-light muted" style="padding:8px;text-align:right;font-size:13px;color:#7C7C7C !important;background-color:#FFFFFF !important;">Subtotal</td>' +
-            '<td class="force-light" style="padding:8px;text-align:right;font-size:13px;color:#0A0A0A !important;width:110px;background-color:#FFFFFF !important;">₹' + (t ? t.sub : 0).toLocaleString('en-IN') + '</td>' +
+            '<td class="force-light muted" style="padding:10px 12px;text-align:right;font-size:13px;color:#7C7C7C !important;background-color:#FFFFFF !important;white-space:nowrap;">Subtotal</td>' +
+            '<td class="force-light" style="padding:10px 12px;text-align:right;font-size:14px;color:#0A0A0A !important;font-weight:500;width:130px;background-color:#FFFFFF !important;white-space:nowrap;">₹' + (t ? t.sub : 0).toLocaleString('en-IN') + '</td>' +
           '</tr>' +
-          discountRow +
+          ((t && t.discount) ?
+            '<tr>' +
+              '<td class="force-light" style="padding:10px 12px;text-align:right;font-size:13px;color:#0A0A0A !important;background-color:#FFFFFF !important;white-space:nowrap;">⭐ Member Discount (50%)</td>' +
+              '<td class="force-light" style="padding:10px 12px;text-align:right;font-size:14px;color:#0A0A0A !important;font-weight:500;background-color:#FFFFFF !important;white-space:nowrap;">−₹' + t.discount.toLocaleString('en-IN') + '</td>' +
+            '</tr>' : '') +
           '<tr>' +
-            '<td class="force-light muted" style="padding:8px;text-align:right;font-size:13px;color:#7C7C7C !important;background-color:#FFFFFF !important;">Delivery</td>' +
-            '<td class="force-light" style="padding:8px;text-align:right;font-size:13px;color:#0A0A0A !important;background-color:#FFFFFF !important;">' + (t && t.del ? '₹' + t.del.toLocaleString('en-IN') : 'FREE') + '</td>' +
+            '<td class="force-light muted" style="padding:10px 12px;text-align:right;font-size:13px;color:#7C7C7C !important;background-color:#FFFFFF !important;white-space:nowrap;">Delivery</td>' +
+            '<td class="force-light" style="padding:10px 12px;text-align:right;font-size:14px;color:#0A0A0A !important;font-weight:500;background-color:#FFFFFF !important;white-space:nowrap;">' + (t && t.del ? '₹' + t.del.toLocaleString('en-IN') : 'FREE') + '</td>' +
           '</tr>' +
           '<tr>' +
-            '<td class="force-light" style="padding:16px 8px 8px;text-align:right;font-size:13px;letter-spacing:2px;color:#0A0A0A !important;text-transform:uppercase;font-weight:600;border-top:2px solid #0A0A0A !important;background-color:#FFFFFF !important;">Total ' + (isOnline ? 'Paid' : 'COD') + '</td>' +
-            '<td class="force-light" style="padding:16px 8px 8px;text-align:right;font-size:22px;color:#0A0A0A !important;font-weight:700;border-top:2px solid #0A0A0A !important;background-color:#FFFFFF !important;">₹' + (t ? t.total : 0).toLocaleString('en-IN') + '</td>' +
+            '<td class="force-light" style="padding:16px 12px 8px;text-align:right;font-size:13px;letter-spacing:2px;color:#0A0A0A !important;text-transform:uppercase;font-weight:600;border-top:2px solid #0A0A0A !important;background-color:#FFFFFF !important;white-space:nowrap;">Total ' + (isOnline ? 'Paid' : 'COD') + '</td>' +
+            '<td class="force-light" style="padding:16px 12px 8px;text-align:right;font-size:22px;color:#0A0A0A !important;font-weight:700;border-top:2px solid #0A0A0A !important;background-color:#FFFFFF !important;white-space:nowrap;">₹' + (t ? t.total : 0).toLocaleString('en-IN') + '</td>' +
           '</tr>' +
         '</table>' +
       '</td></tr>' +
