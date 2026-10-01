@@ -336,6 +336,38 @@ export default async function handler(req, res) {
         })
       }).catch(e => console.error('customer cancel email error:', e));
     }
+
+        // ═══════════ 💳 AUTO REFUND (emails પછી તરત) ═══════════
+    try {
+      const pid = order.payment && order.payment.razorpay_payment_id;
+      if (order.payment && order.payment.method === 'online' && pid) {
+        const RZ_KEY = process.env.RAZORPAY_KEY_ID;
+        const RZ_SECRET = process.env.RAZORPAY_KEY_SECRET;
+        if (RZ_KEY && RZ_SECRET) {
+          const auth = 'Basic ' + Buffer.from(RZ_KEY + ':' + RZ_SECRET).toString('base64');
+
+          // 1) Razorpay પર payment ચકાસો
+          const pRes = await fetch('https://api.razorpay.com/v1/payments/' + pid, { headers: { Authorization: auth } });
+          if (pRes.ok) {
+            const pay = await pRes.json();
+            // 2) captured છે અને પહેલેથી refunded નથી → FULL refund
+            if (pay.status === 'captured' && (pay.amount_refunded || 0) < (pay.amount || 0)) {
+              const rRes = await fetch('https://api.razorpay.com/v1/payments/' + pid + '/refund', {
+                method: 'POST',
+                headers: { Authorization: auth, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ amount: pay.amount, notes: { source: 'hinchfield_cancel_auto_refund', order_id: order.id } })
+              });
+              const ref = await rRes.json();
+              console.log('AUTO REFUND ' + order.id + ':', rRes.ok ? ('SUCCESS ' + ref.id) : ('FAILED ' + JSON.stringify(ref)));
+            } else {
+              console.log('AUTO REFUND skipped ' + order.id + ' (status: ' + pay.status + ')');
+            }
+          }
+        }
+      }
+    } catch (e) {
+      console.error('auto-refund error:', e);
+    }
     
     return res.status(200).json({ success: true });
     
