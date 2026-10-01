@@ -34,41 +34,29 @@ export default async function handler(req, res) {
     '<meta name="color-scheme" content="light dark">' +
     '<meta name="supported-color-schemes" content="light dark">' +
     '<style type="text/css">' +
-      // Light (default)
-      'body, .bg-main { background-color: #F5F4F2; }' +
-      '.bg-card { background-color: #FFFFFF; }' +
+      'body, .bg-card { background-color: #FFFFFF; }' +
       '.bg-soft { background-color: #FAFAF9; }' +
       '.bg-dark { background-color: #0A0A0A; }' +
       '.text-main { color: #0A0A0A; }' +
       '.text-muted { color: #7C7C7C; }' +
       '.text-white { color: #FFFFFF; }' +
-      '.border-line { border-color: #E6E4E0; }' +
-      // Dark mode
       '@media (prefers-color-scheme: dark) {' +
-        'body, .bg-main { background-color: #0A0A0A !important; }' +
-        '.bg-card { background-color: #1A1A1A !important; }' +
-        '.bg-soft { background-color: #141414 !important; }' +
+        'body, .bg-card { background-color: #0A0A0A !important; }' +
+        '.bg-soft { background-color: #1A1A1A !important; }' +
         '.bg-dark { background-color: #FFFFFF !important; }' +
         '.text-main { color: #FFFFFF !important; }' +
         '.text-muted { color: #999999 !important; }' +
         '.text-white { color: #0A0A0A !important; }' +
-        '.border-line { border-color: #2A2A2A !important; }' +
-        '.dark-invert { background-color: #FFFFFF !important; color: #0A0A0A !important; }' +
-        'table[bgcolor="#0A0A0A"] { background-color: #FFFFFF !important; }' +
-        'table[bgcolor="#0A0A0A"] * { color: #0A0A0A !important; }' +
-        'table[bgcolor="#FAFAF9"] { background-color: #141414 !important; }' +
-        'table[bgcolor="#FFFFFF"] { background-color: #1A1A1A !important; }' +
       '}' +
-      '[data-ogsc] body, [data-ogsc] .bg-main { background-color: #0A0A0A !important; }' +
-      '[data-ogsc] .bg-card { background-color: #1A1A1A !important; }' +
+      '[data-ogsc] body, [data-ogsc] .bg-card { background-color: #0A0A0A !important; }' +
       '[data-ogsc] .text-main { color: #FFFFFF !important; }' +
       '[data-ogsc] .text-muted { color: #999999 !important; }' +
     '</style>' +
     '</head>' +
-    '<body class="bg-main" style="margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;">' +
+    '<body class="bg-card" style="margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;">' +
 
-    '<table width="100%" cellpadding="0" cellspacing="0" border="0" class="bg-main">' +
-    '<tr><td align="center" style="padding:24px 12px;">' +
+    '<table width="100%" cellpadding="0" cellspacing="0" border="0" class="bg-card">' +
+    '<tr><td align="center" style="padding:0;">' +
 
     '<table width="620" cellpadding="0" cellspacing="0" border="0" class="bg-card" style="max-width:620px;width:100%;">' +
 
@@ -92,7 +80,7 @@ export default async function handler(req, res) {
       // Alert
       '<tr><td class="bg-card" style="padding:24px 40px 0;">' +
         '<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#FEF2F2;border-left:4px solid #DC2626;">' +
-          '<tr><td style="padding:14px 16px;">' +
+          '<tr><td style="padding:14px 16px;background-color:#FEF2F2;">' +
             '<div style="font-size:13px;color:#DC2626;font-weight:600;">⚠ Customer has cancelled this order</div>' +
             '<div style="font-size:12px;color:#DC2626;opacity:0.75;margin-top:4px;">' + (isOnline ? 'Payment was made online — refund required' : 'COD order — do not ship') + '</div>' +
           '</td></tr>' +
