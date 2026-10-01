@@ -1950,10 +1950,10 @@ return '₹' + n.toLocaleString('en-IN');
 }
 /* ---- Membership prices ને currency મુજબ update કરો ---- */
 function updateMembershipPrices(){
-  const mp = $('#memPrice'); if (mp) mp.textContent = fmt(1);
+  const mp = $('#memPrice'); if (mp) mp.textContent = fmt(599);
   const mm = $('#memMrp'); if (mm) mm.textContent = fmt(1199);
   const mb = $('#memBuyBtn');
-  if (mb && !mb.disabled) mb.textContent = 'Pay ' + fmt(1) + ' — Get Membership';
+  if (mb && !mb.disabled) mb.textContent = 'Pay ' + fmt(599) + ' — Get Membership';
 }
 function refreshPrices(){
 safe(renderFeatured, 'refreshPrices.featured');
