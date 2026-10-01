@@ -3296,60 +3296,40 @@ function showMemberView(){
 }
 
 async function openMemberModal(skipRoute){
+  // 1. તરત જ Popup ખોલો (કોઈ રાહ જોયા વગર - 0ms delay)
   $('#memBuyErr').classList.add('hidden');
-  const wasOpen = !$('#memberModal').classList.contains('hidden');
-  if (typeof updateMembershipPrices === 'function') updateMembershipPrices();
-
-  // 🔒 આ device પર membership છે કે નહીં?
-  let deviceMembership = null;
-  try {
-    const deviceId = await getDeviceId();
-    const r = await fetch(`${API_BASE}/api/membership-check-device`, {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ deviceId })
-    });
-    const d = await r.json();
-    if (d.success && d.membership) deviceMembership = d.membership;
-  } catch(e){ console.error(e); }
-
-  if (deviceMembership){
-    store.set('membership_full', deviceMembership);
-    $('#memViewActive').classList.remove('hidden');
-    $('#memViewBuy').classList.add('hidden');
-    $('#memActiveCode').textContent = deviceMembership.code;
-    $('#memActiveName').textContent = deviceMembership.name || '';
-    $('#memActiveExpiry').textContent = 'Valid till: ' + new Date(deviceMembership.expiresAt).toLocaleDateString('en-IN');
-  } else {
-    // બીજા device પર હંમેશા BUY screen જ દેખાશે
-    $('#memViewActive').classList.add('hidden');
-    $('#memViewBuy').classList.remove('hidden');
-  }
-
   openModal('memberModal');
-  if (!skipRoute && !wasOpen) {
-    try { history.pushState({ modal:'memberModal' }, '', '#membership'); } catch(e){}
-  }
-  const saved = store.get('membership_full', null);
-  if (!saved || !saved.code){
-    const lastPhone = store.get('last_phone', null);
-    if (lastPhone) autoLookup(lastPhone);
-  }
-}
+  
+  // 2. પહેલા 'Buy' screen બતાવો (જેથી લેગ ન દેખાય)
+  $('#memViewActive').classList.add('hidden');
+  $('#memViewBuy').classList.remove('hidden');
 
-async function autoLookup(phone){
-  try {
-    const r = await fetch(`${API_BASE}/api/membership-lookup`, {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ phone })
-    });
-    const d = await r.json();
-    if (d.success){
-      store.set('membership_full', { code: d.code, name: d.name, phone: d.phone, expiresAt: d.expiresAt });
-      showMemberView();
-      if (typeof renderCart === 'function') renderCart();
-      toast('Welcome back!', 'check');
-    }
-  } catch(e){ console.error(e); }
+  // 3. Route push
+  if (!skipRoute) {
+    try { history.pushState({ modal: 'memberModal' }, '', '#membership'); } catch(e){}
+  }
+
+  // 4. બેકગ્રાઉન્ડમાં ડિવાઇસ ચેક કરો (Non-blocking - UI અટકશે નહીં)
+  (async () => {
+    try {
+      const deviceId = await getDeviceId();
+      const r = await fetch(`${API_BASE}/api/membership-check-device`, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ deviceId })
+      });
+      const d = await r.json();
+      
+      // જો મેમ્બરશિપ મળે, તો તરત Active screen પર સ્વિચ કરો
+      if (d.success && d.membership){
+        store.set('membership_full', d.membership);
+        $('#memViewActive').classList.remove('hidden');
+        $('#memViewBuy').classList.add('hidden');
+        $('#memActiveCode').textContent = d.membership.code;
+        $('#memActiveName').textContent = d.membership.name || '';
+        $('#memActiveExpiry').textContent = 'Valid till: ' + new Date(d.membership.expiresAt).toLocaleDateString('en-IN');
+      }
+    } catch(e){ console.error(e); }
+  })();
 }
 
 if ($('#openMembership')) $('#openMembership').onclick = () => openMemberModal();
