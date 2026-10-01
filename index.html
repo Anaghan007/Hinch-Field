@@ -18,6 +18,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Razorpay Checkout SDK -->
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@4/dist/fp.min.js"></script>
   <script>
     tailwind.config = {
 theme: { extend: {
@@ -1551,6 +1552,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
           <button id="memShare" class="pill btn-ink py-3.5">Share</button>
         </div>
         <button id="memGoCart" class="pill btn-gold w-full py-3.5">Shop & Save 50%</button>
+        <button id="memTransfer" class="pill btn-line w-full py-3 mt-2">📱 New device? Transfer here</button>
       </div>
 
       <div id="memViewBuy">
@@ -1574,6 +1576,11 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
         <input id="memBuyPhone" inputmode="numeric" maxlength="15" class="field mb-3" placeholder="WhatsApp number *">
         <p id="memBuyErr" class="text-[11px] hidden mb-3" style="color:#DC2626;"></p>
         <button id="memBuyBtn" class="pill btn-gold w-full py-4">Pay ₹599 — Get Membership</button>
+        <div class="flex gap-2 mt-3">
+        <input id="memTransferCode" maxlength="4" inputmode="numeric" class="field flex-1" placeholder="4-digit code">
+        <input id="memTransferToken" maxlength="6" inputmode="numeric" class="field flex-1" placeholder="Transfer token">
+        <button id="memTransferGo" class="pill btn-line px-4 text-[10px]">Move</button>
+        </div>
         <p class="text-[10px] text-center mt-3" style="color:var(--mut);">Secure payment · Code sent on WhatsApp</p>
       </div>
     </div>
@@ -1699,6 +1706,27 @@ const esc = (s='') => String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;
 const debounce = (fn, ms=250) => { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; };
 const safe = (fn, name) => { try { return fn(); } catch(e){ console.error('['+name+']', e); } };
 const WA = '917434053550';
+/* ---- Device Fingerprint (1 code = 1 device) ---- */
+let DEVICE_ID = null;
+async function getDeviceId(){
+  if (DEVICE_ID) return DEVICE_ID;
+  try {
+    if (typeof FingerprintJS === 'undefined') throw new Error('FP not loaded');
+    const fp = await FingerprintJS.load();
+    const result = await fp.get();
+    DEVICE_ID = result.visitorId;
+  } catch(e){
+    let id = null;
+    try { id = localStorage.getItem('hf_device_id'); } catch(_){}
+    if (!id){
+      id = 'dev_' + Math.random().toString(36).substr(2,16) + Date.now();
+      try { localStorage.setItem('hf_device_id', id); } catch(_){}
+    }
+    DEVICE_ID = id;
+  }
+  return DEVICE_ID;
+}
+getDeviceId();
 const COOKIE_KEYS = ['membership_full', 'last_phone', 'membership'];
 const store = {
 get(k,d){
@@ -3224,19 +3252,45 @@ function showMemberView(){
   }
 }
 
-function openMemberModal(skipRoute){
-$('#memBuyErr').classList.add('hidden');
-showMemberView();
-const wasOpen = !$('#memberModal').classList.contains('hidden');
-openModal('memberModal');
-if (!skipRoute && !wasOpen) {
-try { history.pushState({ modal: 'memberModal' }, '', '#membership'); } catch(e){}
-}
-const saved = store.get('membership_full', null);
-if (!saved || !saved.code){
-const lastPhone = store.get('last_phone', null);
-if (lastPhone) autoLookup(lastPhone);
-}
+async function openMemberModal(skipRoute){
+  $('#memBuyErr').classList.add('hidden');
+  const wasOpen = !$('#memberModal').classList.contains('hidden');
+  if (typeof updateMembershipPrices === 'function') updateMembershipPrices();
+
+  // 🔒 આ device પર membership છે કે નહીં?
+  let deviceMembership = null;
+  try {
+    const deviceId = await getDeviceId();
+    const r = await fetch(`${API_BASE}/api/membership-check-device`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ deviceId })
+    });
+    const d = await r.json();
+    if (d.success && d.membership) deviceMembership = d.membership;
+  } catch(e){ console.error(e); }
+
+  if (deviceMembership){
+    store.set('membership_full', deviceMembership);
+    $('#memViewActive').classList.remove('hidden');
+    $('#memViewBuy').classList.add('hidden');
+    $('#memActiveCode').textContent = deviceMembership.code;
+    $('#memActiveName').textContent = deviceMembership.name || '';
+    $('#memActiveExpiry').textContent = 'Valid till: ' + new Date(deviceMembership.expiresAt).toLocaleDateString('en-IN');
+  } else {
+    // બીજા device પર હંમેશા BUY screen જ દેખાશે
+    $('#memViewActive').classList.add('hidden');
+    $('#memViewBuy').classList.remove('hidden');
+  }
+
+  openModal('memberModal');
+  if (!skipRoute && !wasOpen) {
+    try { history.pushState({ modal:'memberModal' }, '', '#membership'); } catch(e){}
+  }
+  const saved = store.get('membership_full', null);
+  if (!saved || !saved.code){
+    const lastPhone = store.get('last_phone', null);
+    if (lastPhone) autoLookup(lastPhone);
+  }
 }
 
 async function autoLookup(phone){
@@ -3272,6 +3326,33 @@ if ($('#memShare')) $('#memShare').onclick = () => {
   } else {
     try { navigator.clipboard.writeText(txt); toast('Copied — share anywhere', 'check'); } catch(e){}
   }
+};
+
+if ($('#memTransfer')) $('#memTransfer').onclick = async () => {
+  const saved = store.get('membership_full', null);
+  if (!saved || !saved.code) return;
+  const deviceId = await getDeviceId();
+  try {
+    const r = await fetch(`${API_BASE}/api/membership-transfer`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ code: saved.code, deviceId, action:'create' }) });
+    const d = await r.json();
+    if (d.success) toast('Transfer token: ' + d.token + ' — નવા device માં 10 મિનિટમાં નાખો', 'check');
+    else toast(d.error || 'Transfer not available', 'cross');
+  } catch(e){ toast('Transfer failed', 'cross'); }
+};
+if ($('#memTransferGo')) $('#memTransferGo').onclick = async () => {
+  const code = ($('#memTransferCode')?.value || '').trim();
+  const token = ($('#memTransferToken')?.value || '').trim();
+  if (!/^\d{4}$/.test(code) || !/^\d{6}$/.test(token)) return toast('Code + 6-digit token નાખો', 'warn');
+  const deviceId = await getDeviceId();
+  try {
+    const r = await fetch(`${API_BASE}/api/membership-transfer`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ code, deviceId, token, action:'use' }) });
+    const d = await r.json();
+    if (d.success){
+      store.set('membership_full', { code, name: d.name, expiresAt: d.expiresAt });
+      toast('Membership આ device પર આવી ગઈ! જૂના device પરથી હટી ગઈ છે.', 'check');
+      openMemberModal(true);
+    } else toast(d.error || 'Transfer failed', 'cross');
+  } catch(e){ toast('Transfer failed', 'cross'); }
 };
 
 if ($('#memGoCart')) $('#memGoCart').onclick = () => {
@@ -3313,10 +3394,12 @@ if ($('#memBuyBtn')) $('#memBuyBtn').onclick = async () => {
           const vd = await v.json();
           if (!vd.success) throw new Error('Verify failed');
 
+          const currentDeviceId = await getDeviceId();
           const c = await fetch(`${API_BASE}/api/membership-create`, {
             method:'POST', headers:{'Content-Type':'application/json'},
-            body: JSON.stringify({ name, phone })
+            body: JSON.stringify({ name, phone, deviceId: currentDeviceId })
           });
+          
           const cd = await c.json();
           if (!cd.success) throw new Error('Code generation failed');
 
@@ -3351,25 +3434,20 @@ setTimeout(updateMemberUI, 100);
 async function applyMemberFn(){
   const btn = $('#memberApply');
   if (btn && btn.disabled) return;
-
   if (cart.length === 0){
     const mc = $('#memberCode'); if (mc) mc.value = '';
     return toast('First You Have To Add Your Product','warn');
   }
   const code = ($('#memberCode')?.value || '').trim();
   if(!/^\d{4}$/.test(code)) return toast('Enter Your 4-digit code','warn');
-
-  // ⚡ INSTANT — device પર saved code
   const saved = store.get('membership_full', null);
   if (saved && saved.code === code && Date.now() < saved.expiresAt){
     appliedMembership = { code, name: saved.name, expiresAt: saved.expiresAt };
-    updateMemberUI();
-    renderCart();
+    updateMemberUI(); renderCart();
     toast('Member applied — 50% off!','check');
     return;
   }
-
-  // Button લોડિંગ state (તરત visual response)
+  const deviceId = await getDeviceId();
   if (btn){
     btn.disabled = true;
     const orig = btn.textContent;
@@ -3380,16 +3458,15 @@ async function applyMemberFn(){
       const r = await fetch(`${API_BASE}/api/membership-verify`,{
         method:'POST',
         headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({code}),
+        body: JSON.stringify({ code, deviceId }),
         signal: ctl.signal
       });
       clearTimeout(to);
       const d = await r.json();
       if(d.success){
-        appliedMembership={code,name:d.name,expiresAt:d.expiresAt};
+        appliedMembership = { code, name: d.name, expiresAt: d.expiresAt };
         store.set('membership_full', { code, name: d.name, expiresAt: d.expiresAt });
-        updateMemberUI();
-        renderCart();
+        updateMemberUI(); renderCart();
         toast('Member applied — 50% off!','check');
       } else {
         toast(d.error || 'Invalid code','cross');
