@@ -16,157 +16,162 @@ export default async function handler(req, res) {
     const isOnline = order.payment && order.payment.method === 'online';
 
     const itemsHtml = order.items.map((l, i) => {
-      const extras = (l.colorChoice ? '<br><span style="font-size:11px;color:#7C7C7C !important;">Colour: ' + l.colorChoice + '</span>' : '')
-                   + (l.custom ? '<br><span style="font-size:11px;color:#7C7C7C !important;">Custom (' + l.custom.pos + '): ' + (l.custom.note || '') + '</span>' : '');
+      const extras = (l.colorChoice ? '<br><span class="text-muted" style="font-size:11px;">Colour: ' + l.colorChoice + '</span>' : '')
+                   + (l.custom ? '<br><span class="text-muted" style="font-size:11px;">Custom (' + l.custom.pos + '): ' + (l.custom.note || '') + '</span>' : '');
       return '<tr>' +
-        '<td class="force-light" style="padding:14px 8px;border-bottom:1px solid #E6E4E0 !important;font-size:13px;color:#0A0A0A !important;background-color:#FFFFFF !important;font-weight:500;">' +
+        '<td class="bg-card text-main" style="padding:14px 8px;border-bottom:1px solid #E6E4E0;font-size:13px;font-weight:500;">' +
           (i+1) + '. ' + (l.name || 'Product') + extras +
         '</td>' +
-        '<td class="force-light" style="padding:14px 8px;border-bottom:1px solid #E6E4E0 !important;text-align:center;font-size:13px;color:#0A0A0A !important;width:70px;background-color:#FFFFFF !important;">' + l.qty + '</td>' +
-        '<td class="force-light" style="padding:14px 8px;border-bottom:1px solid #E6E4E0 !important;text-align:right;font-size:13px;color:#0A0A0A !important;width:100px;background-color:#FFFFFF !important;">₹' + (l.price||0).toLocaleString('en-IN') + '</td>' +
+        '<td class="bg-card text-main" style="padding:14px 8px;border-bottom:1px solid #E6E4E0;text-align:center;font-size:13px;width:70px;">' + l.qty + '</td>' +
+        '<td class="bg-card text-main" style="padding:14px 8px;border-bottom:1px solid #E6E4E0;text-align:right;font-size:13px;width:100px;white-space:nowrap;">₹' + (l.price||0).toLocaleString('en-IN') + '</td>' +
       '</tr>';
     }).join('');
-
-    const discountRow = (t && t.discount) ? '<tr>' +
-      '<td colspan="2" class="force-light" style="padding:8px;text-align:right;font-size:13px;color:#0A0A0A !important;background-color:#FFFFFF !important;">⭐ Member Discount (50%)</td>' +
-      '<td class="force-light" style="padding:8px;text-align:right;font-size:13px;color:#0A0A0A !important;background-color:#FFFFFF !important;">−₹' + t.discount.toLocaleString('en-IN') + '</td>' +
-    '</tr>' : '';
 
     const html =
     '<!DOCTYPE html>' +
     '<html><head>' +
     '<meta charset="utf-8">' +
-    '<meta name="color-scheme" content="only light">' +
-    '<meta name="supported-color-schemes" content="only light">' +
+    '<meta name="color-scheme" content="light dark">' +
+    '<meta name="supported-color-schemes" content="light dark">' +
     '<style type="text/css">' +
-      ':root { color-scheme: light only !important; supported-color-schemes: light only !important; }' +
-      'body, table, td, div, p, tr, th { background-color: #FFFFFF !important; color: #0A0A0A !important; }' +
-      '.force-light, .force-light * { background-color: #FFFFFF !important; color: #0A0A0A !important; }' +
-      '.force-gray, .force-gray * { background-color: #FAFAF9 !important; color: #0A0A0A !important; }' +
-      '.force-black, .force-black * { background-color: #0A0A0A !important; color: #FFFFFF !important; }' +
-      '.force-red, .force-red * { background-color: #FEF2F2 !important; color: #DC2626 !important; }' +
-      '.muted, .muted * { color: #7C7C7C !important; }' +
+      // Light (default)
+      'body, .bg-main { background-color: #F5F4F2; }' +
+      '.bg-card { background-color: #FFFFFF; }' +
+      '.bg-soft { background-color: #FAFAF9; }' +
+      '.bg-dark { background-color: #0A0A0A; }' +
+      '.text-main { color: #0A0A0A; }' +
+      '.text-muted { color: #7C7C7C; }' +
+      '.text-white { color: #FFFFFF; }' +
+      '.border-line { border-color: #E6E4E0; }' +
+      // Dark mode
       '@media (prefers-color-scheme: dark) {' +
-        'body, table, td, div, p, tr, th { background-color: #FFFFFF !important; color: #0A0A0A !important; }' +
-        '.force-light, .force-light * { background-color: #FFFFFF !important; color: #0A0A0A !important; }' +
-        '.force-gray, .force-gray * { background-color: #FAFAF9 !important; color: #0A0A0A !important; }' +
-        '.force-black, .force-black * { background-color: #0A0A0A !important; color: #FFFFFF !important; }' +
-        '.force-red, .force-red * { background-color: #FEF2F2 !important; color: #DC2626 !important; }' +
-        '.muted, .muted * { color: #7C7C7C !important; }' +
+        'body, .bg-main { background-color: #0A0A0A !important; }' +
+        '.bg-card { background-color: #1A1A1A !important; }' +
+        '.bg-soft { background-color: #141414 !important; }' +
+        '.bg-dark { background-color: #FFFFFF !important; }' +
+        '.text-main { color: #FFFFFF !important; }' +
+        '.text-muted { color: #999999 !important; }' +
+        '.text-white { color: #0A0A0A !important; }' +
+        '.border-line { border-color: #2A2A2A !important; }' +
+        '.dark-invert { background-color: #FFFFFF !important; color: #0A0A0A !important; }' +
+        'table[bgcolor="#0A0A0A"] { background-color: #FFFFFF !important; }' +
+        'table[bgcolor="#0A0A0A"] * { color: #0A0A0A !important; }' +
+        'table[bgcolor="#FAFAF9"] { background-color: #141414 !important; }' +
+        'table[bgcolor="#FFFFFF"] { background-color: #1A1A1A !important; }' +
       '}' +
-      '[data-ogsc] body, [data-ogsc] table, [data-ogsc] td, [data-ogsc] div { background-color: #FFFFFF !important; color: #0A0A0A !important; }' +
-      '[data-ogsc] .force-light, [data-ogsc] .force-light * { background-color: #FFFFFF !important; color: #0A0A0A !important; }' +
-      '[data-ogsc] .force-gray, [data-ogsc] .force-gray * { background-color: #FAFAF9 !important; color: #0A0A0A !important; }' +
-      '[data-ogsc] .force-black, [data-ogsc] .force-black * { background-color: #0A0A0A !important; color: #FFFFFF !important; }' +
+      '[data-ogsc] body, [data-ogsc] .bg-main { background-color: #0A0A0A !important; }' +
+      '[data-ogsc] .bg-card { background-color: #1A1A1A !important; }' +
+      '[data-ogsc] .text-main { color: #FFFFFF !important; }' +
+      '[data-ogsc] .text-muted { color: #999999 !important; }' +
     '</style>' +
     '</head>' +
-    '<body class="force-light" style="margin:0;padding:0;background-color:#F5F4F2 !important;font-family:Arial,Helvetica,sans-serif;">' +
+    '<body class="bg-main" style="margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;">' +
 
-    '<table width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#F5F4F2" style="background-color:#F5F4F2 !important;">' +
-    '<tr><td align="center" style="padding:24px 12px;background-color:#F5F4F2 !important;">' +
+    '<table width="100%" cellpadding="0" cellspacing="0" border="0" class="bg-main">' +
+    '<tr><td align="center" style="padding:24px 12px;">' +
 
-    '<table width="620" cellpadding="0" cellspacing="0" border="0" bgcolor="#FFFFFF" class="force-light" style="max-width:620px;width:100%;background-color:#FFFFFF !important;color:#0A0A0A !important;">' +
+    '<table width="620" cellpadding="0" cellspacing="0" border="0" class="bg-card" style="max-width:620px;width:100%;">' +
 
       // Order Info
-      '<tr><td class="force-light" style="padding:28px 40px 0;background-color:#FFFFFF !important;">' +
+      '<tr><td class="bg-card" style="padding:28px 40px 0;">' +
         '<table width="100%" cellpadding="0" cellspacing="0" border="0">' +
           '<tr>' +
-            '<td class="force-light" style="vertical-align:top;background-color:#FFFFFF !important;">' +
-              '<div class="muted" style="font-size:10px;letter-spacing:3px;color:#7C7C7C !important;text-transform:uppercase;">Order Cancelled</div>' +
-              '<div style="font-family:Arial,sans-serif;font-size:26px;font-weight:600;color:#0A0A0A !important;margin-top:6px;letter-spacing:1px;">' + order.id + '</div>' +
+            '<td style="vertical-align:top;" class="bg-card">' +
+              '<div class="text-muted" style="font-size:10px;letter-spacing:3px;text-transform:uppercase;">Order Cancelled</div>' +
+              '<div class="text-main" style="font-family:Arial,sans-serif;font-size:26px;font-weight:600;margin-top:6px;letter-spacing:1px;">' + order.id + '</div>' +
             '</td>' +
-            '<td class="force-light" style="text-align:right;vertical-align:top;background-color:#FFFFFF !important;">' +
-              '<div class="muted" style="font-size:10px;letter-spacing:3px;color:#7C7C7C !important;text-transform:uppercase;">Date</div>' +
-              '<div style="font-size:14px;font-weight:600;color:#0A0A0A !important;margin-top:6px;">' + new Date().toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }) + '</div>' +
-              '<div style="margin-top:10px;"><span class="force-black" style="display:inline-block;background-color:#0A0A0A !important;color:#FFFFFF !important;font-size:10px;letter-spacing:1.5px;padding:6px 12px;font-weight:600;">CANCELLED</span></div>' +
+            '<td style="text-align:right;vertical-align:top;" class="bg-card">' +
+              '<div class="text-muted" style="font-size:10px;letter-spacing:3px;text-transform:uppercase;">Date</div>' +
+              '<div class="text-main" style="font-size:14px;font-weight:600;margin-top:6px;">' + new Date().toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }) + '</div>' +
+              '<div style="margin-top:10px;"><span class="bg-dark text-white" style="display:inline-block;font-size:10px;letter-spacing:1.5px;padding:6px 12px;font-weight:600;">CANCELLED</span></div>' +
             '</td>' +
           '</tr>' +
         '</table>' +
       '</td></tr>' +
 
       // Alert
-      '<tr><td class="force-light" style="padding:24px 40px 0;background-color:#FFFFFF !important;">' +
-        '<table width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#FEF2F2" class="force-red" style="background-color:#FEF2F2 !important;border-left:4px solid #DC2626 !important;">' +
-          '<tr><td class="force-red" style="padding:14px 16px;background-color:#FEF2F2 !important;">' +
-            '<div style="font-size:13px;color:#DC2626 !important;font-weight:600;">⚠ Customer has cancelled this order</div>' +
-            '<div style="font-size:12px;color:#DC2626 !important;margin-top:4px;opacity:0.7;">' + (isOnline ? 'Payment was made online — refund required' : 'COD order — do not ship') + '</div>' +
+      '<tr><td class="bg-card" style="padding:24px 40px 0;">' +
+        '<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#FEF2F2;border-left:4px solid #DC2626;">' +
+          '<tr><td style="padding:14px 16px;">' +
+            '<div style="font-size:13px;color:#DC2626;font-weight:600;">⚠ Customer has cancelled this order</div>' +
+            '<div style="font-size:12px;color:#DC2626;opacity:0.75;margin-top:4px;">' + (isOnline ? 'Payment was made online — refund required' : 'COD order — do not ship') + '</div>' +
           '</td></tr>' +
         '</table>' +
       '</td></tr>' +
 
       // Items
-      '<tr><td class="force-light" style="padding:28px 40px 0;background-color:#FFFFFF !important;">' +
+      '<tr><td class="bg-card" style="padding:28px 40px 0;">' +
         '<table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">' +
-          '<thead><tr class="force-black" bgcolor="#0A0A0A" style="background-color:#0A0A0A !important;">' +
-            '<th class="force-black" style="padding:12px 8px;text-align:left;font-size:11px;letter-spacing:2px;color:#FFFFFF !important;text-transform:uppercase;font-weight:600;background-color:#0A0A0A !important;">Item</th>' +
-            '<th class="force-black" style="padding:12px 8px;text-align:center;font-size:11px;letter-spacing:2px;color:#FFFFFF !important;text-transform:uppercase;font-weight:600;width:70px;background-color:#0A0A0A !important;">Qty</th>' +
-            '<th class="force-black" style="padding:12px 8px;text-align:right;font-size:11px;letter-spacing:2px;color:#FFFFFF !important;text-transform:uppercase;font-weight:600;width:100px;background-color:#0A0A0A !important;">Price</th>' +
+          '<thead><tr class="bg-dark">' +
+            '<th class="bg-dark text-white" style="padding:12px 8px;text-align:left;font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:600;">Item</th>' +
+            '<th class="bg-dark text-white" style="padding:12px 8px;text-align:center;font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:600;width:70px;">Qty</th>' +
+            '<th class="bg-dark text-white" style="padding:12px 8px;text-align:right;font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:600;width:100px;">Price</th>' +
           '</tr></thead>' +
           '<tbody>' + itemsHtml + '</tbody>' +
         '</table>' +
       '</td></tr>' +
 
-           // Totals - with nowrap to prevent wrapping
-      '<tr><td class="force-light" style="padding:0 40px 8px;background-color:#FFFFFF !important;">' +
+      // Totals
+      '<tr><td class="bg-card" style="padding:0 40px 8px;">' +
         '<table cellpadding="0" cellspacing="0" border="0" style="margin-left:auto;margin-top:8px;width:100%;max-width:340px;">' +
           '<tr>' +
-            '<td class="force-light muted" style="padding:10px 12px;text-align:right;font-size:13px;color:#7C7C7C !important;background-color:#FFFFFF !important;white-space:nowrap;">Subtotal</td>' +
-            '<td class="force-light" style="padding:10px 12px;text-align:right;font-size:14px;color:#0A0A0A !important;font-weight:500;width:130px;background-color:#FFFFFF !important;white-space:nowrap;">₹' + (t ? t.sub : 0).toLocaleString('en-IN') + '</td>' +
+            '<td class="text-muted bg-card" style="padding:10px 12px;text-align:right;font-size:13px;white-space:nowrap;">Subtotal</td>' +
+            '<td class="text-main bg-card" style="padding:10px 12px;text-align:right;font-size:14px;font-weight:500;width:130px;white-space:nowrap;">₹' + (t ? t.sub : 0).toLocaleString('en-IN') + '</td>' +
           '</tr>' +
           ((t && t.discount) ?
             '<tr>' +
-              '<td class="force-light" style="padding:10px 12px;text-align:right;font-size:13px;color:#0A0A0A !important;background-color:#FFFFFF !important;white-space:nowrap;">⭐ Member Discount (50%)</td>' +
-              '<td class="force-light" style="padding:10px 12px;text-align:right;font-size:14px;color:#0A0A0A !important;font-weight:500;background-color:#FFFFFF !important;white-space:nowrap;">−₹' + t.discount.toLocaleString('en-IN') + '</td>' +
+              '<td class="text-main bg-card" style="padding:10px 12px;text-align:right;font-size:13px;white-space:nowrap;">⭐ Member Discount (50%)</td>' +
+              '<td class="text-main bg-card" style="padding:10px 12px;text-align:right;font-size:14px;font-weight:500;white-space:nowrap;">−₹' + t.discount.toLocaleString('en-IN') + '</td>' +
             '</tr>' : '') +
           '<tr>' +
-            '<td class="force-light muted" style="padding:10px 12px;text-align:right;font-size:13px;color:#7C7C7C !important;background-color:#FFFFFF !important;white-space:nowrap;">Delivery</td>' +
-            '<td class="force-light" style="padding:10px 12px;text-align:right;font-size:14px;color:#0A0A0A !important;font-weight:500;background-color:#FFFFFF !important;white-space:nowrap;">' + (t && t.del ? '₹' + t.del.toLocaleString('en-IN') : 'FREE') + '</td>' +
+            '<td class="text-muted bg-card" style="padding:10px 12px;text-align:right;font-size:13px;white-space:nowrap;">Delivery</td>' +
+            '<td class="text-main bg-card" style="padding:10px 12px;text-align:right;font-size:14px;font-weight:500;white-space:nowrap;">' + (t && t.del ? '₹' + t.del.toLocaleString('en-IN') : 'FREE') + '</td>' +
           '</tr>' +
           '<tr>' +
-            '<td class="force-light" style="padding:16px 12px 8px;text-align:right;font-size:13px;letter-spacing:2px;color:#0A0A0A !important;text-transform:uppercase;font-weight:600;border-top:2px solid #0A0A0A !important;background-color:#FFFFFF !important;white-space:nowrap;">Total ' + (isOnline ? 'Paid' : 'COD') + '</td>' +
-            '<td class="force-light" style="padding:16px 12px 8px;text-align:right;font-size:22px;color:#0A0A0A !important;font-weight:700;border-top:2px solid #0A0A0A !important;background-color:#FFFFFF !important;white-space:nowrap;">₹' + (t ? t.total : 0).toLocaleString('en-IN') + '</td>' +
+            '<td class="text-main bg-card" style="padding:16px 12px 8px;text-align:right;font-size:13px;letter-spacing:2px;text-transform:uppercase;font-weight:600;border-top:2px solid #0A0A0A;white-space:nowrap;">Total ' + (isOnline ? 'Paid' : 'COD') + '</td>' +
+            '<td class="text-main bg-card" style="padding:16px 12px 8px;text-align:right;font-size:22px;font-weight:700;border-top:2px solid #0A0A0A;white-space:nowrap;">₹' + (t ? t.total : 0).toLocaleString('en-IN') + '</td>' +
           '</tr>' +
         '</table>' +
       '</td></tr>' +
 
       // Customer
-      '<tr><td class="force-light" style="padding:32px 40px 0;background-color:#FFFFFF !important;">' +
-        '<table width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#FAFAF9" class="force-gray" style="background-color:#FAFAF9 !important;border:1px solid #E6E4E0 !important;">' +
-          '<tr><td class="force-gray" style="padding:24px 28px;background-color:#FAFAF9 !important;">' +
-            '<div style="text-align:center;padding-bottom:18px;border-bottom:1px solid #E6E4E0 !important;margin-bottom:20px;">' +
-              '<div class="muted" style="font-size:10px;letter-spacing:4px;color:#7C7C7C !important;text-transform:uppercase;">Delivery Details</div>' +
+      '<tr><td class="bg-card" style="padding:32px 40px 0;">' +
+        '<table width="100%" cellpadding="0" cellspacing="0" border="0" class="bg-soft" style="border:1px solid #E6E4E0;">' +
+          '<tr><td class="bg-soft" style="padding:24px 28px;">' +
+            '<div style="text-align:center;padding-bottom:18px;border-bottom:1px solid #E6E4E0;margin-bottom:20px;">' +
+              '<div class="text-muted" style="font-size:10px;letter-spacing:4px;text-transform:uppercase;">Delivery Details</div>' +
             '</div>' +
             '<table width="100%" cellpadding="0" cellspacing="0" border="0" style="font-size:13px;">' +
               '<tr>' +
-                '<td class="force-gray" style="padding:8px 0;vertical-align:top;width:100px;background-color:#FAFAF9 !important;">' +
-                  '<div class="muted" style="font-size:9px;letter-spacing:2px;color:#7C7C7C !important;text-transform:uppercase;">Name</div>' +
+                '<td class="bg-soft" style="padding:8px 0;vertical-align:top;width:100px;">' +
+                  '<div class="text-muted" style="font-size:9px;letter-spacing:2px;text-transform:uppercase;">Name</div>' +
                 '</td>' +
-                '<td class="force-gray" style="padding:8px 0;vertical-align:top;background-color:#FAFAF9 !important;">' +
-                  '<div style="font-size:14px;font-weight:600;color:#0A0A0A !important;">' + c.name + '</div>' +
-                '</td>' +
-              '</tr>' +
-              '<tr>' +
-                '<td class="force-gray" style="padding:8px 0;vertical-align:top;background-color:#FAFAF9 !important;">' +
-                  '<div class="muted" style="font-size:9px;letter-spacing:2px;color:#7C7C7C !important;text-transform:uppercase;">Phone</div>' +
-                '</td>' +
-                '<td class="force-gray" style="padding:8px 0;vertical-align:top;background-color:#FAFAF9 !important;">' +
-                  '<div style="font-size:14px;color:#0A0A0A !important;font-weight:500;">' + c.phone + '</div>' +
+                '<td class="bg-soft" style="padding:8px 0;vertical-align:top;">' +
+                  '<div class="text-main" style="font-size:14px;font-weight:600;">' + c.name + '</div>' +
                 '</td>' +
               '</tr>' +
               '<tr>' +
-                '<td class="force-gray" style="padding:8px 0;vertical-align:top;background-color:#FAFAF9 !important;">' +
-                  '<div class="muted" style="font-size:9px;letter-spacing:2px;color:#7C7C7C !important;text-transform:uppercase;">Address</div>' +
+                '<td class="bg-soft" style="padding:8px 0;vertical-align:top;">' +
+                  '<div class="text-muted" style="font-size:9px;letter-spacing:2px;text-transform:uppercase;">Phone</div>' +
                 '</td>' +
-                '<td class="force-gray" style="padding:8px 0;vertical-align:top;background-color:#FAFAF9 !important;">' +
-                  '<div style="font-size:13px;color:#0A0A0A !important;line-height:1.7;">' + c.addr + '</div>' +
+                '<td class="bg-soft" style="padding:8px 0;vertical-align:top;">' +
+                  '<div class="text-main" style="font-size:14px;font-weight:500;">' + c.phone + '</div>' +
                 '</td>' +
               '</tr>' +
               '<tr>' +
-                '<td class="force-gray" style="padding:8px 0;vertical-align:top;background-color:#FAFAF9 !important;">' +
-                  '<div class="muted" style="font-size:9px;letter-spacing:2px;color:#7C7C7C !important;text-transform:uppercase;">City</div>' +
+                '<td class="bg-soft" style="padding:8px 0;vertical-align:top;">' +
+                  '<div class="text-muted" style="font-size:9px;letter-spacing:2px;text-transform:uppercase;">Address</div>' +
                 '</td>' +
-                '<td class="force-gray" style="padding:8px 0;vertical-align:top;background-color:#FAFAF9 !important;">' +
-                  '<div style="font-size:13px;color:#0A0A0A !important;">' + c.city + ', ' + c.state + ' <span style="color:#7C7C7C !important;">— ' + c.pin + '</span></div>' +
+                '<td class="bg-soft" style="padding:8px 0;vertical-align:top;">' +
+                  '<div class="text-main" style="font-size:13px;line-height:1.7;">' + c.addr + '</div>' +
+                '</td>' +
+              '</tr>' +
+              '<tr>' +
+                '<td class="bg-soft" style="padding:8px 0;vertical-align:top;">' +
+                  '<div class="text-muted" style="font-size:9px;letter-spacing:2px;text-transform:uppercase;">City</div>' +
+                '</td>' +
+                '<td class="bg-soft" style="padding:8px 0;vertical-align:top;">' +
+                  '<div class="text-main" style="font-size:13px;">' + c.city + ', ' + c.state + ' <span class="text-muted">— ' + c.pin + '</span></div>' +
                 '</td>' +
               '</tr>' +
             '</table>' +
@@ -175,11 +180,11 @@ export default async function handler(req, res) {
       '</td></tr>' +
 
       // Action
-      '<tr><td class="force-light" style="padding:28px 40px 0;background-color:#FFFFFF !important;">' +
-        '<table width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#0A0A0A" class="force-black" style="background-color:#0A0A0A !important;">' +
-          '<tr><td class="force-black" style="padding:20px 24px;text-align:center;background-color:#0A0A0A !important;">' +
-            '<div style="font-size:10px;letter-spacing:4px;color:#FFFFFF !important;opacity:0.5;text-transform:uppercase;">Action Required</div>' +
-            '<div style="font-family:Georgia,serif;font-size:18px;color:#FFFFFF !important;letter-spacing:1px;margin-top:8px;line-height:1.5;">' +
+      '<tr><td class="bg-card" style="padding:28px 40px 0;">' +
+        '<table width="100%" cellpadding="0" cellspacing="0" border="0" class="bg-dark">' +
+          '<tr><td class="bg-dark" style="padding:20px 24px;text-align:center;">' +
+            '<div class="text-white" style="font-size:10px;letter-spacing:4px;text-transform:uppercase;opacity:0.6;">Action Required</div>' +
+            '<div class="text-white" style="font-family:Georgia,serif;font-size:18px;letter-spacing:1px;margin-top:8px;line-height:1.5;">' +
               (isOnline ? 'Refund <b>₹' + (t ? t.total : 0).toLocaleString('en-IN') + '</b> via Razorpay' : 'Do NOT ship this order') +
             '</div>' +
           '</td></tr>' +
@@ -187,11 +192,11 @@ export default async function handler(req, res) {
       '</td></tr>' +
 
       // Footer
-      '<tr><td class="force-light" style="padding:32px 40px 24px;text-align:center;background-color:#FFFFFF !important;">' +
-        '<div style="font-size:11px;color:#0A0A0A !important;font-weight:600;letter-spacing:2px;margin-bottom:10px;">HINCHFIELD</div>' +
-        '<div class="muted" style="font-size:11px;color:#7C7C7C !important;line-height:1.8;">' +
-          'WhatsApp: <b style="color:#0A0A0A !important;">7434053550</b> · <a href="mailto:support.hinchfield@gmail.com" style="color:#0A0A0A !important;text-decoration:none;">support.hinchfield@gmail.com</a><br>' +
-          '<a href="https://hinchfield.store" style="color:#7C7C7C !important;text-decoration:none;">hinchfield.store</a>' +
+      '<tr><td class="bg-card" style="padding:32px 40px 24px;text-align:center;">' +
+        '<div class="text-main" style="font-size:11px;font-weight:600;letter-spacing:2px;margin-bottom:10px;">HINCHFIELD</div>' +
+        '<div class="text-muted" style="font-size:11px;line-height:1.8;">' +
+          'WhatsApp: <b class="text-main">7434053550</b> · <a href="mailto:support.hinchfield@gmail.com" class="text-main" style="text-decoration:none;">support.hinchfield@gmail.com</a><br>' +
+          '<a href="https://hinchfield.store" class="text-muted" style="text-decoration:none;">hinchfield.store</a>' +
         '</div>' +
       '</td></tr>' +
 
