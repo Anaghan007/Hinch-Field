@@ -2934,34 +2934,46 @@ function cancelOrder(orderId){
   renderHistory();
   toast('Order Cancelled Successfully','cross');
 
-    // 📧 Notify admin via email
-  console.log('Cancel order triggered:', order.id, 'Payment:', order.payment);
-  try {
-    fetch(`${API_BASE}/api/cancel-notify`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        order: {
-          id: order.id,
-          customer: order.customer,
-          items: order.items.map(l => {
-            const p = prodById(l.id);
-            return { name: p ? p.name : 'Product', qty: l.qty, price: p ? p.price : 0 };
-          }),
-          totals: order.totals,
-          payment: order.payment
-        }
-      })
-        }).then(r => r.json()).then(d => {
-      console.log('Cancel-notify response:', d);
-      if (d && d.success) toast('Admin notified', 'check');
-      else toast('Email failed', 'cross');
-    }).catch(e => {
-      console.error('Cancel-notify error:', e);
-      toast('Email error', 'cross');
-    });
-  } catch(e){ console.error('Cancel error:', e); }
-}
+      // 📧 Notify admin via email
+  const cancelPayload = {
+    order: {
+      id: order.id,
+      customer: order.customer,
+      items: (order.items || []).map(l => {
+        const p = prodById(l.id);
+        return { name: p ? p.name : 'Product', qty: l.qty || 1, price: p ? p.price : 0 };
+      }),
+      totals: order.totals,
+      payment: order.payment || { method: 'cod' }
+    }
+  };
+
+  console.log('━━━━━━ CANCEL DEBUG ━━━━━━');
+  console.log('Order ID:', order.id);
+  console.log('Payment:', order.payment);
+  console.log('Totals:', order.totals);
+  console.log('Sending payload:', JSON.stringify(cancelPayload));
+  console.log('━━━━━━━━━━━━━━━━━━━━━━━━━');
+
+  fetch(`${API_BASE}/api/cancel-notify`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(cancelPayload)
+  })
+  .then(r => {
+    console.log('API status:', r.status);
+    return r.json();
+  })
+  .then(d => {
+    console.log('API response:', d);
+    if (d && d.success) toast('Admin notified via email', 'check');
+    else toast('Email failed: ' + (d && d.error || 'Unknown'), 'cross');
+  })
+  .catch(e => {
+    console.error('Fetch error:', e);
+    toast('Email send error', 'cross');
+  });
+  
 /* ---- Admin ---- */
 let adminAuth = false;
 function openAdmin(skipRoute){
