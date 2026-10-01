@@ -3168,7 +3168,7 @@ if (t.hasAttribute('data-membership')){
   return;
 }
 if (t.hasAttribute('data-open-product')){ const id = t.getAttribute('data-open-product'); closeAll(true); openProduct(id); return; }
-if (t.hasAttribute('data-add')){ const id = t.getAttribute('data-add'); addToCart(id); closeAll(true); try{ history.replaceState(null, '', location.pathname + location.search); history.pushState({ modal:'cartDrawer' }, '', '#cart'); handleRoute(); }catch(err){} return; }
+if (t.hasAttribute('data-add')){ const id = t.getAttribute('data-add'); addToCart(id); closeAll(true); try{ history.replaceState(null, '', location.pathname + location.search); history.pushState({ modal:'cartDrawer' }, '', window.location.origin); handleRoute(); }catch(err){} return; }
 if (t.hasAttribute('data-wish')){ toggleWish(t.getAttribute('data-wish')); return; }
 if (t.hasAttribute('data-slide-go')){ goSlide(+t.getAttribute('data-slide-go')); clearInterval(sTimer); startSlider(); return; }
 if (t.hasAttribute('data-catpage')){
@@ -3213,8 +3213,8 @@ return;
 }
 if (t.hasAttribute('data-psize')){ pm.size = +t.getAttribute('data-psize'); $$('#productBody .sizechip').forEach((s,i) => s.classList.toggle('active', i === pm.size)); return; }
 if (t.hasAttribute('data-pq')){ pm.qty = Math.min(9, Math.max(1, pm.qty + (+t.getAttribute('data-pq')))); const q = $('#pmQty'); if (q) q.textContent = pm.qty; return; }
-if (t.hasAttribute('data-pm-add')){ const p = prodById(pm.id); if (!p) return; addToCart(p.id, p.colors[pm.color][0], p.sizes[pm.size], pm.qty, readExtras(p)); closeAll(true); try{ history.replaceState(null, '', location.pathname + location.search); history.pushState({ modal:'cartDrawer' }, '', '#cart'); handleRoute(); }catch(e){} return; }
-if (t.hasAttribute('data-pm-buy')){ const p = prodById(pm.id); if (!p) return; addToCart(p.id, p.colors[pm.color][0], p.sizes[pm.size], pm.qty, readExtras(p)); closeAll(true); try{ history.replaceState(null, '', location.pathname + location.search); history.pushState({ modal:'cartDrawer' }, '', '#cart'); handleRoute(); }catch(e){} return; }
+if (t.hasAttribute('data-pm-add')){ const p = prodById(pm.id); if (!p) return; addToCart(p.id, p.colors[pm.color][0], p.sizes[pm.size], pm.qty, readExtras(p)); closeAll(true); try{ history.replaceState(null, '', location.pathname + location.search); history.pushState({ modal:'cartDrawer' }, '', window.location.origin); handleRoute(); }catch(e){} return; }
+if (t.hasAttribute('data-pm-buy')){ const p = prodById(pm.id); if (!p) return; addToCart(p.id, p.colors[pm.color][0], p.sizes[pm.size], pm.qty, readExtras(p)); closeAll(true); try{ history.replaceState(null, '', location.pathname + location.search); history.pushState({ modal:'cartDrawer' }, '', window.location.origin); handleRoute(); }catch(e){} return; }
 if (t.hasAttribute('data-cq')){ const l = cart.find(x => x.key === t.getAttribute('data-cq')); if (!l) return; l.qty = Math.min(9, Math.max(1, l.qty + (+t.getAttribute('data-d')))); store.set('cart', cart); renderCart(); return; }
 if (t.hasAttribute('data-cr')){ cart = cart.filter(x => x.key !== t.getAttribute('data-cr')); store.set('cart', cart); renderCart(); return; }
 if (t.hasAttribute('data-download-invoice')){
@@ -3230,7 +3230,7 @@ if (t.hasAttribute('data-cancel-order')){ askCancelOrder(t.getAttribute('data-ca
 });
 /* ---- Wire top-level handlers ---- */
 function wire(){
-$('#cartOpen').onclick = () => { closeAll(true); renderCart(); try{ history.pushState({ modal:'cartDrawer' }, '', '#cart'); }catch(e){} handleRoute(); };
+$('#cartOpen').onclick = () => { closeAll(true); renderCart(); try{ history.pushState({ modal:'cartDrawer' }, '', window.location.origin); }catch(e){} handleRoute(); };
 $('#wishOpen').onclick = () => { closeAll(true); renderWish(); try{ history.pushState({ modal:'wishDrawer' }, '', '#wishlist'); }catch(e){} handleRoute(); };
 $('#menuOpen').onclick = () => { openModal('mobileMenu'); try{ history.pushState({ modal: 'mobileMenu' }, '', '#menu'); }catch(e){} };
 $('#mSearchOpen').onclick = () => { openModal('searchOverlay'); try{ history.pushState({ modal: 'searchOverlay' }, '', '#search'); }catch(e){} };
