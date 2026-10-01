@@ -1656,22 +1656,6 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
     </div>
   </div>
 
-  <div id="confirmCancelModal" class="fixed inset-0 z-[95] hidden flex items-center justify-center px-4 w-full">
-  <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" data-close="confirmCancelModal"></div>
-  <div class="modalcard relative p-6 md:p-8 max-w-sm w-full text-center" style="background:var(--bg); color:var(--text); box-shadow:var(--shadow);">
-    <div class="w-14 h-14 mx-auto mb-4 flex items-center justify-center border hairline" style="color:#DC2626;">
-      <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-    </div>
-    <h3 class="disp editorial-h font-luxe text-xl mb-2">Cancel Order?</h3>
-    <p class="text-xs mb-4" style="color:var(--mut);">Do you really want to cancel this order?<br>This action cannot be undone.</p>
-    <p class="text-[11px] mb-5" style="color:var(--mut);">Order ID: <b id="confirmCancelId" style="color:var(--text);"></b></p>
-    <div class="grid grid-cols-2 gap-3">
-      <button id="confirmCancelNo" class="pill btn-line py-3.5">No</button>
-      <button id="confirmCancelYes" class="pill btn-gold py-3.5" style="background:#DC2626;">Yes, Cancel</button>
-    </div>
-  </div>
-</div>
-  
   <div id="toasts" class="fixed top-20 right-3 md:right-5 z-[99] space-y-3 w-[19rem] max-w-[92vw]"></div>
 
   <a id="waFloat" href="https://wa.me/917434053550?text=Hi%20HinchField!" target="_blank" rel="noopener"
@@ -2883,7 +2867,7 @@ return;
 }
 box.innerHTML = orders.map(o => {
 const st = getOrderStatus(o);
-const canCancel = (Date.now() - o.timestamp < 24*60*60*1000) && st.text !== 'Cancelled' && st.text !== 'Delivered';
+const canCancel = (Date.now() - o.timestamp < 24*60*60*1000) && st.text !== 'Cancelled' && st.text !== 'Delivered' && (!o.payment || o.payment.method !== 'online');
 const date = new Date(o.timestamp).toLocaleString('en-IN');
 const payBadge = o.payment && o.payment.method === 'online'
   ? '<span class="chip" style="background:#0A0A0A; color:#fff;">PAID ONLINE</span>'
@@ -2910,57 +2894,39 @@ return '<div class="flex gap-3 items-center"><div class="w-12 h-14 overflow-hidd
 '</div>';
 }).join('');
 }
-let pendingCancelId = null;
-
-function openCancelConfirm(orderId){
-  pendingCancelId = orderId;
-  $('#confirmCancelId').textContent = orderId;
-  openModal('confirmCancelModal');
-}
-
 function cancelOrder(orderId){
-  const orders = store.get('orders', []);
-  const idx = orders.findIndex(o => o.id === orderId);
-  if (idx === -1) return;
-
-  if (Date.now() - orders[idx].timestamp >= 24*60*60*1000){
-    return toast('Cannot cancel after 24 hours','warn');
-  }
-
-  const order = orders[idx];
-  order.status = 'Cancelled';
-  order.updatedAt = Date.now();
-  store.set('orders', orders);
-  renderHistory();
-  toast('Order Cancelled Successfully','cross');
-
-    // 📧 Notify admin via email
-  console.log('Cancel order triggered:', order.id, 'Payment:', order.payment);
-  try {
-    fetch(`${API_BASE}/api/cancel-notify`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        order: {
-          id: order.id,
-          customer: order.customer,
-          items: order.items.map(l => {
-            const p = prodById(l.id);
-            return { name: p ? p.name : 'Product', qty: l.qty, price: p ? p.price : 0 };
-          }),
-          totals: order.totals,
-          payment: order.payment
-        }
-      })
-        }).then(r => r.json()).then(d => {
-      console.log('Cancel-notify response:', d);
-      if (d && d.success) toast('Admin notified', 'check');
-      else toast('Email failed', 'cross');
-    }).catch(e => {
-      console.error('Cancel-notify error:', e);
-      toast('Email error', 'cross');
-    });
-  } catch(e){ console.error('Cancel error:', e); }
+const orders = store.get('orders', []);
+const idx = orders.findIndex(o => o.id === orderId);
+if (idx === -1) return;
+if (Date.now() - orders[idx].timestamp < 24*60*60*1000){
+const order = orders[idx];
+order.status = 'Cancelled';
+order.updatedAt = Date.now();
+store.set('orders', orders);
+renderHistory();
+toast('Order Cancelled Successfully','cross');
+// 📧 Notify admin via email
+try {
+  fetch(`${API_BASE}/api/cancel-notify`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      order: {
+        id: order.id,
+        customer: order.customer,
+        items: order.items.map(l => {
+          const p = prodById(l.id);
+          return { name: p ? p.name : 'Product', qty: l.qty, price: p ? p.price : 0 };
+        }),
+        totals: order.totals,
+        payment: order.payment
+      }
+    })
+  }).catch(() => {});
+} catch(e){}
+} else {
+toast('Cannot cancel after 24 hours','warn');
+}
 }
 /* ---- Admin ---- */
 let adminAuth = false;
@@ -3023,7 +2989,7 @@ try { history.back(); } catch(e){}
 }
 }
 function closeAll(skipHistory){
-['cartDrawer','wishDrawer','productModal','sizeModal','trackModal','catPage','mobileMenu','searchOverlay','historyModal','staffModal','memberModal','confirmCancelModal'].forEach(id => {
+['cartDrawer','wishDrawer','productModal','sizeModal','trackModal','catPage','mobileMenu','searchOverlay','historyModal','staffModal','memberModal'].forEach(id => {
 const el = $('#'+id); if (el) el.classList.add('hidden');
 });
 document.body.style.overflow = '';
@@ -3105,7 +3071,7 @@ if (t.hasAttribute('data-download-invoice')){
     }
     return;
 }
-if (t.hasAttribute('data-cancel-order')){ openCancelConfirm(t.getAttribute('data-cancel-order')); return; }
+if (t.hasAttribute('data-cancel-order')){ cancelOrder(t.getAttribute('data-cancel-order')); return; }
 });
 /* ---- Wire top-level handlers ---- */
 function wire(){
@@ -3342,17 +3308,6 @@ if($('#memberRemove'))$('#memberRemove').onclick=()=>{
   updateMemberUI();
   renderCart();
   toast('Membership removed','check');
-};
-
-if ($('#confirmCancelYes')) $('#confirmCancelYes').onclick = () => {
-  const id = pendingCancelId;
-  pendingCancelId = null;
-  closeModal('confirmCancelModal');
-  if (id) cancelOrder(id);
-};
-if ($('#confirmCancelNo')) $('#confirmCancelNo').onclick = () => {
-  pendingCancelId = null;
-  closeModal('confirmCancelModal');
 };
   
 $('#delVerify').onclick = () => {
