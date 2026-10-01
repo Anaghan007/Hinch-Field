@@ -1552,7 +1552,6 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
           <button id="memShare" class="pill btn-ink py-3.5">Share</button>
         </div>
         <button id="memGoCart" class="pill btn-gold w-full py-3.5">Shop & Save 50%</button>
-        <button id="memTransfer" class="pill btn-line w-full py-3 mt-2">📱 New device? Transfer here</button>
       </div>
 
       <div id="memViewBuy">
@@ -1569,44 +1568,41 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
         <div class="border hairline p-4 space-y-2.5 mb-5" style="background:var(--bg2);">
           <p class="text-xs">✅ <b>Flat 50% OFF</b> on ALL products</p>
           <p class="text-xs">✅ <b>FREE delivery</b> on every order</p>
-          <p class="text-xs">✅ Unique 4-digit code via WhatsApp</p>
+          <p class="text-xs">✅ Unique 4-digit code instantly after payment</p>
           <p class="text-xs">✅ Valid for 365 days</p>
         </div>
         <input id="memBuyName" maxlength="60" class="field mb-3" placeholder="Full name *">
         <input id="memBuyPhone" inputmode="numeric" maxlength="15" class="field mb-3" placeholder="WhatsApp number *">
         <p id="memBuyErr" class="text-[11px] hidden mb-3" style="color:#DC2626;"></p>
         <button id="memBuyBtn" class="pill btn-gold w-full py-4">Pay ₹599 — Get Membership</button>
-        <div class="flex gap-2 mt-3">
-        <input id="memTransferCode" maxlength="4" inputmode="numeric" class="field flex-1" placeholder="4-digit code">
-        <input id="memTransferToken" maxlength="6" inputmode="numeric" class="field flex-1" placeholder="Transfer token">
-        <button id="memTransferGo" class="pill btn-line px-4 text-[10px]">Move</button>
-        </div>
-        <p class="text-[10px] text-center mt-3" style="color:var(--mut);">Secure payment · Code sent on WhatsApp</p>
+        <p class="text-[10px] text-center mt-3" style="color:var(--mut);">Secure payment</p>
       </div>
     </div>
   </div>
 
   <!-- ═══ CANCEL CONFIRMATION POPUP ═══ -->
-<div id="confirmCancelModal" class="fixed inset-0 z-[96] hidden flex items-center justify-center px-4 w-full">
-  <div id="confirmCancelBackdrop" class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
-  <div class="modalcard relative p-6 md:p-8 max-w-sm w-full" style="background:var(--bg); color:var(--text); box-shadow:var(--shadow);">
-    <div class="text-center mb-6">
-      <span class="w-14 h-14 mx-auto mb-4 flex items-center justify-center" style="background:var(--bg2); color:var(--text);">
+  <div id="confirmCancelModal" class="fixed inset-0 z-[96] hidden flex items-center justify-center px-4 w-full">
+    <div id="confirmCancelBackdrop" class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
+    <div class="modalcard relative p-6 md:p-8 max-w-sm w-full"
+      style="background:var(--bg); color:var(--text); box-shadow:var(--shadow);">
+      <div class="text-center mb-6">
+        <span class="w-14 h-14 mx-auto mb-4 flex items-center justify-center" style="background:var(--bg2); color:var(--text);">
         <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
       </span>
-      <p class="micro mb-2" style="color:var(--mut);">Confirm Cancellation</p>
-      <h3 class="disp editorial-h font-luxe text-xl leading-snug mb-2">Do You Really Want To<br>Cancel Order?</h3>
-      <p class="text-xs" style="color:var(--mut);">Order ID: <b id="cancelOrderIdTxt" style="color:var(--text);"></b></p>
-      <p id="cancelOrderPayTxt" class="text-[10px] font-semibold mt-2 tracking-wide2 uppercase"></p>
+        <p class="micro mb-2" style="color:var(--mut);">Confirm Cancellation</p>
+        <h3 class="disp editorial-h font-luxe text-xl leading-snug mb-2">Do You Really Want To<br>Cancel Order?</h3>
+        <p class="text-xs" style="color:var(--mut);">Order ID: <b id="cancelOrderIdTxt" style="color:var(--text);"></b>
+        </p>
+        <p id="cancelOrderPayTxt" class="text-[10px] font-semibold mt-2 tracking-wide2 uppercase"></p>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <button id="confirmCancelNo" class="pill btn-line py-3.5">No</button>
+        <button id="confirmCancelYes" class="pill btn-gold py-3.5">Yes, Cancel</button>
+      </div>
+      <p class="text-[10px] text-center mt-4" style="color:var(--mut);">This action cannot be undone</p>
     </div>
-    <div class="grid grid-cols-2 gap-3">
-      <button id="confirmCancelNo" class="pill btn-line py-3.5">No</button>
-      <button id="confirmCancelYes" class="pill btn-gold py-3.5">Yes, Cancel</button>
-    </div>
-    <p class="text-[10px] text-center mt-4" style="color:var(--mut);">This action cannot be undone</p>
   </div>
-</div>
-  
+
   <!-- ═══ INVOICE MODAL ═══ -->
   <div id="invoiceModal" class="fixed inset-0 z-[90] hidden overflow-y-auto w-full" style="background:var(--bg);">
     <div class="invoice-wrap max-w-3xl mx-auto my-4 md:my-8"
@@ -3326,33 +3322,6 @@ if ($('#memShare')) $('#memShare').onclick = () => {
   } else {
     try { navigator.clipboard.writeText(txt); toast('Copied — share anywhere', 'check'); } catch(e){}
   }
-};
-
-if ($('#memTransfer')) $('#memTransfer').onclick = async () => {
-  const saved = store.get('membership_full', null);
-  if (!saved || !saved.code) return;
-  const deviceId = await getDeviceId();
-  try {
-    const r = await fetch(`${API_BASE}/api/membership-transfer`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ code: saved.code, deviceId, action:'create' }) });
-    const d = await r.json();
-    if (d.success) toast('Transfer token: ' + d.token + ' — નવા device માં 10 મિનિટમાં નાખો', 'check');
-    else toast(d.error || 'Transfer not available', 'cross');
-  } catch(e){ toast('Transfer failed', 'cross'); }
-};
-if ($('#memTransferGo')) $('#memTransferGo').onclick = async () => {
-  const code = ($('#memTransferCode')?.value || '').trim();
-  const token = ($('#memTransferToken')?.value || '').trim();
-  if (!/^\d{4}$/.test(code) || !/^\d{6}$/.test(token)) return toast('Code + 6-digit token નાખો', 'warn');
-  const deviceId = await getDeviceId();
-  try {
-    const r = await fetch(`${API_BASE}/api/membership-transfer`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ code, deviceId, token, action:'use' }) });
-    const d = await r.json();
-    if (d.success){
-      store.set('membership_full', { code, name: d.name, expiresAt: d.expiresAt });
-      toast('Membership આ device પર આવી ગઈ! જૂના device પરથી હટી ગઈ છે.', 'check');
-      openMemberModal(true);
-    } else toast(d.error || 'Transfer failed', 'cross');
-  } catch(e){ toast('Transfer failed', 'cross'); }
 };
 
 if ($('#memGoCart')) $('#memGoCart').onclick = () => {
