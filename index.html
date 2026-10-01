@@ -2568,7 +2568,7 @@ if (!skipRoute) {
 let hash = '#shop';
 if (special) hash += '/' + special;
 else if (cat) hash += '/' + cat;
-history.pushState({ modal: 'catPage', cat, special }, '', hash);
+history.pushState({ modal: 'catPage', cat, special }, '', window.location.origin);
 }
 }
 function cpItems(){
