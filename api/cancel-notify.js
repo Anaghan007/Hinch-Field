@@ -6,20 +6,14 @@ export default async function handler(req, res) {
 
   try {
     const { order } = req.body || {};
-    if (!order || !order.id) return res.status(400).json({ success: false, error: 'Invalid order data' });
+    if (!order || !order.id) return res.status(400).json({ success: false });
 
     const KEY = process.env.RESEND_API_KEY;
-    if (!KEY) return res.status(500).json({ success: false, error: 'Missing RESEND_API_KEY' });
+    if (!KEY) return res.status(500).json({ success: false });
 
     const c = order.customer;
     const t = order.totals;
-    const p = order.payment || {};
-    const isOnline = p.method === 'online';
-
-    // 🎯 Dynamic Subject Line (PAID vs COD)
-    const subject = isOnline 
-      ? `🚨 REFUND REQUIRED: PAID Order Cancelled — ${order.id} — ₹${t ? t.total : 0}`
-      : `📦 COD Order Cancelled — ${order.id} — ₹${t ? t.total : 0}`;
+    const isOnline = order.payment && order.payment.method === 'online';
 
     const itemsHtml = order.items.map((l, i) => {
       const extras = (l.colorChoice ? '<br><span class="text-muted" style="font-size:11px;">Colour: ' + l.colorChoice + '</span>' : '')
@@ -32,19 +26,6 @@ export default async function handler(req, res) {
         '<td class="bg-card text-main" style="padding:14px 8px;border-bottom:1px solid #E6E4E0;text-align:right;font-size:13px;width:100px;white-space:nowrap;">₹' + (l.price||0).toLocaleString('en-IN') + '</td>' +
       '</tr>';
     }).join('');
-
-    // 🎯 Razorpay Details Box (Only for PAID orders)
-    const razorpayBox = (isOnline && (p.razorpay_payment_id || p.razorpay_order_id))
-      ? '<tr><td class="bg-card" style="padding:0 40px 20px;">' +
-          '<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#FEF2F2;border:1px dashed #DC2626;border-radius:4px;">' +
-            '<tr><td style="padding:16px;">' +
-              '<div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#DC2626;font-weight:700;margin-bottom:10px;">⚠ Razorpay Refund Details</div>' +
-              (p.razorpay_payment_id ? '<div style="font-size:13px;margin-bottom:6px;"><span style="color:#7C7C7C;">Payment ID:</span> <b style="color:#0A0A0A;letter-spacing:0.5px;background:#FEE2E2;padding:2px 6px;border-radius:3px;">' + p.razorpay_payment_id + '</b></div>' : '') +
-              (p.razorpay_order_id ? '<div style="font-size:13px;"><span style="color:#7C7C7C;">Razorpay Order ID:</span> <b style="color:#0A0A0A;letter-spacing:0.5px;">' + p.razorpay_order_id + '</b></div>' : '') +
-            '</td></tr>' +
-          '</table>' +
-        '</td></tr>'
-      : '';
 
     const html =
     '<!DOCTYPE html>' +
@@ -96,26 +77,15 @@ export default async function handler(req, res) {
         '</table>' +
       '</td></tr>' +
 
-      // Alert (Dynamic for PAID vs COD)
+      // Alert
       '<tr><td class="bg-card" style="padding:24px 40px 0;">' +
-        (isOnline 
-          ? '<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#FEF2F2;border-left:4px solid #DC2626;">' +
-              '<tr><td style="padding:14px 16px;background-color:#FEF2F2;">' +
-                '<div style="font-size:13px;color:#DC2626;font-weight:700;">⚠ PAID ORDER — REFUND REQUIRED</div>' +
-                '<div style="font-size:12px;color:#DC2626;opacity:0.75;margin-top:4px;">Customer paid online via Razorpay. Please initiate refund immediately.</div>' +
-              '</td></tr>' +
-            '</table>'
-          : '<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#F5F4F2;border-left:4px solid #0A0A0A;">' +
-              '<tr><td style="padding:14px 16px;background-color:#F5F4F2;">' +
-                '<div style="font-size:13px;color:#0A0A0A;font-weight:700;">📦 COD ORDER CANCELLED</div>' +
-                '<div style="font-size:12px;color:#0A0A0A;opacity:0.75;margin-top:4px;">Do NOT ship this order. Cash on Delivery cancelled by customer.</div>' +
-              '</td></tr>' +
-            '</table>'
-        ) +
+        '<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#FEF2F2;border-left:4px solid #DC2626;">' +
+          '<tr><td style="padding:14px 16px;background-color:#FEF2F2;">' +
+            '<div style="font-size:13px;color:#DC2626;font-weight:600;">⚠ Customer has cancelled this order</div>' +
+            '<div style="font-size:12px;color:#DC2626;opacity:0.75;margin-top:4px;">' + (isOnline ? 'Payment was made online — refund required' : 'COD order — do not ship') + '</div>' +
+          '</td></tr>' +
+        '</table>' +
       '</td></tr>' +
-
-      // Razorpay Details Box (If PAID)
-      razorpayBox +
 
       // Items
       '<tr><td class="bg-card" style="padding:28px 40px 0;">' +
@@ -155,28 +125,41 @@ export default async function handler(req, res) {
       // Customer - Receipt Style (Name + Phone only)
       '<tr><td class="bg-card" style="padding:28px 40px 0;">' +
         '<table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">' +
+
+          // Receipt top border
           '<tr><td style="border-top:1px solid #E6E4E0;padding:0;"></td></tr>' +
+
+          // Header
           '<tr><td class="bg-card" style="padding:16px 0 12px;">' +
             '<div class="text-muted" style="font-size:10px;letter-spacing:4px;text-transform:uppercase;font-weight:600;">Customer</div>' +
           '</td></tr>' +
+
+          // Divider
           '<tr><td style="border-top:1px solid #E6E4E0;padding:0;"></td></tr>' +
+
+          // Name - Big Bold
           '<tr><td class="bg-card" style="padding:20px 0 0;">' +
             '<div class="text-main" style="font-size:20px;font-weight:700;letter-spacing:0.5px;line-height:1.3;">' + c.name + '</div>' +
           '</td></tr>' +
+
+          // Phone - Small Muted
           '<tr><td class="bg-card" style="padding:6px 0 20px;">' +
             '<div class="text-muted" style="font-size:12px;letter-spacing:1.5px;font-weight:400;">' + c.phone + '</div>' +
           '</td></tr>' +
+
+          // Receipt bottom border
           '<tr><td style="border-top:1px solid #E6E4E0;padding:0;"></td></tr>' +
+
         '</table>' +
       '</td></tr>' +
 
-      // Action (Dynamic for PAID vs COD)
+      // Action
       '<tr><td class="bg-card" style="padding:28px 40px 0;">' +
         '<table width="100%" cellpadding="0" cellspacing="0" border="0" class="bg-dark">' +
           '<tr><td class="bg-dark" style="padding:20px 24px;text-align:center;">' +
             '<div class="text-white" style="font-size:10px;letter-spacing:4px;text-transform:uppercase;opacity:0.6;">Action Required</div>' +
             '<div class="text-white" style="font-family:Georgia,serif;font-size:18px;letter-spacing:1px;margin-top:8px;line-height:1.5;">' +
-              (isOnline ? 'Refund <b>₹' + (t ? t.total : 0).toLocaleString('en-IN') + '</b> via Razorpay' : 'Do NOT ship this COD order') +
+              (isOnline ? 'Refund <b>₹' + (t ? t.total : 0).toLocaleString('en-IN') + '</b> via Razorpay' : 'Do NOT ship this order') +
             '</div>' +
           '</td></tr>' +
         '</table>' +
@@ -195,15 +178,17 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         from: 'HinchField <orders@hinchfield.store>',
         to: ['support.hinchfield@gmail.com'],
-        subject: subject,
+        // 👇 ફક્ત Subject Line માં PAID/COD નો તફાવત ઉમેર્યો છે
+        subject: (isOnline ? '🚨 PAID (Refund) Cancelled' : '📦 COD Cancelled') + ' — ' + order.id + ' — ₹' + (t ? t.total : 0),
         html
       })
     });
 
     return res.status(200).json({ success: true });
+    
   } catch (e) {
-    console.error('Cancel Notify Error:', e);
-    // 🔧 FIXED: અહીં તારો syntax error હતો (us(500)...) હવે proper છે
+    console.error(e);
+    // 👇 અહીંયા તારો ભાંગેલો કોડ (us(500)...) ફિક્સ કરી દીધો છે
     return res.status(500).json({ success: false, error: e.message });
   }
 }
