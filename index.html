@@ -3296,49 +3296,47 @@ function showMemberView(){
 }
 
 async function openMemberModal(skipRoute){
-  // 1. સૌથી પહેલાં Modal તરત જ ખોલો (કોઈ િલે વગર)
   $('#memBuyErr').classList.add('hidden');
-  openModal('memberModal');
-  if (!skipRoute) {
-    try { history.pushState({ modal: 'memberModal' }, '', '#membership'); } catch(e){}
-  }
+  if (typeof updateMembershipPrices === 'function') updateMembershipPrices();
 
-  // 2. તરત જ 'Buy Screen' બતાવો જેથી યુઝર ને ખાલી સ્ક્રીન ન દેખાય
+  // 1. તરત જ Modal ખોલો (ડિફોલ્ટ: Buy screen દેખાશે) → કોઈ ડિલે નહીં!
+  openModal('memberModal');
   $('#memViewActive').classList.add('hidden');
   $('#memViewBuy').classList.remove('hidden');
 
-  // 3. હવે બેકગ્રાઉન્ડમાં Device Check કરો (યુઝર ને અટકાવ્યા વગર)
+  if (!skipRoute) {
+    try { history.pushState({ modal:'memberModal' }, '', '#membership'); } catch(e){}
+  }
+
+  // 2. Background માં Device Check કરો (UI અટકશે નહીં, સ્મૂથ લાગશે)
   try {
     const deviceId = await getDeviceId();
     const r = await fetch(`${API_BASE}/api/membership-check-device`, {
-      method:'POST', 
-      headers:{'Content-Type':'application/json'},
+      method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ deviceId })
     });
     const d = await r.json();
-
-    // 4. જો આ Device પર Membership હોય, તો 'Active Screen' બતાવો
+    
+    // જો membership મળે, તો તરત Active screen બતાવી દો
     if (d.success && d.membership){
-      store.set('membership_full', d.membership);
+      const deviceMembership = d.membership;
+      store.set('membership_full', deviceMembership);
       $('#memViewActive').classList.remove('hidden');
       $('#memViewBuy').classList.add('hidden');
-      $('#memActiveCode').textContent = d.membership.code;
-      $('#memActiveName').textContent = d.membership.name || '';
-      $('#memActiveExpiry').textContent = 'Valid till: ' + new Date(d.membership.expiresAt).toLocaleDateString('en-IN');
-      
-      if (typeof updateMemberUI === 'function') updateMemberUI();
-      if (typeof renderCart === 'function') renderCart();
-    } else {
-      // નહીં હોય તો Buy Screen જ રહે, અને જૂનો ડેટા સાફ કરો
-      store.set('membership_full', null);
-      if (typeof updateMemberUI === 'function') updateMemberUI();
+      $('#memActiveCode').textContent = deviceMembership.code;
+      $('#memActiveName').textContent = deviceMembership.name || '';
+      $('#memActiveExpiry').textContent = 'Valid till: ' + new Date(deviceMembership.expiresAt).toLocaleDateString('en-IN');
     }
-  } catch(e){
-    console.error('Membership check error:', e);
-    // નેટવર્ક ફેલ હોય તો પણ Buy Screen જ દેખાશે (કોઈ error નહીં)
+  } catch(e){ console.error(e); }
+
+  // 3. જો કોઈ saved membership હોય તો auto lookup
+  const saved = store.get('membership_full', null);
+  if (!saved || !saved.code){
+    const lastPhone = store.get('last_phone', null);
+    if (lastPhone) autoLookup(lastPhone);
   }
 }
-
+  
 if ($('#openMembership')) $('#openMembership').onclick = () => openMemberModal();
 if ($('#footAdmin')) $('#footAdmin').onclick = () => { openAdmin(); };
 
