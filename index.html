@@ -3140,17 +3140,53 @@ document.addEventListener('click', e => {
 const t = e.target.closest('[data-open-product],[data-add],[data-wish],[data-close],[data-slide-go],[data-catpage],[data-angle],[data-psize],[data-pq],[data-pm-add],[data-pm-buy],[data-pm-wa],[data-cq],[data-cr],[data-bnav],[data-share],[data-sizeopen],[data-cancel-order],[data-download-invoice],[data-track-wa],[data-openhistory],[data-membership]');
 if (!t){ const sd = $('#searchDrop'); if (sd) sd.classList.add('hidden'); return; }
 if (t.hasAttribute('data-close')){ closeModal(t.getAttribute('data-close')); return; }
-if (t.hasAttribute('data-openhistory')){ closeAll(true); openHistory(); return; }
-if (t.hasAttribute('data-membership')){ closeAll(true); const _b = $('#openMembership'); if (_b) _b.click(); return; }
+if (t.hasAttribute('data-openhistory')){
+  const mobileOpen = $('#mobileMenu') && !$('#mobileMenu').classList.contains('hidden');
+  if (mobileOpen) {
+    closeAll(true);
+    renderHistory();
+    openModal('historyModal');
+    history.replaceState({ modal: 'historyModal' }, '', '#orders');
+  } else {
+    closeAll(true);
+    openHistory();
+  }
+  return;
+}
+if (t.hasAttribute('data-membership')){
+  const mobileOpen = $('#mobileMenu') && !$('#mobileMenu').classList.contains('hidden');
+  if (mobileOpen) {
+    closeAll(true);
+    const _b = $('#openMembership');
+    if (_b) _b.click();
+    history.replaceState({ modal: 'memberModal' }, '', '#membership');
+  } else {
+    closeAll(true);
+    const _b = $('#openMembership');
+    if (_b) _b.click();
+  }
+  return;
+}
 if (t.hasAttribute('data-open-product')){ const id = t.getAttribute('data-open-product'); closeAll(true); openProduct(id); return; }
 if (t.hasAttribute('data-add')){ const id = t.getAttribute('data-add'); addToCart(id); closeAll(true); try{ history.replaceState(null, '', location.pathname + location.search); history.pushState({ modal:'cartDrawer' }, '', '#cart'); handleRoute(); }catch(err){} return; }
 if (t.hasAttribute('data-wish')){ toggleWish(t.getAttribute('data-wish')); return; }
 if (t.hasAttribute('data-slide-go')){ goSlide(+t.getAttribute('data-slide-go')); clearInterval(sTimer); startSlider(); return; }
 if (t.hasAttribute('data-catpage')){
-const v = t.getAttribute('data-catpage');
-if (['new','best','under499','under599','under699'].indexOf(v) > -1) openCatPage('', '', v);
-else openCatPage(v, '', '');
-return;
+  const v = t.getAttribute('data-catpage');
+  const mobileOpen = $('#mobileMenu') && !$('#mobileMenu').classList.contains('hidden');
+  if (mobileOpen) {
+    closeAll(true);
+    if (['new','best','under499','under599','under699'].indexOf(v) > -1) openCatPage('', '', v, true);
+    else openCatPage(v, '', '', true);
+    let hash = '#shop';
+    if (['new','best','under499','under599','under699'].indexOf(v) > -1) hash += '/' + v;
+    else if (v) hash += '/' + v;
+    history.replaceState({ modal: 'catPage' }, '', hash);
+  } else {
+    if (['new','best','under499','under599','under699'].indexOf(v) > -1) openCatPage('', '', v);
+    else openCatPage(v, '', '');
+  }
+  return;
 }
 if (t.hasAttribute('data-sizeopen')){ openModal('sizeModal'); try{ history.pushState({ modal: 'sizeModal' }, '', '#size'); }catch(e){} return; }
 if (t.hasAttribute('data-bnav')){
