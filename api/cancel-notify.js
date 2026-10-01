@@ -122,48 +122,27 @@ export default async function handler(req, res) {
         '</table>' +
       '</td></tr>' +
 
-      // Customer
-      '<tr><td class="bg-card" style="padding:32px 40px 0;">' +
-        '<table width="100%" cellpadding="0" cellspacing="0" border="0" class="bg-soft" style="border:1px solid #E6E4E0;">' +
-          '<tr><td class="bg-soft" style="padding:24px 28px;">' +
-            '<div style="text-align:center;padding-bottom:18px;border-bottom:1px solid #E6E4E0;margin-bottom:20px;">' +
-              '<div class="text-muted" style="font-size:10px;letter-spacing:4px;text-transform:uppercase;">Delivery Details</div>' +
-            '</div>' +
-            '<table width="100%" cellpadding="0" cellspacing="0" border="0" style="font-size:13px;">' +
-              '<tr>' +
-                '<td class="bg-soft" style="padding:8px 0;vertical-align:top;width:100px;">' +
-                  '<div class="text-muted" style="font-size:9px;letter-spacing:2px;text-transform:uppercase;">Name</div>' +
-                '</td>' +
-                '<td class="bg-soft" style="padding:8px 0;vertical-align:top;">' +
-                  '<div class="text-main" style="font-size:14px;font-weight:600;">' + c.name + '</div>' +
-                '</td>' +
-              '</tr>' +
-              '<tr>' +
-                '<td class="bg-soft" style="padding:8px 0;vertical-align:top;">' +
-                  '<div class="text-muted" style="font-size:9px;letter-spacing:2px;text-transform:uppercase;">Phone</div>' +
-                '</td>' +
-                '<td class="bg-soft" style="padding:8px 0;vertical-align:top;">' +
-                  '<div class="text-main" style="font-size:14px;font-weight:500;">' + c.phone + '</div>' +
-                '</td>' +
-              '</tr>' +
-              '<tr>' +
-                '<td class="bg-soft" style="padding:8px 0;vertical-align:top;">' +
-                  '<div class="text-muted" style="font-size:9px;letter-spacing:2px;text-transform:uppercase;">Address</div>' +
-                '</td>' +
-                '<td class="bg-soft" style="padding:8px 0;vertical-align:top;">' +
-                  '<div class="text-main" style="font-size:13px;line-height:1.7;">' + c.addr + '</div>' +
-                '</td>' +
-              '</tr>' +
-              '<tr>' +
-                '<td class="bg-soft" style="padding:8px 0;vertical-align:top;">' +
-                  '<div class="text-muted" style="font-size:9px;letter-spacing:2px;text-transform:uppercase;">City</div>' +
-                '</td>' +
-                '<td class="bg-soft" style="padding:8px 0;vertical-align:top;">' +
-                  '<div class="text-main" style="font-size:13px;">' + c.city + ', ' + c.state + ' <span class="text-muted">— ' + c.pin + '</span></div>' +
-                '</td>' +
-              '</tr>' +
-            '</table>' +
-          '</td></tr>' +
+            // Customer - Items Table Style
+      '<tr><td class="bg-card" style="padding:28px 40px 0;">' +
+        '<table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">' +
+          // Black header
+          '<thead><tr class="bg-dark">' +
+            '<th class="bg-dark text-white" style="padding:12px 20px;text-align:left;font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:600;">Delivery Details</th>' +
+          '</tr></thead>' +
+          // Body
+          '<tbody>' +
+            '<tr>' +
+              '<td class="bg-card" style="padding:24px 20px 8px;">' +
+                '<div class="text-main" style="font-size:15px;font-weight:600;letter-spacing:0.3px;">' + c.name + '</div>' +
+                '<div style="margin-top:8px;">' +
+                  '<span class="text-main" style="font-size:14px;font-weight:500;">' + c.phone + '</span>' +
+                '</div>' +
+                '<div style="margin:16px 0;border-top:1px solid #E6E4E0;"></div>' +
+                '<div class="text-main" style="font-size:14px;line-height:1.7;">' + c.addr + '</div>' +
+                '<div class="text-main" style="font-size:14px;line-height:1.7;margin-top:2px;">' + c.city + ', ' + c.state + ' <span class="text-muted">— ' + c.pin + '</span></div>' +
+              '</td>' +
+            '</tr>' +
+          '</tbody>' +
         '</table>' +
       '</td></tr>' +
 
