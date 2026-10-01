@@ -3096,6 +3096,7 @@ const pid = hash.split('/')[1];
 openProduct(pid, true);
 }
 else if (hash === '#size') { openModal('sizeModal'); }
+else if (hash === '#membership') { openMemberModal(true); }
 else if (hash === '#admin') { openAdmin(true); }
 else if (hash === '#menu') { openModal('mobileMenu'); }
 else if (hash === '#search') { openModal('searchOverlay'); }
@@ -3213,16 +3214,19 @@ function showMemberView(){
   }
 }
 
-function openMemberModal(){
-  $('#memBuyErr').classList.add('hidden');
-  showMemberView();
-  updateMembershipPrices();
-  openModal('memberModal');
-  const saved = store.get('membership_full', null);
-  if (!saved || !saved.code){
-    const lastPhone = store.get('last_phone', null);
-    if (lastPhone) autoLookup(lastPhone);
-  }
+function openMemberModal(skipRoute){
+$('#memBuyErr').classList.add('hidden');
+showMemberView();
+const wasOpen = !$('#memberModal').classList.contains('hidden');
+openModal('memberModal');
+if (!skipRoute && !wasOpen) {
+try { history.pushState({ modal: 'memberModal' }, '', '#membership'); } catch(e){}
+}
+const saved = store.get('membership_full', null);
+if (!saved || !saved.code){
+const lastPhone = store.get('last_phone', null);
+if (lastPhone) autoLookup(lastPhone);
+}
 }
 
 async function autoLookup(phone){
@@ -3241,7 +3245,7 @@ async function autoLookup(phone){
   } catch(e){ console.error(e); }
 }
 
-if ($('#openMembership')) $('#openMembership').onclick = openMemberModal;
+if ($('#openMembership')) $('#openMembership').onclick = () => openMemberModal();
 
 if ($('#memCopy')) $('#memCopy').onclick = () => {
   const code = $('#memActiveCode').textContent.trim();
