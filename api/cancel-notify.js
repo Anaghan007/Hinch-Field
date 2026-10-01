@@ -184,6 +184,90 @@ export default async function handler(req, res) {
       })
     });
 
+
+        // ═══════════ CUSTOMER CANCELLATION EMAIL ═══════════
+    const custEmail = (c && c.email) ? String(c.email).trim() : '';
+    if (custEmail) {
+      const custHtml =
+      '<!DOCTYPE html>' +
+      '<html><head><meta charset="utf-8"><meta name="color-scheme" content="light dark"><meta name="supported-color-schemes" content="light dark">' +
+      '<style type="text/css">' +
+        'body, .bg-card { background-color: #FFFFFF; }' +
+        '.bg-dark { background-color: #0A0A0A; }' +
+        '.text-main { color: #0A0A0A; }' +
+        '.text-muted { color: #7C7C7C; }' +
+        '.text-white { color: #FFFFFF; }' +
+        '@media (prefers-color-scheme: dark) {' +
+          'body, .bg-card { background-color: #0A0A0A !important; }' +
+          '.bg-dark { background-color: #FFFFFF !important; }' +
+          '.text-main { color: #FFFFFF !important; }' +
+          '.text-muted { color: #999999 !important; }' +
+          '.text-white { color: #0A0A0A !important; }' +
+        '}' +
+      '</style></head>' +
+      '<body class="bg-card" style="margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;">' +
+      '<table width="100%" cellpadding="0" cellspacing="0" border="0" class="bg-card"><tr><td align="center" style="padding:0;">' +
+      '<table width="620" cellpadding="0" cellspacing="0" border="0" class="bg-card" style="max-width:620px;width:100%;">' +
+
+        '<tr><td class="bg-dark" style="padding:18px 40px;text-align:center;background-color:#0A0A0A;">' +
+          '<span style="font-family:Georgia,serif;font-size:18px;letter-spacing:6px;font-weight:600;color:#FFFFFF;">HINCHFIELD</span>' +
+        '</td></tr>' +
+
+        '<tr><td class="bg-card" style="padding:32px 40px 0;">' +
+          '<div class="text-muted" style="font-size:10px;letter-spacing:3px;text-transform:uppercase;">Order Cancelled</div>' +
+          '<div class="text-main" style="font-family:Georgia,serif;font-size:26px;font-weight:600;margin-top:8px;line-height:1.25;">Your Order Has Been Cancelled</div>' +
+          '<div class="text-muted" style="font-size:13px;margin-top:8px;line-height:1.6;">Order <b class="text-main">' + order.id + '</b> · ' + new Date().toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }) + ' — cancelled as per your request.</div>' +
+        '</td></tr>' +
+
+        '<tr><td class="bg-card" style="padding:24px 40px 0;">' +
+          '<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#FEF2F2;border-left:4px solid #DC2626;">' +
+            '<tr><td style="padding:14px 16px;background-color:#FEF2F2;">' +
+              '<div style="font-size:13px;color:#DC2626;font-weight:600;">' + (isOnline ? '💳 Refund Update' : '📦 No Payment Collected') + '</div>' +
+              '<div style="font-size:12px;color:#DC2626;opacity:0.85;margin-top:4px;line-height:1.6;">' +
+                (isOnline
+                  ? 'Since this was a prepaid order, your refund of <b>₹' + (t ? t.total : 0).toLocaleString('en-IN') + '</b> will be initiated to your original payment method within 5–7 business days.'
+                  : 'This was a Cash on Delivery order, so no payment was collected — nothing to worry about.') +
+              '</div>' +
+            '</tr></table>' +
+        '</td></tr>' +
+
+        '<tr><td class="bg-card" style="padding:28px 40px 0;">' +
+          '<table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">' +
+            '<thead><tr class="bg-dark">' +
+              '<th class="bg-dark text-white" style="padding:12px 8px;text-align:left;font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:600;">Cancelled Item</th>' +
+              '<th class="bg-dark text-white" style="padding:12px 8px;text-align:center;font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:600;width:70px;">Qty</th>' +
+              '<th class="bg-dark text-white" style="padding:12px 8px;text-align:right;font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:600;width:100px;">Price</th>' +
+            '</tr></thead>' +
+            '<tbody>' + itemsHtml + '</tbody>' +
+          '</table>' +
+        '</td></tr>' +
+
+        '<tr><td class="bg-card" style="padding:0 40px 8px;">' +
+          '<table cellpadding="0" cellspacing="0" border="0" style="margin-left:auto;margin-top:8px;width:100%;max-width:340px;">' +
+            '<tr><td class="text-main bg-card" style="padding:14px 12px 8px;text-align:right;font-size:13px;letter-spacing:2px;text-transform:uppercase;font-weight:600;border-top:2px solid #0A0A0A;">Refund / Order Total</td><td class="text-main bg-card" style="padding:14px 12px 8px;text-align:right;font-size:22px;font-weight:700;border-top:2px solid #0A0A0A;">₹' + (t ? t.total : 0).toLocaleString('en-IN') + '</td></tr>' +
+          '</table>' +
+        '</td></tr>' +
+
+        '<tr><td class="bg-card" style="padding:28px 40px 32px;text-align:center;">' +
+          '<div class="text-muted" style="font-size:11px;line-height:1.8;">We are sorry to see this order go 💔<br>' +
+          'Questions? WhatsApp us at <b class="text-main">7434053550</b> or email <b class="text-main">support.hinchfield@gmail.com</b><br>' +
+          'We would love to serve you again at hinchfield.store</div>' +
+        '</td></tr>' +
+
+      '</table></td></tr></table></body></html>';
+
+      await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + KEY, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          from: 'HinchField <orders@hinchfield.store>',
+          to: [custEmail],
+          subject: '❌ Your Order ' + order.id + ' Has Been Cancelled — HinchField',
+          html: custHtml
+        })
+      }).catch(e => console.error('customer cancel email error:', e));
+    }
+    
     return res.status(200).json({ success: true });
     
   } catch (e) {
