@@ -2934,7 +2934,8 @@ function cancelOrder(orderId){
   renderHistory();
   toast('Order Cancelled Successfully','cross');
 
-  // 📧 Notify admin via email
+    // 📧 Notify admin via email
+  console.log('Cancel order triggered:', order.id, 'Payment:', order.payment);
   try {
     fetch(`${API_BASE}/api/cancel-notify`, {
       method: 'POST',
@@ -2951,8 +2952,15 @@ function cancelOrder(orderId){
           payment: order.payment
         }
       })
-    }).catch(() => {});
-  } catch(e){}
+        }).then(r => r.json()).then(d => {
+      console.log('Cancel-notify response:', d);
+      if (d && d.success) toast('Admin notified', 'check');
+      else toast('Email failed', 'cross');
+    }).catch(e => {
+      console.error('Cancel-notify error:', e);
+      toast('Email error', 'cross');
+    });
+  } catch(e){ console.error('Cancel error:', e); }
 }
 /* ---- Admin ---- */
 let adminAuth = false;
