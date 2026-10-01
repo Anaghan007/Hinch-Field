@@ -1655,7 +1655,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       <button onclick="closeModal('invoiceModal'); if(typeof openHistory==='function') openHistory();" class="pill btn-line" style="flex:1;padding:14px;">Close</button>
     </div>
   </div>
-  
+
   <div id="toasts" class="fixed top-20 right-3 md:right-5 z-[99] space-y-3 w-[19rem] max-w-[92vw]"></div>
 
   <a id="waFloat" href="https://wa.me/917434053550?text=Hi%20HinchField!" target="_blank" rel="noopener"
@@ -2867,7 +2867,7 @@ return;
 }
 box.innerHTML = orders.map(o => {
 const st = getOrderStatus(o);
-const canCancel = (Date.now() - o.timestamp < 24*60*60*1000) && st.text !== 'Cancelled' && st.text !== 'Delivered';
+const canCancel = (Date.now() - o.timestamp < 24*60*60*1000) && st.text !== 'Cancelled' && st.text !== 'Delivered' && (!o.payment || o.payment.method !== 'online');
 const date = new Date(o.timestamp).toLocaleString('en-IN');
 const payBadge = o.payment && o.payment.method === 'online'
   ? '<span class="chip" style="background:#0A0A0A; color:#fff;">PAID ONLINE</span>'
@@ -2887,7 +2887,7 @@ return '<div class="flex gap-3 items-center"><div class="w-12 h-14 overflow-hidd
 '<div class="flex justify-between items-center pt-3 border-t hairline flex-wrap gap-2"><b class="disp text-sm">Total: ' + fmt(o.totals.total) + '</b>' +
 '<div class="flex gap-2">' +
 '<button class="chip border hairline text-[10px]" style="color:var(--text);" data-download-invoice="' + o.id + '">Download Invoice</button>' +
-(canCancel ? '<button class="chip border hairline text-[10px]" style="color:#DC2626;" onclick="window.cancelOrder(\'' + o.id + '\')">Cancel</button>' : '') +
+(canCancel ? '<button class="chip border hairline text-[10px]" style="color:#DC2626;" data-cancel-order="' + o.id + '">Cancel</button>' : '') +
 '</div></div>' +
 (o.otp && st.text !== 'Cancelled' ? '<p class="text-[10px] font-medium text-center py-2 tracking-wide2 uppercase" style="background:var(--bg2); color:var(--text);">Delivery OTP: ' + o.otp + '</p>' : '') +
 (o.payment && o.payment.razorpay_payment_id ? '<p class="text-[10px] text-center" style="color:var(--mut);">Payment ID: ' + o.payment.razorpay_payment_id + '</p>' : '') +
@@ -2895,100 +2895,36 @@ return '<div class="flex gap-3 items-center"><div class="w-12 h-14 overflow-hidd
 }).join('');
 }
 function cancelOrder(orderId){
-  try {
-    const orders = store.get('orders', []);
-    const idx = orders.findIndex(o => o.id === orderId);
-    if (idx === -1) return toast('Order not found','cross');
-    const order = orders[idx];
-    if (Date.now() - order.timestamp >= 24*60*60*1000){
-      return toast('Cannot cancel after 24 hours','warn');
-    }
-    const isOnline = order.payment && order.payment.method === 'online';
-    const total = (order.totals && order.totals.total) ? order.totals.total : 0;
-    const msg = isOnline
-      ? 'Your paid amount of Rs ' + total + ' will be refunded to your original payment method within 5-7 business days.\n\nCancel this order?'
-      : 'This order will be cancelled permanently and will not be shipped.\n\nCancel this order?';
-    if (window.confirm(msg)) {
-      doCancelOrder(orderId);
-    }
-  } catch(e){
-    console.error('cancelOrder:', e);
-    toast('Something went wrong','cross');
-  }
-}
-
-window.cancelOrder = function(orderId){
-  try {
-    var orders = store.get('orders', []);
-    var idx = -1;
-    for (var i = 0; i < orders.length; i++){
-      if (orders[i].id === orderId){ idx = i; break; }
-    }
-    if (idx === -1){ alert('Order not found'); return; }
-    var order = orders[idx];
-
-    if (Date.now() - order.timestamp >= 24*60*60*1000){
-      alert('Cannot cancel after 24 hours');
-      return;
-    }
-
-    var isOnline = order.payment && order.payment.method === 'online';
-    var total = (order.totals && order.totals.total) || 0;
-
-    var msg = isOnline
-      ? 'Your paid amount of Rs ' + total.toLocaleString('en-IN') + ' will be refunded to your original payment method within 5-7 business days.\n\nDo you really want to cancel this order?'
-      : 'This order will be cancelled permanently and will not be shipped.\n\nDo you really want to cancel this order?';
-
-    if (!confirm(msg)) return;
-
-    // ⏺️ Mark cancelled SYNCHRONOUSLY
-    order.status = 'Cancelled';
-    order.updatedAt = Date.now();
-    store.set('orders', orders);
-
-    // 🔄 Re-render history
-    try { renderHistory(); } catch(e){ console.error('renderHistory fail:', e); }
-
-    // 💰 Refund (fire and forget)
-    if (isOnline && order.payment && order.payment.razorpay_payment_id){
-      fetch('/api/refund', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          payment_id: order.payment.razorpay_payment_id,
-          amount: Math.round(total * 100)
-        })
-      })
-      .then(function(r){ return r.json(); })
-      .then(function(d){
-        if (d && d.success){
-          alert('✅ Order cancelled\n💰 Refund initiated — Rs ' + total);
-        } else {
-          alert('⚠ Order cancelled\nRefund issue: ' + ((d && d.error) || 'Contact support'));
-        }
-      })
-      .catch(function(e){
-        console.error('Refund fetch:', e);
-        alert('⚠ Order cancelled\nRefund failed — contact support');
-      });
-    } else {
-      alert('✅ Order cancelled successfully');
-    }
-
-    // 📧 Email admin (fire and forget)
-    try {
-      fetch('/api/cancel-notify', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ order: order })
-      }).catch(function(){});
-    } catch(e){ console.error('notify:', e); }
-
-  } catch(e){
-    console.error('cancelOrder FATAL:', e);
-    alert('Error: ' + e.message);
-  }
-}; else {
+const orders = store.get('orders', []);
+const idx = orders.findIndex(o => o.id === orderId);
+if (idx === -1) return;
+if (Date.now() - orders[idx].timestamp < 24*60*60*1000){
+const order = orders[idx];
+order.status = 'Cancelled';
+order.updatedAt = Date.now();
+store.set('orders', orders);
+renderHistory();
+toast('Order Cancelled Successfully','cross');
+// 📧 Notify admin via email
+try {
+  fetch(`${API_BASE}/api/cancel-notify`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      order: {
+        id: order.id,
+        customer: order.customer,
+        items: order.items.map(l => {
+          const p = prodById(l.id);
+          return { name: p ? p.name : 'Product', qty: l.qty, price: p ? p.price : 0 };
+        }),
+        totals: order.totals,
+        payment: order.payment
+      }
+    })
+  }).catch(() => {});
+} catch(e){}
+} else {
 toast('Cannot cancel after 24 hours','warn');
 }
 }
@@ -3082,7 +3018,7 @@ else if (hash === '#search') { openModal('searchOverlay'); }
 }
 window.addEventListener('popstate', handleRoute);
 document.addEventListener('click', e => {
-const t = e.target.closest('[data-open-product],[data-add],[data-wish],[data-close],[data-slide-go],[data-catpage],[data-angle],[data-psize],[data-pq],[data-pm-add],[data-pm-buy],[data-pm-wa],[data-cq],[data-cr],[data-bnav],[data-share],[data-sizeopen],[data-download-invoice],[data-track-wa],[data-openhistory],[data-membership]');
+const t = e.target.closest('[data-open-product],[data-add],[data-wish],[data-close],[data-slide-go],[data-catpage],[data-angle],[data-psize],[data-pq],[data-pm-add],[data-pm-buy],[data-pm-wa],[data-cq],[data-cr],[data-bnav],[data-share],[data-sizeopen],[data-cancel-order],[data-download-invoice],[data-track-wa],[data-openhistory],[data-membership]');
 if (!t){ const sd = $('#searchDrop'); if (sd) sd.classList.add('hidden'); return; }
 if (t.hasAttribute('data-close')){ closeModal(t.getAttribute('data-close')); return; }
 if (t.hasAttribute('data-openhistory')){ closeAll(true); openHistory(); return; }
@@ -3135,6 +3071,7 @@ if (t.hasAttribute('data-download-invoice')){
     }
     return;
 }
+if (t.hasAttribute('data-cancel-order')){ cancelOrder(t.getAttribute('data-cancel-order')); return; }
 });
 /* ---- Wire top-level handlers ---- */
 function wire(){
@@ -3372,8 +3309,6 @@ if($('#memberRemove'))$('#memberRemove').onclick=()=>{
   renderCart();
   toast('Membership removed','check');
 };
-
-if ($('#confirmOverlay')) $('#confirmOverlay').onclick = hideConfirm;
   
 $('#delVerify').onclick = () => {
 const id = $('#delOrderId').value.trim().toUpperCase();
