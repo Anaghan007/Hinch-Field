@@ -9,6 +9,7 @@
     "express": "^4.21.0",
     "razorpay": "^2.9.4",
     "dotenv": "^16.4.5",
-    "cors": "^2.8.5"
+    "cors": "^2.8.5",
+    "@upstash/redis": "^1.28.0"
   }
 }
