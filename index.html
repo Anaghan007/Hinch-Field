@@ -2660,6 +2660,7 @@ const orders = store.get('orders', []);
 orders.push(order);
 store.set('orders', orders);
 store.set('user', { name, phone });
+notifyNewOrder(order);   // 📧 COD order ની email admin ને જશે
 
 cart = []; store.set('cart', []);
 renderCart();
@@ -2835,6 +2836,7 @@ async function handleOnlinePayment(){
 
           if (vData.success){
   const order = savePaidOrder(customer, t, response);
+  notifyNewOrder(order);   // 📧 PAID order ની email admin ને જશે
   cart = []; store.set('cart', []);
   renderCart();
   closeModal('cartDrawer', true);
@@ -2915,6 +2917,30 @@ return '<div class="flex gap-3 items-center"><div class="w-12 h-14 overflow-hidd
 '</div>';
 }).join('');
 }
+
+/* ---- 📧 Admin New Order Email Notify (COD + PAID બંને) ---- */
+function notifyNewOrder(order){
+  try {
+    fetch(`${API_BASE}/api/order-notify`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        order: {
+          id: order.id,
+          otp: order.otp,
+          customer: order.customer,
+          items: order.items.map(l => {
+            const p = prodById(l.id);
+            return { name: p ? p.name : 'Product', qty: l.qty, price: p ? p.price : 0, colorChoice: l.colorChoice || '', custom: l.custom || null };
+          }),
+          totals: order.totals,
+          payment: order.payment
+        }
+      })
+    }).catch(() => {});
+  } catch(e){}
+}
+    
 /* ---- Cancel Order with Confirmation Popup ---- */
 let pendingCancelId = null;
 
