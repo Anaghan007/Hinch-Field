@@ -3064,7 +3064,7 @@ return '<div class="flex gap-3 items-center"><div class="w-12 h-14 overflow-hidd
 /* ---- 🌐 Save order to server ---- */
 function saveOrderToServer(order){
   try {
-    fetch(`${API_BASE}/api/save-order`, {
+    fetch(`${API_BASE}/api/orders?action=save`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ order })
@@ -3854,7 +3854,7 @@ if ($('#adminFetchAll')) $('#adminFetchAll').onclick = async () => {
   btn.textContent = 'Loading…';
   box.innerHTML = '<p class="text-xs text-center" style="color:var(--mut);">Fetching…</p>';
   try {
-    const r = await fetch(`${API_BASE}/api/all-orders?pwd=HF2026`);
+    const r = await fetch(`${API_BASE}/api/orders?action=list&pwd=HF2026`);
     const d = await r.json();
     if (!d.success) throw new Error(d.error || 'Failed');
     if (!d.orders.length) {
@@ -3892,7 +3892,7 @@ if ($('#adminFetchAll')) $('#adminFetchAll').onclick = async () => {
         const status = sel.value;
         b.disabled = true; b.textContent = '…';
         try {
-          const r2 = await fetch(`${API_BASE}/api/update-order`, {
+          const r2 = await fetch(`${API_BASE}/api/orders?action=update`, {
             method:'POST', headers:{'Content-Type':'application/json'},
             body: JSON.stringify({ id, status, pwd: 'HF2026' })
           });
