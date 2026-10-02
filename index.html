@@ -20,7 +20,6 @@
     href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap"
     rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Razorpay Checkout SDK -->
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@4/dist/fp.min.js"></script>
   <script>
@@ -34,13 +33,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
 }
   </script>
   <style>
-    /* ═══════════════════════════════════════════════════════
-   UNIVERSAL RESPONSIVE RESET
-   Works on: iOS Safari, Android Chrome, Samsung Internet,
-   Firefox, Edge, all screen sizes (320px → 4K)
-   ═══════════════════════════════════════════════════════ */
-
-    /* 1. Prevent browser font auto-adjust (iOS/Safari/Chrome Android) */
+    /* ═══ UNIVERSAL RESPONSIVE RESET ═══ */
     html {
       -webkit-text-size-adjust: 100%;
       -moz-text-size-adjust: 100%;
@@ -48,7 +41,6 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       -ms-text-size-adjust: 100%;
     }
 
-    /* 2. Prevent font boosting on Android Chrome */
     body,
     p,
     h1,
@@ -70,7 +62,6 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       font-optical-sizing: auto;
     }
 
-    /* 3. Consistent base font sizing (immune to user's default font size) */
     html {
       font-size: 16px;
     }
@@ -87,7 +78,6 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       }
     }
 
-    /* 4. Prevent iOS input zoom (font-size < 16px triggers zoom) */
     @media (max-width: 767px) {
 
       input,
@@ -97,7 +87,6 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       }
     }
 
-    /* 5. Prevent horizontal overflow on ALL devices */
     html,
     body {
       max-width: 100vw;
@@ -105,13 +94,11 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       overscroll-behavior-x: none;
     }
 
-    /* 6. Safe area for notched phones (iPhone X+, Android punch-hole) */
     body {
       padding-left: env(safe-area-inset-left, 0);
       padding-right: env(safe-area-inset-right, 0);
     }
 
-    /* 7. Minimum touch target (44px per Apple HIG / 48px per Google) */
     .pill,
     .sizechip,
     .qtybtn,
@@ -125,7 +112,6 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       min-height: 36px;
     }
 
-    /* 8. Responsive images — never overflow */
     img,
     svg,
     video,
@@ -135,7 +121,6 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       display: block;
     }
 
-    /* 9. Long words don't break layout (names, custom text) */
     p,
     h1,
     h2,
@@ -154,14 +139,12 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       hyphens: auto;
     }
 
-    /* 10. Grid/flex children min-width 0 (prevents overflow) */
     .grid>*,
     .flex>* {
       min-width: 0;
       min-height: 0;
     }
 
-    /* 11. Consistent form appearance across browsers */
     input,
     select,
     textarea,
@@ -180,7 +163,6 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       appearance: auto;
     }
 
-    /* 12. Table overflow protection */
     table {
       width: 100%;
       table-layout: fixed;
@@ -193,7 +175,6 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       overflow-wrap: break-word;
     }
 
-    /* 13. Fixed elements don't overlap content */
     @supports (padding: max(0px)) {
       body {
         padding-left: max(0px, env(safe-area-inset-left));
@@ -201,7 +182,6 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       }
     }
 
-    /* 14. Prevents text selection on tap (mobile UX) */
     button,
     .pill,
     .cat-card,
@@ -211,21 +191,18 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       -webkit-touch-callout: none;
     }
 
-    /* 15. Smooth font rendering everywhere */
     * {
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
       text-rendering: optimizeLegibility;
     }
 
-    /* 16. Ultra-wide screens (>1920px) — keep content centered */
     @media (min-width: 1921px) {
       .wrap {
         max-width: 1800px;
       }
     }
 
-    /* 17. Very small screens (< 360px) — compact layout */
     @media (max-width: 359px) {
       :root {
         --pad: 12px;
@@ -242,7 +219,6 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       }
     }
 
-    /* 18. Zoom accessibility — respect user's zoom but cap max */
     @media (min-resolution: 2dppx) {
 
       img,
@@ -251,13 +227,11 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       }
     }
 
-    /* 19. Focus visible for keyboard users (accessibility) */
     :focus-visible {
       outline: 2px solid var(--text);
       outline-offset: 2px;
     }
 
-    /* 20. Prevent double-tap zoom on iOS */
     * {
       touch-action: manipulation;
     }
@@ -1049,15 +1023,11 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       }
     }
 
-    /* Invoice Print */
     @media print {
-
-      /* બધા એલિમેન્ટ્સ છુપાવો */
       body>*:not(#invoiceModal) {
         display: none !important;
       }
 
-      /* ઇન્વોઇસ મોડલને નોર્મલ document flow માં લાવો */
       #invoiceModal {
         position: static !important;
         inset: auto !important;
@@ -1069,12 +1039,10 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
         display: block !important;
       }
 
-      /* પ્રિન્ટ બટન્સ છુપાવો */
       .invoice-buttons {
         display: none !important;
       }
 
-      /* ઇન્વોઇસ રેપરને પેજ પર ફિટ કરો */
       .invoice-wrap {
         box-shadow: none !important;
         margin: 0 !important;
@@ -1083,7 +1051,6 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
         page-break-inside: avoid !important;
       }
 
-      /* ટેબલ હેડરનો બ્લેક બેકગ્રાઉન્ડ પ્રિન્ટ કરો */
       .invoice-wrap table thead tr {
         background: #0A0A0A !important;
         color: #fff !important;
@@ -1100,14 +1067,12 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
         color-adjust: exact !important;
       }
 
-      /* બધા બેકગ્રાઉન્ડ કલર્સ ફોર્સ કરો */
       .invoice-wrap * {
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
         color-adjust: exact !important;
       }
 
-      /* ડિલિવરી બેનરનો બ્લેક બેકગ્રાઉન્ડ */
       .invoice-wrap div[style*="background:#0A0A0A"],
       .invoice-wrap div[style*="background: #0A0A0A"] {
         background: #0A0A0A !important;
@@ -1116,7 +1081,6 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
         print-color-adjust: exact !important;
       }
 
-      /* CASH ON DELIVERY બેજ */
       .invoice-wrap p[style*="background:#f5f4f2"],
       .invoice-wrap p[style*="background: #f5f4f2"] {
         background: #f5f4f2 !important;
@@ -1124,7 +1088,6 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
         print-color-adjust: exact !important;
       }
 
-      /* ટેબલ રોને વચ્ચેથી તૂટતા અટકાવો */
       .invoice-wrap table,
       .invoice-wrap tr,
       .invoice-wrap td,
@@ -1132,7 +1095,6 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
         page-break-inside: avoid !important;
       }
 
-      /* પેજ માર્જિન */
       @page {
         margin: 10mm;
         size: A4 portrait;
@@ -1202,7 +1164,6 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       transform: scaleX(1);
     }
 
-    /* Payment Method Radio Cards */
     .pay-radio {
       display: flex;
       align-items: center;
@@ -1277,7 +1238,6 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
     </nav>
   </header>
 
-  <!-- Mobile Menu -->
   <div id="mobileMenu" class="fixed inset-0 z-[60] hidden w-full">
     <div class="absolute inset-0 bg-black/70 backdrop-blur-md" data-close="mobileMenu"></div>
     <div class="absolute left-0 top-0 h-full w-[88%] max-w-sm overflow-y-auto flex flex-col border-r hairline"
@@ -1310,7 +1270,6 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
         id="heroDots"></div>
     </section>
 
-    <!-- Shop by Category -->
     <section class="py-12 md:py-20 w-full" style="background:var(--bg2);" id="shopCatSec">
       <div class="wrap text-center mb-10">
         <p class="micro mb-3">Shop by Category</p>
@@ -1319,7 +1278,6 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       <div class="wrap grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6" id="shopCats"></div>
     </section>
 
-    <!-- Featured -->
     <section class="py-12 md:py-20 w-full" style="background:var(--bg);" id="sec-featured">
       <div class="wrap space-y-16 md:space-y-24" id="featuredCats"></div>
     </section>
@@ -1535,7 +1493,6 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       </svg><span class="micro mt-1">Chat</span></a>
   </nav>
 
-  <!-- Cart Drawer with Payment Method Selection -->
   <div id="cartDrawer" class="fixed inset-0 z-[70] hidden w-full">
     <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" data-close="cartDrawer"></div>
     <aside class="sheet-wrap absolute right-0 top-0 h-full w-full flex justify-end pointer-events-none">
@@ -1543,8 +1500,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
         style="background:var(--bg); color:var(--text); animation:slideR .45s both;">
         <div class="flex items-center justify-between p-4 md:p-5 border-b hairline" style="background:var(--card);">
           <h3 class="disp editorial-h font-luxe text-xl">Your Cart
-            <span id="cartN" class="text-[var(--mut)] text-sm"></span>
-          </h3>
+            <span id="cartN" class="text-[var(--mut)] text-sm"></span></h3>
           <button data-close="cartDrawer" class="w-9 h-9 border hairline transition" aria-label="Close">✕</button>
         </div>
         <div class="flex-1 overflow-y-auto w-full">
@@ -1562,10 +1518,8 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
             <div class="flex justify-between text-sm"><span style="color:var(--mut);">Delivery</span><b id="sumDel"></b>
             </div>
             <div class="flex justify-between disp text-lg border-t hairline pt-3">
-              <span>Total</span><b id="sumTotal"></b>
-            </div>
+              <span>Total</span><b id="sumTotal"></b></div>
           </div>
-
           <div class="border hairline p-4" style="background:var(--bg2);">
             <p class="micro mb-2" style="color:var(--text);">Membership Code</p>
             <div id="memberNotApplied">
@@ -1586,7 +1540,6 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
               </div>
             </div>
           </div>
-
           <div class="p-4 md:p-5 space-y-3 w-full">
             <p class="micro" style="color:var(--text);">Delivery Details</p>
             <input id="coName" maxlength="60" class="field" placeholder="Full name *">
@@ -1600,33 +1553,21 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
             <input id="coPin" maxlength="10" class="field" placeholder="PIN / ZIP *">
             <input type="text" name="website" id="coHoney" class="hidden" tabindex="-1" autocomplete="off" aria-hidden="true">
             <p id="coErr" class="text-[11px] hidden" style="color:#DC2626;"></p>
-
-            <!-- ===== PAYMENT METHOD SELECTION ===== -->
             <p class="micro pt-2" style="color:var(--text);">Payment Method</p>
             <div class="space-y-2">
               <label class="pay-radio active" id="payRadCod">
                 <input type="radio" name="payMethod" value="cod" checked>
-                <div class="flex-1">
-                  <p class="text-xs font-medium">Cash on Delivery</p>
-                  <p class="text-[10px]" style="color:var(--mut);">Pay at your doorstep (India only)</p>
-                </div>
+                <div class="flex-1"><p class="text-xs font-medium">Cash on Delivery</p><p class="text-[10px]" style="color:var(--mut);">Pay at your doorstep (India only)</p></div>
                 <span class="chip" style="background:var(--text); color:var(--bg);">COD</span>
               </label>
               <label class="pay-radio" id="payRadOnline">
                 <input type="radio" name="payMethod" value="online">
-                <div class="flex-1">
-                  <p class="text-xs font-medium">Pay Online</p>
-                  <p class="text-[10px]" style="color:var(--mut);">UPI · Cards · Netbanking · Wallets</p>
-                </div>
+                <div class="flex-1"><p class="text-xs font-medium">Pay Online</p><p class="text-[10px]" style="color:var(--mut);">UPI · Cards · Netbanking · Wallets</p></div>
                 <span class="chip" style="background:#0A0A0A; color:#fff;">Secure</span>
               </label>
             </div>
-
-            <!-- COD button (default) -->
             <button id="placeOrder" class="pill btn-gold w-full py-4">Place Order (COD)</button>
-            <!-- Online payment button (hidden by default) -->
             <button id="payOnline" class="pill btn-gold w-full py-4 hidden">Pay Online</button>
-
             <p class="text-[10px] text-center" style="color:var(--mut);">No Return / No Exchange • Secure checkout</p>
           </div>
         </div>
@@ -1665,8 +1606,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
         <button data-close="trackModal" class="w-9 h-9 border hairline" aria-label="Close">✕</button>
       </div>
       <div class="flex gap-2 w-full">
-        <input id="trackInput" maxlength="12" class="field flex-1 uppercase" placeholder="Order ID e.g. HF123456">
-        <button id="trackGo" class="pill btn-ink px-6">TRACK</button>
+        <input id="trackInput" maxlength="12" class="field flex-1 uppercase" placeholder="Order ID e.g. HF123456"><button id="trackGo" class="pill btn-ink px-6">TRACK</button>
       </div>
       <div id="trackResult" class="mt-6"></div>
     </div>
@@ -1709,7 +1649,6 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
           <div id="adminAllOrders" class="mt-4 space-y-3 max-h-[50vh] overflow-y-auto"></div>
         </div>
       </div>
-      <!-- Cancel Membership Section -->
       <div class="border hairline p-4 mt-6 mb-4" style="background:var(--bg2);">
         <h4 class="micro mb-3" style="color:var(--text);">Cancel / Revoke Membership</h4>
         <div class="flex gap-2 mb-2">
@@ -1777,7 +1716,6 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
     <div class="modalcard relative p-6 md:p-8 max-w-md w-full max-h-[90vh] overflow-y-auto"
       style="background:var(--bg); color:var(--text); box-shadow:var(--shadow);">
       <button class="absolute top-3 right-3 w-9 h-9 border hairline" data-close="memberModal" aria-label="Close">✕</button>
-
       <div id="memViewActive" class="hidden">
         <div class="text-center mb-6">
           <svg class="w-14 h-14 mx-auto mb-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"
@@ -1801,7 +1739,6 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
         </div>
         <button id="memGoCart" class="pill btn-gold w-full py-3.5">Shop & Save 50%</button>
       </div>
-
       <div id="memViewBuy">
         <div class="text-center mb-6">
           <p class="micro mb-2">HINCHFIELD</p>
@@ -1828,15 +1765,14 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
     </div>
   </div>
 
-  <!-- ═══ CANCEL CONFIRMATION POPUP ═══ -->
   <div id="confirmCancelModal" class="fixed inset-0 z-[96] hidden flex items-center justify-center px-4 w-full">
     <div id="confirmCancelBackdrop" class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
     <div class="modalcard relative p-6 md:p-8 max-w-sm w-full"
       style="background:var(--bg); color:var(--text); box-shadow:var(--shadow);">
       <div class="text-center mb-6">
         <span class="w-14 h-14 mx-auto mb-4 flex items-center justify-center" style="background:var(--bg2); color:var(--text);">
-        <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-      </span>
+          <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </span>
         <p class="micro mb-2" style="color:var(--mut);">Confirm Cancellation</p>
         <h3 class="disp editorial-h font-luxe text-xl leading-snug mb-2">Do You Really Want To<br>Cancel Order?</h3>
         <p class="text-xs" style="color:var(--mut);">Order ID: <b id="cancelOrderIdTxt" style="color:var(--text);"></b>
@@ -1851,7 +1787,6 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
     </div>
   </div>
 
-  <!-- ═══ POLICY MODAL ═══ -->
   <div id="policyModal" class="fixed inset-0 z-[88] hidden overflow-y-auto w-full"
     style="background:var(--bg); color:var(--text);">
     <header class="sticky top-0 z-10 glassbar border-b hairline w-full">
@@ -1865,15 +1800,12 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
     </div>
   </div>
 
-  <!-- ═══ INVOICE MODAL ═══ -->
   <div id="invoiceModal" class="fixed inset-0 z-[90] hidden overflow-y-auto w-full" style="background:var(--bg);">
     <div class="invoice-wrap max-w-3xl mx-auto my-4 md:my-8"
       style="background:#fff;color:#0A0A0A;padding:32px 24px;box-shadow:0 10px 40px rgba(0,0,0,.08);">
-
       <div style="text-align:center;padding-bottom:20px;border-bottom:2px solid #0A0A0A;">
         <img src="images/logo.png" class="h-12 md:h-14 w-auto object-contain" alt="HinchField" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
       </div>
-
       <div
         style="display:flex;justify-content:space-between;align-items:flex-start;margin:24px 0;flex-wrap:wrap;gap:12px;">
         <div>
@@ -1888,12 +1820,9 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
           </p>
         </div>
       </div>
-
       <div id="invPayIdBox"
         style="background:#f5f4f2;padding:10px 14px;margin-bottom:24px;font-size:11px;display:none;">
-        <span style="color:#7C7C7C;">Payment ID: </span><b id="invPayId"></b>
-      </div>
-
+        <span style="color:#7C7C7C;">Payment ID: </span><b id="invPayId"></b></div>
       <table style="width:100%;border-collapse:collapse;margin-bottom:24px;">
         <thead>
           <tr style="background:#0A0A0A;color:#fff;">
@@ -1908,34 +1837,24 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
         </thead>
         <tbody id="invItems"></tbody>
       </table>
-
       <table style="width:100%;margin-left:auto;max-width:340px;margin-bottom:24px;">
         <tbody id="invTotals"></tbody>
       </table>
-
       <div style="border-top:1px solid #E6E4E0;padding-top:20px;margin-top:8px;">
         <p style="margin:0 0 10px;font-size:11px;letter-spacing:2px;color:#7C7C7C;text-transform:uppercase;">Delivery
           Address</p>
         <p id="invAddress" style="margin:0;font-size:13px;line-height:1.8;"></p>
       </div>
-
       <div
         style="background:#0A0A0A;color:#fff;padding:16px;margin-top:24px;text-align:center;font-size:12px;letter-spacing:1.5px;">
-        🚚 Expected Delivery: 4-5 Business Days
-      </div>
-
+        🚚 Expected Delivery: 4-5 Business Days</div>
       <div style="text-align:center;padding:24px 0 8px;font-size:12px;color:#7C7C7C;line-height:1.7;">
-        <b style="color:#0A0A0A;">HINCHFIELD</b><br>
-      WhatsApp: 7434053550 · support.hinchfield@gmail.com<br>
-      hinchfield.store
+        <b style="color:#0A0A0A;">HINCHFIELD</b><br>WhatsApp: 7434053550 · support.hinchfield@gmail.com<br>hinchfield.store
       </div>
-
       <div
         style="border-top:1px solid #E6E4E0;padding-top:14px;margin-top:8px;text-align:center;font-size:10px;letter-spacing:1.5px;color:#7C7C7C;text-transform:uppercase;">
-        No Return / No Exchange · Thank you for shopping
-      </div>
+        No Return / No Exchange · Thank you for shopping</div>
     </div>
-
     <div class="invoice-buttons"
       style="position:sticky;bottom:0;background:#fff;border-top:1px solid #E6E4E0;padding:14px 16px;display:flex;gap:10px;max-width:768px;margin:0 auto;">
       <button onclick="window.print()" class="pill btn-gold" style="flex:1;padding:14px;">Download PDF</button>
@@ -1957,14 +1876,12 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
 
   <script>
     'use strict';
-/* ---- Safe helpers ---- */
 const $ = (s,r=document) => r.querySelector(s);
 const $$ = (s,r=document) => [...r.querySelectorAll(s)];
 const esc = (s='') => String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const debounce = (fn, ms=250) => { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; };
 const safe = (fn, name) => { try { return fn(); } catch(e){ console.error('['+name+']', e); } };
 const WA = '917434053550';
-/* ---- Device Fingerprint (1 code = 1 device) ---- */
 let DEVICE_ID = null;
 async function getDeviceId(){
   if (DEVICE_ID) return DEVICE_ID;
@@ -1976,10 +1893,7 @@ async function getDeviceId(){
   } catch(e){
     let id = null;
     try { id = localStorage.getItem('hf_device_id'); } catch(_){}
-    if (!id){
-      id = 'dev_' + Math.random().toString(36).substr(2,16) + Date.now();
-      try { localStorage.setItem('hf_device_id', id); } catch(_){}
-    }
+    if (!id){ id = 'dev_' + Math.random().toString(36).substr(2,16) + Date.now(); try { localStorage.setItem('hf_device_id', id); } catch(_){} }
     DEVICE_ID = id;
   }
   return DEVICE_ID;
@@ -2001,8 +1915,7 @@ set(k,v){
   try{ localStorage.setItem('hf_'+k, JSON.stringify(v)); }catch(e){}
   if (COOKIE_KEYS.includes(k)){
     try{
-      const d = new Date();
-      d.setTime(d.getTime() + 400*24*60*60*1000);
+      const d = new Date(); d.setTime(d.getTime() + 400*24*60*60*1000);
       document.cookie = 'hf_' + k + '=' + encodeURIComponent(JSON.stringify(v)) + ';expires=' + d.toUTCString() + ';path=/;SameSite=Lax';
     }catch(e){}
   }
@@ -2037,7 +1950,6 @@ share:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="
 menu:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 7h16M4 12h16M4 17h16"/></svg>`
 };
 function ic(n,c='w-4 h-4'){ return `<span class="inline-flex items-center justify-center ${c}">${ICONS[n]||''}</span>`; }
-/* ---- Price format (INR only) ---- */
 function fmt(inr){
   const n = Number(inr);
   if (!isFinite(n)) return '₹0';
@@ -2049,7 +1961,6 @@ function updateMembershipPrices(){
   const mb = $('#memBuyBtn');
   if (mb && !mb.disabled) mb.textContent = 'Pay ' + fmt(599) + ' — Get Membership';
 }
-/* ---- Categories ---- */
 const CATMETA = {
 'graphic-tee': { name:'Oversized Graphic T-Shirts', main:'T-Shirt', views:2 },
 'minimal-tee': { name:'Minimalist Text T-Shirts', main:'T-Shirt', views:2 },
@@ -2074,36 +1985,11 @@ let pid = 1;
 for (const cat of CATKEYS) {
 names[cat].forEach((name, i) => {
 const price = [499, 549, 599, 649, 699][i % 5];
-PRODUCTS.push({
-id: 'p' + (pid++),
-cat, name, price,
-mrp: price + 500,
-rating: +(4.5 + (i % 5) * 0.1).toFixed(1),
-reviews: 50 + (i * 13) % 150,
-tags: i < 2 ? 'new' : (i < 4 ? 'best' : (i < 5 ? 'hot' : '')),
-sizes: ['Free Size'],
-desc: 'Premium quality ' + CATMETA[cat].name + '. Customisable and comfortable.',
-colors: [['Default', '#0A0A0A']],
-hasColors: false
-});
+PRODUCTS.push({ id: 'p' + (pid++), cat, name, price, mrp: price + 500, rating: +(4.5 + (i % 5) * 0.1).toFixed(1), reviews: 50 + (i * 13) % 150, tags: i < 2 ? 'new' : (i < 4 ? 'best' : (i < 5 ? 'hot' : '')), sizes: ['Free Size'], desc: 'Premium quality ' + CATMETA[cat].name + '. Customisable and comfortable.', colors: [['Default', '#0A0A0A']], hasColors: false });
 });
 }
 }
-// 🔧 TEST PRODUCT — ₹1 sample (remove after testing)
-PRODUCTS.push({
-  id: 'test1',
-  cat: 'minimal-tee',
-  name: '🧪 TEST ORDER ₹1',
-  price: 1,
-  mrp: 500,
-  rating: 5.0,
-  reviews: 1,
-  tags: 'new',
-  sizes: ['Free Size'],
-  desc: 'Internal test product for Razorpay live testing. Do not order.',
-  colors: [['Default', '#0A0A0A']],
-  hasColors: false
-});   
+PRODUCTS.push({ id: 'test1', cat: 'minimal-tee', name: '🧪 TEST ORDER ₹1', price: 1, mrp: 500, rating: 5.0, reviews: 1, tags: 'new', sizes: ['Free Size'], desc: 'Internal test product for Razorpay live testing. Do not order.', colors: [['Default', '#0A0A0A']], hasColors: false });
 const prodById = id => PRODUCTS.find(p => p.id === id);
 const offPct = p => Math.max(0, Math.round((1 - p.price / p.mrp) * 100));
 const stars = r => { const f = Math.max(0, Math.min(5, Math.round(r || 0))); return '<span style="color:var(--text);font-size:10px;letter-spacing:.15em;">' + '★'.repeat(f) + '☆'.repeat(5-f) + '</span>'; };
@@ -2113,10 +1999,7 @@ function imgURLs(p){
   const prefix = catPrefix[p.cat] || 'o';
   const catProducts = PRODUCTS.filter(x => x.cat === p.cat);
   let imgIndex = catProducts.findIndex(x => x.id === p.id) + 1;
-  if (!imgIndex || imgIndex < 1) {
-    const pidNum = parseInt(p.id.replace('p',''),10) || 1;
-    imgIndex = ((pidNum - 1) % 10) + 1;
-  }
+  if (!imgIndex || imgIndex < 1) { const pidNum = parseInt(p.id.replace('p',''),10) || 1; imgIndex = ((pidNum - 1) % 10) + 1; }
   const base = 'images/' + prefix + imgIndex + '-';
   return Array.from({ length: viewsOf(p) }, (_, i) => base + (i + 1) + '.jpeg');
 }
@@ -2129,8 +2012,7 @@ const real = imgURLs(p)[0];
 return '<img class="w-full h-full object-contain hero-img" src="' + real + '" alt="' + esc(p.name) + '" fetchpriority="high" decoding="async" style="height:100%;width:100%;object-fit:contain;">';
 }
 function card(p, anim, delay){
-anim = anim || 'a-up';
-delay = delay || 0;
+anim = anim || 'a-up'; delay = delay || 0;
 const wished = wish.includes(p.id);
 const tag = p.tags === 'new' ? ['NEW','background:var(--text);color:var(--bg);'] : p.tags === 'hot' ? ['HOT','background:var(--text);color:var(--bg);'] : p.tags === 'best' ? ['BEST','background:var(--text);color:var(--bg);'] : null;
 const multi = viewsOf(p) > 1;
@@ -2141,10 +2023,7 @@ ${tag ? `<span class="absolute top-3 left-3 z-10 chip" style="${tag[1]}">${tag[0
 <svg class="w-3.5 h-3.5" style="${wished ? 'color:#0A0A0A;' : 'color:var(--mut);'}" viewBox="0 0 24 24" fill="${wished ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="1.4"><path d="M12 21s-7.5-4.7-10-9.3C.5 8 2.6 4.5 6.2 4.5c2.2 0 3.7 1.2 4.6 2.6.9-1.4 2.4-2.6 4.6-2.6 3.6 0 5.7 3.5 4.2 7.2C19.5 16.3 12 21 12 21z"/></svg>
 </button>
 <div class="cardimg relative aspect-[4/5] overflow-hidden cursor-pointer" style="background:var(--bg2);" data-open-product="${p.id}">
-${multi
-? imgTag(p,p.colors[0][0],0,'swap front','',true)
-+ imgTag(p,p.colors[0][0],1,'swap back')
-: imgTag(p,p.colors[0][0],0,'w-full h-full object-contain','',true)}
+${multi ? imgTag(p,p.colors[0][0],0,'swap front','',true) + imgTag(p,p.colors[0][0],1,'swap back') : imgTag(p,p.colors[0][0],0,'w-full h-full object-contain','',true)}
 <span class="absolute inset-x-0 bottom-0 quickadd text-center py-3">${multi ? 'Front ⇄ Back' : 'Quick View'}</span>
 </div>
 <div class="p-3 md:p-4">
@@ -2152,18 +2031,10 @@ ${multi
 <h3 class="disp text-[13px] md:text-[14px] leading-snug mt-1 truncate cursor-pointer" data-open-product="${p.id}">${esc(p.name)}</h3>
 <div class="flex items-center gap-2 mt-1">${stars(p.rating)}<span class="text-[10px]" style="color:var(--mut);">(${p.reviews})</span></div>
 <div class="mt-3 grid grid-cols-2 border hairline">
-<div class="p-2 text-center">
-<p class="text-[9px] tracking-wide2 uppercase mb-1" style="color:var(--mut);">Regular</p>
-<b class="disp text-[15px] md:text-base">${fmt(p.price)}</b>
+<div class="p-2 text-center"><p class="text-[9px] tracking-wide2 uppercase mb-1" style="color:var(--mut);">Regular</p><b class="disp text-[15px] md:text-base">${fmt(p.price)}</b></div>
+<div class="p-2 text-center border-l hairline" style="background:var(--text); color:var(--bg);"><p class="text-[9px] tracking-wide2 uppercase mb-1">⭐ Member</p><b class="disp text-[15px] md:text-base">${fmt(Math.round(p.price * 0.5))}</b></div>
 </div>
-<div class="p-2 text-center border-l hairline" style="background:var(--text); color:var(--bg);">
-<p class="text-[9px] tracking-wide2 uppercase mb-1">⭐ Member</p>
-<b class="disp text-[15px] md:text-base">${fmt(Math.round(p.price * 0.5))}</b>
-</div>
-</div>
-<div class="text-[9px] text-center py-1.5 tracking-wide2 uppercase hairline border border-t-0" style="color:var(--text);">
-Save ${fmt(Math.round(p.price * 0.5))} with Membership
-</div>
+<div class="text-[9px] text-center py-1.5 tracking-wide2 uppercase hairline border border-t-0" style="color:var(--text);">Save ${fmt(Math.round(p.price * 0.5))} with Membership</div>
 <button class="pill btn-line w-full mt-3 py-2.5 text-[10px] flex items-center justify-center gap-1.5" data-add="${p.id}">${ic('cart','w-3 h-3')} Add to Cart</button>
 </div>
 </article>`;
@@ -2184,63 +2055,39 @@ const cname = CATMETA[cat].name;
 return `
 <div class="${ci === 0 ? '' : 'border-t hairline pt-12 md:pt-16'}">
 <div class="flex items-end justify-between mb-6 md:mb-8">
-<div>
-<p class="micro mb-2">Collection</p>
-<h2 class="disp editorial-h font-luxe" style="font-size:var(--fs-h2);">${esc(cname)}</h2>
-</div>
+<div><p class="micro mb-2">Collection</p><h2 class="disp editorial-h font-luxe" style="font-size:var(--fs-h2);">${esc(cname)}</h2></div>
 <button class="link-u transition hover:opacity-60 shrink-0" data-catpage="${cat}">View All</button>
 </div>
-<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
-${prods.map((p,i) => card(p, 'a-up', i * 50)).join('')}
-</div>
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">${prods.map((p,i) => card(p, 'a-up', i * 50)).join('')}</div>
 </div>`;
 }).join('');
 $('#featuredCats').innerHTML = html;
 }
 
-// ═══ INVOICE SYSTEM ═══
 function showInvoice(order){
   const t = order.totals;
   const c = order.customer;
-
   $('#invId').textContent = order.id;
   $('#invDate').textContent = new Date(order.timestamp).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
-
   const isOnline = order.payment && order.payment.method === 'online';
   $('#invPayBadge').textContent = isOnline ? 'PAID ONLINE' : 'CASH ON DELIVERY';
   $('#invPayBadge').style.background = isOnline ? '#0A0A0A' : '#f5f4f2';
   $('#invPayBadge').style.color = isOnline ? '#fff' : '#0A0A0A';
   $('#invPayBadge').style.border = isOnline ? 'none' : '1px solid #E6E4E0';
-
-  if (isOnline && order.payment.razorpay_payment_id){
-    $('#invPayIdBox').style.display = 'block';
-    $('#invPayId').textContent = order.payment.razorpay_payment_id;
-  } else {
-    $('#invPayIdBox').style.display = 'none';
-  }
-
+  if (isOnline && order.payment.razorpay_payment_id){ $('#invPayIdBox').style.display = 'block'; $('#invPayId').textContent = order.payment.razorpay_payment_id; } else { $('#invPayIdBox').style.display = 'none'; }
   $('#invItems').innerHTML = order.items.map((l, i) => {
     const p = prodById(l.id);
     const name = p ? p.name : 'Product';
     const price = p ? p.price : 0;
-    const extras = (l.colorChoice ? '<br><span style="font-size:11px;color:#7C7C7C;">Colour: ' + l.colorChoice + '</span>' : '')
-                 + (l.custom ? '<br><span style="font-size:11px;color:#7C7C7C;">Custom (' + l.custom.pos + '): ' + (l.custom.note || '') + '</span>' : '');
-    return '<tr>' +
-      '<td style="padding:14px 10px;border-bottom:1px solid #E6E4E0;font-size:13px;"><b>' + (i+1) + '. ' + name + '</b>' + extras + '</td>' +
-      '<td style="padding:14px 10px;border-bottom:1px solid #E6E4E0;text-align:center;font-size:13px;">' + l.qty + '</td>' +
-      '<td style="padding:14px 10px;border-bottom:1px solid #E6E4E0;text-align:right;font-size:13px;">₹' + price.toLocaleString('en-IN') + '</td>' +
-      '<td style="padding:14px 10px;border-bottom:1px solid #E6E4E0;text-align:right;font-size:13px;font-weight:600;">₹' + (price * l.qty).toLocaleString('en-IN') + '</td>' +
-    '</tr>';
+    const extras = (l.colorChoice ? '<br><span style="font-size:11px;color:#7C7C7C;">Colour: ' + l.colorChoice + '</span>' : '') + (l.custom ? '<br><span style="font-size:11px;color:#7C7C7C;">Custom (' + l.custom.pos + '): ' + (l.custom.note || '') + '</span>' : '');
+    return '<tr><td style="padding:14px 10px;border-bottom:1px solid #E6E4E0;font-size:13px;"><b>' + (i+1) + '. ' + name + '</b>' + extras + '</td><td style="padding:14px 10px;border-bottom:1px solid #E6E4E0;text-align:center;font-size:13px;">' + l.qty + '</td><td style="padding:14px 10px;border-bottom:1px solid #E6E4E0;text-align:right;font-size:13px;">₹' + price.toLocaleString('en-IN') + '</td><td style="padding:14px 10px;border-bottom:1px solid #E6E4E0;text-align:right;font-size:13px;font-weight:600;">₹' + (price * l.qty).toLocaleString('en-IN') + '</td></tr>';
   }).join('');
-
   let totalsHtml = '<tr><td style="padding:8px 10px;text-align:right;font-size:13px;color:#7C7C7C;">Subtotal</td><td style="padding:8px 10px;text-align:right;font-size:13px;width:120px;">₹' + t.sub.toLocaleString('en-IN') + '</td></tr>';
   if (t.discount) totalsHtml += '<tr><td style="padding:8px 10px;text-align:right;font-size:13px;">⭐ Member Discount (50%)</td><td style="padding:8px 10px;text-align:right;font-size:13px;">−₹' + t.discount.toLocaleString('en-IN') + '</td></tr>';
   totalsHtml += '<tr><td style="padding:8px 10px;text-align:right;font-size:13px;color:#7C7C7C;">Delivery</td><td style="padding:8px 10px;text-align:right;font-size:13px;">' + (t.del ? '₹' + t.del.toLocaleString('en-IN') : 'FREE') + '</td></tr>';
   totalsHtml += '<tr style="border-top:2px solid #0A0A0A;"><td style="padding:14px 10px;text-align:right;font-size:13px;letter-spacing:1.5px;">TOTAL ' + (isOnline ? 'PAID' : 'COD') + '</td><td style="padding:14px 10px;text-align:right;font-size:22px;font-weight:700;">₹' + t.total.toLocaleString('en-IN') + '</td></tr>';
   $('#invTotals').innerHTML = totalsHtml;
-
   $('#invAddress').innerHTML = '<b>' + c.name + '</b><br>' + c.phone + '<br>' + c.addr + '<br>' + c.city + ', ' + c.state + ' — ' + c.pin;
-
   openModal('invoiceModal');
 }
     
@@ -2258,10 +2105,7 @@ const top = [
 ];
 $('#mobileNav').innerHTML = top.map((it,idx) => `
 <a class="w-full flex items-center justify-between px-4 py-3.5 border hairline transition active:scale-[0.99] text-left" style="background:var(--card); animation:fadeUp .5s both; animation-delay:${idx*40}ms;" ${it.a}>
-<span class="flex items-center gap-3 min-w-0">
-<span class="w-8 h-8 flex items-center justify-center text-base shrink-0 text-[var(--text)]">${it.i}</span>
-<span class="disp text-[14px] font-normal truncate">${esc(it.l)}</span>
-</span>
+<span class="flex items-center gap-3 min-w-0"><span class="w-8 h-8 flex items-center justify-center text-base shrink-0 text-[var(--text)]">${it.i}</span><span class="disp text-[14px] font-normal truncate">${esc(it.l)}</span></span>
 <span class="micro shrink-0">→</span>
 </a>`).join('');
 $('#footCats').innerHTML = CATKEYS.map(c => '<li><button class="hover:opacity-60 transition" data-catpage="' + c + '">' + esc(CATMETA[c].name) + '</button></li>').join('');
@@ -2272,17 +2116,13 @@ function renderShopCats() {
     const prod = PRODUCTS.find(p => p.cat === c);
     return `
       <button class="cat-card group" data-catpage="${c}" aria-label="Shop ${esc(shortNames[c] || CATMETA[c].name)}">
-        <div class="cat-card-img">
-          ${prod ? imgTag(prod, prod.colors[0][0], 0, 'w-full h-full object-contain', '', true) : ''}
+        <div class="cat-card-img">${prod ? imgTag(prod, prod.colors[0][0], 0, 'w-full h-full object-contain', '', true) : ''}
           <div class="cat-card-overlay"></div>
           <div class="absolute top-3 left-3 z-10"><span class="cat-card-no">${String(i + 1).padStart(2, '0')}</span></div>
         </div>
         <div class="cat-card-content">
           <div class="flex items-center justify-between gap-3">
-            <div class="min-w-0">
-              <p class="text-[13px] md:text-[14px] font-normal leading-tight truncate tracking-tight" style="color:var(--text);">${esc(shortNames[c] || CATMETA[c].name)}</p>
-              <p class="text-[10px] mt-1 tracking-wide2 uppercase" style="color:var(--mut);">Explore</p>
-            </div>
+            <div class="min-w-0"><p class="text-[13px] md:text-[14px] font-normal leading-tight truncate tracking-tight" style="color:var(--text);">${esc(shortNames[c] || CATMETA[c].name)}</p><p class="text-[10px] mt-1 tracking-wide2 uppercase" style="color:var(--mut);">Explore</p></div>
             <span class="cat-card-arrow shrink-0">→</span>
           </div>
         </div>
@@ -2294,11 +2134,7 @@ function renderInsta(){
   $('#instaRow').innerHTML = ids.map((id,i) => {
     const p = prodById(id);
     if (!p) return '';
-    return '<a href="https://www.instagram.com/hinchfield_official?stkn=NHExem1hbnA2eGs=" target="_blank" rel="noopener" class="relative overflow-hidden group aspect-square">' 
-      + imgTag(p, p.colors[0][0], 0, 'w-full h-full object-contain group-hover:scale-105') 
-      + '<span class="absolute inset-0 bg-black/45 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white">' 
-      + ic('insta','w-7 h-7') 
-      + '</span></a>';
+    return '<a href="https://www.instagram.com/hinchfield_official?stkn=NHExem1hbnA2eGs=" target="_blank" rel="noopener" class="relative overflow-hidden group aspect-square">' + imgTag(p, p.colors[0][0], 0, 'w-full h-full object-contain group-hover:scale-105') + '<span class="absolute inset-0 bg-black/45 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white">' + ic('insta','w-7 h-7') + '</span></a>';
   }).join('');
 }
 let sIdx = 0, sTimer;
@@ -2323,18 +2159,10 @@ return `
 <span class="ha-up micro inline-block" style="color:var(--mut);">${esc(meta.name)}</span>
 <h1 class="ha-up editorial-h font-luxe leading-[1.05]" style="font-size:var(--fs-hero); color:var(--hero-ink); animation-delay:.05s;">${esc(p.name)}</h1>
 <div class="ha-up grid grid-cols-2 border hairline max-w-md mx-auto md:mx-0" style="animation-delay:.1s;">
-<div class="p-3 md:p-4 text-center">
-<p class="text-[9px] md:text-[10px] tracking-wide2 uppercase mb-1" style="color:var(--mut);">Regular</p>
-<b class="disp text-xl md:text-2xl hero-price" style="color:var(--text); font-weight:500;">${fmt(p.price)}</b>
+<div class="p-3 md:p-4 text-center"><p class="text-[9px] md:text-[10px] tracking-wide2 uppercase mb-1" style="color:var(--mut);">Regular</p><b class="disp text-xl md:text-2xl hero-price" style="color:var(--text); font-weight:500;">${fmt(p.price)}</b></div>
+<div class="p-3 md:p-4 text-center border-l hairline" style="background:var(--text); color:var(--bg);"><p class="text-[9px] md:text-[10px] tracking-wide2 uppercase mb-1">⭐ Member</p><b class="disp text-xl md:text-2xl" style="font-weight:500;">${fmt(Math.round(p.price * 0.5))}</b></div>
 </div>
-<div class="p-3 md:p-4 text-center border-l hairline" style="background:var(--text); color:var(--bg);">
-<p class="text-[9px] md:text-[10px] tracking-wide2 uppercase mb-1">⭐ Member</p>
-<b class="disp text-xl md:text-2xl" style="font-weight:500;">${fmt(Math.round(p.price * 0.5))}</b>
-</div>
-</div>
-<p class="ha-up text-[10px] text-center md:text-left py-2 tracking-wide2 uppercase" style="color:var(--text); animation-delay:.15s;">
-💡 Save ${fmt(Math.round(p.price * 0.5))} with Membership
-</p>
+<p class="ha-up text-[10px] text-center md:text-left py-2 tracking-wide2 uppercase" style="color:var(--text); animation-delay:.15s;">💡 Save ${fmt(Math.round(p.price * 0.5))} with Membership</p>
 <p class="ha-up text-sm md:text-base max-w-md mx-auto md:mx-0" style="color:var(--mut); animation-delay:.15s; line-height:1.6;">${esc(p.desc)}</p>
 <div class="ha-up flex flex-wrap gap-2 justify-center md:justify-start" style="animation-delay:.2s;">
 <span class="chip border hairline gap-1.5" style="background:transparent; color:var(--text);">${ic('cash','w-3 h-3')} COD</span>
@@ -2348,9 +2176,7 @@ return `
 </div>
 <div class="order-1 md:order-2 flex justify-center md:justify-end">
 <div class="ha-zoom relative w-full max-w-[280px] md:max-w-[400px]">
-<div class="relative aspect-[4/5] overflow-hidden shadow-lift border hairline" style="background:var(--card);">
-${heroImg(p,p.colors[0][0])}
-</div>
+<div class="relative aspect-[4/5] overflow-hidden shadow-lift border hairline" style="background:var(--card);">${heroImg(p,p.colors[0][0])}</div>
 <span class="absolute top-3 right-3 chip hero-off-badge" style="background:var(--text); color:var(--bg);">−${offPct(p)}%</span>
 </div>
 </div>
@@ -2361,13 +2187,9 @@ renderDots();
 }
 function renderDots(){
 const total = buildSlides().length;
-$('#heroDots').innerHTML = Array.from({ length: total }, (_,i) =>
-'<button class="h-[2px] transition-all" style="background:' + (i===sIdx ? 'var(--text)' : 'var(--line)') + '; width:' + (i===sIdx ? '2.4rem' : '0.8rem') + ';" data-slide-go="' + i + '" aria-label="Slide ' + (i+1) + '"></button>'
-).join('');
+$('#heroDots').innerHTML = Array.from({ length: total }, (_,i) => '<button class="h-[2px] transition-all" style="background:' + (i===sIdx ? 'var(--text)' : 'var(--line)') + '; width:' + (i===sIdx ? '2.4rem' : '0.8rem') + ';" data-slide-go="' + i + '" aria-label="Slide ' + (i+1) + '"></button>').join('');
 }
-function replayAnims(slide){
-slide.querySelectorAll('[class*="ha-"]').forEach(el => { el.style.animation = 'none'; void el.offsetWidth; el.style.animation = ''; });
-}
+function replayAnims(slide){ slide.querySelectorAll('[class*="ha-"]').forEach(el => { el.style.animation = 'none'; void el.offsetWidth; el.style.animation = ''; }); }
 function goSlide(n){
 const total = buildSlides().length;
 if (!total) return;
@@ -2375,11 +2197,7 @@ sIdx = ((n % total) + total) % total;
 $$('[data-slide]').forEach((el,i) => { el.classList.toggle('hidden', i !== sIdx); if (i === sIdx) replayAnims(el); });
 renderDots();
 }
-function startSlider(){
-if (reduceMotion) return;
-clearInterval(sTimer);
-sTimer = setInterval(() => goSlide(sIdx+1), 5200);
-}
+function startSlider(){ if (reduceMotion) return; clearInterval(sTimer); sTimer = setInterval(() => goSlide(sIdx+1), 5200); }
 function sizeHero(){
 const hh = $('#header') ? $('#header').offsetHeight : 0;
 const avail = Math.max(320, window.innerHeight - hh);
@@ -2406,7 +2224,6 @@ $('#toasts').appendChild(t);
 setTimeout(() => { t.style.transition = 'all .4s'; t.style.opacity = 0; t.style.transform = 'translateX(30px)'; setTimeout(() => t.remove(), 400); }, 2400);
 }catch(e){}
 }
-/* ---- Cart ---- */
 const key = (id,c,s,ex) => id + '|' + c + '|' + s + '|' + (ex ? (ex.custom ? ex.custom.note+'|'+ex.custom.pos : '') + '|' + (ex.colorChoice||'') : '');
 function addToCart(id,color,size,qty,ex){
 const p = prodById(id);
@@ -2436,20 +2253,13 @@ else del = 99;
 }
 return { sub, discount, del, total: discountedSub + del, last: discountedSub };
 }
-/* ---- Delivery details clear (cart empty થાય ત્યારે) ---- */
 function clearCheckoutFields(){
-  ['coName','coPhone','coEmail','coAddr','coCity','coState','coPin'].forEach(id => {
-    const el = $('#'+id);
-    if (el) el.value = '';
-  });
-  const err = $('#coErr');
-  if (err) err.classList.add('hidden');
-  const honey = $('#coHoney');
-  if (honey) honey.value = '';
+  ['coName','coPhone','coEmail','coAddr','coCity','coState','coPin'].forEach(id => { const el = $('#'+id); if (el) el.value = ''; });
+  const err = $('#coErr'); if (err) err.classList.add('hidden');
+  const honey = $('#coHoney'); if (honey) honey.value = '';
 }
 function renderCart(){
 const n = cart.reduce((a,l) => a + (Number(l.qty)||0), 0);
-// ⭐ Cart ખાલી હોય તો delivery details + error clear કરો
 if (cart.length === 0) clearCheckoutFields();
 if (cart.length === 0 && appliedMembership){
   appliedMembership = null;
@@ -2461,19 +2271,10 @@ if (cart.length === 0 && appliedMembership){
 $('#cartCount').textContent = n;
 $('#cartN').textContent = n ? '(' + n + ')' : '';
 const t = totals();
-if (!cart.length){
-$('#shipMsg').innerHTML = '<b>FREE delivery</b> on orders above ₹1499';
-$('#shipBar').style.width = '0%';
-} else if (t.last >= 1499) {
-$('#shipMsg').innerHTML = '<b>FREE delivery</b> unlocked';
-$('#shipBar').style.width = '100%';
-} else if (t.last >= 999) {
-$('#shipMsg').innerHTML = 'Add <b>' + fmt(1499 - t.last) + '</b> more for <b>FREE delivery</b>';
-$('#shipBar').style.width = Math.min(100,(t.last/1499)*100) + '%';
-} else {
-$('#shipMsg').innerHTML = 'Add <b>' + fmt(999 - t.last) + '</b> more to reduce delivery fee to ₹49';
-$('#shipBar').style.width = Math.min(100,(t.last/1499)*100) + '%';
-}
+if (!cart.length){ $('#shipMsg').innerHTML = '<b>FREE delivery</b> on orders above ₹1499'; $('#shipBar').style.width = '0%'; }
+else if (t.last >= 1499) { $('#shipMsg').innerHTML = '<b>FREE delivery</b> unlocked'; $('#shipBar').style.width = '100%'; }
+else if (t.last >= 999) { $('#shipMsg').innerHTML = 'Add <b>' + fmt(1499 - t.last) + '</b> more for <b>FREE delivery</b>'; $('#shipBar').style.width = Math.min(100,(t.last/1499)*100) + '%'; }
+else { $('#shipMsg').innerHTML = 'Add <b>' + fmt(999 - t.last) + '</b> more to reduce delivery fee to ₹49'; $('#shipBar').style.width = Math.min(100,(t.last/1499)*100) + '%'; }
 const box = $('#cartItems');
 if (!cart.length){
 box.innerHTML = '<div class="text-center py-16 flex flex-col items-center" style="color:var(--mut);"><span class="mb-4 a-float text-[var(--text)]">' + ic('bag','w-14 h-14') + '</span><p class="text-sm font-medium">Your cart is empty</p><button class="pill btn-ink px-6 py-3 mt-5" data-close="cartDrawer" data-catpage="">Start Shopping</button></div>';
@@ -2487,14 +2288,9 @@ return '<div class="flex gap-3 border hairline p-3 a-up w-full" style="backgroun
 '<h4 class="text-xs font-medium truncate">' + esc(p.name) + '</h4>' +
 '<p class="text-[10px] mt-0.5 tracking-wide2 uppercase" style="color:var(--mut);">Size: ' + esc(l.size) + (l.colorChoice ? ' • ' + esc(l.colorChoice) : '') + (l.custom ? ' • Custom' : '') + '</p>' +
 '<div class="flex items-center justify-between mt-3">' +
-'<div class="flex items-center gap-2">' +
-'<button class="qtybtn" data-cq="' + l.key + '" data-d="-1">−</button>' +
-'<b class="text-xs w-4 text-center">' + l.qty + '</b>' +
-'<button class="qtybtn" data-cq="' + l.key + '" data-d="1">+</button>' +
-'</div>' +
+'<div class="flex items-center gap-2"><button class="qtybtn" data-cq="' + l.key + '" data-d="-1">−</button><b class="text-xs w-4 text-center">' + l.qty + '</b><button class="qtybtn" data-cq="' + l.key + '" data-d="1">+</button></div>' +
 '<b class="disp">' + fmt(p.price * l.qty) + '</b>' +
-'</div>' +
-'</div>' +
+'</div></div>' +
 '<button class="self-start" style="color:var(--mut);" data-cr="' + l.key + '" aria-label="Remove">✕</button>' +
 '</div>';
 }).join('');
@@ -2513,7 +2309,6 @@ if (t.discount > 0) $('#shipMsg').innerHTML = '<b style="color:var(--text);">⭐
 $('#sumDel').innerHTML = t.del ? fmt(t.del) : '<span style="color:var(--text);">FREE</span>';
 $('#sumTotal').textContent = fmt(t.total);
 }
-/* ---- Wishlist ---- */
 function toggleWish(id){
 const i = wish.indexOf(id);
 if (i > -1) wish.splice(i,1); else wish.push(id);
@@ -2534,13 +2329,10 @@ return '<div class="flex gap-3 border hairline p-3 a-left w-full" style="backgro
 '<div class="flex-1 min-w-0">' +
 '<h4 class="text-xs font-medium truncate">' + esc(p.name) + '</h4>' +
 '<b class="disp text-sm">' + fmt(p.price) + '</b> <s class="text-[10px]" style="color:var(--mut);">' + fmt(p.mrp) + '</s>' +
-'<div class="flex gap-2 mt-3">' +
-'<button class="pill btn-ink px-4 py-2 text-[10px]" data-add="' + p.id + '">Add</button>' +
-'<button class="pill btn-line px-4 py-2 text-[10px]" data-wish="' + p.id + '">Remove</button>' +
-'</div></div></div>';
+'<div class="flex gap-2 mt-3"><button class="pill btn-ink px-4 py-2 text-[10px]" data-add="' + p.id + '">Add</button><button class="pill btn-line px-4 py-2 text-[10px]" data-wish="' + p.id + '">Remove</button></div>' +
+'</div></div>';
 }).join('');
 }
-/* ---- Product Modal ---- */
 let pm = { id:null, color:0, size:0, qty:1, angle:0, customOn:false, customPos:'Front + Back', customNote:'', colorChoice:'' };
 function openProduct(id, skipRoute){
 const p = prodById(id);
@@ -2567,46 +2359,23 @@ ${imgs.length > 1 ? '<div class="hidden md:flex flex-col gap-2 order-1">' + imgs
 <div class="overflow-hidden aspect-[4/5] w-full">${imgTag(p, cn, pm.angle, 'w-full h-full object-contain','id="pmMain"')}</div>
 ${imgs.length > 1 ? '<button class="absolute left-2 top-1/2 -translate-y-1/2 w-9 h-9 border hairline" style="background:var(--card);" data-angle="-1">‹</button><button class="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 border hairline" style="background:var(--card);" data-angle="1">›</button>' : ''}
 <p class="text-[10px] text-center mt-3 tracking-wide2 uppercase" style="color:var(--mut);">View ${pm.angle+1}/2 • ${['FRONT','BACK'][pm.angle]||''}</p>
-</div>
-</div>
-</div>
+</div></div></div>
 <div class="p-4 md:p-8 pb-28 md:pb-8 min-w-0">
 <div class="flex items-start justify-between gap-3">
-<div class="min-w-0">
-<p class="micro mb-2">${esc(CATMETA[p.cat].name)}</p>
-<h2 class="disp editorial-h font-luxe text-xl md:text-2xl">${esc(p.name)}</h2>
-</div>
+<div class="min-w-0"><p class="micro mb-2">${esc(CATMETA[p.cat].name)}</p><h2 class="disp editorial-h font-luxe text-xl md:text-2xl">${esc(p.name)}</h2></div>
 <button class="w-9 h-9 border hairline shrink-0" data-close="productModal" aria-label="Close">✕</button>
 </div>
 <div class="mt-4 grid grid-cols-2 border hairline">
-<div class="p-3 text-center">
-<p class="text-[10px] tracking-wide2 uppercase mb-1" style="color:var(--mut);">Regular Price</p>
-<b class="disp text-xl md:text-2xl" style="font-weight:500;">${fmt(p.price)}</b>
+<div class="p-3 text-center"><p class="text-[10px] tracking-wide2 uppercase mb-1" style="color:var(--mut);">Regular Price</p><b class="disp text-xl md:text-2xl" style="font-weight:500;">${fmt(p.price)}</b></div>
+<div class="p-3 text-center border-l hairline" style="background:var(--text); color:var(--bg);"><p class="text-[10px] tracking-wide2 uppercase mb-1">⭐ Member Price</p><b class="disp text-xl md:text-2xl" style="font-weight:500;">${fmt(Math.round(p.price * 0.5))}</b></div>
 </div>
-<div class="p-3 text-center border-l hairline" style="background:var(--text); color:var(--bg);">
-<p class="text-[10px] tracking-wide2 uppercase mb-1">⭐ Member Price</p>
-<b class="disp text-xl md:text-2xl" style="font-weight:500;">${fmt(Math.round(p.price * 0.5))}</b>
-</div>
-</div>
-<div class="text-[10px] text-center py-2 tracking-wide2 uppercase hairline border border-t-0" style="color:var(--text);">
-💡 Save ${fmt(Math.round(p.price * 0.5))} with Hinchfield Membership
-</div>
+<div class="text-[10px] text-center py-2 tracking-wide2 uppercase hairline border border-t-0" style="color:var(--text);">💡 Save ${fmt(Math.round(p.price * 0.5))} with Hinchfield Membership</div>
 <div class="flex items-center gap-2 mt-2">${stars(p.rating)}<span class="text-xs" style="color:var(--mut);">${p.rating} · ${p.reviews} reviews</span></div>
 <div class="mt-5 flex items-end justify-between gap-3 flex-wrap">
-<div>
-<p class="micro mb-3">Size</p>
-<div class="flex gap-2 flex-wrap">${p.sizes.map((s,i) => '<button class="sizechip ' + (i===pm.size ? 'active' : '') + '" data-psize="' + i + '">' + esc(s) + '</button>').join('')}</div>
-</div>
+<div><p class="micro mb-3">Size</p><div class="flex gap-2 flex-wrap">${p.sizes.map((s,i) => '<button class="sizechip ' + (i===pm.size ? 'active' : '') + '" data-psize="' + i + '">' + esc(s) + '</button>').join('')}</div></div>
 <button class="link-u transition hover:opacity-60" data-sizeopen>Size Guide</button>
 </div>
-<div class="mt-5 flex items-center gap-4">
-<p class="micro">Qty</p>
-<div class="flex items-center gap-2">
-<button class="qtybtn" data-pq="-1">−</button>
-<b id="pmQty" class="w-6 text-center">${pm.qty}</b>
-<button class="qtybtn" data-pq="1">+</button>
-</div>
-</div>
+<div class="mt-5 flex items-center gap-4"><p class="micro">Qty</p><div class="flex items-center gap-2"><button class="qtybtn" data-pq="-1">−</button><b id="pmQty" class="w-6 text-center">${pm.qty}</b><button class="qtybtn" data-pq="1">+</button></div></div>
 ${isT ? `
 <div class="border hairline p-4 mt-5" style="background:var(--bg2);">
 <p class="text-xs font-medium tracking-tight flex items-center gap-2">${ic('palette','w-4 h-4')} Want YOUR own colour?</p>
@@ -2614,19 +2383,11 @@ ${isT ? `
 <input id="pmColorChoice" maxlength="40" class="field mt-2" placeholder="e.g. Olive Green, Pastel Pink…" value="${esc(pm.colorChoice)}">
 </div>
 <div class="border hairline p-4 mt-3" style="background:var(--bg2);">
-<label class="flex items-center gap-2 text-xs font-medium cursor-pointer">
-<input type="checkbox" id="pmCustomOn" class="accent-[#0A0A0A]" ${pm.customOn ? 'checked' : ''}>
-Customise this T-Shirt (own text / design)
-</label>
+<label class="flex items-center gap-2 text-xs font-medium cursor-pointer"><input type="checkbox" id="pmCustomOn" class="accent-[#0A0A0A]" ${pm.customOn ? 'checked' : ''}>Customise this T-Shirt (own text / design)</label>
 <div id="pmCustomBox" class="${pm.customOn ? '' : 'hidden'} mt-3 space-y-2">
-<select id="pmCustomPos" class="field">
-<option ${pm.customPos==='Front' ? 'selected' : ''}>Front</option>
-<option ${pm.customPos==='Back' ? 'selected' : ''}>Back</option>
-<option ${pm.customPos==='Front + Back' ? 'selected' : ''}>Front + Back</option>
-</select>
+<select id="pmCustomPos" class="field"><option ${pm.customPos==='Front' ? 'selected' : ''}>Front</option><option ${pm.customPos==='Back' ? 'selected' : ''}>Back</option><option ${pm.customPos==='Front + Back' ? 'selected' : ''}>Front + Back</option></select>
 <textarea id="pmCustomNote" maxlength="200" rows="2" class="field" placeholder="e.g. Print text: RIYA ❤ SURAT">${esc(pm.customNote)}</textarea>
-</div>
-</div>` : ''}
+</div></div>` : ''}
 <div class="border hairline p-4 md:p-5 mt-5 text-xs space-y-1.5" style="background:var(--bg2);">
 <p class="micro mb-2">Highlights</p>
 <p>— 240 GSM premium cotton • Free Size</p>
@@ -2634,16 +2395,9 @@ Customise this T-Shirt (own text / design)
 <p class="border hairline px-3 py-2 mt-2 font-medium text-[10px] tracking-wide2 uppercase text-center" style="color:var(--text);">No Return / No Exchange</p>
 </div>
 <p class="text-sm leading-relaxed mt-4" style="color:var(--mut);">${esc(p.desc)}</p>
-<div class="hidden md:grid grid-cols-2 gap-3 mt-6">
-<button class="pill btn-line py-3.5" data-pm-add>Add to Cart</button>
-<button class="pill btn-gold py-3.5" data-pm-buy>Buy Now</button>
-</div>
-</div>
-</div>
-<div class="md:hidden sticky bottom-0 border-t hairline p-3 flex gap-2 glassbar w-full">
-<button class="pill btn-line flex-1 py-3.5" data-pm-add>Add</button>
-<button class="pill btn-gold flex-1 py-3.5" data-pm-buy>Buy</button>
-</div>`;
+<div class="hidden md:grid grid-cols-2 gap-3 mt-6"><button class="pill btn-line py-3.5" data-pm-add>Add to Cart</button><button class="pill btn-gold py-3.5" data-pm-buy>Buy Now</button></div>
+</div></div>
+<div class="md:hidden sticky bottom-0 border-t hairline p-3 flex gap-2 glassbar w-full"><button class="pill btn-line flex-1 py-3.5" data-pm-add>Add</button><button class="pill btn-gold flex-1 py-3.5" data-pm-buy>Buy</button></div>`;
 const on = $('#pmCustomOn');
 if (on){ on.addEventListener('change', () => { pm.customOn = on.checked; $('#pmCustomBox').classList.toggle('hidden', !on.checked); }); }
 }
@@ -2654,18 +2408,12 @@ let custom = null;
 if (pm.customOn){ custom = { pos: $('#pmCustomPos') ? $('#pmCustomPos').value : pm.customPos, note: $('#pmCustomNote') ? $('#pmCustomNote').value.trim() : pm.customNote }; }
 return { custom, colorChoice: cc };
 }
-/* ---- Category Page ---- */
 let cp = { cat:'', special:'', sort:'feat' };
 function openCatPage(cat, type, special, skipRoute){
 cp = { cat: cat || '', special: special || '', sort: cp.sort || 'feat' };
 drawCatPage();
 openModal('catPage');
-if (!skipRoute) {
-let hash = '#shop';
-if (special) hash += '/' + special;
-else if (cat) hash += '/' + cat;
-history.pushState({ modal: 'catPage', cat, special }, '', window.location.origin);
-}
+if (!skipRoute) { let hash = '#shop'; if (special) hash += '/' + special; else if (cat) hash += '/' + cat; history.pushState({ modal: 'catPage', cat, special }, '', window.location.origin); }
 }
 function cpItems(){
 let items = [...PRODUCTS];
@@ -2675,16 +2423,8 @@ if (cp.special === 'under499') items = items.filter(p => p.price <= 499);
 if (cp.special === 'under599') items = items.filter(p => p.price <= 599);
 if (cp.special === 'under699') items = items.filter(p => p.price <= 699);
 if (cp.cat && CATMETA[cp.cat]) items = items.filter(p => p.cat === cp.cat);
-if (!cp.cat && !cp.special) {
-items.sort(() => Math.random() - 0.5);
-} else {
-switch (cp.sort){
-case 'low': items.sort((a,b) => a.price - b.price); break;
-case 'high': items.sort((a,b) => b.price - a.price); break;
-case 'rate': items.sort((a,b) => b.rating - a.rating); break;
-case 'off': items.sort((a,b) => offPct(b) - offPct(a)); break;
-}
-}
+if (!cp.cat && !cp.special) { items.sort(() => Math.random() - 0.5); }
+else { switch (cp.sort){ case 'low': items.sort((a,b) => a.price - b.price); break; case 'high': items.sort((a,b) => b.price - a.price); break; case 'rate': items.sort((a,b) => b.rating - a.rating); break; case 'off': items.sort((a,b) => offPct(b) - offPct(a)); break; } }
 return items;
 }
 function drawCatPage(){
@@ -2699,60 +2439,37 @@ else if (cp.cat && CATMETA[cp.cat]) title = CATMETA[cp.cat].name;
 $('#catPageTitle').textContent = title + ' (' + items.length + ')';
 $('#catPageGrid').innerHTML = items.map((p,i) => card(p,'a-up',(i%8)*50)).join('') || '<p class="col-span-full text-center py-20" style="color:var(--mut);">No products found.</p>';
 }
-/* ---- Order tracking ---- */
 const STAGES = [
-{ t:'Order Placed', icon:'check' },
-{ t:'Order Confirmed', icon:'chat' },
-{ t:'In Process', icon:'gear' },
-{ t:'Order Ready', icon:'box' },
-{ t:'Dispatched', icon:'truck' },
-{ t:'Out For Delivery', icon:'truck' },
-{ t:'Delivered', icon:'check' }
+{ t:'Order Placed', icon:'check' },{ t:'Order Confirmed', icon:'chat' },{ t:'In Process', icon:'gear' },{ t:'Order Ready', icon:'box' },{ t:'Dispatched', icon:'truck' },{ t:'Out For Delivery', icon:'truck' },{ t:'Delivered', icon:'check' }
 ];
 function getOrderStatus(order){
   const status = order.status || order.manualStatus || 'Order Placed';
   const STATUS_MAP = {
-    'Order Placed': { icon:'check', color:'var(--mut)' },
-    'Order Confirmed': { icon:'check', color:'#0A0A0A' },
-    'In Process': { icon:'gear', color:'#0A0A0A' },
-    'Order Ready': { icon:'box', color:'#0A0A0A' },
-    'Dispatched': { icon:'truck', color:'#0A0A0A' },
-    'Out For Delivery': { icon:'truck', color:'#0A0A0A' },
-    'Delivered': { icon:'check', color:'#0A0A0A' },
-    'Cancelled': { icon:'cross', color:'#DC2626' }
+    'Order Placed': { icon:'check', color:'var(--mut)' }, 'Order Confirmed': { icon:'check', color:'#0A0A0A' },
+    'In Process': { icon:'gear', color:'#0A0A0A' }, 'Order Ready': { icon:'box', color:'#0A0A0A' },
+    'Dispatched': { icon:'truck', color:'#0A0A0A' }, 'Out For Delivery': { icon:'truck', color:'#0A0A0A' },
+    'Delivered': { icon:'check', color:'#0A0A0A' }, 'Cancelled': { icon:'cross', color:'#DC2626' }
   };
   const meta = STATUS_MAP[status] || STATUS_MAP['Order Placed'];
   return { text: status, icon: meta.icon, color: meta.color };
 }
 function currentStageIdx(order){
   const status = getOrderStatus(order).text;
-  const map = {
-    'Order Placed': 0,'Order Confirmed': 1,'In Process': 2,'Order Ready': 3,
-    'Dispatched': 4,'Out For Delivery': 5,'Delivered': 6,'Cancelled': -1
-  };
+  const map = { 'Order Placed': 0,'Order Confirmed': 1,'In Process': 2,'Order Ready': 3,'Dispatched': 4,'Out For Delivery': 5,'Delivered': 6,'Cancelled': -1 };
   return map[status] ?? 0;
 }
 function statusTimeline(order){
   const ci = currentStageIdx(order);
-  if (ci === -1) {
-    return '<p class="text-xs font-medium flex items-center gap-2" style="color:#DC2626;">' + ic('cross','w-4 h-4') + 'Order Cancelled</p>';
-  }
+  if (ci === -1) { return '<p class="text-xs font-medium flex items-center gap-2" style="color:#DC2626;">' + ic('cross','w-4 h-4') + 'Order Cancelled</p>'; }
   let html = '<div class="track-wrap"><div class="track-timeline">';
   html += STAGES.map((s, i) => {
-    const done = i <= ci;
-    const active = i === ci;
-    const cls = done ? 'done' : (active ? 'active' : '');
-    return '<div class="track-step ' + cls + '">' +
-      '<div class="track-icon">' + (done ? ic('check','w-4 h-4') : ic(s.icon,'w-4 h-4')) + '</div>' +
-      '<div class="pt-1"><p class="text-[11px] font-medium" style="color:' + (done ? 'var(--text)' : 'var(--mut)') + ';">' + s.t + '</p>' +
-      (active ? '<p class="text-[10px] mt-0.5 tracking-wide2 uppercase" style="color:var(--text);">Current</p>' : '') +
-      '</div></div>';
+    const done = i <= ci; const active = i === ci; const cls = done ? 'done' : (active ? 'active' : '');
+    return '<div class="track-step ' + cls + '"><div class="track-icon">' + (done ? ic('check','w-4 h-4') : ic(s.icon,'w-4 h-4')) + '</div><div class="pt-1"><p class="text-[11px] font-medium" style="color:' + (done ? 'var(--text)' : 'var(--mut)') + ';">' + s.t + '</p>' + (active ? '<p class="text-[10px] mt-0.5 tracking-wide2 uppercase" style="color:var(--text);">Current</p>' : '') + '</div></div>';
   }).join('');
   html += '</div></div>';
   html += '<p class="text-[11px] mt-4 text-center" style="color:var(--mut);">Expected Delivery: 9:00 AM – 7:00 PM</p>';
   return html;
 }
-/* ---- Place Order (COD) ---- */
 let lock = false;
 function placeOrder(){
 if (lock) return;
@@ -2781,20 +2498,14 @@ const t = totals();
 const oid = 'HF' + String(Date.now()).slice(-6);
 const otp = String(Math.floor(1000 + Math.random() * 9000));
 const order = {
-  id: oid, otp, timestamp: Date.now(),
-  status: 'Order Placed', updatedAt: Date.now(),
+  id: oid, otp, timestamp: Date.now(), status: 'Order Placed', updatedAt: Date.now(),
   customer: { name, phone, email, addr, city, state, pin },
-  items: JSON.parse(JSON.stringify(cart)),
-  totals: t, deliveredAt: null,
-  payment: { method: 'cod' }
+  items: JSON.parse(JSON.stringify(cart)), totals: t, deliveredAt: null, payment: { method: 'cod' }
 };
 const orders = store.get('orders', []);
-orders.push(order);
-store.set('orders', orders);
-store.set('user', { name, phone });
-notifyNewOrder(order);   // 📧 COD order ની email admin ને જશે
-saveOrderToServer(order); // 🌐 Backend save
-
+orders.push(order); store.set('orders', orders); store.set('user', { name, phone });
+notifyNewOrder(order);
+saveOrderToServer(order);
 cart = []; store.set('cart', []);
 renderCart();
 closeModal('cartDrawer', true);
@@ -2802,50 +2513,24 @@ toast('Order placed — ' + oid, 'check');
 setTimeout(() => { try { showInvoice(order); } catch(e){ console.error('Invoice error:', e); alert('Invoice error: ' + e.message); } }, 400);
 }
 
-/* ============================================================
-   RAZORPAY ONLINE PAYMENT
-   ============================================================ */
 const RAZORPAY_KEY_ID = 'rzp_live_ThrZ8hY3CqJiE8';
-// Auto-detect API base: same origin if served from backend, else localhost in dev
-const API_BASE = (window.location.port === '3000' || window.location.port === '')
-  ? '' 
-  : (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-    ? 'http://localhost:3000'
-    : '';
-
+const API_BASE = (window.location.port === '3000' || window.location.port === '') ? '' : (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:3000' : '';
 let selectedPayMethod = 'cod';
-
-// Toggle payment method UI
 function updatePayMethodUI(){
-  const codBtn = $('#placeOrder');
-  const onlineBtn = $('#payOnline');
-  const codRad = $('#payRadCod');
-  const onlineRad = $('#payRadOnline');
+  const codBtn = $('#placeOrder'); const onlineBtn = $('#payOnline');
+  const codRad = $('#payRadCod'); const onlineRad = $('#payRadOnline');
   if (!codBtn || !onlineBtn) return;
-  if (selectedPayMethod === 'cod'){
-    codBtn.classList.remove('hidden');
-    onlineBtn.classList.add('hidden');
-    if (codRad) codRad.classList.add('active');
-    if (onlineRad) onlineRad.classList.remove('active');
-  } else {
-    codBtn.classList.add('hidden');
-    onlineBtn.classList.remove('hidden');
-    if (codRad) codRad.classList.remove('active');
-    if (onlineRad) onlineRad.classList.add('active');
-  }
+  if (selectedPayMethod === 'cod'){ codBtn.classList.remove('hidden'); onlineBtn.classList.add('hidden'); if (codRad) codRad.classList.add('active'); if (onlineRad) onlineRad.classList.remove('active'); }
+  else { codBtn.classList.add('hidden'); onlineBtn.classList.remove('hidden'); if (codRad) codRad.classList.remove('active'); if (onlineRad) onlineRad.classList.add('active'); }
 }
-
 function validateCheckoutForm(){
   const err = m => { const e = $('#coErr'); e.textContent = m; e.classList.remove('hidden'); return false; };
   $('#coErr').classList.add('hidden');
   if (!cart.length) return err('Cart is empty — add products first.');
   if ($('#coHoney').value) return false;
-  const name = $('#coName').value.trim();
-  const phone = $('#coPhone').value.trim();
-  const email = $('#coEmail').value.trim();
-  const addr = $('#coAddr').value.trim();
-  const city = $('#coCity').value.trim();
-  const state = $('#coState').value.trim();
+  const name = $('#coName').value.trim(); const phone = $('#coPhone').value.trim();
+  const email = $('#coEmail').value.trim(); const addr = $('#coAddr').value.trim();
+  const city = $('#coCity').value.trim(); const state = $('#coState').value.trim();
   const pin = $('#coPin').value.trim();
   if (!/^[A-Za-z .]{3,60}$/.test(name)) return err('Please enter a valid full name.');
   if (!/^\d{7,15}$/.test(phone.replace(/[^0-9]/g,''))) return err('Please enter a valid mobile / WhatsApp number.');
@@ -2856,201 +2541,118 @@ function validateCheckoutForm(){
   if (!/^[A-Za-z0-9 -]{4,10}$/.test(pin)) return err('Please enter a valid PIN / ZIP.');
   return true;
 }
-
 function readCustomer(){
-  return {
-    name: $('#coName').value.trim(),
-    phone: $('#coPhone').value.trim(),
-    email: $('#coEmail').value.trim(),
-    addr: $('#coAddr').value.trim(),
-    city: $('#coCity').value.trim(),
-    state: $('#coState').value.trim(),
-    pin: $('#coPin').value.trim(),
-  };
+  return { name: $('#coName').value.trim(), phone: $('#coPhone').value.trim(), email: $('#coEmail').value.trim(), addr: $('#coAddr').value.trim(), city: $('#coCity').value.trim(), state: $('#coState').value.trim(), pin: $('#coPin').value.trim() };
 }
-
-// Save a paid order to local history
 function savePaidOrder(customer, t, razorpayResponse){
   const oid = 'HF' + String(Date.now()).slice(-6);
   const otp = String(Math.floor(1000 + Math.random() * 9000));
   const order = {
-    id: oid, otp, timestamp: Date.now(),
-    status: 'Order Confirmed', updatedAt: Date.now(),
-    customer: { ...customer },
-    items: JSON.parse(JSON.stringify(cart)),
-    totals: t, deliveredAt: null,
-    payment: {
-      method: 'online',
-      razorpay_order_id: razorpayResponse.razorpay_order_id,
-      razorpay_payment_id: razorpayResponse.razorpay_payment_id,
-      verified: true
-    }
+    id: oid, otp, timestamp: Date.now(), status: 'Order Confirmed', updatedAt: Date.now(),
+    customer: { ...customer }, items: JSON.parse(JSON.stringify(cart)), totals: t, deliveredAt: null,
+    payment: { method: 'online', razorpay_order_id: razorpayResponse.razorpay_order_id, razorpay_payment_id: razorpayResponse.razorpay_payment_id, verified: true }
   };
   const orders = store.get('orders', []);
-  orders.push(order);
-  store.set('orders', orders);
+  orders.push(order); store.set('orders', orders);
   store.set('user', { name: customer.name, phone: customer.phone });
   return order;
 }
-
 async function handleOnlinePayment(){
   const btn = $('#payOnline');
   if (!btn || btn.disabled) return;
   if (!validateCheckoutForm()) return;
-  if (typeof Razorpay === 'undefined'){
-    toast('Payment SDK not loaded. Refresh and try again.', 'cross');
-    return;
-  }
-
+  if (typeof Razorpay === 'undefined'){ toast('Payment SDK not loaded. Refresh and try again.', 'cross'); return; }
   const t = totals();
   const amountPaise = Math.round(t.total * 100);
-
-  if (amountPaise < 100){
-    toast('Minimum online payment is ₹1', 'warn');
-    return;
-  }
-
+  if (amountPaise < 100){ toast('Minimum online payment is ₹1', 'warn'); return; }
   btn.disabled = true;
   const origText = btn.textContent;
   btn.textContent = 'Creating Order…';
-
   try {
-    // STEP 1 — Create order on backend
-    const res = await fetch(`${API_BASE}/api/create-order`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        amount: amountPaise,
-        currency: 'INR',
-        receipt: 'hf_' + Date.now(),
-      }),
-    });
-
-    if (!res.ok) {
-      throw new Error('Server error ' + res.status + '. Is backend running?');
-    }
-
+    const res = await fetch(`${API_BASE}/api/create-order`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ amount: amountPaise, currency: 'INR', receipt: 'hf_' + Date.now() }) });
+    if (!res.ok) throw new Error('Server error ' + res.status + '. Is backend running?');
     const orderData = await res.json();
-    if (!orderData.success) {
-      throw new Error(orderData.error || 'Order creation failed');
-    }
-
-    // STEP 2 — Open Razorpay Checkout
+    if (!orderData.success) throw new Error(orderData.error || 'Order creation failed');
     const customer = readCustomer();
-
     const options = {
-      key: RAZORPAY_KEY_ID,
-      amount: orderData.amount,
-      currency: orderData.currency,
-      name: 'HinchField',
-      description: 'Premium T-Shirt Order',
-      image: 'images/logo.png',
-      order_id: orderData.order_id,
-      prefill: { name: customer.name, contact: customer.phone },
-      notes: {
-        address: customer.addr,
-        city: customer.city,
-        state: customer.state,
-        pin: customer.pin,
-      },
+      key: RAZORPAY_KEY_ID, amount: orderData.amount, currency: orderData.currency,
+      name: 'HinchField', description: 'Premium T-Shirt Order', image: 'images/logo.png',
+      order_id: orderData.order_id, prefill: { name: customer.name, contact: customer.phone },
+      notes: { address: customer.addr, city: customer.city, state: customer.state, pin: customer.pin },
       theme: { color: '#0A0A0A' },
       handler: async function (response){
-        // STEP 3 — Verify signature on backend
         try {
-          const vRes = await fetch(`${API_BASE}/api/verify-payment`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_signature: response.razorpay_signature,
-            }),
-          });
+          const vRes = await fetch(`${API_BASE}/api/verify-payment`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ razorpay_order_id: response.razorpay_order_id, razorpay_payment_id: response.razorpay_payment_id, razorpay_signature: response.razorpay_signature }) });
           const vData = await vRes.json();
-
           if (vData.success){
-  const order = savePaidOrder(customer, t, response);
-  notifyNewOrder(order);   // 📧 PAID order ની email admin ને જશે
-    saveOrderToServer(order); // 🌐 Backend save
-  cart = []; store.set('cart', []);
-  renderCart();
-  closeModal('cartDrawer', true);
-  toast('Payment successful — ' + order.id, 'check');
-  setTimeout(() => { try { showInvoice(order); } catch(e){ console.error('Invoice error:', e); alert('Invoice error: ' + e.message); } }, 400);
-} else {
-            toast('Payment verification failed. Contact support.', 'cross');
-          }
-        } catch (err){
-          console.error('Verify error:', err);
-          toast('Verification failed. Share payment ID with support.', 'cross');
-        }
+            const order = savePaidOrder(customer, t, response);
+            notifyNewOrder(order);
+            saveOrderToServer(order);
+            cart = []; store.set('cart', []);
+            renderCart();
+            closeModal('cartDrawer', true);
+            toast('Payment successful — ' + order.id, 'check');
+            setTimeout(() => { try { showInvoice(order); } catch(e){ console.error('Invoice error:', e); alert('Invoice error: ' + e.message); } }, 400);
+          } else { toast('Payment verification failed. Contact support.', 'cross'); }
+        } catch (err){ console.error('Verify error:', err); toast('Verification failed. Share payment ID with support.', 'cross'); }
       },
-      modal: {
-        ondismiss: function (){
-          toast('Payment cancelled', 'warn');
-        }
-      }
+      modal: { ondismiss: function (){ toast('Payment cancelled', 'warn'); } }
     };
-
     const rzp = new Razorpay(options);
-
-    rzp.on('payment.failed', function (resp){
-      const desc = (resp && resp.error && resp.error.description) || 'Payment failed';
-      toast(desc, 'cross');
-      console.error('Payment failed:', resp);
-    });
-
+    rzp.on('payment.failed', function (resp){ const desc = (resp && resp.error && resp.error.description) || 'Payment failed'; toast(desc, 'cross'); console.error('Payment failed:', resp); });
     rzp.open();
-  } catch (err){
-    console.error('Payment error:', err);
-    toast(err.message || 'Something went wrong. Try again.', 'cross');
-  } finally {
-    btn.disabled = false;
-    btn.textContent = origText;
-  }
+  } catch (err){ console.error('Payment error:', err); toast(err.message || 'Something went wrong. Try again.', 'cross'); }
+  finally { btn.disabled = false; btn.textContent = origText; }
 }
+
+/* ---- 🌐 Owner mode (URL → localStorage auto-save) ---- */
+(function detectOwnerMode(){
+  try {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('admin') === '1' || params.get('owner') === '1'){
+      localStorage.setItem('hf_is_admin', 'true');
+      const clean = window.location.pathname + window.location.hash;
+      window.history.replaceState({}, '', clean);
+      console.log('✅ Owner mode activated permanently');
+    }
+  } catch(e){}
+})();
 
 /* ---- 🌐 Sync user's orders from server ---- */
 async function syncMyOrders(){
   try {
-    syncMyOrders._last = Date.now();   // track last call
-    const user = store.get('user', null);
-    if (!user || !user.phone) return;
-    const phone = String(user.phone).replace(/[^0-9]/g, '');
-    if (!phone) return;
-
-    const r = await fetch(`${API_BASE}/api/orders?action=my-orders&phone=${phone}`);
+    syncMyOrders._last = Date.now();
+    const isAdmin = localStorage.getItem('hf_is_admin') === 'true';
+    let url;
+    if (isAdmin) {
+      url = `${API_BASE}/api/orders?action=list&pwd=HF2026`;
+    } else {
+      const user = store.get('user', null);
+      if (!user || !user.phone) return;
+      const phone = String(user.phone).replace(/[^0-9]/g, '');
+      if (!phone) return;
+      url = `${API_BASE}/api/orders?action=my-orders&phone=${phone}`;
+    }
+    const r = await fetch(url);
     const d = await r.json();
     if (!d.success || !d.orders.length) return;
-
     const local = store.get('orders', []);
     let changed = false;
-
     d.orders.forEach(serverO => {
       const idx = local.findIndex(x => x.id === serverO.id);
-      if (idx === -1) {
-        // 🆕 Order from another device — add it
-        local.push(serverO);
-        changed = true;
-      } else if (local[idx].status !== serverO.status) {
-        // 🔄 Status changed on server — update locally
+      if (idx === -1) { local.push(serverO); changed = true; }
+      else if (local[idx].status !== serverO.status) {
         local[idx].status = serverO.status;
         local[idx].updatedAt = serverO.updatedAt || Date.now();
         if (serverO.status === 'Delivered') local[idx].deliveredAt = serverO.deliveredAt || Date.now();
         changed = true;
       }
     });
-
     if (changed){
       store.set('orders', local);
-      // Auto-refresh history if visible
       const hm = $('#historyModal');
       if (hm && !hm.classList.contains('hidden')) renderHistory();
-      // Refresh tracking modal too if open
-      if ($('#trackModal') && !$('#trackModal').classList.contains('hidden')) {
-        if ($('#trackInput') && $('#trackInput').value.trim()) track();
-      }
-      // Refresh admin panel if open
+      if ($('#trackModal') && !$('#trackModal').classList.contains('hidden')) { if ($('#trackInput') && $('#trackInput').value.trim()) track(); }
       const sm = $('#staffModal');
       if (sm && !sm.classList.contains('hidden')) {
         const q = $('#adminSearchId') && $('#adminSearchId').value.trim();
@@ -3059,8 +2661,7 @@ async function syncMyOrders(){
     }
   } catch(e){ /* silent */ }
 }
-    
-/* ---- History ---- */
+
 function openHistory(){
   renderHistory();
   openModal('historyModal');
@@ -3073,10 +2674,7 @@ function openHistory(){
 }
 function renderHistory(){
 let orders = store.get('orders', []).sort((a,b) => b.timestamp - a.timestamp);
-orders = orders.filter(o => {
-const st = getOrderStatus(o).text;
-return st !== 'Delivered' && st !== 'Cancelled';
-});
+orders = orders.filter(o => { const st = getOrderStatus(o).text; return st !== 'Delivered' && st !== 'Cancelled'; });
 const box = $('#historyList');
 if (!orders.length){
 box.innerHTML = '<div class="text-center py-20 flex flex-col items-center" style="color:var(--mut);"><span class="mb-4">' + ic('box','w-14 h-14') + '</span><p class="text-sm font-medium">No active orders right now</p></div>';
@@ -3086,70 +2684,34 @@ box.innerHTML = orders.map(o => {
 const st = getOrderStatus(o);
 const canCancel = (Date.now() - o.timestamp < 24*60*60*1000) && st.text !== 'Cancelled' && st.text !== 'Delivered';
 const date = new Date(o.timestamp).toLocaleString('en-IN');
-const payBadge = o.payment && o.payment.method === 'online'
-  ? '<span class="chip" style="background:#0A0A0A; color:#fff;">PAID ONLINE</span>'
-  : '<span class="chip border hairline" style="color:var(--text);">COD</span>';
+const payBadge = o.payment && o.payment.method === 'online' ? '<span class="chip" style="background:#0A0A0A; color:#fff;">PAID ONLINE</span>' : '<span class="chip border hairline" style="color:var(--text);">COD</span>';
 return '<div class="card p-4 md:p-5 space-y-4">' +
 '<div class="flex justify-between items-start gap-3 flex-wrap"><div><b class="disp text-sm">' + o.id + '</b><p class="text-[10px] mt-1" style="color:var(--mut);">' + date + '</p></div>' +
-'<div class="flex gap-2 flex-wrap items-center">' + payBadge +
-'<span class="chip border hairline" style="color:' + st.color + ';">' + ic(st.icon,'w-3 h-3') + ' ' + st.text + '</span></div></div>' +
+'<div class="flex gap-2 flex-wrap items-center">' + payBadge + '<span class="chip border hairline" style="color:' + st.color + ';">' + ic(st.icon,'w-3 h-3') + ' ' + st.text + '</span></div></div>' +
 statusTimeline(o) +
 '<div class="border-t hairline pt-3 space-y-2">' + o.items.map(l => {
 const p = prodById(l.id);
 if (!p) return '';
-return '<div class="flex gap-3 items-center"><div class="w-12 h-14 overflow-hidden shrink-0" style="background:var(--bg2);">' + imgTag(p, l.color, 0, 'w-full h-full object-contain') + '</div>' +
-'<div class="flex-1 min-w-0"><p class="text-xs font-medium truncate">' + esc(p.name) + '</p>' +
-'<p class="text-[10px]" style="color:var(--mut);">Qty: ' + l.qty + ' • ' + fmt(p.price * l.qty) + '</p></div></div>';
+return '<div class="flex gap-3 items-center"><div class="w-12 h-14 overflow-hidden shrink-0" style="background:var(--bg2);">' + imgTag(p, l.color, 0, 'w-full h-full object-contain') + '</div><div class="flex-1 min-w-0"><p class="text-xs font-medium truncate">' + esc(p.name) + '</p><p class="text-[10px]" style="color:var(--mut);">Qty: ' + l.qty + ' • ' + fmt(p.price * l.qty) + '</p></div></div>';
 }).join('') + '</div>' +
 '<div class="flex justify-between items-center pt-3 border-t hairline flex-wrap gap-2"><b class="disp text-sm">Total: ' + fmt(o.totals.total) + '</b>' +
-'<div class="flex gap-2">' +
-'<button class="chip border hairline text-[10px]" style="color:var(--text);" data-download-invoice="' + o.id + '">Download Invoice</button>' +
-(canCancel ? '<button class="chip border hairline text-[10px]" style="color:#DC2626;" data-cancel-order="' + o.id + '">Cancel</button>' : '') +
-'</div></div>' +
+'<div class="flex gap-2"><button class="chip border hairline text-[10px]" style="color:var(--text);" data-download-invoice="' + o.id + '">Download Invoice</button>' + (canCancel ? '<button class="chip border hairline text-[10px]" style="color:#DC2626;" data-cancel-order="' + o.id + '">Cancel</button>' : '') + '</div></div>' +
 (o.otp && st.text !== 'Cancelled' ? '<p class="text-[10px] font-medium text-center py-2 tracking-wide2 uppercase" style="background:var(--bg2); color:var(--text);">Delivery OTP: ' + o.otp + '</p>' : '') +
 (o.payment && o.payment.razorpay_payment_id ? '<p class="text-[10px] text-center" style="color:var(--mut);">Payment ID: ' + o.payment.razorpay_payment_id + '</p>' : '') +
 '</div>';
 }).join('');
 }
 
-/* ---- 🌐 Save order to server ---- */
 function saveOrderToServer(order){
-  try {
-    fetch(`${API_BASE}/api/orders?action=save`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ order })
-    }).catch(() => {});
-  } catch(e){}
+  try { fetch(`${API_BASE}/api/orders?action=save`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ order }) }).catch(() => {}); } catch(e){}
 }
-
-/* ---- 📧 Admin New Order Email Notify (COD + PAID બંને) ---- */
 function notifyNewOrder(order){
   try {
-    fetch(`${API_BASE}/api/order-notify`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        order: {
-          id: order.id,
-          otp: order.otp,
-          customer: order.customer,
-          items: order.items.map(l => {
-            const p = prodById(l.id);
-            return { name: p ? p.name : 'Product', qty: l.qty, price: p ? p.price : 0, colorChoice: l.colorChoice || '', custom: l.custom || null };
-          }),
-          totals: order.totals,
-          payment: order.payment
-        }
-      })
-    }).catch(() => {});
+    fetch(`${API_BASE}/api/order-notify`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ order: { id: order.id, otp: order.otp, customer: order.customer, items: order.items.map(l => { const p = prodById(l.id); return { name: p ? p.name : 'Product', qty: l.qty, price: p ? p.price : 0, colorChoice: l.colorChoice || '', custom: l.custom || null }; }), totals: order.totals, payment: order.payment } }) }).catch(() => {});
   } catch(e){}
 }
     
-/* ---- Cancel Order with Confirmation Popup ---- */
 let pendingCancelId = null;
-
-// STEP A — Cancel button દબાવે એટલે POPUP ખુલે (હજી cancel થતું નથી)
 function askCancelOrder(orderId){
   const orders = store.get('orders', []);
   const order = orders.find(o => o.id === orderId);
@@ -3162,8 +2724,6 @@ function askCancelOrder(orderId){
   payTxt.style.color = isOnline ? '#0A0A0A' : 'var(--mut)';
   openModal('confirmCancelModal');
 }
-
-// STEP B — ફક્ત "Yes" દબાવે ત્યારે જ અહીં આવે
 function cancelOrder(orderId){
   const orders = store.get('orders', []);
   const idx = orders.findIndex(o => o.id === orderId);
@@ -3177,34 +2737,9 @@ function cancelOrder(orderId){
     pendingCancelId = null;
     renderHistory();
     toast('Order Cancelled Successfully','cross');
-
-    // 🌐 Push cancellation to server
+    try { fetch(`${API_BASE}/api/orders?action=update`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: order.id, status: 'Cancelled', pwd: 'HF2026' }) }).catch(() => {}); } catch(e){}
     try {
-      fetch(`${API_BASE}/api/orders?action=update`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: order.id, status: 'Cancelled', pwd: 'HF2026' })
-      }).catch(() => {});
-    } catch(e){}
-    
-    // 📧 ફક્ત આ એક જ call — email + refund બધું backend માં થશે
-    try {
-      fetch(`${API_BASE}/api/cancel-notify`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          order: {
-            id: order.id,
-            customer: order.customer,
-            items: order.items.map(l => {
-              const p = prodById(l.id);
-              return { name: p ? p.name : 'Product', qty: l.qty, price: p ? p.price : 0 };
-            }),
-            totals: order.totals,
-            payment: order.payment
-          }
-        })
-      }).catch(() => {});
+      fetch(`${API_BASE}/api/cancel-notify`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ order: { id: order.id, customer: order.customer, items: order.items.map(l => { const p = prodById(l.id); return { name: p ? p.name : 'Product', qty: l.qty, price: p ? p.price : 0 }; }), totals: order.totals, payment: order.payment } }) }).catch(() => {});
     } catch(e){}
   } else {
     closeModal('confirmCancelModal', true);
@@ -3213,7 +2748,6 @@ function cancelOrder(orderId){
   }
 }
     
-/* ---- Admin ---- */
 let adminAuth = false;
 function openAdmin(skipRoute){
 if (adminAuth){ $('#adminLoginBox').classList.add('hidden'); $('#adminDashBox').classList.remove('hidden'); }
@@ -3221,28 +2755,17 @@ else { $('#adminLoginBox').classList.remove('hidden'); $('#adminDashBox').classL
 openModal('staffModal');
 if (!skipRoute) history.pushState({ modal: 'staffModal' }, '', '#admin');
 }
-// 🔐 SECRET ADMIN: 5 clicks on logo within 2 sec
 let _logoTaps = 0, _logoTimer = null;
 const secretLogo = $('#secretLogo');
 if (secretLogo){
   secretLogo.addEventListener('click', (e) => {
     e.preventDefault();
     _logoTaps++;
-    if (_logoTaps === 1){
-      _logoTimer = setTimeout(() => { _logoTaps = 0; }, 2000);
-    }
-    if (_logoTaps >= 5){
-      clearTimeout(_logoTimer);
-      _logoTaps = 0;
-      if (typeof openAdmin === 'function') openAdmin();
-    }
+    if (_logoTaps === 1){ _logoTimer = setTimeout(() => { _logoTaps = 0; }, 2000); }
+    if (_logoTaps >= 5){ clearTimeout(_logoTimer); _logoTaps = 0; if (typeof openAdmin === 'function') openAdmin(); }
   });
 }
-function results(q){
-q = q.toLowerCase();
-return PRODUCTS.filter(p => p.name.toLowerCase().indexOf(q) > -1 || CATMETA[p.cat].name.toLowerCase().indexOf(q) > -1).slice(0,8);
-}
-    
+function results(q){ q = q.toLowerCase(); return PRODUCTS.filter(p => p.name.toLowerCase().indexOf(q) > -1 || CATMETA[p.cat].name.toLowerCase().indexOf(q) > -1).slice(0,8); }
 function track(){
 const id = $('#trackInput').value.trim().toUpperCase().replace(/[^A-Z0-9]/g,'');
 if (!/^HF\d{6}$/.test(id)){ $('#trackResult').innerHTML = '<p class="text-xs" style="color:#DC2626;">Format: HF123456</p>'; return; }
@@ -3250,28 +2773,14 @@ const orders = store.get('orders', []);
 const o = orders.find(x => x.id === id);
 if (o){
 const st = getOrderStatus(o);
-$('#trackResult').innerHTML =
-'<div class="border hairline p-4 mb-4" style="background:var(--card);"><div class="flex justify-between items-center mb-2">' +
-'<b class="text-sm">' + o.id + '</b>' +
-'<span class="chip border hairline" style="color:' + st.color + ';">' + ic(st.icon,'w-3 h-3') + ' ' + st.text + '</span></div>' +
-'<p class="text-[10px]" style="color:var(--mut);">Placed: ' + new Date(o.timestamp).toLocaleString('en-IN') + '</p></div>' +
-statusTimeline(o) +
-'<a class="pill btn-ink w-full py-3 mt-5" href="https://wa.me/' + WA + '?text=' + encodeURIComponent('Hi! Track my order ' + id) + '" target="_blank" rel="noopener">Live Help on WhatsApp</a>';
+$('#trackResult').innerHTML = '<div class="border hairline p-4 mb-4" style="background:var(--card);"><div class="flex justify-between items-center mb-2"><b class="text-sm">' + o.id + '</b><span class="chip border hairline" style="color:' + st.color + ';">' + ic(st.icon,'w-3 h-3') + ' ' + st.text + '</span></div><p class="text-[10px]" style="color:var(--mut);">Placed: ' + new Date(o.timestamp).toLocaleString('en-IN') + '</p></div>' + statusTimeline(o) + '<a class="pill btn-ink w-full py-3 mt-5" href="https://wa.me/' + WA + '?text=' + encodeURIComponent('Hi! Track my order ' + id) + '" target="_blank" rel="noopener">Live Help on WhatsApp</a>';
 return;
 }
-$('#trackResult').innerHTML =
-'<p class="text-xs mb-3" style="color:var(--mut);">Order not found on this device. Ask us live on WhatsApp:</p>' +
-'<a class="pill btn-ink w-full py-3" href="https://wa.me/' + WA + '?text=' + encodeURIComponent('Hi! Track my order ' + id) + '" target="_blank" rel="noopener">Live Status on WhatsApp</a>';
+$('#trackResult').innerHTML = '<p class="text-xs mb-3" style="color:var(--mut);">Order not found on this device. Ask us live on WhatsApp:</p><a class="pill btn-ink w-full py-3" href="https://wa.me/' + WA + '?text=' + encodeURIComponent('Hi! Track my order ' + id) + '" target="_blank" rel="noopener">Live Status on WhatsApp</a>';
 }
-/* ============================================================
-   POLICIES SYSTEM
-   ============================================================ */
+
 const POLICIES = {
-  shipping: {
-    title: 'Shipping & Delivery Policy',
-    updated: 'Last updated · January 2026',
-    intro: 'Hinchfield is committed to delivering premium products safely and on time. This policy covers processing, dispatch, delivery timelines, and charges.',
-    sections: [
+  shipping: { title: 'Shipping & Delivery Policy', updated: 'Last updated · January 2026', intro: 'Hinchfield is committed to delivering premium products safely and on time. This policy covers processing, dispatch, delivery timelines, and charges.', sections: [
       { h:'Order Processing', p:'All orders are processed within <b>24 hours</b> of confirmation, excluding Sundays and public holidays. You will receive an order confirmation on WhatsApp and email immediately after checkout.' },
       { h:'Delivery Timeline', p:'<b>Within India:</b> 2–5 business days from dispatch.<br><b>International:</b> 7–14 business days, subject to customs clearance.' },
       { h:'Shipping Charges', p:'<b>Orders below ₹999</b> → ₹99 flat<br><b>Orders ₹999 – ₹1,499</b> → ₹49 flat<br><b>Orders above ₹1,499</b> → FREE delivery across India.<br>Hinchfield Members enjoy <b>FREE delivery on every order</b>, regardless of value.' },
@@ -3279,26 +2788,16 @@ const POLICIES = {
       { h:'Order Tracking', p:'Track your order anytime via <b>My Orders</b> or the <b>Track Order</b> page. Live status updates are pushed at every stage — Placed, Confirmed, In Process, Ready, Dispatched, Out for Delivery, Delivered.' },
       { h:'Delivery OTP Verification', p:'Every order is delivered with a <b>4-digit OTP</b> verification to ensure safe handover. Please share the OTP only with the assigned delivery agent.' },
       { h:'Possible Delays', p:'Delivery timelines may be affected by weather, festivals, regional restrictions, or courier delays. We keep you informed on WhatsApp at every step.' }
-    ]
-  },
-  refund: {
-    title: 'Refund Policy',
-    updated: 'Last updated · January 2026',
-    intro: 'We believe in transparent and fair refund practices. Please read the eligibility criteria carefully before requesting a refund.',
-    sections: [
+  ]},
+  refund: { title: 'Refund Policy', updated: 'Last updated · January 2026', intro: 'We believe in transparent and fair refund practices. Please read the eligibility criteria carefully before requesting a refund.', sections: [
       { h:'Refund Eligibility', p:'Refunds are applicable <b>only</b> in the following cases:<br>• Order not delivered within the promised timeline<br>• Product received is damaged or defective<br>• Wrong product delivered' },
       { h:'Non-Refundable Cases', p:'• Customised products (custom name / photo / design)<br>• Products used, washed, or altered<br>• Products without original packaging<br>• Orders cancelled after 24 hours of placement' },
       { h:'How to Request a Refund', p:'Report the issue within <b>24 hours of delivery</b> via WhatsApp at <b>7434053550</b> with:<br>• Order ID<br>• Unboxing video (mandatory)<br>• Clear photos of the product and packaging' },
       { h:'Verification Process', p:'Our support team verifies the claim within <b>48 hours</b>. Once approved, the refund is initiated to the original payment method or via UPI / bank transfer.' },
       { h:'Refund Timeline', p:'• UPI / Wallet → 24–48 hours<br>• Cards / Netbanking → 5–7 business days<br>• COD orders → Refunded via UPI or bank transfer only' },
       { h:'Cancellation Refunds', p:'Orders cancelled within <b>24 hours</b> of placement are eligible for a full refund. COD orders carry no cancellation charges within this window.' }
-    ]
-  },
-  privacy: {
-    title: 'Privacy Policy',
-    updated: 'Last updated · January 2026',
-    intro: 'Your privacy matters to us. This policy explains what data we collect, how we use it, and how we protect it.',
-    sections: [
+  ]},
+  privacy: { title: 'Privacy Policy', updated: 'Last updated · January 2026', intro: 'Your privacy matters to us. This policy explains what data we collect, how we use it, and how we protect it.', sections: [
       { h:'Information We Collect', p:'When you shop with Hinchfield, we collect:<br>• Full name, phone number, email address<br>• Delivery address (city, state, PIN / ZIP)<br>• Order history and product preferences<br>• Payment info — processed securely via <b>Razorpay</b> (we never store card details)' },
       { h:'How We Use Your Information', p:'• To process and deliver your orders<br>• To send order updates via WhatsApp, email, or SMS<br>• To provide customer support<br>• To improve our products and shopping experience' },
       { h:'Data Sharing', p:'We <b>never sell</b> your data. Information is shared only with:<br>• Logistics partners (for delivery)<br>• Payment gateways (Razorpay — PCI-DSS compliant)<br>• Legal authorities, when required by law' },
@@ -3306,26 +2805,16 @@ const POLICIES = {
       { h:'Data Security', p:'All transactions are encrypted. Payment data is handled exclusively by Razorpay, a PCI-DSS Level 1 certified gateway. We have no access to your card or UPI credentials.' },
       { h:'Your Rights', p:'You may request access, correction, or deletion of your personal data by emailing <b>support.hinchfield@gmail.com</b>. We respond within 7 business days.' },
       { h:'Marketing Communication', p:'We only contact you for order-related updates and optional offers. You may opt out anytime by replying <b>STOP</b> on WhatsApp.' }
-    ]
-  },
-  'no-return': {
-    title: 'No Return / No Exchange Policy',
-    updated: 'Last updated · January 2026',
-    intro: 'Hinchfield follows a strict No Return / No Exchange policy across all product categories.',
-    sections: [
+  ]},
+  'no-return': { title: 'No Return / No Exchange Policy', updated: 'Last updated · January 2026', intro: 'Hinchfield follows a strict No Return / No Exchange policy across all product categories.', sections: [
       { h:'Strict Policy Notice', p:'All orders are <b>final</b> once delivered and accepted. We do not accept returns, exchanges, or size change requests.' },
       { h:'Why This Policy', p:'Our T-Shirts are made-to-order and often customised (custom name, photo, colour, or text). Because of personalisation, hygiene standards, and print-on-demand production, returns and exchanges are not feasible.' },
       { h:'Exceptions We Do Support', p:'We resolve the following cases at <b>no extra cost</b>:<br>• Product damaged in transit<br>• Wrong product delivered<br>• Product with manufacturing defect' },
       { h:'Reporting Window', p:'Any issue must be reported within <b>24 hours of delivery</b> via WhatsApp at <b>7434053550</b> with an unboxing video and clear photos.' },
       { h:'Resolution', p:'On verification, we will provide a <b>replacement or refund</b> — at our sole discretion, based on stock availability and case severity.' },
       { h:'Customer Responsibility', p:'Please review <b>size (Free Size)</b>, colour, customisation details, and delivery address carefully before placing the order. For any clarification, message us on WhatsApp before ordering.' }
-    ]
-  },
-  membership: {
-    title: 'Membership Policy',
-    updated: 'Last updated · January 2026',
-    intro: 'Hinchfield Yearly Membership gives you unbeatable value — Flat 50% OFF + FREE delivery for 365 days.',
-    sections: [
+  ]},
+  membership: { title: 'Membership Policy', updated: 'Last updated · January 2026', intro: 'Hinchfield Yearly Membership gives you unbeatable value — Flat 50% OFF + FREE delivery for 365 days.', sections: [
       { h:'Membership Benefits', p:'• <b>Flat 50% OFF</b> on all products<br>• <b>FREE delivery</b> on every order (no minimum)<br>• Priority customer support<br>• Early access to new drops and limited collections' },
       { h:'Membership Fee & Validity', p:'One-time fee of <b>₹599</b> for <b>365 days</b> from the date of activation. No auto-renewal, no hidden charges.' },
       { h:'How to Use', p:'After purchase, you receive a unique <b>4-digit code</b> instantly. Enter this code in the cart → Membership section → click <b>Apply</b>. The 50% discount and FREE delivery apply automatically.' },
@@ -3333,83 +2822,47 @@ const POLICIES = {
       { h:'Non-Transferable', p:'Membership is strictly non-transferable. It cannot be gifted, resold, or combined with other accounts.' },
       { h:'Cancellation & Refund', p:'Membership is <b>non-refundable</b> once activated. If your code is cancelled by us for misuse, no refund will be issued.' },
       { h:'Lost Code Recovery', p:'If you lose your code, log in from the same device or contact us on WhatsApp with your registered phone number to retrieve it.' }
-    ]
-  }
+  ]}
 };
 
 function openPolicy(key, skipRoute){
   const p = POLICIES[key];
   if (!p) return;
   $('#policyTitle').textContent = p.title;
-
   let html = `
     <div class="text-center mb-10 md:mb-14">
       <p class="micro mb-3">Hinchfield · Legal</p>
       <h1 class="disp editorial-h font-luxe text-2xl md:text-3xl mb-3">${p.title}</h1>
     </div>
-
     <p class="text-[13px] md:text-sm leading-relaxed mb-8 md:mb-10 text-center max-w-2xl mx-auto" style="color:var(--mut);">${p.intro}</p>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5 items-stretch">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5 items-stretch">
   `;
-
   p.sections.forEach((s, i) => {
-    html += `
-        <div class="border hairline p-5 md:p-6 h-full" style="background:var(--card);">
-        <div class="flex items-start gap-3 mb-3">
-          <span class="w-8 h-8 border hairline flex items-center justify-center text-[11px] font-medium shrink-0"
-                style="background:var(--text); color:var(--bg);">${String(i+1).padStart(2,'0')}</span>
-          <h3 class="disp editorial-h font-luxe text-base md:text-lg pt-1">${s.h}</h3>
-        </div>
-        <div class="text-[13px] leading-relaxed md:pl-11" style="color:var(--mut);">${s.p}</div>
-      </div>
-    `;
+    html += `<div class="border hairline p-5 md:p-6 h-full" style="background:var(--card);"><div class="flex items-start gap-3 mb-3"><span class="w-8 h-8 border hairline flex items-center justify-center text-[11px] font-medium shrink-0" style="background:var(--text); color:var(--bg);">${String(i+1).padStart(2,'0')}</span><h3 class="disp editorial-h font-luxe text-base md:text-lg pt-1">${s.h}</h3></div><div class="text-[13px] leading-relaxed md:pl-11" style="color:var(--mut);">${s.p}</div></div>`;
   });
-
-  html += `
-    </div>
-
+  html += `</div>
     <div class="border hairline p-5 md:p-6 mt-8 md:mt-10" style="background:var(--bg2);">
       <p class="micro mb-2" style="color:var(--text);">Need Help?</p>
-      <p class="text-xs leading-relaxed" style="color:var(--mut);">
-        For any questions about this policy, contact our support team:
-      </p>
+      <p class="text-xs leading-relaxed" style="color:var(--mut);">For any questions about this policy, contact our support team:</p>
       <div class="flex flex-wrap gap-3 mt-4">
-        <a href="https://wa.me/917434053550" target="_blank" rel="noopener"
-           class="pill btn-ink px-5 py-2.5 text-[10px] flex items-center gap-2">
-          ${ic('chat','w-3.5 h-3.5')} WhatsApp 7434053550
-        </a>
-        <a href="mailto:support.hinchfield@gmail.com"
-           class="pill btn-line px-5 py-2.5 text-[10px] flex items-center gap-2">
-          ${ic('pin','w-3.5 h-3.5')} support.hinchfield@gmail.com
-        </a>
+        <a href="https://wa.me/917434053550" target="_blank" rel="noopener" class="pill btn-ink px-5 py-2.5 text-[10px] flex items-center gap-2">${ic('chat','w-3.5 h-3.5')} WhatsApp 7434053550</a>
+        <a href="mailto:support.hinchfield@gmail.com" class="pill btn-line px-5 py-2.5 text-[10px] flex items-center gap-2">${ic('pin','w-3.5 h-3.5')} support.hinchfield@gmail.com</a>
       </div>
     </div>
-
-    <p class="text-[10px] text-center mt-8 tracking-wide2 uppercase" style="color:var(--mut);">
-      © 2026 Hinchfield · All rights reserved
-    </p>
-  `;
-
+    <p class="text-[10px] text-center mt-8 tracking-wide2 uppercase" style="color:var(--mut);">© 2026 Hinchfield · All rights reserved</p>`;
   $('#policyContent').innerHTML = html;
   openModal('policyModal');
-  if (!skipRoute) {
-    try { history.pushState({ modal:'policyModal', key }, '', '#policy/' + key); } catch(e){}
-  }
+  if (!skipRoute) { try { history.pushState({ modal:'policyModal', key }, '', '#policy/' + key); } catch(e){} }
 }
-/* ---- Modal & Route Management ---- */
+
 function openModal(id){ const el = $('#'+id); if (el) el.classList.remove('hidden'); document.body.style.overflow = 'hidden'; }
 function closeModal(id, skipHistory){
 const el = $('#'+id); if (el) el.classList.add('hidden');
 document.body.style.overflow = '';
-if (!skipHistory && window.location.hash) {
-try { history.back(); } catch(e){}
-}
+if (!skipHistory && window.location.hash) { try { history.back(); } catch(e){} }
 }
 function closeAll(skipHistory){
-['cartDrawer','wishDrawer','productModal','sizeModal','trackModal','catPage','mobileMenu','historyModal','staffModal','memberModal','confirmCancelModal','policyModal','invoiceModal'].forEach(id => {
-const el = $('#'+id); if (el) el.classList.add('hidden');
-});
+['cartDrawer','wishDrawer','productModal','sizeModal','trackModal','catPage','mobileMenu','historyModal','staffModal','memberModal','confirmCancelModal','policyModal','invoiceModal'].forEach(id => { const el = $('#'+id); if (el) el.classList.add('hidden'); });
 document.body.style.overflow = '';
 }
 function handleRoute(){
@@ -3425,10 +2878,7 @@ if (['new','best','under499','under599','under699'].indexOf(seg) > -1) openCatPa
 else if (CATMETA[seg]) openCatPage(seg, '', '', true);
 else openCatPage('', '', '', true);
 }
-else if (hash.indexOf('#product/') === 0) {
-const pid = hash.split('/')[1];
-openProduct(pid, true);
-}
+else if (hash.indexOf('#product/') === 0) { const pid = hash.split('/')[1]; openProduct(pid, true); }
 else if (hash === '#size') { openModal('sizeModal'); }
 else if (hash === '#membership') { openMemberModal(true); }
 else if (hash.indexOf('#policy/') === 0) { openPolicy(hash.split('/')[1], true); }
@@ -3442,29 +2892,14 @@ if (!t){ const sd = $('#searchDrop'); if (sd) sd.classList.add('hidden'); return
 if (t.hasAttribute('data-close')){ closeModal(t.getAttribute('data-close')); return; }
 if (t.hasAttribute('data-openhistory')){
   const mobileOpen = $('#mobileMenu') && !$('#mobileMenu').classList.contains('hidden');
-  if (mobileOpen) {
-    closeAll(true);
-    renderHistory();
-    openModal('historyModal');
-    history.replaceState({ modal: 'historyModal' }, '', '#orders');
-  } else {
-    closeAll(true);
-    openHistory();
-  }
+  if (mobileOpen) { closeAll(true); renderHistory(); openModal('historyModal'); history.replaceState({ modal: 'historyModal' }, '', '#orders'); }
+  else { closeAll(true); openHistory(); }
   return;
 }
 if (t.hasAttribute('data-membership')){
   const mobileOpen = $('#mobileMenu') && !$('#mobileMenu').classList.contains('hidden');
-  if (mobileOpen) {
-    closeAll(true);
-    const _b = $('#openMembership');
-    if (_b) _b.click();
-    history.replaceState({ modal: 'memberModal' }, '', '#membership');
-  } else {
-    closeAll(true);
-    const _b = $('#openMembership');
-    if (_b) _b.click();
-  }
+  if (mobileOpen) { closeAll(true); const _b = $('#openMembership'); if (_b) _b.click(); history.replaceState({ modal: 'memberModal' }, '', '#membership'); }
+  else { closeAll(true); const _b = $('#openMembership'); if (_b) _b.click(); }
   return;
 }
 if (t.hasAttribute('data-open-product')){ const id = t.getAttribute('data-open-product'); closeAll(true); openProduct(id); return; }
@@ -3482,10 +2917,7 @@ if (t.hasAttribute('data-catpage')){
     if (['new','best','under499','under599','under699'].indexOf(v) > -1) hash += '/' + v;
     else if (v) hash += '/' + v;
     history.replaceState({ modal: 'catPage' }, '', hash);
-  } else {
-    if (['new','best','under499','under599','under699'].indexOf(v) > -1) openCatPage('', '', v);
-    else openCatPage(v, '', '');
-  }
+  } else { if (['new','best','under499','under599','under699'].indexOf(v) > -1) openCatPage('', '', v); else openCatPage(v, '', ''); }
   return;
 }
 if (t.hasAttribute('data-sizeopen')){ openModal('sizeModal'); try{ history.pushState({ modal: 'sizeModal' }, '', '#size'); }catch(e){} return; }
@@ -3497,44 +2929,19 @@ if (v==='orders'){ closeAll(true); openHistory(); }
 if (v==='track'){ closeAll(true); openModal('trackModal'); try{ history.pushState({ modal: 'trackModal' }, '', '#track'); }catch(e){} }
 return;
 }
-if (t.hasAttribute('data-share')){
-const p = prodById(pm.id);
-if (!p) return;
-const txt = p.name + ' — ' + fmt(p.price) + ' on HinchField';
-if (navigator.share){ navigator.share({ title:'HinchField', text:txt, url:location.href }).catch(()=>{}); }
-return;
-}
-if (t.hasAttribute('data-angle')){
-const a = +t.getAttribute('data-angle');
-const n = 2;
-pm.angle = a === -1 ? (pm.angle + n - 1) % n : a === 1 ? (pm.angle + 1) % n : a;
-drawProduct();
-return;
-}
+if (t.hasAttribute('data-share')){ const p = prodById(pm.id); if (!p) return; const txt = p.name + ' — ' + fmt(p.price) + ' on HinchField'; if (navigator.share){ navigator.share({ title:'HinchField', text:txt, url:location.href }).catch(()=>{}); } return; }
+if (t.hasAttribute('data-angle')){ const a = +t.getAttribute('data-angle'); const n = 2; pm.angle = a === -1 ? (pm.angle + n - 1) % n : a === 1 ? (pm.angle + 1) % n : a; drawProduct(); return; }
 if (t.hasAttribute('data-psize')){ pm.size = +t.getAttribute('data-psize'); $$('#productBody .sizechip').forEach((s,i) => s.classList.toggle('active', i === pm.size)); return; }
 if (t.hasAttribute('data-pq')){ pm.qty = Math.min(9, Math.max(1, pm.qty + (+t.getAttribute('data-pq')))); const q = $('#pmQty'); if (q) q.textContent = pm.qty; return; }
 if (t.hasAttribute('data-pm-add')){ const p = prodById(pm.id); if (!p) return; addToCart(p.id, p.colors[pm.color][0], p.sizes[pm.size], pm.qty, readExtras(p)); closeAll(true); try{ history.replaceState(null, '', location.pathname + location.search); history.pushState({ modal:'cartDrawer' }, '', '#cart'); handleRoute(); }catch(e){} return; }
 if (t.hasAttribute('data-pm-buy')){ const p = prodById(pm.id); if (!p) return; addToCart(p.id, p.colors[pm.color][0], p.sizes[pm.size], pm.qty, readExtras(p)); closeAll(true); try{ history.replaceState(null, '', location.pathname + location.search); history.pushState({ modal:'cartDrawer' }, '', '#cart'); handleRoute(); }catch(e){} return; }
 if (t.hasAttribute('data-cq')){ const l = cart.find(x => x.key === t.getAttribute('data-cq')); if (!l) return; l.qty = Math.min(9, Math.max(1, l.qty + (+t.getAttribute('data-d')))); store.set('cart', cart); renderCart(); return; }
 if (t.hasAttribute('data-cr')){ cart = cart.filter(x => x.key !== t.getAttribute('data-cr')); store.set('cart', cart); renderCart(); return; }
-if (t.hasAttribute('data-download-invoice')){
-    const id = t.getAttribute('data-download-invoice');
-    const orders = store.get('orders', []);
-    const order = orders.find(o => o.id === id);
-    if (order) {
-        showInvoice(order);
-    }
-    return;
-}
+if (t.hasAttribute('data-download-invoice')){ const id = t.getAttribute('data-download-invoice'); const orders = store.get('orders', []); const order = orders.find(o => o.id === id); if (order) { showInvoice(order); } return; }
 if (t.hasAttribute('data-cancel-order')){ askCancelOrder(t.getAttribute('data-cancel-order')); return; }
-if (t.hasAttribute('data-policy')){
-  const key = t.getAttribute('data-policy');
-  closeAll(true);
-  openPolicy(key);
-  return;
-}
+if (t.hasAttribute('data-policy')){ const key = t.getAttribute('data-policy'); closeAll(true); openPolicy(key); return; }
 });
-/* ---- Wire top-level handlers ---- */
+
 function wire(){
 $('#cartOpen').onclick = () => { closeAll(true); renderCart(); try{ history.pushState({ modal:'cartDrawer' }, '', '#cart'); }catch(e){} handleRoute(); };
 $('#wishOpen').onclick = () => { closeAll(true); renderWish(); try{ history.pushState({ modal:'wishDrawer' }, '', '#wishlist'); }catch(e){} handleRoute(); };
@@ -3543,25 +2950,15 @@ $('#trackOpen2').onclick = () => { openModal('trackModal'); try{ history.pushSta
 $('#sizeOpen').onclick = () => { openModal('sizeModal'); try{ history.pushState({ modal: 'sizeModal' }, '', '#size'); }catch(e){} };
 $('#placeOrder').onclick = placeOrder;
 $('#payOnline').onclick = handleOnlinePayment;
-// Cancel confirmation popup — Yes / No / Backdrop
 if ($('#confirmCancelNo')) $('#confirmCancelNo').onclick = () => { pendingCancelId = null; closeModal('confirmCancelModal', true); };
 if ($('#confirmCancelBackdrop')) $('#confirmCancelBackdrop').onclick = () => { pendingCancelId = null; closeModal('confirmCancelModal', true); };
 if ($('#confirmCancelYes')) $('#confirmCancelYes').onclick = () => { if (pendingCancelId) cancelOrder(pendingCancelId); };
 
-// Payment method radio toggles
 document.querySelectorAll('input[name="payMethod"]').forEach(radio => {
-  radio.addEventListener('change', (ev) => {
-    selectedPayMethod = ev.target.value;
-    updatePayMethodUI();
-  });
+  radio.addEventListener('change', (ev) => { selectedPayMethod = ev.target.value; updatePayMethodUI(); });
 });
-// Make the whole label clickable & toggle active class
 $$('#payRadCod, #payRadOnline').forEach(lbl => {
-  lbl.addEventListener('click', () => {
-    const val = lbl.querySelector('input').value;
-    selectedPayMethod = val;
-    updatePayMethodUI();
-  });
+  lbl.addEventListener('click', () => { const val = lbl.querySelector('input').value; selectedPayMethod = val; updatePayMethodUI(); });
 });
 
 $('#sortSel').onchange = e => { cp.sort = e.target.value; drawCatPage(); };
@@ -3569,54 +2966,33 @@ $('#trackGo').onclick = track;
 $('#toTop').onclick = () => window.scrollTo({ top:0, behavior:'smooth' });
 
 function showMemberView(){
-  const active = $('#memViewActive');
-  const buy = $('#memViewBuy');
+  const active = $('#memViewActive'); const buy = $('#memViewBuy');
   if (!active || !buy) return;
   const saved = store.get('membership_full', null);
   if (saved && saved.code && Date.now() < saved.expiresAt){
-    active.classList.remove('hidden');
-    buy.classList.add('hidden');
+    active.classList.remove('hidden'); buy.classList.add('hidden');
     $('#memActiveCode').textContent = saved.code;
     $('#memActiveName').textContent = saved.name || '';
     $('#memActiveExpiry').textContent = 'Valid till: ' + new Date(saved.expiresAt).toLocaleDateString('en-IN');
-  } else {
-    active.classList.add('hidden');
-    buy.classList.remove('hidden');
-  }
+  } else { active.classList.add('hidden'); buy.classList.remove('hidden'); }
 }
 
 async function openMemberModal(skipRoute){
   $('#memBuyErr').classList.add('hidden');
   if (typeof updateMembershipPrices === 'function') updateMembershipPrices();
-
-  // 1. તરત જ Modal ખોલો (ડિફોલ્ટ: Buy screen દેખાશે)
   openModal('memberModal');
   $('#memViewActive').classList.add('hidden');
   $('#memViewBuy').classList.remove('hidden');
-
-  // 2. History મેનેજમેન્ટ (Mobile Menu fix)
   if (!skipRoute) {
-    try { 
-      // જો Mobile Menu (#menu) માંથી આવ્યા હોઈએ, તો history replace કરો (push નહીં)
-      if (window.location.hash === '#menu') {
-        history.replaceState({ modal:'memberModal' }, '', '#membership');
-      } else {
-        // સામાન્ય રીતે ખોલ્યું હોય તો push કરો
-        history.pushState({ modal:'memberModal' }, '', '#membership');
-      }
+    try {
+      if (window.location.hash === '#menu') { history.replaceState({ modal:'memberModal' }, '', '#membership'); }
+      else { history.pushState({ modal:'memberModal' }, '', '#membership'); }
     } catch(e){}
   }
-
-  // 3. Background માં Device Check કરો (UI અટકશે નહીં)
   try {
     const deviceId = await getDeviceId();
-    const r = await fetch(`${API_BASE}/api/membership-check-device`, {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ deviceId })
-    });
+    const r = await fetch(`${API_BASE}/api/membership-check-device`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ deviceId }) });
     const d = await r.json();
-    
-    // જો membership મળે, તો તરત Active screen બતાવી દો
     if (d.success && d.membership){
       const deviceMembership = d.membership;
       store.set('membership_full', deviceMembership);
@@ -3627,8 +3003,6 @@ async function openMemberModal(skipRoute){
       $('#memActiveExpiry').textContent = 'Valid till: ' + new Date(deviceMembership.expiresAt).toLocaleDateString('en-IN');
     }
   } catch(e){ console.error(e); }
-
-  // 4. જો કોઈ saved membership હોય તો auto lookup
   const saved = store.get('membership_full', null);
   if (!saved || !saved.code){
     const lastPhone = store.get('last_phone', null);
@@ -3638,26 +3012,14 @@ async function openMemberModal(skipRoute){
   
 if ($('#openMembership')) $('#openMembership').onclick = () => openMemberModal();
 
-if ($('#memCopy')) $('#memCopy').onclick = () => {
-  const code = $('#memActiveCode').textContent.trim();
-  try { navigator.clipboard.writeText(code); toast('Code copied!', 'check'); }
-  catch(e){ toast('Copy failed', 'cross'); }
-};
-
+if ($('#memCopy')) $('#memCopy').onclick = () => { const code = $('#memActiveCode').textContent.trim(); try { navigator.clipboard.writeText(code); toast('Code copied!', 'check'); } catch(e){ toast('Copy failed', 'cross'); } };
 if ($('#memShare')) $('#memShare').onclick = () => {
   const code = $('#memActiveCode').textContent.trim();
   const txt = '⭐ HINCHFIELD Membership\n\nMy Code: ' + code + '\n\nFlat 50% OFF + Free delivery on hinchfield.store';
-  if (navigator.share){
-    navigator.share({ title:'HinchField Membership', text: txt }).catch(()=>{});
-  } else {
-    try { navigator.clipboard.writeText(txt); toast('Copied — share anywhere', 'check'); } catch(e){}
-  }
+  if (navigator.share){ navigator.share({ title:'HinchField Membership', text: txt }).catch(()=>{}); }
+  else { try { navigator.clipboard.writeText(txt); toast('Copied — share anywhere', 'check'); } catch(e){} }
 };
-
-if ($('#memGoCart')) $('#memGoCart').onclick = () => {
-  closeAll(true);
-  openCatPage('', '', '');
-};
+if ($('#memGoCart')) $('#memGoCart').onclick = () => { closeAll(true); openCatPage('', '', ''); };
 
 if ($('#memBuyBtn')) $('#memBuyBtn').onclick = async () => {
   const btn = $('#memBuyBtn');
@@ -3674,43 +3036,25 @@ if ($('#memBuyBtn')) $('#memBuyBtn').onclick = async () => {
     const r = await fetch(`${API_BASE}/api/membership-order`, { method:'POST' });
     const d = await r.json();
     if (!d.success) throw new Error('Order create failed');
-
     const options = {
-      key: RAZORPAY_KEY_ID, amount: d.amount, currency: d.currency,
-      name: 'HinchField Membership', description: 'Yearly Membership — ₹1',
-      image: 'images/logo.png', order_id: d.order_id,
+      key: RAZORPAY_KEY_ID, amount: d.amount, currency: d.currency, name: 'HinchField Membership', description: 'Yearly Membership — ₹1', image: 'images/logo.png', order_id: d.order_id,
       prefill: { name, contact: phone }, theme: { color: '#0A0A0A' },
       handler: async function(resp){
         try {
-          const v = await fetch(`${API_BASE}/api/verify-payment`, {
-            method:'POST', headers:{'Content-Type':'application/json'},
-            body: JSON.stringify({
-              razorpay_order_id: resp.razorpay_order_id,
-              razorpay_payment_id: resp.razorpay_payment_id,
-              razorpay_signature: resp.razorpay_signature
-            })
-          });
+          const v = await fetch(`${API_BASE}/api/verify-payment`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ razorpay_order_id: resp.razorpay_order_id, razorpay_payment_id: resp.razorpay_payment_id, razorpay_signature: resp.razorpay_signature }) });
           const vd = await v.json();
           if (!vd.success) throw new Error('Verify failed');
-
           const currentDeviceId = await getDeviceId();
-          const c = await fetch(`${API_BASE}/api/membership-create`, {
-            method:'POST', headers:{'Content-Type':'application/json'},
-            body: JSON.stringify({ name, phone, deviceId: currentDeviceId })
-          });
-          
+          const c = await fetch(`${API_BASE}/api/membership-create`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ name, phone, deviceId: currentDeviceId }) });
           const cd = await c.json();
           if (!cd.success) throw new Error('Code generation failed');
-
           const clean = phone.replace(/[^0-9]/g, '');
           const full = { code: cd.code, name, phone: clean, expiresAt: cd.expiresAt };
           store.set('membership_full', full);
           store.set('last_phone', clean);
-          
           toast('Membership activated!', 'check');
           showMemberView();
           if (typeof renderCart === 'function') renderCart();
-          
         } catch(e){ console.error(e); toast('Verification failed', 'cross'); }
       },
       modal: { ondismiss: () => toast('Payment cancelled', 'warn') }
@@ -3733,10 +3077,7 @@ setTimeout(updateMemberUI, 100);
 async function applyMemberFn(){
   const btn = $('#memberApply');
   if (btn && btn.disabled) return;
-  if (cart.length === 0){
-    const mc = $('#memberCode'); if (mc) mc.value = '';
-    return toast('First You Have To Add Your Product','warn');
-  }
+  if (cart.length === 0){ const mc = $('#memberCode'); if (mc) mc.value = ''; return toast('First You Have To Add Your Product','warn'); }
   const code = ($('#memberCode')?.value || '').trim();
   if(!/^\d{4}$/.test(code)) return toast('Enter Your 4-digit code','warn');
   const saved = store.get('membership_full', null);
@@ -3754,12 +3095,7 @@ async function applyMemberFn(){
     try {
       const ctl = new AbortController();
       const to = setTimeout(() => ctl.abort(), 6000);
-      const r = await fetch(`${API_BASE}/api/membership-verify`,{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ code, deviceId }),
-        signal: ctl.signal
-      });
+      const r = await fetch(`${API_BASE}/api/membership-verify`,{ method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ code, deviceId }), signal: ctl.signal });
       clearTimeout(to);
       const d = await r.json();
       if(d.success){
@@ -3767,28 +3103,14 @@ async function applyMemberFn(){
         store.set('membership_full', { code, name: d.name, expiresAt: d.expiresAt });
         updateMemberUI(); renderCart();
         toast('Member applied — 50% off!','check');
-      } else {
-        toast(d.error || 'Invalid code','cross');
-        const mc = $('#memberCode'); if (mc) mc.value = '';
-      }
-    } catch(e){
-      toast('Invalid code','cross');
-      const mc = $('#memberCode'); if (mc) mc.value = '';
-    } finally {
-      btn.disabled = false;
-      btn.textContent = orig;
-    }
+      } else { toast(d.error || 'Invalid code','cross'); const mc = $('#memberCode'); if (mc) mc.value = ''; }
+    } catch(e){ toast('Invalid code','cross'); const mc = $('#memberCode'); if (mc) mc.value = ''; }
+    finally { btn.disabled = false; btn.textContent = orig; }
   }
 }
   
 if($('#memberApply'))$('#memberApply').onclick=applyMemberFn;
-if($('#memberRemove'))$('#memberRemove').onclick=()=>{
-  appliedMembership=null;
-  const mc = $('#memberCode'); if (mc) mc.value = '';
-  updateMemberUI();
-  renderCart();
-  toast('Membership removed','check');
-};
+if($('#memberRemove'))$('#memberRemove').onclick=()=>{ appliedMembership=null; const mc = $('#memberCode'); if (mc) mc.value = ''; updateMemberUI(); renderCart(); toast('Membership removed','check'); };
   
 $('#delVerify').onclick = () => {
 const id = $('#delOrderId').value.trim().toUpperCase();
@@ -3801,47 +3123,39 @@ o.deliveredAt = Date.now();
 o.status = 'Delivered';
 o.updatedAt = Date.now();
 store.set('orders', orders);
+// 🌐 Push delivery to server
+try { fetch(`${API_BASE}/api/orders?action=update`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: o.id, status: 'Delivered', pwd: 'HF2026' }) }).catch(() => {}); } catch(e){}
 toast('Delivery Confirmed!','check');
 $('#delOrderId').value = ''; $('#delOtp').value = '';
 } else { toast('Invalid OTP','cross'); }
 };
+
 $('#adminLoginBtn').onclick = () => {
 if ($('#adminPass').value === 'HF2026'){
 adminAuth = true;
+localStorage.setItem('hf_is_admin', 'true');
 $('#adminLoginBox').classList.add('hidden');
 $('#adminDashBox').classList.remove('hidden');
-$('#adminCancelBox').classList.remove('hidden');
-toast('Admin Unlocked','lock');
+toast('Admin Unlocked — Owner mode active','lock');
+setTimeout(() => { syncMyOrders(); }, 500);
 } else { toast('Wrong Passcode','cross'); }
 };
-// Cancel Membership handler
+
+// Cancel Membership handler (single copy)
 $('#adminCancelBtn').onclick = async () => {
   const input = $('#adminCancelInput').value.trim();
   const result = $('#adminCancelResult');
-  if (!input) {
-    result.innerHTML = '<p class="text-[10px]" style="color:#DC2626;">Enter phone or code</p>';
-    return;
-  }
-
+  if (!input) { result.innerHTML = '<p class="text-[10px]" style="color:#DC2626;">Enter phone or code</p>'; return; }
   const isCode = /^\d{4}$/.test(input);
   const payload = isCode ? { code: input } : { phone: input };
-
   $('#adminCancelBtn').disabled = true;
   $('#adminCancelBtn').textContent = '…';
-
   try {
-    const r = await fetch(`${API_BASE}/api/membership-cancel`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
+    const r = await fetch(`${API_BASE}/api/membership-cancel`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
     const d = await r.json();
-
     if (d.success) {
       result.innerHTML = '<p class="text-[10px]" style="color:#0A0A0A;">✅ Membership cancelled (Code: ' + d.code + ')</p>';
       $('#adminCancelInput').value = '';
-      
-      // Clear local storage if it's the current user's membership
       const saved = store.get('membership_full', null);
       if (saved && saved.code === d.code) {
         store.set('membership_full', null);
@@ -3850,61 +3164,11 @@ $('#adminCancelBtn').onclick = async () => {
         if (typeof renderCart === 'function') renderCart();
         toast('Membership cancelled', 'cross');
       }
-    } else {
-      result.innerHTML = '<p class="text-[10px]" style="color:#DC2626;">❌ ' + (d.error || 'Not found') + '</p>';
-    }
-  } catch (e) {
-    result.innerHTML = '<p class="text-[10px]" style="color:#DC2626;">Error: ' + e.message + '</p>';
-  } finally {
-    $('#adminCancelBtn').disabled = false;
-    $('#adminCancelBtn').textContent = 'Cancel';
-  }
+    } else { result.innerHTML = '<p class="text-[10px]" style="color:#DC2626;">❌ ' + (d.error || 'Not found') + '</p>'; }
+  } catch (e) { result.innerHTML = '<p class="text-[10px]" style="color:#DC2626;">Error: ' + e.message + '</p>'; }
+  finally { $('#adminCancelBtn').disabled = false; $('#adminCancelBtn').textContent = 'Cancel'; }
 };
-// Cancel Membership handler
-$('#adminCancelBtn').onclick = async () => {
-  const input = $('#adminCancelInput').value.trim();
-  const result = $('#adminCancelResult');
-  if (!input) {
-    result.innerHTML = '<p class="text-[10px]" style="color:#DC2626;">Enter phone or code</p>';
-    return;
-  }
 
-  const isCode = /^\d{4}$/.test(input);
-  const payload = isCode ? { code: input } : { phone: input };
-
-  $('#adminCancelBtn').disabled = true;
-  $('#adminCancelBtn').textContent = '…';
-
-  try {
-    const r = await fetch(`${API_BASE}/api/membership-cancel`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    const d = await r.json();
-
-    if (d.success) {
-      result.innerHTML = '<p class="text-[10px]" style="color:#0A0A0A;">✅ Membership cancelled (Code: ' + d.code + ')</p>';
-      $('#adminCancelInput').value = '';
-      
-      const saved = store.get('membership_full', null);
-      if (saved && saved.code === d.code) {
-        store.set('membership_full', null);
-        appliedMembership = null;
-        if (typeof showMemberView === 'function') showMemberView();
-        if (typeof renderCart === 'function') renderCart();
-        toast('Membership cancelled', 'cross');
-      }
-    } else {
-      result.innerHTML = '<p class="text-[10px]" style="color:#DC2626;">❌ ' + (d.error || 'Not found') + '</p>';
-    }
-  } catch (e) {
-    result.innerHTML = '<p class="text-[10px]" style="color:#DC2626;">Error: ' + e.message + '</p>';
-  } finally {
-    $('#adminCancelBtn').disabled = false;
-    $('#adminCancelBtn').textContent = 'Cancel';
-  }
-};
 /* ---- 🌐 Admin: Load all orders → My Orders ---- */
 if ($('#adminFetchAll')) $('#adminFetchAll').onclick = async () => {
   const btn = $('#adminFetchAll');
@@ -3912,62 +3176,29 @@ if ($('#adminFetchAll')) $('#adminFetchAll').onclick = async () => {
   btn.disabled = true;
   const orig = btn.textContent;
   btn.textContent = 'Loading…';
-
   try {
     const r = await fetch(`${API_BASE}/api/orders?action=list&pwd=HF2026`);
     const d = await r.json();
     if (!d.success) throw new Error(d.error || 'Failed');
-    if (!d.orders.length) {
-      toast('No orders found on server', 'warn');
-      return;
-    }
-
-    // 🔀 Merge server orders into local storage
+    if (!d.orders.length) { toast('No orders found on server', 'warn'); return; }
     const local = store.get('orders', []);
     const localMap = new Map(local.map(o => [o.id, o]));
     let added = 0;
     d.orders.forEach(o => {
       const st = o.status || 'Order Placed';
       const existing = localMap.get(o.id);
-
       if (existing) {
-        // Already in local — silently update status only if changed
-        if (existing.status !== st) {
-          existing.status = st;
-          existing.updatedAt = o.updatedAt || Date.now();
-          if (st === 'Delivered') existing.deliveredAt = o.deliveredAt || Date.now();
-        }
+        if (existing.status !== st) { existing.status = st; existing.updatedAt = o.updatedAt || Date.now(); if (st === 'Delivered') existing.deliveredAt = o.deliveredAt || Date.now(); }
         return;
       }
-
-      // 🆕 New order — only add if STILL ACTIVE
-      if (st !== 'Delivered' && st !== 'Cancelled') {
-        local.push(o);
-        added++;
-      }
+      if (st !== 'Delivered' && st !== 'Cancelled') { local.push(o); added++; }
     });
     store.set('orders', local);
-
-    // ✅ Toast confirmation
-    toast(added > 0 
-      ? added + ' order(s) added to My Orders' 
-      : 'Orders synced — status up to date', 'check');
-
-    // Close admin panel & open My Orders
+    toast(added > 0 ? added + ' order(s) added to My Orders' : 'Orders synced — status up to date', 'check');
     closeAll(true);
-    setTimeout(() => {
-      renderHistory();
-      openModal('historyModal');
-      try { history.replaceState({ modal:'historyModal' }, '', '#orders'); } catch(e){}
-    }, 600);
-
-  } catch(e) {
-    console.error(e);
-    toast(e.message || 'Failed to load', 'cross');
-  } finally {
-    btn.disabled = false;
-    btn.textContent = orig;
-  }
+    setTimeout(() => { renderHistory(); openModal('historyModal'); try { history.replaceState({ modal:'historyModal' }, '', '#orders'); } catch(e){} }, 600);
+  } catch(e) { console.error(e); toast(e.message || 'Failed to load', 'cross'); }
+  finally { btn.disabled = false; btn.textContent = orig; }
 };
 
 $('#adminSearchId').addEventListener('input', debounce(() => {
@@ -3978,18 +3209,7 @@ const orders = store.get('orders', []);
 const o = orders.find(x => x.id.indexOf(q) > -1);
 if (!o){ res.innerHTML = '<p class="text-xs text-center" style="color:var(--mut);">No order found.</p>'; return; }
 const st = getOrderStatus(o);
-res.innerHTML =
-'<div class="border hairline p-4" style="background:var(--card);">' +
-'<div class="flex justify-between items-center mb-2"><b class="text-sm">' + o.id + '</b>' +
-'<span class="chip border hairline" style="color:' + st.color + ';">' + st.text + '</span></div>' +
-'<p class="text-[10px] mb-3" style="color:var(--mut);">' + o.customer.name + ' • ' + o.customer.phone + '</p>' +
-'<div class="flex gap-2 flex-wrap">' +
-'<select id="adminStatusSel" class="field text-[10px] py-1 flex-1">' +
-'<option value="">Auto (Time-Based)</option>' +
-['Order Placed','Order Confirmed','In Process','Order Ready','Dispatched','Out For Delivery','Delivered','Cancelled'].map(v => '<option value="' + v + '">' + v + '</option>').join('') +
-'</select>' +
-'<button id="adminUpdateBtn" class="pill btn-ink px-4 text-[10px]">Update</button>' +
-'</div></div>';
+res.innerHTML = '<div class="border hairline p-4" style="background:var(--card);"><div class="flex justify-between items-center mb-2"><b class="text-sm">' + o.id + '</b><span class="chip border hairline" style="color:' + st.color + ';">' + st.text + '</span></div><p class="text-[10px] mb-3" style="color:var(--mut);">' + o.customer.name + ' • ' + o.customer.phone + '</p><div class="flex gap-2 flex-wrap"><select id="adminStatusSel" class="field text-[10px] py-1 flex-1"><option value="">Auto (Time-Based)</option>' + ['Order Placed','Order Confirmed','In Process','Order Ready','Dispatched','Out For Delivery','Delivered','Cancelled'].map(v => '<option value="' + v + '">' + v + '</option>').join('') + '</select><button id="adminUpdateBtn" class="pill btn-ink px-4 text-[10px]">Update</button></div></div>';
 $('#adminStatusSel').value = o.status || 'Order Placed';
 $('#adminUpdateBtn').onclick = async () => {
   const v = $('#adminStatusSel').value || 'Order Placed';
@@ -4002,18 +3222,12 @@ $('#adminUpdateBtn').onclick = async () => {
     else { orders2[idx].deliveredAt = null; }
     store.set('orders', orders2);
   }
-  // 🌐 Push to server
-  try {
-    await fetch(`${API_BASE}/api/orders?action=update`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: o.id, status: v, pwd: 'HF2026' })
-    });
-  } catch(e){ console.error(e); }
+  try { await fetch(`${API_BASE}/api/orders?action=update`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: o.id, status: v, pwd: 'HF2026' }) }); } catch(e){ console.error(e); }
   toast('Status Updated','check');
   $('#adminSearchId').dispatchEvent(new Event('input'));
 };
 }, 300));
+
 $$('details.faq').forEach(faq => {
 faq.addEventListener('toggle', () => {
 if (faq.open){ $$('details.faq').forEach(other => { if (other !== faq) other.open = false; }); }
@@ -4034,25 +3248,29 @@ if (e.key === 'ArrowLeft'){ pm.angle = (pm.angle+1) % 2; drawProduct(); }
 }
 });
 window.addEventListener('resize', debounce(sizeHero, 300));
-// 🌐 Sync when tab becomes visible again
+
+// 🌐 Sync when tab becomes visible again (works for admin + customer)
 document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible' && store.get('user', null)) {
-    syncMyOrders();
-  }
+  if (document.visibilityState !== 'visible') return;
+  const isAdmin = localStorage.getItem('hf_is_admin') === 'true';
+  const user = store.get('user', null);
+  if (isAdmin || user) syncMyOrders();
 });
+
 setInterval(() => {
   if (document.visibilityState === 'visible') {
     refreshOrderTrackingUI();
   }
 }, 1000);
 
-// 🌐 Smart polling — fast when My Orders open, slow otherwise
+// 🌐 Smart polling — 5s when My Orders open, 15s otherwise
 setInterval(() => {
   if (document.visibilityState !== 'visible') return;
-  if (!store.get('user', null)) return;
+  const isAdmin = localStorage.getItem('hf_is_admin') === 'true';
+  const user = store.get('user', null);
+  if (!isAdmin && !user) return;
   const hm = $('#historyModal');
   const isOpen = hm && !hm.classList.contains('hidden');
-  // 5s when My Orders open, 15s otherwise
   if (isOpen || (Date.now() - (syncMyOrders._last || 0) > 14000)) {
     syncMyOrders();
   }
@@ -4067,14 +3285,10 @@ function refreshOrderTrackingUI(){
     if (input && input.value.trim()) { track(); }
   }
 }
-/* ---- Init ---- */
 (function init(){
 safe(generateProducts, 'generateProducts');
 const oldMem = store.get('membership_full', null);
-if (oldMem && !oldMem.deviceId) {
-  store.set('membership_full', null);
-  console.log('Old legacy membership cleared');
-}
+if (oldMem && !oldMem.deviceId) { store.set('membership_full', null); console.log('Old legacy membership cleared'); }
 safe(renderMobileNav, 'renderMobileNav');
 safe(renderShopCats, 'renderShopCats');
 safe(renderInsta, 'renderInsta');
