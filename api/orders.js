@@ -83,6 +83,21 @@ export default async function handler(req, res) {
       return res.status(200).json({ success: true, orders });
     }
 
+    // 🌐 SET ADMIN DEVICE (only 1 allowed — new login kicks out old)
+    if (action === 'set-admin' && req.method === 'POST') {
+      const { deviceId, pwd } = req.body || {};
+      if (pwd !== ADMIN_PWD) return res.status(401).json({ success: false, error: 'Unauthorized' });
+      if (!deviceId) return res.status(400).json({ success: false, error: 'Missing deviceId' });
+      await redis.set('admin:device', deviceId);
+      return res.status(200).json({ success: true });
+    }
+
+    // 🌐 GET ADMIN DEVICE (for verification)
+    if (action === 'get-admin' && req.method === 'GET') {
+      const deviceId = await redis.get('admin:device');
+      return res.status(200).json({ success: true, deviceId: deviceId || null });
+    }
+
     return res.status(400).json({ success: false, error: 'Invalid action' });
   } catch (e) {
     console.error('orders API error:', e);
