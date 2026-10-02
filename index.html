@@ -3093,14 +3093,12 @@ drop.classList.remove('hidden');
 // 🔄 Restore last search on page load
 const lastSearch = store.get('last_search', '');
 if (lastSearch){
-  setTimeout(() => {
     const di = $('#searchInput'); if (di) di.value = lastSearch;
     const mi = $('#mSearchInput'); if (mi) mi.value = lastSearch;
     if (lastSearch.length >= 2){
       try { doSearch(); } catch(e){}
       try { doMSearch(); } catch(e){}
     }
-  }, 400);
 }
 
 const doMSearch = debounce(() => {
