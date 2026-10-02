@@ -61,6 +61,28 @@ export default async function handler(req, res) {
       return res.status(200).json({ success: true });
     }
 
+    // MY ORDERS (public — by phone)
+    if (action === 'my-orders' && req.method === 'GET') {
+      const phone = (req.query.phone || '').replace(/[^0-9]/g, '');
+      if (!phone) return res.status(400).json({ success: false, error: 'Phone required' });
+
+      const ids = await redis.lrange('orders:all', 0, -1);
+      if (!ids || !ids.length) return res.status(200).json({ success: true, orders: [] });
+
+      const orders = [];
+      for (const id of ids) {
+        const raw = await redis.get('order:' + id);
+        if (raw) {
+          try {
+            const o = typeof raw === 'string' ? JSON.parse(raw) : raw;
+            const oPhone = (o.customer && o.customer.phone || '').replace(/[^0-9]/g, '');
+            if (oPhone && oPhone.endsWith(phone.slice(-10))) orders.push(o);
+          } catch (e) {}
+        }
+      }
+      return res.status(200).json({ success: true, orders });
+    }
+
     return res.status(400).json({ success: false, error: 'Invalid action' });
   } catch (e) {
     console.error('orders API error:', e);
