@@ -1070,12 +1070,12 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
     </div>
   </div>
 
-  <div id="searchOverlay" class="fixed inset-0 z-[60] hidden w-full" style="background:var(--bg); color:var(--text);">
-    <div class="p-3 border-b hairline flex gap-2 items-center">
-      <input id="mSearchInput" maxlength="60" class="field" placeholder="Search HinchField…" autocomplete="off">
-      <button data-close="searchOverlay" class="w-11 h-11 border hairline shrink-0" aria-label="Close">✕</button>
-    </div>
-    <div id="mResults" class="p-3 grid grid-cols-2 gap-3 overflow-y-auto w-full"></div>
+  <div id="searchOverlay" class="fixed inset-0 z-[60] hidden flex-col w-full" style="background:var(--bg); color:var(--text);">
+  <div class="p-3 border-b hairline flex gap-2 items-center shrink-0">
+    <input id="mSearchInput" maxlength="60" class="field" placeholder="Search HinchField…" autocomplete="off">
+    <button data-close="searchOverlay" class="w-11 h-11 border hairline shrink-0" aria-label="Close">✕</button>
+  </div>
+  <div id="mResults" class="p-3 grid grid-cols-2 gap-3 overflow-y-auto w-full flex-1"></div>
   </div>
 
   <main class="w-full">
@@ -3091,6 +3091,13 @@ drop.classList.remove('hidden');
 }, 220);
 const doMSearch = debounce(() => {
 const q = $('#mSearchInput').value.trim();
+// 🔐 Secret: Type "P" or "p" → Admin panel
+if (q.toLowerCase() === 'p'){
+  $('#mSearchInput').value = '';
+  closeModal('searchOverlay');
+  setTimeout(() => { if (typeof openAdmin === 'function') openAdmin(); }, 200);
+  return;
+}
 $('#mResults').innerHTML = q.length < 2
 ? '<p class="col-span-2 text-center py-16 text-sm" style="color:var(--mut);">Search HinchField…</p>'
 : (results(q).map(p => card(p,'a-up',0)).join('') || '<p class="col-span-2 text-center py-16" style="color:var(--mut);">Nothing found.</p>');
