@@ -1917,8 +1917,12 @@ async function detectCountry(showNote){
 let c = await ipCountry();
 if (!c) c = tzCountry();
 const changed = !!(c && COUNTRY_CUR[c] && c !== country);
-if (c && COUNTRY_CUR[c]) country = c;
+if (c && COUNTRY_CUR[c]) {
+  country = c;
+  store.set('country', c);           // ← cache country
+}
 updateCountryUI();
+if (changed) refreshPrices();         // ← INSTANT (rates cache હોય તો તરત દેખાય)
 if (showNote) toast('Location: ' + (COUNTRY_NAME[country] || country), 'pin');
 return changed;
 }
@@ -1992,12 +1996,22 @@ function updateCartPrices(){
   if (d) d.innerHTML = t.del ? fmt(t.del) : '<span style="color:var(--text);">FREE</span>';
   if (tot) tot.textContent = fmt(t.total);
 }
+let _lastPriceKey = '';
 function refreshPrices(){
-safe(updateCardPrices, 'refreshPrices.cardPrices');           // ← cards in-place
-safe(updateHeroPrices, 'refreshPrices.hero');
-safe(updateMembershipPrices, 'refreshPrices.membership');
-safe(updateCartPrices, 'refreshPrices.cart');                       // cart drawer (hidden હોય તો effect નહીં)
-if ($('#catPage') && !$('#catPage').classList.contains('hidden')) safe(updateCardPrices, 'refreshPrices.cat');
+  // signature = country + rates snapshot
+  const rk = RATES
+    ? (Number(RATES.USD)||0).toFixed(4) + '|' + (Number(RATES.EUR)||0).toFixed(4) + '|' + (Number(RATES[curCode()])||0).toFixed(4)
+    : 'norates';
+  const sig = country + '|' + rk;
+  if (sig === _lastPriceKey) return;    // ← nothing changed → skip
+  _lastPriceKey = sig;
+
+  safe(updateCardPrices, 'refreshPrices.cardPrices');
+  safe(updateHeroPrices, 'refreshPrices.hero');
+  safe(updateMembershipPrices, 'refreshPrices.membership');
+  safe(updateCartPrices, 'refreshPrices.cart');
+  if ($('#catPage') && !$('#catPage').classList.contains('hidden')) safe(updateCardPrices, 'refreshPrices.cat');
+  if ($('#productModal') && !$('#productModal').classList.contains('hidden')) safe(drawProduct, 'refreshPrices.pm');
 }
 /* ---- Categories ---- */
 const CATMETA = {
@@ -3865,7 +3879,9 @@ if (oldMem && !oldMem.deviceId) {
   store.set('membership_full', null);
   console.log('Old legacy membership cleared');
 }
-country = tzCountry();
+// Cache હોય તો તરત વાપરો — first render જ સાચી currency માં
+const _cachedCountry = store.get('country', null);
+country = (_cachedCountry && COUNTRY_CUR[_cachedCountry]) ? _cachedCountry : tzCountry();
 loadCachedRates();
 fxStatus = RATES ? 'live' : 'connecting';
 updateCountryUI();
@@ -3896,9 +3912,8 @@ clearInterval(sTimer); startSlider();
 }
 handleRoute();
 (async () => {
-const changed = await safe(() => detectCountry(false), 'detectCountry');
-const fresh = await safe(() => ensureLive(false), 'ensureLive');
-if (changed || fresh) refreshPrices();
+await safe(() => detectCountry(false), 'detectCountry');
+await safe(() => ensureLive(false), 'ensureLive');
 })();
 })();
   </script>
