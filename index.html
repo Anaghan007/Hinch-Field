@@ -1500,7 +1500,8 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
         style="background:var(--bg); color:var(--text); animation:slideR .45s both;">
         <div class="flex items-center justify-between p-4 md:p-5 border-b hairline" style="background:var(--card);">
           <h3 class="disp editorial-h font-luxe text-xl">Your Cart
-            <span id="cartN" class="text-[var(--mut)] text-sm"></span></h3>
+            <span id="cartN" class="text-[var(--mut)] text-sm"></span>
+          </h3>
           <button data-close="cartDrawer" class="w-9 h-9 border hairline transition" aria-label="Close">✕</button>
         </div>
         <div class="flex-1 overflow-y-auto w-full">
@@ -1518,7 +1519,8 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
             <div class="flex justify-between text-sm"><span style="color:var(--mut);">Delivery</span><b id="sumDel"></b>
             </div>
             <div class="flex justify-between disp text-lg border-t hairline pt-3">
-              <span>Total</span><b id="sumTotal"></b></div>
+              <span>Total</span><b id="sumTotal"></b>
+            </div>
           </div>
           <div class="border hairline p-4" style="background:var(--bg2);">
             <p class="micro mb-2" style="color:var(--text);">Membership Code</p>
@@ -1645,8 +1647,6 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
         <div id="adminDashBox" class="hidden">
           <input id="adminSearchId" maxlength="10" class="field mb-3 uppercase" placeholder="Search Order ID...">
           <div id="adminResult" class="space-y-3"></div>
-          <button id="adminFetchAll" class="pill btn-gold w-full py-3 mt-4">🌐 Load All Orders</button>
-          <div id="adminAllOrders" class="mt-4 space-y-3 max-h-[50vh] overflow-y-auto"></div>
         </div>
       </div>
       <div class="border hairline p-4 mt-6 mb-4" style="background:var(--bg2);">
@@ -1822,7 +1822,8 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       </div>
       <div id="invPayIdBox"
         style="background:#f5f4f2;padding:10px 14px;margin-bottom:24px;font-size:11px;display:none;">
-        <span style="color:#7C7C7C;">Payment ID: </span><b id="invPayId"></b></div>
+        <span style="color:#7C7C7C;">Payment ID: </span><b id="invPayId"></b>
+      </div>
       <table style="width:100%;border-collapse:collapse;margin-bottom:24px;">
         <thead>
           <tr style="background:#0A0A0A;color:#fff;">
@@ -3167,38 +3168,6 @@ $('#adminCancelBtn').onclick = async () => {
     } else { result.innerHTML = '<p class="text-[10px]" style="color:#DC2626;">❌ ' + (d.error || 'Not found') + '</p>'; }
   } catch (e) { result.innerHTML = '<p class="text-[10px]" style="color:#DC2626;">Error: ' + e.message + '</p>'; }
   finally { $('#adminCancelBtn').disabled = false; $('#adminCancelBtn').textContent = 'Cancel'; }
-};
-
-/* ---- 🌐 Admin: Load all orders → My Orders ---- */
-if ($('#adminFetchAll')) $('#adminFetchAll').onclick = async () => {
-  const btn = $('#adminFetchAll');
-  if (btn.disabled) return;
-  btn.disabled = true;
-  const orig = btn.textContent;
-  btn.textContent = 'Loading…';
-  try {
-    const r = await fetch(`${API_BASE}/api/orders?action=list&pwd=HF2026`);
-    const d = await r.json();
-    if (!d.success) throw new Error(d.error || 'Failed');
-    if (!d.orders.length) { toast('No orders found on server', 'warn'); return; }
-    const local = store.get('orders', []);
-    const localMap = new Map(local.map(o => [o.id, o]));
-    let added = 0;
-    d.orders.forEach(o => {
-      const st = o.status || 'Order Placed';
-      const existing = localMap.get(o.id);
-      if (existing) {
-        if (existing.status !== st) { existing.status = st; existing.updatedAt = o.updatedAt || Date.now(); if (st === 'Delivered') existing.deliveredAt = o.deliveredAt || Date.now(); }
-        return;
-      }
-      if (st !== 'Delivered' && st !== 'Cancelled') { local.push(o); added++; }
-    });
-    store.set('orders', local);
-    toast(added > 0 ? added + ' order(s) added to My Orders' : 'Orders synced — status up to date', 'check');
-    closeAll(true);
-    setTimeout(() => { renderHistory(); openModal('historyModal'); try { history.replaceState({ modal:'historyModal' }, '', '#orders'); } catch(e){} }, 600);
-  } catch(e) { console.error(e); toast(e.message || 'Failed to load', 'cross'); }
-  finally { btn.disabled = false; btn.textContent = orig; }
 };
 
 $('#adminSearchId').addEventListener('input', debounce(() => {
