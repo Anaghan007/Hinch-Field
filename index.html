@@ -1955,12 +1955,23 @@ function updateMembershipPrices(){
   const mb = $('#memBuyBtn');
   if (mb && !mb.disabled) mb.textContent = 'Pay ' + fmt(599) + ' — Get Membership';
 }
+/* ---- In-place card price update (NO image re-render) ---- */
+function updateCardPrices(){
+  $$('[data-price]').forEach(el => {
+    const p = prodById(el.dataset.pid);
+    if (!p) return;
+    const t = el.dataset.price;
+    if (t === 'reg')       el.textContent = fmt(p.price);
+    else if (t === 'mem')  el.textContent = fmt(Math.round(p.price * 0.5));
+    else if (t === 'save') el.textContent = 'Save ' + fmt(Math.round(p.price * 0.5)) + ' with Membership';
+  });
+}
 function refreshPrices(){
-safe(renderFeatured, 'refreshPrices.featured');
+safe(updateCardPrices, 'refreshPrices.cardPrices');           // ← cards in-place
 safe(updateHeroPrices, 'refreshPrices.hero');
 safe(updateMembershipPrices, 'refreshPrices.membership');
-safe(renderCart, 'refreshPrices.cart');
-if ($('#catPage') && !$('#catPage').classList.contains('hidden')) safe(drawCatPage, 'refreshPrices.cat');
+safe(renderCart, 'refreshPrices.cart');                       // cart drawer (hidden હોય તો effect નહીં)
+if ($('#catPage') && !$('#catPage').classList.contains('hidden')) safe(updateCardPrices, 'refreshPrices.cat');
 if ($('#productModal') && !$('#productModal').classList.contains('hidden')) safe(drawProduct, 'refreshPrices.pm');
 }
 /* ---- Categories ---- */
@@ -2068,14 +2079,14 @@ ${multi
 <div class="mt-3 grid grid-cols-2 border hairline">
 <div class="p-2 text-center">
 <p class="text-[9px] tracking-wide2 uppercase mb-1" style="color:var(--mut);">Regular</p>
-<b class="disp text-[15px] md:text-base">${fmt(p.price)}</b>
+<b class="disp text-[15px] md:text-base" data-price="reg" data-pid="${p.id}">${fmt(p.price)}</b>
 </div>
 <div class="p-2 text-center border-l hairline" style="background:var(--text); color:var(--bg);">
 <p class="text-[9px] tracking-wide2 uppercase mb-1">⭐ Member</p>
-<b class="disp text-[15px] md:text-base">${fmt(Math.round(p.price * 0.5))}</b>
+<b class="disp text-[15px] md:text-base" data-price="mem" data-pid="${p.id}">${fmt(Math.round(p.price * 0.5))}</b>
 </div>
 </div>
-<div class="text-[9px] text-center py-1.5 tracking-wide2 uppercase hairline border border-t-0" style="color:var(--text);">
+<div class="text-[9px] text-center py-1.5 tracking-wide2 uppercase hairline border border-t-0" style="color:var(--text);" data-price="save" data-pid="${p.id}">
 Save ${fmt(Math.round(p.price * 0.5))} with Membership
 </div>
 <button class="pill btn-line w-full mt-3 py-2.5 text-[10px] flex items-center justify-center gap-1.5" data-add="${p.id}">${ic('cart','w-3 h-3')} Add to Cart</button>
