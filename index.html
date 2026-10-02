@@ -34,1159 +34,169 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
   </script>
   <style>
     /* ═══ UNIVERSAL RESPONSIVE RESET ═══ */
-    html {
-      -webkit-text-size-adjust: 100%;
-      -moz-text-size-adjust: 100%;
-      text-size-adjust: 100%;
-      -ms-text-size-adjust: 100%;
-    }
-
-    body,
-    p,
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6,
-    span,
-    div,
-    li,
-    a,
-    button,
-    input,
-    textarea,
-    select {
-      -webkit-text-size-adjust: 100%;
-      text-size-adjust: 100%;
-      font-optical-sizing: auto;
-    }
-
-    html {
-      font-size: 16px;
-    }
-
-    @media (max-width: 360px) {
-      html {
-        font-size: 15px;
-      }
-    }
-
-    @media (max-width: 320px) {
-      html {
-        font-size: 14px;
-      }
-    }
-
-    @media (max-width: 767px) {
-
-      input,
-      select,
-      textarea {
-        font-size: 16px !important;
-      }
-    }
-
-    html,
-    body {
-      max-width: 100vw;
-      overflow-x: hidden;
-      overscroll-behavior-x: none;
-    }
-
-    body {
-      padding-left: env(safe-area-inset-left, 0);
-      padding-right: env(safe-area-inset-right, 0);
-    }
-
-    .pill,
-    .sizechip,
-    .qtybtn,
-    nav button,
-    header button {
-      min-height: 40px;
-    }
-
-    .sizechip,
-    .qtybtn {
-      min-height: 36px;
-    }
-
-    img,
-    svg,
-    video,
-    canvas {
-      max-width: 100%;
-      height: auto;
-      display: block;
-    }
-
-    p,
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6,
-    span,
-    div,
-    td,
-    th,
-    li {
-      overflow-wrap: break-word;
-      word-wrap: break-word;
-      word-break: break-word;
-      hyphens: auto;
-    }
-
-    .grid>*,
-    .flex>* {
-      min-width: 0;
-      min-height: 0;
-    }
-
-    input,
-    select,
-    textarea,
-    button {
-      font-family: inherit;
-      font-size: inherit;
-      line-height: inherit;
-      -webkit-appearance: none;
-      appearance: none;
-      border-radius: 0;
-    }
-
-    input[type="checkbox"],
-    input[type="radio"] {
-      -webkit-appearance: auto;
-      appearance: auto;
-    }
-
-    table {
-      width: 100%;
-      table-layout: fixed;
-      border-collapse: collapse;
-      word-break: break-word;
-    }
-
-    table td,
-    table th {
-      overflow-wrap: break-word;
-    }
-
-    @supports (padding: max(0px)) {
-      body {
-        padding-left: max(0px, env(safe-area-inset-left));
-        padding-right: max(0px, env(safe-area-inset-right));
-      }
-    }
-
-    button,
-    .pill,
-    .cat-card,
-    .card button,
-    [role="button"] {
-      -webkit-tap-highlight-color: transparent;
-      -webkit-touch-callout: none;
-    }
-
-    * {
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      text-rendering: optimizeLegibility;
-    }
-
-    @media (min-width: 1921px) {
-      .wrap {
-        max-width: 1800px;
-      }
-    }
-
-    @media (max-width: 359px) {
-      :root {
-        --pad: 12px;
-        --fs-hero: clamp(1.2rem, 5vw, 1.8rem);
-        --fs-h2: clamp(0.95rem, 3vw, 1.25rem);
-      }
-
-      .cat-card-content {
-        padding: 8px 8px 10px;
-      }
-
-      .card .p-3 {
-        padding: 8px;
-      }
-    }
-
-    @media (min-resolution: 2dppx) {
-
-      img,
-      svg {
-        image-rendering: -webkit-optimize-contrast;
-      }
-    }
-
-    :focus-visible {
-      outline: 2px solid var(--text);
-      outline-offset: 2px;
-    }
-
-    * {
-      touch-action: manipulation;
-    }
-
-    input,
-    textarea,
-    select {
-      touch-action: auto;
-    }
+    html { -webkit-text-size-adjust: 100%; -moz-text-size-adjust: 100%; text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+    body, p, h1, h2, h3, h4, h5, h6, span, div, li, a, button, input, textarea, select { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; font-optical-sizing: auto; }
+    html { font-size: 16px; }
+    @media (max-width: 360px) { html { font-size: 15px; } }
+    @media (max-width: 320px) { html { font-size: 14px; } }
+    @media (max-width: 767px) { input, select, textarea { font-size: 16px !important; } }
+    html, body { max-width: 100vw; overflow-x: hidden; overscroll-behavior-x: none; }
+    body { padding-left: env(safe-area-inset-left, 0); padding-right: env(safe-area-inset-right, 0); }
+    .pill, .sizechip, .qtybtn, nav button, header button { min-height: 40px; }
+    .sizechip, .qtybtn { min-height: 36px; }
+    img, svg, video, canvas { max-width: 100%; height: auto; display: block; }
+    p, h1, h2, h3, h4, h5, h6, span, div, td, th, li { overflow-wrap: break-word; word-wrap: break-word; word-break: break-word; hyphens: auto; }
+    .grid>*, .flex>* { min-width: 0; min-height: 0; }
+    input, select, textarea, button { font-family: inherit; font-size: inherit; line-height: inherit; -webkit-appearance: none; appearance: none; border-radius: 0; }
+    input[type="checkbox"], input[type="radio"] { -webkit-appearance: auto; appearance: auto; }
+    table { width: 100%; table-layout: fixed; border-collapse: collapse; word-break: break-word; }
+    table td, table th { overflow-wrap: break-word; }
+    @supports (padding: max(0px)) { body { padding-left: max(0px, env(safe-area-inset-left)); padding-right: max(0px, env(safe-area-inset-right)); } }
+    button, .pill, .cat-card, .card button, [role="button"] { -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; }
+    * { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility; }
+    @media (min-width: 1921px) { .wrap { max-width: 1800px; } }
+    @media (max-width: 359px) { :root { --pad: 12px; --fs-hero: clamp(1.2rem, 5vw, 1.8rem); --fs-h2: clamp(0.95rem, 3vw, 1.25rem); } .cat-card-content { padding: 8px 8px 10px; } .card .p-3 { padding: 8px; } }
+    @media (min-resolution: 2dppx) { img, svg { image-rendering: -webkit-optimize-contrast; } }
+    :focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
+    * { touch-action: manipulation; }
+    input, textarea, select { touch-action: auto; }
 
     :root {
-      --bg: #FFFFFF;
-      --bg2: #F5F4F2;
-      --card: #FFFFFF;
-      --text: #0A0A0A;
-      --mut: #7C7C7C;
-      --line: #E6E4E0;
-      --gold: #0A0A0A;
-      --gold2: #000000;
-      --on-gold: #FFFFFF;
-      --glass: rgba(255, 255, 255, .94);
-      --hero-ink: #0A0A0A;
-      --shadow: 0 30px 60px -30px rgba(0, 0, 0, .18);
-      --fs-hero: clamp(1.5rem, 1rem + 5.4vw, 2.6rem);
-      --fs-h2: clamp(1.05rem, .9rem + 1.8vw, 1.55rem);
-      --pad: 16px;
-      --rad: 2px;
-    }
-
-    @media(min-width:768px) {
-      :root {
-        --fs-hero: clamp(2.2rem, 1.4rem + 3.4vw, 4.2rem);
-        --fs-h2: clamp(1.25rem, 1rem + 1.3vw, 1.95rem);
-        --pad: clamp(24px, 4vw, 64px);
-        --rad: 2px;
-      }
-    }
-
-    html,
-    body {
-      overflow-x: hidden;
-      overflow-x: clip;
-      max-width: 100%;
-    }
-
-    *,
-    *::before,
-    *::after {
-      box-sizing: border-box;
-      min-width: 0;
-    }
-
-    img,
-    svg {
-      max-width: 100%;
-      height: auto;
-      display: block;
-    }
-
-    img {
-      opacity: 1;
-      transition: opacity .5s ease, transform .9s cubic-bezier(.2, .7, .2, 1);
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      font-family: 'Inter', system-ui, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      -webkit-font-smoothing: antialiased;
-      width: 100%;
-      font-feature-settings: "ss01", "cv11";
-      letter-spacing: -0.005em;
-    }
-
-    ::selection {
-      background: var(--text);
-      color: var(--bg);
-    }
-
-    html,
-    body {
-      scrollbar-width: none;
-      -ms-overflow-style: none;
-    }
-
-    html::-webkit-scrollbar,
-    body::-webkit-scrollbar {
-      display: none;
-    }
-
-    input,
-    select,
-    textarea,
-    button {
-      font-family: inherit;
-    }
-
-    input,
-    select,
-    textarea {
-      outline: none;
-    }
-
-    .wrap {
-      width: 100%;
-      max-width: 1600px;
-      margin-inline: auto;
-      padding-inline: var(--pad);
-    }
-
-    .no-scrollbar::-webkit-scrollbar {
-      display: none;
-    }
-
-    .no-scrollbar {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-    }
-
-    .micro {
-      font-size: .62rem;
-      letter-spacing: .22em;
-      text-transform: uppercase;
-      font-weight: 500;
-      color: var(--mut);
-    }
-
-    .micro-gold {
-      color: var(--text);
-    }
-
-    .disp {
-      font-weight: 500;
-      letter-spacing: -0.01em;
-    }
-
-    .hairline {
-      border-color: var(--line);
-    }
-
-    .pill {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: .6rem;
-      border-radius: 0;
-      font-weight: 500;
-      letter-spacing: .16em;
-      text-transform: uppercase;
-      font-size: 11px;
-      transition: all .3s ease;
-      cursor: pointer;
-      border: 0;
-      padding: 14px 28px;
-      position: relative;
-    }
-
-    .btn-gold {
-      background: var(--text);
-      color: var(--bg);
-    }
-
-    .btn-gold:hover {
-      background: #262626;
-      transform: translateY(-1px);
-    }
-
-    .btn-ink {
-      background: var(--text);
-      color: var(--bg);
-    }
-
-    .btn-ink:hover {
-      background: #262626;
-      color: var(--bg);
-    }
-
-    .btn-line {
-      border: 1px solid var(--text);
-      background: transparent;
-      color: var(--text);
-    }
-
-    .btn-line:hover {
-      background: var(--text);
-      color: var(--bg);
-    }
-
-    .field {
-      width: 100%;
-      border: 1px solid var(--line);
-      background: var(--card);
-      color: var(--text);
-      border-radius: 0;
-      padding: .8rem 1rem;
-      font-size: .82rem;
-      letter-spacing: 0;
-      transition: border .25s;
-    }
-
-    .field:focus {
-      border-color: var(--text);
-      box-shadow: none;
-    }
-
-    .field::placeholder {
-      color: var(--mut);
-      opacity: .7;
-      letter-spacing: .02em;
-    }
-
-    .chip {
-      display: inline-flex;
-      align-items: center;
-      gap: .35rem;
-      border-radius: 0;
-      padding: .32rem .7rem;
-      font-size: .58rem;
-      font-weight: 500;
-      letter-spacing: .14em;
-      text-transform: uppercase;
-    }
-
-    .cat-card {
-      position: relative;
-      display: block;
-      width: 100%;
-      overflow: hidden;
-      border: 1px solid var(--line);
-      border-radius: 0;
-      background: var(--card);
-      text-align: left;
-      transition: border-color .3s;
-    }
-
-    .cat-card:hover {
-      border-color: var(--text);
-    }
-
-    .cat-card-img {
-      position: relative;
-      aspect-ratio: 4 / 4.8;
-      overflow: hidden;
-      background: var(--bg2);
-    }
-
-    .cat-card-img img {
-      transition: transform .9s cubic-bezier(.2, .7, .2, 1), filter .5s;
-    }
-
-    .cat-card:hover .cat-card-img img {
-      transform: scale(1.04);
-    }
-
-    .cat-card-overlay {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(to top, rgba(10, 10, 10, .18) 0%, transparent 55%);
-      pointer-events: none;
-    }
-
-    .cat-card-content {
-      padding: 14px 14px 16px;
-    }
-
-    .cat-card-no {
-      width: 26px;
-      height: 26px;
-      border-radius: 0;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 10px;
-      font-weight: 500;
-      letter-spacing: .08em;
-      color: var(--text);
-      background: var(--card);
-      border: 1px solid var(--line);
-    }
-
-    .cat-card-arrow {
-      width: 26px;
-      height: 26px;
-      border-radius: 0;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      border: 1px solid var(--line);
-      color: var(--text);
-      background: var(--card);
-      transition: all .3s ease;
-      font-size: 12px;
-    }
-
-    .cat-card:hover .cat-card-arrow {
-      background: var(--text);
-      color: var(--bg);
-      border-color: var(--text);
-    }
-
-    @media(max-width:767px) {
-      .cat-card-content {
-        padding: 11px 11px 13px;
-      }
-
-      .cat-card-img {
-        aspect-ratio: 1 / 1.2;
-      }
-    }
-
-    .card {
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: 0;
-      overflow: hidden;
-      transition: border-color .3s;
-      position: relative;
-    }
-
-    @media(hover:hover) {
-      .card:hover {
-        border-color: var(--text);
-      }
-
-      .cardimg img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        object-position: center 25%;
-      }
-
-      .card:hover .cardimg img {
-        transform: scale(1);
-      }
-
-      .card:hover .quickadd {
-        transform: translateY(0);
-        opacity: 1;
-      }
-    }
-
-    .cardimg {
-      position: relative;
-      overflow: hidden;
-    }
-
-    .quickadd {
-      transform: translateY(100%);
-      opacity: 0;
-      transition: transform .4s cubic-bezier(.2, .7, .2, 1), opacity .4s;
-      backdrop-filter: blur(6px);
-      background: rgba(10, 10, 10, .82);
-      color: #fff;
-      letter-spacing: .22em;
-      font-weight: 500;
-      font-size: 10px;
-      text-transform: uppercase;
-    }
-
-    @media(hover:none) {
-      .quickadd {
-        transform: translateY(0);
-        opacity: 1;
-      }
-    }
-
-    .card button[data-wish] {
-      transition: transform .2s, background .2s;
-    }
-
-    .card button[data-wish]:hover {
-      transform: scale(1.08);
-    }
-
-    .cardimg .swap {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      transition: opacity .6s ease, transform .9s cubic-bezier(.2, .7, .2, 1);
-    }
-
-    .cardimg .swap.back {
-      opacity: 0;
-    }
-
-    .cardimg .swap.front,
-    .cardimg .swap.back {
-      backface-visibility: hidden;
-      -webkit-backface-visibility: hidden;
-      will-change: opacity;
-    }
-
-    .cardimg .swap.front {
-      opacity: 1;
-    }
-
-    .cardimg .swap.back {
-      opacity: 0;
-    }
-
-    @media(hover:hover) {
-      .card:hover .cardimg .swap.front {
-        opacity: 0;
-      }
-
-      .card:hover .cardimg .swap.back {
-        opacity: 1;
-      }
-    }
-
-    .swatch {
-      width: 1.7rem;
-      height: 1.7rem;
-      border-radius: 0;
-      border: 1px solid var(--line);
-      cursor: pointer;
-      transition: all .25s;
-      flex: none;
-    }
-
-    .swatch.active {
-      border-color: var(--text);
-      transform: scale(1.05);
-    }
-
-    .sizechip {
-      border: 1px solid var(--line);
-      background: var(--card);
-      color: var(--text);
-      border-radius: 0;
-      padding: .55rem 1rem;
-      font-size: .68rem;
-      font-weight: 500;
-      letter-spacing: .14em;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: all .25s;
-      min-width: 52px;
-    }
-
-    .sizechip.active {
-      background: var(--text);
-      color: var(--bg);
-      border-color: var(--text);
-    }
-
-    .qtybtn {
-      width: 2.1rem;
-      height: 2.1rem;
-      border-radius: 0;
-      border: 1px solid var(--line);
-      background: var(--card);
-      color: var(--text);
-      font-size: .95rem;
-      transition: all .25s;
-      flex: none;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .qtybtn:hover {
-      background: var(--text);
-      color: var(--bg);
-      border-color: var(--text);
-    }
-
-    .sheet-wrap {
-      position: absolute;
-      inset: 0;
-      padding: 0;
-    }
-
-    .sheet {
-      width: min(100%, 28rem);
-    }
-
-    .glassbar {
-      background: var(--glass);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-    }
-
-    @keyframes fadeUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-
-      to {
-        opacity: 1;
-        transform: none;
-      }
-    }
-
-    @keyframes fadeLeft {
-      from {
-        opacity: 0;
-        transform: translateX(-24px);
-      }
-
-      to {
-        opacity: 1;
-        transform: none;
-      }
-    }
-
-    @keyframes fadeRight {
-      from {
-        opacity: 0;
-        transform: translateX(24px);
-      }
-
-      to {
-        opacity: 1;
-        transform: none;
-      }
-    }
-
-    @keyframes zoomIn {
-      from {
-        opacity: 0;
-        transform: scale(.97);
-      }
-
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
-
-    @keyframes slideR {
-      from {
-        transform: translateX(100%);
-      }
-
-      to {
-        transform: none;
-      }
-    }
-
-    @keyframes slideL {
-      from {
-        transform: translateX(-100%);
-      }
-
-      to {
-        transform: none;
-      }
-    }
-
-    @keyframes popIn {
-      0% {
-        opacity: 0;
-        transform: scale(.9);
-      }
-
-      100% {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
-
-    @keyframes floaty {
-
-      0%,
-      100% {
-        transform: translateY(0);
-      }
-
-      50% {
-        transform: translateY(-6px);
-      }
-    }
-
-    @keyframes pulseWa {
-      0% {
-        box-shadow: 0 0 0 0 rgba(37, 211, 102, .35);
-      }
-
-      100% {
-        box-shadow: 0 0 0 18px rgba(37, 211, 102, 0);
-      }
-    }
-
-    .a-up {
-      animation: fadeUp .7s both;
-    }
-
-    .a-left {
-      animation: fadeLeft .7s both;
-    }
-
-    .a-right {
-      animation: fadeRight .7s both;
-    }
-
-    .a-zoom {
-      animation: zoomIn .6s both;
-    }
-
-    .a-pop {
-      animation: popIn .4s both;
-    }
-
-    .a-float {
-      animation: floaty 6s ease-in-out infinite;
-    }
-
-    .ha-up {
-      animation: fadeUp .6s cubic-bezier(.2, .7, .2, 1) both;
-    }
-
-    .ha-zoom {
-      animation: zoomIn .6s cubic-bezier(.2, .7, .2, 1) both;
-    }
-
-    [data-reveal] {
-      opacity: 0;
-      transition: all .9s cubic-bezier(.2, .7, .2, 1);
-    }
-
-    [data-reveal="up"] {
-      transform: translateY(30px);
-    }
-
-    [data-reveal="left"] {
-      transform: translateX(-30px);
-    }
-
-    [data-reveal="right"] {
-      transform: translateX(30px);
-    }
-
-    [data-reveal="zoom"] {
-      transform: scale(.94);
-    }
-
-    [data-reveal].revealed {
-      opacity: 1;
-      transform: none;
-    }
-
-    .modalcard {
-      animation: zoomIn .35s both;
-    }
-
-    .toast {
-      animation: popIn .35s both;
-    }
-
-    .wa-float {
-      animation: pulseWa 2s infinite;
-    }
-
-    .hero-slide {
-      display: flex;
-      align-items: center;
-      transition: opacity .6s ease;
-      min-height: calc(100vh - 120px);
-      min-height: calc(100dvh - 120px);
-    }
-
-    #heroSec {
-      min-height: calc(100vh - 120px);
-      min-height: calc(100dvh - 120px);
-    }
-
-    .track-wrap {
-      position: relative;
-      margin-top: 16px;
-      padding: 0 1px;
-      width: 100%;
-      overflow: visible;
-    }
-
-    .track-timeline {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      position: relative;
-      z-index: 2;
-      overflow-x: auto;
-      scrollbar-width: none;
-      width: 100%;
-    }
-
-    .track-timeline::-webkit-scrollbar {
-      display: none;
-    }
-
-    .track-step {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      flex: 1;
-      min-width: 80px;
-      position: relative;
-    }
-
-    .track-step:not(:last-child)::after {
-      content: '';
-      position: absolute;
-      top: 15px;
-      left: calc(50% + 16px);
-      width: calc(100% - 32px);
-      height: 1px;
-      background: var(--line);
-      z-index: 1;
-    }
-
-    .track-icon {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: var(--card);
-      border: 1px solid var(--line);
-      color: var(--mut);
-      transition: all .4s cubic-bezier(.4, 0, .2, 1);
-      margin-bottom: 8px;
-      position: relative;
-      z-index: 3;
-      flex-shrink: 0;
-    }
-
-    .track-step.done .track-icon {
-      background: var(--text);
-      border-color: var(--text);
-      color: var(--bg);
-    }
-
-    .track-step.active .track-icon {
-      background: var(--text);
-      border-color: var(--text);
-      color: var(--bg);
-    }
-
-    @media(max-width:767px) {
-      body {
-        padding-bottom: 4.6rem;
-      }
-
-      #waFloat {
-        display: none;
-      }
-
-      #productModal .pm-wrap {
-        padding: 0;
-        margin: 0;
-        max-width: 100%;
-      }
-
-      #productModal .modalcard {
-        border-radius: 0;
-        min-height: 100dvh;
-      }
-
-      .sheet {
-        width: 100%;
-        max-width: 100%;
-      }
-
-      .hero-slide {
-        padding-bottom: 2.75rem;
-      }
-    }
-
-    @media(min-width:768px) {
-      #bottomNav {
-        display: none;
-      }
-
-      body {
-        padding-bottom: 0 !important;
-      }
-
-      #heroSec {
-        min-height: calc(100vh - 140px);
-      }
-    }
+      --bg: #FFFFFF; --bg2: #F5F4F2; --card: #FFFFFF; --text: #0A0A0A; --mut: #7C7C7C; --line: #E6E4E0;
+      --gold: #0A0A0A; --gold2: #000000; --on-gold: #FFFFFF; --glass: rgba(255, 255, 255, .94);
+      --hero-ink: #0A0A0A; --shadow: 0 30px 60px -30px rgba(0, 0, 0, .18);
+      --fs-hero: clamp(1.5rem, 1rem + 5.4vw, 2.6rem); --fs-h2: clamp(1.05rem, .9rem + 1.8vw, 1.55rem);
+      --pad: 16px; --rad: 2px;
+    }
+    @media(min-width:768px) { :root { --fs-hero: clamp(2.2rem, 1.4rem + 3.4vw, 4.2rem); --fs-h2: clamp(1.25rem, 1rem + 1.3vw, 1.95rem); --pad: clamp(24px, 4vw, 64px); --rad: 2px; } }
+    html, body { overflow-x: hidden; overflow-x: clip; max-width: 100%; }
+    *, *::before, *::after { box-sizing: border-box; min-width: 0; }
+    img, svg { max-width: 100%; height: auto; display: block; }
+    img { opacity: 1; transition: opacity .5s ease, transform .9s cubic-bezier(.2, .7, .2, 1); }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; width: 100%; font-feature-settings: "ss01", "cv11"; letter-spacing: -0.005em; }
+    ::selection { background: var(--text); color: var(--bg); }
+    html, body { scrollbar-width: none; -ms-overflow-style: none; }
+    html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; }
+    input, select, textarea, button { font-family: inherit; }
+    input, select, textarea { outline: none; }
+    .wrap { width: 100%; max-width: 1600px; margin-inline: auto; padding-inline: var(--pad); }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    .micro { font-size: .62rem; letter-spacing: .22em; text-transform: uppercase; font-weight: 500; color: var(--mut); }
+    .micro-gold { color: var(--text); }
+    .disp { font-weight: 500; letter-spacing: -0.01em; }
+    .hairline { border-color: var(--line); }
+    .pill { display: inline-flex; align-items: center; justify-content: center; gap: .6rem; border-radius: 0; font-weight: 500; letter-spacing: .16em; text-transform: uppercase; font-size: 11px; transition: all .3s ease; cursor: pointer; border: 0; padding: 14px 28px; position: relative; }
+    .btn-gold { background: var(--text); color: var(--bg); }
+    .btn-gold:hover { background: #262626; transform: translateY(-1px); }
+    .btn-ink { background: var(--text); color: var(--bg); }
+    .btn-ink:hover { background: #262626; color: var(--bg); }
+    .btn-line { border: 1px solid var(--text); background: transparent; color: var(--text); }
+    .btn-line:hover { background: var(--text); color: var(--bg); }
+    .field { width: 100%; border: 1px solid var(--line); background: var(--card); color: var(--text); border-radius: 0; padding: .8rem 1rem; font-size: .82rem; letter-spacing: 0; transition: border .25s; }
+    .field:focus { border-color: var(--text); box-shadow: none; }
+    .field::placeholder { color: var(--mut); opacity: .7; letter-spacing: .02em; }
+    .chip { display: inline-flex; align-items: center; gap: .35rem; border-radius: 0; padding: .32rem .7rem; font-size: .58rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; }
+    .cat-card { position: relative; display: block; width: 100%; overflow: hidden; border: 1px solid var(--line); border-radius: 0; background: var(--card); text-align: left; transition: border-color .3s; }
+    .cat-card:hover { border-color: var(--text); }
+    .cat-card-img { position: relative; aspect-ratio: 4 / 4.8; overflow: hidden; background: var(--bg2); }
+    .cat-card-img img { transition: transform .9s cubic-bezier(.2, .7, .2, 1), filter .5s; }
+    .cat-card:hover .cat-card-img img { transform: scale(1.04); }
+    .cat-card-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(10, 10, 10, .18) 0%, transparent 55%); pointer-events: none; }
+    .cat-card-content { padding: 14px 14px 16px; }
+    .cat-card-no { width: 26px; height: 26px; border-radius: 0; display: inline-flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 500; letter-spacing: .08em; color: var(--text); background: var(--card); border: 1px solid var(--line); }
+    .cat-card-arrow { width: 26px; height: 26px; border-radius: 0; display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--line); color: var(--text); background: var(--card); transition: all .3s ease; font-size: 12px; }
+    .cat-card:hover .cat-card-arrow { background: var(--text); color: var(--bg); border-color: var(--text); }
+    @media(max-width:767px) { .cat-card-content { padding: 11px 11px 13px; } .cat-card-img { aspect-ratio: 1 / 1.2; } }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 0; overflow: hidden; transition: border-color .3s; position: relative; }
+    @media(hover:hover) { .card:hover { border-color: var(--text); } .cardimg img { width: 100%; height: 100%; object-fit: cover; object-position: center 25%; } .card:hover .cardimg img { transform: scale(1); } .card:hover .quickadd { transform: translateY(0); opacity: 1; } }
+    .cardimg { position: relative; overflow: hidden; }
+    .quickadd { transform: translateY(100%); opacity: 0; transition: transform .4s cubic-bezier(.2, .7, .2, 1), opacity .4s; backdrop-filter: blur(6px); background: rgba(10, 10, 10, .82); color: #fff; letter-spacing: .22em; font-weight: 500; font-size: 10px; text-transform: uppercase; }
+    @media(hover:none) { .quickadd { transform: translateY(0); opacity: 1; } }
+    .card button[data-wish] { transition: transform .2s, background .2s; }
+    .card button[data-wish]:hover { transform: scale(1.08); }
+    .cardimg .swap { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; transition: opacity .6s ease, transform .9s cubic-bezier(.2, .7, .2, 1); }
+    .cardimg .swap.back { opacity: 0; }
+    .cardimg .swap.front, .cardimg .swap.back { backface-visibility: hidden; -webkit-backface-visibility: hidden; will-change: opacity; }
+    .cardimg .swap.front { opacity: 1; }
+    .cardimg .swap.back { opacity: 0; }
+    @media(hover:hover) { .card:hover .cardimg .swap.front { opacity: 0; } .card:hover .cardimg .swap.back { opacity: 1; } }
+    .swatch { width: 1.7rem; height: 1.7rem; border-radius: 0; border: 1px solid var(--line); cursor: pointer; transition: all .25s; flex: none; }
+    .swatch.active { border-color: var(--text); transform: scale(1.05); }
+    .sizechip { border: 1px solid var(--line); background: var(--card); color: var(--text); border-radius: 0; padding: .55rem 1rem; font-size: .68rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; cursor: pointer; transition: all .25s; min-width: 52px; }
+    .sizechip.active { background: var(--text); color: var(--bg); border-color: var(--text); }
+    .qtybtn { width: 2.1rem; height: 2.1rem; border-radius: 0; border: 1px solid var(--line); background: var(--card); color: var(--text); font-size: .95rem; transition: all .25s; flex: none; display: inline-flex; align-items: center; justify-content: center; }
+    .qtybtn:hover { background: var(--text); color: var(--bg); border-color: var(--text); }
+    .sheet-wrap { position: absolute; inset: 0; padding: 0; }
+    .sheet { width: min(100%, 28rem); }
+    .glassbar { background: var(--glass); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+    @keyframes fadeLeft { from { opacity: 0; transform: translateX(-24px); } to { opacity: 1; transform: none; } }
+    @keyframes fadeRight { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: none; } }
+    @keyframes zoomIn { from { opacity: 0; transform: scale(.97); } to { opacity: 1; transform: scale(1); } }
+    @keyframes slideR { from { transform: translateX(100%); } to { transform: none; } }
+    @keyframes slideL { from { transform: translateX(-100%); } to { transform: none; } }
+    @keyframes popIn { 0% { opacity: 0; transform: scale(.9); } 100% { opacity: 1; transform: scale(1); } }
+    @keyframes floaty { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+    @keyframes pulseWa { 0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, .35); } 100% { box-shadow: 0 0 0 18px rgba(37, 211, 102, 0); } }
+    .a-up { animation: fadeUp .7s both; }
+    .a-left { animation: fadeLeft .7s both; }
+    .a-right { animation: fadeRight .7s both; }
+    .a-zoom { animation: zoomIn .6s both; }
+    .a-pop { animation: popIn .4s both; }
+    .a-float { animation: floaty 6s ease-in-out infinite; }
+    .ha-up { animation: fadeUp .6s cubic-bezier(.2, .7, .2, 1) both; }
+    .ha-zoom { animation: zoomIn .6s cubic-bezier(.2, .7, .2, 1) both; }
+    [data-reveal] { opacity: 0; transition: all .9s cubic-bezier(.2, .7, .2, 1); }
+    [data-reveal="up"] { transform: translateY(30px); }
+    [data-reveal="left"] { transform: translateX(-30px); }
+    [data-reveal="right"] { transform: translateX(30px); }
+    [data-reveal="zoom"] { transform: scale(.94); }
+    [data-reveal].revealed { opacity: 1; transform: none; }
+    .modalcard { animation: zoomIn .35s both; }
+    .toast { animation: popIn .35s both; }
+    .wa-float { animation: pulseWa 2s infinite; }
+    .hero-slide { display: flex; align-items: center; transition: opacity .6s ease; min-height: calc(100vh - 120px); min-height: calc(100dvh - 120px); }
+    #heroSec { min-height: calc(100vh - 120px); min-height: calc(100dvh - 120px); }
+    .track-wrap { position: relative; margin-top: 16px; padding: 0 1px; width: 100%; overflow: visible; }
+    .track-timeline { display: flex; flex-direction: row; justify-content: space-between; position: relative; z-index: 2; overflow-x: auto; scrollbar-width: none; width: 100%; }
+    .track-timeline::-webkit-scrollbar { display: none; }
+    .track-step { display: flex; flex-direction: column; align-items: center; text-align: center; flex: 1; min-width: 80px; position: relative; }
+    .track-step:not(:last-child)::after { content: ''; position: absolute; top: 15px; left: calc(50% + 16px); width: calc(100% - 32px); height: 1px; background: var(--line); z-index: 1; }
+    .track-icon { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--card); border: 1px solid var(--line); color: var(--mut); transition: all .4s cubic-bezier(.4, 0, .2, 1); margin-bottom: 8px; position: relative; z-index: 3; flex-shrink: 0; }
+    .track-step.done .track-icon { background: var(--text); border-color: var(--text); color: var(--bg); }
+    .track-step.active .track-icon { background: var(--text); border-color: var(--text); color: var(--bg); }
+    @media(max-width:767px) { body { padding-bottom: 4.6rem; } #waFloat { display: none; } #productModal .pm-wrap { padding: 0; margin: 0; max-width: 100%; } #productModal .modalcard { border-radius: 0; min-height: 100dvh; } .sheet { width: 100%; max-width: 100%; } .hero-slide { padding-bottom: 2.75rem; } }
+    @media(min-width:768px) { #bottomNav { display: none; } body { padding-bottom: 0 !important; } #heroSec { min-height: calc(100vh - 140px); } }
 
     @media print {
-      body>*:not(#invoiceModal) {
-        display: none !important;
-      }
-
-      #invoiceModal {
-        position: static !important;
-        inset: auto !important;
-        height: auto !important;
-        width: 100% !important;
-        overflow: visible !important;
-        background: #fff !important;
-        z-index: 1 !important;
-        display: block !important;
-      }
-
-      .invoice-buttons {
-        display: none !important;
-      }
-
-      .invoice-wrap {
-        box-shadow: none !important;
-        margin: 0 !important;
-        padding: 20px !important;
-        max-width: 100% !important;
-        page-break-inside: avoid !important;
-      }
-
-      .invoice-wrap table thead tr {
-        background: #0A0A0A !important;
-        color: #fff !important;
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-        color-adjust: exact !important;
-      }
-
-      .invoice-wrap table thead th {
-        background: #0A0A0A !important;
-        color: #fff !important;
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-        color-adjust: exact !important;
-      }
-
-      .invoice-wrap * {
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-        color-adjust: exact !important;
-      }
-
-      .invoice-wrap div[style*="background:#0A0A0A"],
-      .invoice-wrap div[style*="background: #0A0A0A"] {
-        background: #0A0A0A !important;
-        color: #fff !important;
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-      }
-
-      .invoice-wrap p[style*="background:#f5f4f2"],
-      .invoice-wrap p[style*="background: #f5f4f2"] {
-        background: #f5f4f2 !important;
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-      }
-
-      .invoice-wrap table,
-      .invoice-wrap tr,
-      .invoice-wrap td,
-      .invoice-wrap th {
-        page-break-inside: avoid !important;
-      }
-
-      @page {
-        margin: 10mm;
-        size: A4 portrait;
-      }
+      body>*:not(#invoiceModal) { display: none !important; }
+      #invoiceModal { position: static !important; inset: auto !important; height: auto !important; width: 100% !important; overflow: visible !important; background: #fff !important; z-index: 1 !important; display: block !important; }
+      .invoice-buttons { display: none !important; }
+      .invoice-wrap { box-shadow: none !important; margin: 0 !important; padding: 20px !important; max-width: 100% !important; page-break-inside: avoid !important; }
+      .invoice-wrap table thead tr { background: #0A0A0A !important; color: #fff !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }
+      .invoice-wrap table thead th { background: #0A0A0A !important; color: #fff !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }
+      .invoice-wrap * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }
+      .invoice-wrap div[style*="background:#0A0A0A"], .invoice-wrap div[style*="background: #0A0A0A"] { background: #0A0A0A !important; color: #fff !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+      .invoice-wrap p[style*="background:#f5f4f2"], .invoice-wrap p[style*="background: #f5f4f2"] { background: #f5f4f2 !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+      .invoice-wrap table, .invoice-wrap tr, .invoice-wrap td, .invoice-wrap th { page-break-inside: avoid !important; }
+      @page { margin: 10mm; size: A4 portrait; }
     }
 
-    @media(prefers-reduced-motion:reduce) {
-
-      *,
-      *::before,
-      *::after {
-        animation-duration: .01ms !important;
-        transition-duration: .15s !important;
-      }
-
-      html {
-        scroll-behavior: auto;
-      }
-    }
-
-    details.faq summary {
-      list-style: none;
-      cursor: pointer;
-    }
-
-    details.faq summary::-webkit-details-marker {
-      display: none;
-    }
-
-    details.faq[open] .faqicon {
-      transform: rotate(45deg);
-    }
-
-    .faqicon {
-      transition: transform .3s;
-    }
-
-    .editorial-h {
-      font-weight: 400;
-      letter-spacing: -0.01em;
-      line-height: 1.1;
-    }
-
-    .link-u {
-      position: relative;
-      display: inline-block;
-      letter-spacing: .18em;
-      text-transform: uppercase;
-      font-size: 11px;
-      font-weight: 500;
-    }
-
-    .link-u::after {
-      content: '';
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: -4px;
-      height: 1px;
-      background: currentColor;
-      transform: scaleX(0);
-      transform-origin: left;
-      transition: transform .4s cubic-bezier(.2, .7, .2, 1);
-    }
-
-    .link-u:hover::after {
-      transform: scaleX(1);
-    }
-
-    .pay-radio {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px;
-      border: 1px solid var(--line);
-      background: var(--card);
-      cursor: pointer;
-      transition: border-color .25s, background .25s;
-    }
-
-    .pay-radio:hover {
-      border-color: var(--text);
-    }
-
-    .pay-radio.active {
-      border-color: var(--text);
-      background: var(--bg2);
-    }
-
-    .pay-radio input[type="radio"] {
-      accent-color: var(--text);
-    }
+    @media(prefers-reduced-motion:reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .15s !important; } html { scroll-behavior: auto; } }
+    details.faq summary { list-style: none; cursor: pointer; }
+    details.faq summary::-webkit-details-marker { display: none; }
+    details.faq[open] .faqicon { transform: rotate(45deg); }
+    .faqicon { transition: transform .3s; }
+    .editorial-h { font-weight: 400; letter-spacing: -0.01em; line-height: 1.1; }
+    .link-u { position: relative; display: inline-block; letter-spacing: .18em; text-transform: uppercase; font-size: 11px; font-weight: 500; }
+    .link-u::after { content: ''; position: absolute; left: 0; right: 0; bottom: -4px; height: 1px; background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform .4s cubic-bezier(.2, .7, .2, 1); }
+    .link-u:hover::after { transform: scaleX(1); }
+    .pay-radio { display: flex; align-items: center; gap: 12px; padding: 12px; border: 1px solid var(--line); background: var(--card); cursor: pointer; transition: border-color .25s, background .25s; }
+    .pay-radio:hover { border-color: var(--text); }
+    .pay-radio.active { border-color: var(--text); background: var(--bg2); }
+    .pay-radio input[type="radio"] { accent-color: var(--text); }
   </style>
 </head>
 
@@ -1197,8 +207,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
         <button id="menuOpen" class="md:hidden p-2 -ml-1" aria-label="Menu">
           <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M4 7h16M4 12h10M4 17h16"/></svg>
         </button>
-        <a href="#home" id="secretLogo" class="flex items-center shrink-0" aria-label="HinchField home"
-          style="cursor:default;">
+        <a href="#home" id="secretLogo" class="flex items-center shrink-0" aria-label="HinchField home" style="cursor:default;">
           <img src="images/logo.png" class="h-12 md:h-14 w-auto object-contain" alt="HinchField" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
           <span class="h-12 items-center font-luxe text-xl md:text-2xl font-medium tracking-luxe" style="display:none;color:var(--text);">HINCHFIELD</span>
         </a>
@@ -1222,8 +231,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
     </div>
     <nav class="hidden md:block border-t hairline w-full">
       <div class="wrap flex items-center justify-center gap-8 py-3 overflow-x-auto no-scrollbar">
-        <a href="#home" class="text-[11px] font-medium tracking-wide2 uppercase hover:opacity-60 transition shrink-0"
-          style="color:var(--text);">Home</a>
+        <a href="#home" class="text-[11px] font-medium tracking-wide2 uppercase hover:opacity-60 transition shrink-0" style="color:var(--text);">Home</a>
         <button class="text-[11px] font-medium tracking-wide2 uppercase hover:opacity-60 transition shrink-0" data-catpage="new">New Drops</button>
         <button class="text-[11px] font-medium tracking-wide2 uppercase hover:opacity-60 transition shrink-0" data-catpage="best">Best Sell</button>
         <button class="text-[11px] font-medium tracking-wide2 uppercase hover:opacity-60 transition shrink-0" data-catpage="under499">Under ₹499</button>
@@ -1232,16 +240,15 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
         <button class="text-[11px] font-medium tracking-wide2 uppercase hover:opacity-60 transition shrink-0" data-catpage="">All Products</button>
         <button class="text-[11px] font-medium tracking-wide2 uppercase hover:opacity-60 transition shrink-0" data-openhistory>My Orders</button>
         <button id="openMembership" class="flex items-center gap-1.5" style="color:var(--text);"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a8 8 0 0 1 16 0v1"/></svg>Membership</button>
-        <a href="#contact"
-          class="text-[11px] font-medium tracking-wide2 uppercase hover:opacity-60 transition shrink-0">Contact</a>
+        <button class="text-[11px] font-medium tracking-wide2 uppercase hover:opacity-60 transition shrink-0" data-openpast>History</button>
+        <a href="#contact" class="text-[11px] font-medium tracking-wide2 uppercase hover:opacity-60 transition shrink-0">Contact</a>
       </div>
     </nav>
   </header>
 
   <div id="mobileMenu" class="fixed inset-0 z-[60] hidden w-full">
     <div class="absolute inset-0 bg-black/70 backdrop-blur-md" data-close="mobileMenu"></div>
-    <div class="absolute left-0 top-0 h-full w-[88%] max-w-sm overflow-y-auto flex flex-col border-r hairline"
-      style="background:var(--bg); animation:slideL .4s cubic-bezier(0.2,0.8,0.2,1) both;">
+    <div class="absolute left-0 top-0 h-full w-[88%] max-w-sm overflow-y-auto flex flex-col border-r hairline" style="background:var(--bg); animation:slideL .4s cubic-bezier(0.2,0.8,0.2,1) both;">
       <div class="relative p-6 pb-5 border-b hairline overflow-hidden">
         <div class="flex items-center relative">
           <img src="images/logo.png" class="h-14 w-auto object-contain" alt="HinchField" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
@@ -1251,12 +258,8 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       <nav class="flex-1 p-4 space-y-2.5" id="mobileNav"></nav>
       <div class="p-5 border-t hairline text-center">
         <p class="micro mb-3" style="color:var(--mut);">Need Assistance?</p>
-        <a href="https://wa.me/917434053550" target="_blank" rel="noopener"
-          class="pill btn-gold w-full py-4 text-[11px] flex justify-center items-center gap-2">
-          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-            <path
-              d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-          </svg>
+        <a href="https://wa.me/917434053550" target="_blank" rel="noopener" class="pill btn-gold w-full py-4 text-[11px] flex justify-center items-center gap-2">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
           Premium Support
         </a>
       </div>
@@ -1266,8 +269,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
   <main class="w-full">
     <section id="heroSec" class="relative overflow-hidden w-full" aria-label="Hero" style="background:var(--bg);">
       <div id="heroSlides" class="w-full"></div>
-      <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 z-10 flex-wrap justify-center px-4 w-full"
-        id="heroDots"></div>
+      <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 z-10 flex-wrap justify-center px-4 w-full" id="heroDots"></div>
     </section>
 
     <section class="py-12 md:py-20 w-full" style="background:var(--bg2);" id="shopCatSec">
@@ -1288,91 +290,20 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
         <h2 class="disp editorial-h font-luxe" style="font-size:var(--fs-h2);">Frequently Asked Questions</h2>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-start">
-        <details class="faq card p-5">
-          <summary class="flex justify-between items-center font-medium text-sm">What is Hinchfield
-            Membership?<span class="faqicon text-[var(--text)] text-lg">+</span></summary>
-          <p class="text-xs mt-3 leading-relaxed" style="color:var(--mut);">Yearly membership ₹599 — Flat 50% off on all
-            orders + FREE delivery for 365 days. Get your code instantly after purchase.</p>
-        </details>
-        <details class="faq card p-5">
-          <summary class="flex justify-between items-center font-medium text-sm">How do I use my membership
-            code?<span class="faqicon text-[var(--text)] text-lg">+</span></summary>
-          <p class="text-xs mt-3 leading-relaxed" style="color:var(--mut);">Add products to cart → open cart → enter
-            your 4-digit code → click Apply. 50% off + Free delivery applies instantly.</p>
-        </details>
-        <details class="faq card p-5">
-          <summary class="flex justify-between items-center font-medium text-sm">Where to buy premium oversized graphic
-            t-shirts online?<span class="faqicon text-[var(--text)] text-lg">+</span></summary>
-          <p class="text-xs mt-3 leading-relaxed" style="color:var(--mut);">HinchField offers a curated collection of
-            heavyweight oversized graphic T-Shirt with streetwear and retro aesthetics. COD available across India.</p>
-        </details>
-        <details class="faq card p-5">
-          <summary class="flex justify-between items-center font-medium text-sm">How do I order custom name or photo
-            t-shirts?<span class="faqicon text-[var(--text)] text-lg">+</span></summary>
-          <p class="text-xs mt-3 leading-relaxed" style="color:var(--mut);">Select any T-Shirt from our Custom Category,
-            add your text or upload instructions in the notes, and checkout. We confirm the design on WhatsApp before
-            printing.</p>
-        </details>
-        <details class="faq card p-5">
-          <summary class="flex justify-between items-center font-medium text-sm">Do you offer minimalist text
-            t-shirts?<span class="faqicon text-[var(--text)] text-lg">+</span></summary>
-          <p class="text-xs mt-3 leading-relaxed" style="color:var(--mut);">Yes, our Minimalist collection features
-            clean typography, micro-dots, and subtle chest hits.</p>
-        </details>
-        <details class="faq card p-5">
-          <summary class="flex justify-between items-center font-medium text-sm">Are cropped boxy t-shirts available for
-            women?<span class="faqicon text-[var(--text)] text-lg">+</span></summary>
-          <p class="text-xs mt-3 leading-relaxed" style="color:var(--mut);">Absolutely. Our Cropped Boxy collection is
-            tailored specifically for women with a relaxed silhouette.</p>
-        </details>
-        <details class="faq card p-5">
-          <summary class="flex justify-between items-center font-medium text-sm">Do you sell premium polo
-            t-shirts?<span class="faqicon text-[var(--text)] text-lg">+</span></summary>
-          <p class="text-xs mt-3 leading-relaxed" style="color:var(--mut);">Yes, we offer premium polo T-Shirt with
-            structured collars and breathable fabrics.</p>
-        </details>
-        <details class="faq card p-5">
-          <summary class="flex justify-between items-center font-medium text-sm">Where to buy anime and gaming T-Shirt
-            in India?<span class="faqicon text-[var(--text)] text-lg">+</span></summary>
-          <p class="text-xs mt-3 leading-relaxed" style="color:var(--mut);">Our Anime &amp; Gaming category features
-            officially inspired streetwear graphics.</p>
-        </details>
-        <details class="faq card p-5">
-          <summary class="flex justify-between items-center font-medium text-sm">What is the delivery time and tracking
-            process?<span class="faqicon text-[var(--text)] text-lg">+</span></summary>
-          <p class="text-xs mt-3 leading-relaxed" style="color:var(--mut);">Orders are processed within 24 hours and
-            delivered within 48 hours. Track live via My Orders.</p>
-        </details>
-        <details class="faq card p-5">
-          <summary class="flex justify-between items-center font-medium text-sm">What are your shipping and delivery
-            charges?<span class="faqicon text-[var(--text)] text-lg">+</span></summary>
-          <p class="text-xs mt-3 leading-relaxed" style="color:var(--mut);">Below ₹999: ₹99. ₹999-₹1499: ₹49. Above
-            ₹1499: FREE across India.</p>
-        </details>
-        <details class="faq card p-5">
-          <summary class="flex justify-between items-center font-medium text-sm">Do you offer Cash on Delivery
-            (COD)?<span class="faqicon text-[var(--text)] text-lg">+</span></summary>
-          <p class="text-xs mt-3 leading-relaxed" style="color:var(--mut);">Yes, COD is available across India. Pay at
-            your doorstep after verifying the 4-digit OTP.</p>
-        </details>
-        <details class="faq card p-5">
-          <summary class="flex justify-between items-center font-medium text-sm">Is there a return or exchange
-            policy?<span class="faqicon text-[var(--text)] text-lg">+</span></summary>
-          <p class="text-xs mt-3 leading-relaxed" style="color:var(--mut);">Strict No Return / No Exchange policy due to
-            customisation options.</p>
-        </details>
-        <details class="faq card p-5">
-          <summary class="flex justify-between items-center font-medium text-sm">Do you ship
-            worldwide?<span class="faqicon text-[var(--text)] text-lg">+</span></summary>
-          <p class="text-xs mt-3 leading-relaxed" style="color:var(--mut);">Yes, worldwide shipping. International
-            orders confirmed via WhatsApp with live currency.</p>
-        </details>
-        <details class="faq card p-5">
-          <summary class="flex justify-between items-center font-medium text-sm">How do I track my HinchField
-            order?<span class="faqicon text-[var(--text)] text-lg">+</span></summary>
-          <p class="text-xs mt-3 leading-relaxed" style="color:var(--mut);">Use "My Orders" or "Track" from the menu to
-            see real-time stages.</p>
-        </details>
+        <details class="faq card p-5"><summary class="flex justify-between items-center font-medium text-sm">What is Hinchfield Membership?<span class="faqicon text-[var(--text)] text-lg">+</span></summary><p class="text-xs mt-3 leading-relaxed" style="color:var(--mut);">Yearly membership ₹599 — Flat 50% off on all orders + FREE delivery for 365 days. Get your code instantly after purchase.</p></details>
+        <details class="faq card p-5"><summary class="flex justify-between items-center font-medium text-sm">How do I use my membership code?<span class="faqicon text-[var(--text)] text-lg">+</span></summary><p class="text-xs mt-3 leading-relaxed" style="color:var(--mut);">Add products to cart → open cart → enter your 4-digit code → click Apply. 50% off + Free delivery applies instantly.</p></details>
+        <details class="faq card p-5"><summary class="flex justify-between items-center font-medium text-sm">Where to buy premium oversized graphic t-shirts online?<span class="faqicon text-[var(--text)] text-lg">+</span></summary><p class="text-xs mt-3 leading-relaxed" style="color:var(--mut);">HinchField offers a curated collection of heavyweight oversized graphic T-Shirt with streetwear and retro aesthetics. COD available across India.</p></details>
+        <details class="faq card p-5"><summary class="flex justify-between items-center font-medium text-sm">How do I order custom name or photo t-shirts?<span class="faqicon text-[var(--text)] text-lg">+</span></summary><p class="text-xs mt-3 leading-relaxed" style="color:var(--mut);">Select any T-Shirt from our Custom Category, add your text or upload instructions in the notes, and checkout. We confirm the design on WhatsApp before printing.</p></details>
+        <details class="faq card p-5"><summary class="flex justify-between items-center font-medium text-sm">Do you offer minimalist text t-shirts?<span class="faqicon text-[var(--text)] text-lg">+</span></summary><p class="text-xs mt-3 leading-relaxed" style="color:var(--mut);">Yes, our Minimalist collection features clean typography, micro-dots, and subtle chest hits.</p></details>
+        <details class="faq card p-5"><summary class="flex justify-between items-center font-medium text-sm">Are cropped boxy t-shirts available for women?<span class="faqicon text-[var(--text)] text-lg">+</span></summary><p class="text-xs mt-3 leading-relaxed" style="color:var(--mut);">Absolutely. Our Cropped Boxy collection is tailored specifically for women with a relaxed silhouette.</p></details>
+        <details class="faq card p-5"><summary class="flex justify-between items-center font-medium text-sm">Do you sell premium polo t-shirts?<span class="faqicon text-[var(--text)] text-lg">+</span></summary><p class="text-xs mt-3 leading-relaxed" style="color:var(--mut);">Yes, we offer premium polo T-Shirt with structured collars and breathable fabrics.</p></details>
+        <details class="faq card p-5"><summary class="flex justify-between items-center font-medium text-sm">Where to buy anime and gaming T-Shirt in India?<span class="faqicon text-[var(--text)] text-lg">+</span></summary><p class="text-xs mt-3 leading-relaxed" style="color:var(--mut);">Our Anime &amp; Gaming category features officially inspired streetwear graphics.</p></details>
+        <details class="faq card p-5"><summary class="flex justify-between items-center font-medium text-sm">What is the delivery time and tracking process?<span class="faqicon text-[var(--text)] text-lg">+</span></summary><p class="text-xs mt-3 leading-relaxed" style="color:var(--mut);">Orders are processed within 24 hours and delivered within 48 hours. Track live via My Orders.</p></details>
+        <details class="faq card p-5"><summary class="flex justify-between items-center font-medium text-sm">What are your shipping and delivery charges?<span class="faqicon text-[var(--text)] text-lg">+</span></summary><p class="text-xs mt-3 leading-relaxed" style="color:var(--mut);">Below ₹999: ₹99. ₹999-₹1499: ₹49. Above ₹1499: FREE across India.</p></details>
+        <details class="faq card p-5"><summary class="flex justify-between items-center font-medium text-sm">Do you offer Cash on Delivery (COD)?<span class="faqicon text-[var(--text)] text-lg">+</span></summary><p class="text-xs mt-3 leading-relaxed" style="color:var(--mut);">Yes, COD is available across India. Pay at your doorstep after verifying the 4-digit OTP.</p></details>
+        <details class="faq card p-5"><summary class="flex justify-between items-center font-medium text-sm">Is there a return or exchange policy?<span class="faqicon text-[var(--text)] text-lg">+</span></summary><p class="text-xs mt-3 leading-relaxed" style="color:var(--mut);">Strict No Return / No Exchange policy due to customisation options.</p></details>
+        <details class="faq card p-5"><summary class="flex justify-between items-center font-medium text-sm">Do you ship worldwide?<span class="faqicon text-[var(--text)] text-lg">+</span></summary><p class="text-xs mt-3 leading-relaxed" style="color:var(--mut);">Yes, worldwide shipping. International orders confirmed via WhatsApp with live currency.</p></details>
+        <details class="faq card p-5"><summary class="flex justify-between items-center font-medium text-sm">How do I track my HinchField order?<span class="faqicon text-[var(--text)] text-lg">+</span></summary><p class="text-xs mt-3 leading-relaxed" style="color:var(--mut);">Use "My Orders" or "Track" from the menu to see real-time stages.</p></details>
       </div>
     </section>
 
@@ -1384,13 +315,8 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
         </div>
         <div id="instaRow" class="grid grid-cols-3 md:grid-cols-6 gap-2 md:gap-4"></div>
         <p class="text-center mt-8 md:mt-10">
-          <a href="https://www.instagram.com/hinchfield_official?stkn=NHExem1hbnA2eGs=" target="_blank" rel="noopener"
-            class="pill btn-line px-8 py-3">
-            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3">
-              <rect x="3" y="3" width="18" height="18" rx="5" />
-              <circle cx="12" cy="12" r="4" />
-              <circle cx="17.2" cy="6.8" r="1" fill="currentColor" stroke="none" />
-            </svg>
+          <a href="https://www.instagram.com/hinchfield_official?stkn=NHExem1hbnA2eGs=" target="_blank" rel="noopener" class="pill btn-line px-8 py-3">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="currentColor" stroke="none"/></svg>
             Follow Us
           </a>
         </p>
@@ -1405,36 +331,23 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
           <img src="images/logo.png" class="h-14 w-auto object-contain mb-5" alt="HinchField" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
           <span class="h-12 items-center font-luxe text-xl font-medium tracking-luxe" style="display:none;color:var(--text);">HINCHFIELD</span>
         </a>
-        <p class="text-sm leading-relaxed" style="color:var(--mut);">Premium Oversized, Custom &amp; Anime T-Shirt,
-          curated for the world.</p>
+        <p class="text-sm leading-relaxed" style="color:var(--mut);">Premium Oversized, Custom &amp; Anime T-Shirt, curated for the world.</p>
         <div class="flex gap-3 mt-6">
-          <a href="https://www.instagram.com/hinchfield_official?stkn=NHExem1hbnA2eGs=" target="_blank" rel="noopener"
-            aria-label="Instagram"
-            class="w-10 h-10 border hairline flex items-center justify-center transition hover:bg-[var(--text)] hover:text-[var(--bg)]">
-            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3">
-              <rect x="3" y="3" width="18" height="18" rx="5" />
-              <circle cx="12" cy="12" r="4" />
-              <circle cx="17.2" cy="6.8" r="1" fill="currentColor" stroke="none" />
-            </svg>
+          <a href="https://www.instagram.com/hinchfield_official?stkn=NHExem1hbnA2eGs=" target="_blank" rel="noopener" aria-label="Instagram" class="w-10 h-10 border hairline flex items-center justify-center transition hover:bg-[var(--text)] hover:text-[var(--bg)]">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="currentColor" stroke="none"/></svg>
           </a>
-          <a href="https://wa.me/917434053550" target="_blank" rel="noopener" aria-label="WhatsApp"
-            class="w-10 h-10 border hairline flex items-center justify-center transition hover:bg-[var(--text)] hover:text-[var(--bg)]">
-            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-              <path
-                d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-            </svg>
+          <a href="https://wa.me/917434053550" target="_blank" rel="noopener" aria-label="WhatsApp" class="w-10 h-10 border hairline flex items-center justify-center transition hover:bg-[var(--text)] hover:text-[var(--bg)]">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
           </a>
         </div>
       </div>
-      <div>
-        <p class="micro mb-4" style="color:var(--text);">Shop</p>
-        <ul class="space-y-2 text-sm" id="footCats"></ul>
-      </div>
+      <div><p class="micro mb-4" style="color:var(--text);">Shop</p><ul class="space-y-2 text-sm" id="footCats"></ul></div>
       <div>
         <p class="micro mb-4" style="color:var(--text);">Help</p>
         <ul class="space-y-2 text-sm">
           <li><button data-membership class="hover:opacity-60 transition">⭐ Membership</button></li>
-          <li><button data-openhistory class="hover:opacity-60 transition">My Orders / History</button></li>
+          <li><button data-openhistory class="hover:opacity-60 transition">My Orders / Active</button></li>
+          <li><button data-openpast class="hover:opacity-60 transition">Order History</button></li>
           <li><button id="trackOpen2" class="hover:opacity-60 transition">Track Order</button></li>
           <li><button id="sizeOpen" class="hover:opacity-60 transition">Size Guide</button></li>
           <li><a href="#faq" class="hover:opacity-60 transition">FAQs</a></li>
@@ -1444,98 +357,69 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       <div>
         <p class="micro mb-4" style="color:var(--text);">Policies</p>
         <ul class="space-y-2 text-sm">
-          <li>
-            <button data-policy="shipping" class="hover:opacity-60 transition text-left">Shipping &amp; Delivery</button>
-          </li>
+          <li><button data-policy="shipping" class="hover:opacity-60 transition text-left">Shipping &amp; Delivery</button></li>
           <li><button data-policy="refund" class="hover:opacity-60 transition text-left">Refund Policy</button></li>
           <li><button data-policy="privacy" class="hover:opacity-60 transition text-left">Privacy Policy</button></li>
-          <li>
-            <button data-policy="no-return" class="hover:opacity-60 transition text-left">No Return / No Exchange</button>
-          </li>
-          <li><button data-policy="membership" class="hover:opacity-60 transition text-left">Membership Policy</button>
-          </li>
+          <li><button data-policy="no-return" class="hover:opacity-60 transition text-left">No Return / No Exchange</button></li>
+          <li><button data-policy="membership" class="hover:opacity-60 transition text-left">Membership Policy</button></li>
         </ul>
       </div>
       <div>
         <p class="micro mb-4" style="color:var(--text);">Reach Us</p>
         <ul class="space-y-3 text-sm">
-          <li><a href="tel:7434053550"
-              class="flex items-center gap-3 hover:opacity-60 transition"><span class="text-[var(--text)]"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>7434053550</a>
-          </li>
-          <li><a href="mailto:support.hinchfield@gmail.com"
-              class="flex items-center gap-3 hover:opacity-60 transition"><span class="text-[var(--text)]"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></span>support.hinchfield@gmail.com</a>
-          </li>
+          <li><a href="tel:7434053550" class="flex items-center gap-3 hover:opacity-60 transition"><span class="text-[var(--text)]"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>7434053550</a></li>
+          <li><a href="mailto:support.hinchfield@gmail.com" class="flex items-center gap-3 hover:opacity-60 transition"><span class="text-[var(--text)]"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></span>support.hinchfield@gmail.com</a></li>
         </ul>
       </div>
     </div>
     <div class="border-t hairline w-full">
-      <div class="wrap py-6 flex flex-col md:flex-row items-center justify-between gap-3 text-[11px]"
-        style="color:var(--mut);">
+      <div class="wrap py-6 flex flex-col md:flex-row items-center justify-between gap-3 text-[11px]" style="color:var(--mut);">
         <p>© 2026 HinchField. All rights reserved.</p>
-        <p class="flex flex-wrap gap-4 items-center justify-center font-medium tracking-wide2 uppercase"
-          style="color:var(--text);">
+        <p class="flex flex-wrap gap-4 items-center justify-center font-medium tracking-wide2 uppercase" style="color:var(--text);">
           <span>COD India</span>•<span>Online Payment</span>•<span>Worldwide</span>•<button data-policy="no-return" class="hover:opacity-60 transition uppercase tracking-wide2 font-medium">No Return</button>
         </p>
       </div>
     </div>
   </footer>
 
-  <nav id="bottomNav"
-    class="fixed bottom-0 inset-x-0 z-50 glassbar border-t hairline shadow-bar grid grid-cols-5 w-full">
+  <nav id="bottomNav" class="fixed bottom-0 inset-x-0 z-50 glassbar border-t hairline shadow-bar grid grid-cols-5 w-full">
     <button class="flex flex-col items-center py-2.5" style="color:var(--text);" data-bnav="home"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 11l9-8 9 8v10h-6v-6H9v6H3z"/></svg><span class="micro mt-1">Home</span></button>
     <button class="flex flex-col items-center py-2.5" style="color:var(--mut);" data-bnav="shop"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 7h16M4 12h16M4 17h16"/></svg><span class="micro mt-1">Shop</span></button>
     <button class="flex flex-col items-center py-2.5" style="color:var(--mut);" data-bnav="orders"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"/></svg><span class="micro mt-1">Orders</span></button>
     <button class="flex flex-col items-center py-2.5" style="color:var(--mut);" data-bnav="track"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="10" r="3"/><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span class="micro mt-1">Track</span></button>
-    <a href="https://wa.me/917434053550" target="_blank" rel="noopener" class="flex flex-col items-center py-2.5"
-      style="color:var(--mut);"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-        <path
-          d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-      </svg><span class="micro mt-1">Chat</span></a>
+    <button class="flex flex-col items-center py-2.5" style="color:var(--mut);" data-bnav="history"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span class="micro mt-1">History</span></button>
   </nav>
 
   <div id="cartDrawer" class="fixed inset-0 z-[70] hidden w-full">
     <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" data-close="cartDrawer"></div>
     <aside class="sheet-wrap absolute right-0 top-0 h-full w-full flex justify-end pointer-events-none">
-      <div class="sheet h-full flex flex-col pointer-events-auto border-l hairline"
-        style="background:var(--bg); color:var(--text); animation:slideR .45s both;">
+      <div class="sheet h-full flex flex-col pointer-events-auto border-l hairline" style="background:var(--bg); color:var(--text); animation:slideR .45s both;">
         <div class="flex items-center justify-between p-4 md:p-5 border-b hairline" style="background:var(--card);">
-          <h3 class="disp editorial-h font-luxe text-xl">Your Cart
-            <span id="cartN" class="text-[var(--mut)] text-sm"></span>
-          </h3>
+          <h3 class="disp editorial-h font-luxe text-xl">Your Cart <span id="cartN" class="text-[var(--mut)] text-sm"></span></h3>
           <button data-close="cartDrawer" class="w-9 h-9 border hairline transition" aria-label="Close">✕</button>
         </div>
         <div class="flex-1 overflow-y-auto w-full">
           <div class="px-4 md:px-5 py-3 border-b hairline" style="background:var(--bg2);">
             <p id="shipMsg" class="text-[11px] mb-2" style="color:var(--mut);"></p>
-            <div class="h-1 overflow-hidden" style="background:var(--line);">
-              <div id="shipBar" class="h-full transition-all duration-700" style="width:0%; background:var(--text);">
-              </div>
-            </div>
+            <div class="h-1 overflow-hidden" style="background:var(--line);"><div id="shipBar" class="h-full transition-all duration-700" style="width:0%; background:var(--text);"></div></div>
           </div>
           <div id="cartItems" class="p-4 md:p-5 space-y-3 md:space-y-4 w-full"></div>
           <div class="px-4 md:px-5 pb-4 space-y-3 border-b hairline w-full">
-            <div class="flex justify-between text-sm"><span style="color:var(--mut);">Subtotal</span><b id="sumSub"></b>
-            </div>
-            <div class="flex justify-between text-sm"><span style="color:var(--mut);">Delivery</span><b id="sumDel"></b>
-            </div>
-            <div class="flex justify-between disp text-lg border-t hairline pt-3">
-              <span>Total</span><b id="sumTotal"></b>
-            </div>
+            <div class="flex justify-between text-sm"><span style="color:var(--mut);">Subtotal</span><b id="sumSub"></b></div>
+            <div class="flex justify-between text-sm"><span style="color:var(--mut);">Delivery</span><b id="sumDel"></b></div>
+            <div class="flex justify-between disp text-lg border-t hairline pt-3"><span>Total</span><b id="sumTotal"></b></div>
           </div>
           <div class="border hairline p-4" style="background:var(--bg2);">
             <p class="micro mb-2" style="color:var(--text);">Membership Code</p>
             <div id="memberNotApplied">
-              <div class="flex gap-2">
-                <input id="memberCode" maxlength="4" inputmode="numeric" class="field flex-1" placeholder="4-digit code"><button id="memberApply" class="pill btn-ink px-5 text-[10px]">Apply</button>
-              </div>
+              <div class="flex gap-2"><input id="memberCode" maxlength="4" inputmode="numeric" class="field flex-1" placeholder="4-digit code"><button id="memberApply" class="pill btn-ink px-5 text-[10px]">Apply</button></div>
               <p class="text-[10px] mt-2" style="color:var(--mut);">Flat 50% off + Free delivery</p>
             </div>
             <div id="memberApplied" class="hidden">
               <div class="flex items-center justify-between gap-3 p-3" style="background:var(--text); color:var(--bg);">
                 <div class="min-w-0">
                   <p class="text-[10px] tracking-wide2 uppercase opacity-80">⭐ Member Active</p>
-                  <p class="disp" style="font-size:1.5rem;letter-spacing:.25em;font-weight:500;line-height:1.2;"
-                    id="memCodeTxt"></p>
+                  <p class="disp" style="font-size:1.5rem;letter-spacing:.25em;font-weight:500;line-height:1.2;" id="memCodeTxt"></p>
                   <p class="text-[10px] opacity-70 mt-0.5">50% OFF + FREE delivery</p>
                 </div>
                 <button id="memberRemove" class="text-[10px] underline shrink-0 opacity-80">Remove</button>
@@ -1580,8 +464,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
   <div id="wishDrawer" class="fixed inset-0 z-[70] hidden w-full">
     <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" data-close="wishDrawer"></div>
     <aside class="sheet-wrap absolute left-0 top-0 h-full w-full flex justify-start pointer-events-none">
-      <div class="sheet h-full flex flex-col pointer-events-auto border-r hairline"
-        style="background:var(--bg); color:var(--text); animation:slideL .45s both;">
+      <div class="sheet h-full flex flex-col pointer-events-auto border-r hairline" style="background:var(--bg); color:var(--text); animation:slideL .45s both;">
         <div class="flex items-center justify-between p-4 md:p-5 border-b hairline" style="background:var(--card);">
           <h3 class="disp editorial-h font-luxe text-xl">Wishlist</h3>
           <button data-close="wishDrawer" class="w-9 h-9 border hairline" aria-label="Close">✕</button>
@@ -1594,22 +477,18 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
   <div id="productModal" class="fixed inset-0 z-[80] hidden overflow-y-auto w-full">
     <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" data-close="productModal"></div>
     <div class="pm-wrap relative max-w-6xl mx-auto my-0 md:my-8 px-0 md:px-4 w-full">
-      <div class="modalcard overflow-hidden md:rounded-none"
-        style="background:var(--bg); color:var(--text); box-shadow:var(--shadow);" id="productBody"></div>
+      <div class="modalcard overflow-hidden md:rounded-none" style="background:var(--bg); color:var(--text); box-shadow:var(--shadow);" id="productBody"></div>
     </div>
   </div>
 
   <div id="trackModal" class="fixed inset-0 z-[85] hidden flex items-center justify-center px-4 w-full">
     <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" data-close="trackModal"></div>
-    <div class="modalcard relative rounded-none p-6 md:p-8 max-w-md w-full"
-      style="background:var(--bg); color:var(--text); box-shadow:var(--shadow);">
+    <div class="modalcard relative rounded-none p-6 md:p-8 max-w-md w-full" style="background:var(--bg); color:var(--text); box-shadow:var(--shadow);">
       <div class="flex justify-between items-center mb-4">
         <h3 class="disp editorial-h font-luxe text-xl">Track Order</h3>
         <button data-close="trackModal" class="w-9 h-9 border hairline" aria-label="Close">✕</button>
       </div>
-      <div class="flex gap-2 w-full">
-        <input id="trackInput" maxlength="12" class="field flex-1 uppercase" placeholder="Order ID e.g. HF123456"><button id="trackGo" class="pill btn-ink px-6">TRACK</button>
-      </div>
+      <div class="flex gap-2 w-full"><input id="trackInput" maxlength="12" class="field flex-1 uppercase" placeholder="Order ID e.g. HF123456"><button id="trackGo" class="pill btn-ink px-6">TRACK</button></div>
       <div id="trackResult" class="mt-6"></div>
     </div>
   </div>
@@ -1618,16 +497,25 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
     <header class="shrink-0 glassbar border-b hairline w-full">
       <div class="wrap flex items-center gap-3 py-3">
         <button data-close="historyModal" class="w-10 h-10 border hairline transition" aria-label="Back">←</button>
-        <h3 class="disp editorial-h font-luxe text-lg md:text-xl flex-1 truncate">My Orders</h3>
+        <h3 class="disp editorial-h font-luxe text-lg md:text-xl flex-1 truncate">My Orders <span class="micro ml-2" style="color:var(--mut);">Active</span></h3>
       </div>
     </header>
     <div id="historyList" class="flex-1 overflow-y-auto overflow-x-hidden wrap py-6 space-y-4 w-full"></div>
   </div>
 
+  <div id="pastHistoryModal" class="fixed inset-0 z-[85] hidden flex flex-col w-full" style="background:var(--bg);">
+    <header class="shrink-0 glassbar border-b hairline w-full">
+      <div class="wrap flex items-center gap-3 py-3">
+        <button data-close="pastHistoryModal" class="w-10 h-10 border hairline transition" aria-label="Back">←</button>
+        <h3 class="disp editorial-h font-luxe text-lg md:text-xl flex-1 truncate">Order History <span class="micro ml-2" style="color:var(--mut);">Past</span></h3>
+      </div>
+    </header>
+    <div id="pastHistoryList" class="flex-1 overflow-y-auto overflow-x-hidden wrap py-6 space-y-4 w-full"></div>
+  </div>
+
   <div id="staffModal" class="fixed inset-0 z-[95] hidden flex items-center justify-center px-4 w-full">
     <div class="absolute inset-0 bg-black/80 backdrop-blur-md" data-close="staffModal"></div>
-    <div class="modalcard relative rounded-none p-6 md:p-8 max-w-lg w-full max-h-[90vh] overflow-y-auto"
-      style="background:var(--bg); color:var(--text); box-shadow:var(--shadow);">
+    <div class="modalcard relative rounded-none p-6 md:p-8 max-w-lg w-full max-h-[90vh] overflow-y-auto" style="background:var(--bg); color:var(--text); box-shadow:var(--shadow);">
       <div class="flex justify-between items-center mb-6">
         <h3 class="disp editorial-h font-luxe text-xl">Staff &amp; Admin Portal</h3>
         <button data-close="staffModal" class="w-9 h-9 border hairline" aria-label="Close">✕</button>
@@ -1655,8 +543,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
           <input id="adminCancelInput" maxlength="15" class="field flex-1" placeholder="Phone or 4-digit code">
           <button id="adminCancelBtn" class="pill btn-ink px-4 text-[10px]">Cancel</button>
         </div>
-        <p class="text-[10px]" style="color:var(--mut);">Enter phone number OR 4-digit membership code to permanently
-          cancel</p>
+        <p class="text-[10px]" style="color:var(--mut);">Enter phone number OR 4-digit membership code to permanently cancel</p>
         <div id="adminCancelResult" class="mt-2"></div>
       </div>
     </div>
@@ -1664,39 +551,23 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
 
   <div id="sizeModal" class="fixed inset-0 z-[85] hidden flex items-center justify-center px-4 w-full">
     <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" data-close="sizeModal"></div>
-    <div class="modalcard relative rounded-none p-6 md:p-8 max-w-md w-full"
-      style="background:var(--bg); color:var(--text); box-shadow:var(--shadow);">
+    <div class="modalcard relative rounded-none p-6 md:p-8 max-w-md w-full" style="background:var(--bg); color:var(--text); box-shadow:var(--shadow);">
       <div class="flex justify-between items-center mb-4">
         <h3 class="disp editorial-h font-luxe text-xl">Size Guide</h3>
         <button data-close="sizeModal" class="w-9 h-9 border hairline" aria-label="Close">✕</button>
       </div>
       <table class="w-full text-xs">
-        <thead>
-          <tr class="border-b hairline text-left micro">
-            <th class="py-2">Item</th>
-            <th>Size</th>
-            <th>Note</th>
-          </tr>
-        </thead>
+        <thead><tr class="border-b hairline text-left micro"><th class="py-2">Item</th><th>Size</th><th>Note</th></tr></thead>
         <tbody>
-          <tr class="border-b hairline">
-            <td class="py-2 font-medium">T-Shirts</td>
-            <td>Free Size</td>
-            <td>Relaxed oversized fit (S–XL)</td>
-          </tr>
-          <tr>
-            <td class="py-2 font-medium">Cropped T-Shirt</td>
-            <td>Free Size</td>
-            <td>Boxy relaxed fit</td>
-          </tr>
+          <tr class="border-b hairline"><td class="py-2 font-medium">T-Shirts</td><td>Free Size</td><td>Relaxed oversized fit (S–XL)</td></tr>
+          <tr><td class="py-2 font-medium">Cropped T-Shirt</td><td>Free Size</td><td>Boxy relaxed fit</td></tr>
         </tbody>
       </table>
       <p class="text-[11px] mt-4" style="color:var(--mut);">No S/M/L — no return hassles. No Return / No Exchange.</p>
     </div>
   </div>
 
-  <div id="catPage" class="fixed inset-0 z-[75] hidden overflow-y-auto w-full"
-    style="background:var(--bg); color:var(--text);">
+  <div id="catPage" class="fixed inset-0 z-[75] hidden overflow-y-auto w-full" style="background:var(--bg); color:var(--text);">
     <header class="sticky top-0 z-10 glassbar border-b hairline w-full">
       <div class="wrap flex items-center gap-3 py-3">
         <button data-close="catPage" class="w-10 h-10 border hairline transition" aria-label="Back">←</button>
@@ -1706,23 +577,16 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
         </select>
       </div>
     </header>
-    <div id="catPageGrid"
-      class="wrap py-6 md:py-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-6 w-full">
-    </div>
+    <div id="catPageGrid" class="wrap py-6 md:py-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-6 w-full"></div>
   </div>
 
   <div id="memberModal" class="fixed inset-0 z-[85] hidden flex items-center justify-center px-4 w-full">
     <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" data-close="memberModal"></div>
-    <div class="modalcard relative p-6 md:p-8 max-w-md w-full max-h-[90vh] overflow-y-auto"
-      style="background:var(--bg); color:var(--text); box-shadow:var(--shadow);">
+    <div class="modalcard relative p-6 md:p-8 max-w-md w-full max-h-[90vh] overflow-y-auto" style="background:var(--bg); color:var(--text); box-shadow:var(--shadow);">
       <button class="absolute top-3 right-3 w-9 h-9 border hairline" data-close="memberModal" aria-label="Close">✕</button>
       <div id="memViewActive" class="hidden">
         <div class="text-center mb-6">
-          <svg class="w-14 h-14 mx-auto mb-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"
-            stroke-linecap="round" stroke-linejoin="round">
-            <path d="M2 6l4 4 6-8 6 8 4-4v12H2z" />
-            <path d="M2 18h20" />
-          </svg>
+          <svg class="w-14 h-14 mx-auto mb-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6l4 4 6-8 6 8 4-4v12H2z"/><path d="M2 18h20"/></svg>
           <p class="micro mb-2">HINCHFIELD</p>
           <h3 class="disp editorial-h font-luxe text-2xl mb-1">Active Member</h3>
           <p class="text-xs" style="color:var(--mut);">Welcome back!</p>
@@ -1767,16 +631,14 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
 
   <div id="confirmCancelModal" class="fixed inset-0 z-[96] hidden flex items-center justify-center px-4 w-full">
     <div id="confirmCancelBackdrop" class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
-    <div class="modalcard relative p-6 md:p-8 max-w-sm w-full"
-      style="background:var(--bg); color:var(--text); box-shadow:var(--shadow);">
+    <div class="modalcard relative p-6 md:p-8 max-w-sm w-full" style="background:var(--bg); color:var(--text); box-shadow:var(--shadow);">
       <div class="text-center mb-6">
         <span class="w-14 h-14 mx-auto mb-4 flex items-center justify-center" style="background:var(--bg2); color:var(--text);">
           <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
         </span>
         <p class="micro mb-2" style="color:var(--mut);">Confirm Cancellation</p>
         <h3 class="disp editorial-h font-luxe text-xl leading-snug mb-2">Do You Really Want To<br>Cancel Order?</h3>
-        <p class="text-xs" style="color:var(--mut);">Order ID: <b id="cancelOrderIdTxt" style="color:var(--text);"></b>
-        </p>
+        <p class="text-xs" style="color:var(--mut);">Order ID: <b id="cancelOrderIdTxt" style="color:var(--text);"></b></p>
         <p id="cancelOrderPayTxt" class="text-[10px] font-semibold mt-2 tracking-wide2 uppercase"></p>
       </div>
       <div class="grid grid-cols-2 gap-3">
@@ -1787,91 +649,53 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
     </div>
   </div>
 
-  <div id="policyModal" class="fixed inset-0 z-[88] hidden overflow-y-auto w-full"
-    style="background:var(--bg); color:var(--text);">
+  <div id="policyModal" class="fixed inset-0 z-[88] hidden overflow-y-auto w-full" style="background:var(--bg); color:var(--text);">
     <header class="sticky top-0 z-10 glassbar border-b hairline w-full">
       <div class="wrap flex items-center gap-3 py-3">
         <button data-close="policyModal" class="w-10 h-10 border hairline transition" aria-label="Back">←</button>
         <h3 id="policyTitle" class="disp editorial-h font-luxe text-lg md:text-xl flex-1 truncate">Policy</h3>
       </div>
     </header>
-    <div class="wrap max-w-6xl mx-auto py-4 md:py-6 pb-20">
-      <div id="policyContent"></div>
-    </div>
+    <div class="wrap max-w-6xl mx-auto py-4 md:py-6 pb-20"><div id="policyContent"></div></div>
   </div>
 
   <div id="invoiceModal" class="fixed inset-0 z-[90] hidden overflow-y-auto w-full" style="background:var(--bg);">
-    <div class="invoice-wrap max-w-3xl mx-auto my-4 md:my-8"
-      style="background:#fff;color:#0A0A0A;padding:32px 24px;box-shadow:0 10px 40px rgba(0,0,0,.08);">
+    <div class="invoice-wrap max-w-3xl mx-auto my-4 md:my-8" style="background:#fff;color:#0A0A0A;padding:32px 24px;box-shadow:0 10px 40px rgba(0,0,0,.08);">
       <div style="text-align:center;padding-bottom:20px;border-bottom:2px solid #0A0A0A;">
         <img src="images/logo.png" class="h-12 md:h-14 w-auto object-contain" alt="HinchField" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
       </div>
-      <div
-        style="display:flex;justify-content:space-between;align-items:flex-start;margin:24px 0;flex-wrap:wrap;gap:12px;">
-        <div>
-          <p style="margin:0;font-size:11px;letter-spacing:2px;color:#7C7C7C;text-transform:uppercase;">Invoice</p>
-          <p id="invId" style="margin:6px 0 0;font-size:22px;font-weight:600;letter-spacing:1px;"></p>
-        </div>
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin:24px 0;flex-wrap:wrap;gap:12px;">
+        <div><p style="margin:0;font-size:11px;letter-spacing:2px;color:#7C7C7C;text-transform:uppercase;">Invoice</p><p id="invId" style="margin:6px 0 0;font-size:22px;font-weight:600;letter-spacing:1px;"></p></div>
         <div style="text-align:right;">
           <p style="margin:0;font-size:11px;letter-spacing:2px;color:#7C7C7C;text-transform:uppercase;">Date</p>
           <p id="invDate" style="margin:6px 0 0;font-size:13px;font-weight:500;"></p>
-          <p id="invPayBadge"
-            style="margin:8px 0 0;font-size:10px;letter-spacing:1.5px;padding:5px 10px;display:inline-block;background:#0A0A0A;color:#fff;">
-          </p>
+          <p id="invPayBadge" style="margin:8px 0 0;font-size:10px;letter-spacing:1.5px;padding:5px 10px;display:inline-block;background:#0A0A0A;color:#fff;"></p>
         </div>
       </div>
-      <div id="invPayIdBox"
-        style="background:#f5f4f2;padding:10px 14px;margin-bottom:24px;font-size:11px;display:none;">
-        <span style="color:#7C7C7C;">Payment ID: </span><b id="invPayId"></b>
-      </div>
+      <div id="invPayIdBox" style="background:#f5f4f2;padding:10px 14px;margin-bottom:24px;font-size:11px;display:none;"><span style="color:#7C7C7C;">Payment ID: </span><b id="invPayId"></b></div>
       <table style="width:100%;border-collapse:collapse;margin-bottom:24px;">
-        <thead>
-          <tr style="background:#0A0A0A;color:#fff;">
-            <th style="padding:12px 10px;text-align:left;font-size:11px;letter-spacing:1.5px;font-weight:500;">ITEM</th>
-            <th style="padding:12px 10px;text-align:center;font-size:11px;letter-spacing:1.5px;font-weight:500;">QTY
-            </th>
-            <th style="padding:12px 10px;text-align:right;font-size:11px;letter-spacing:1.5px;font-weight:500;">PRICE
-            </th>
-            <th style="padding:12px 10px;text-align:right;font-size:11px;letter-spacing:1.5px;font-weight:500;">TOTAL
-            </th>
-          </tr>
-        </thead>
+        <thead><tr style="background:#0A0A0A;color:#fff;"><th style="padding:12px 10px;text-align:left;font-size:11px;letter-spacing:1.5px;font-weight:500;">ITEM</th><th style="padding:12px 10px;text-align:center;font-size:11px;letter-spacing:1.5px;font-weight:500;">QTY</th><th style="padding:12px 10px;text-align:right;font-size:11px;letter-spacing:1.5px;font-weight:500;">PRICE</th><th style="padding:12px 10px;text-align:right;font-size:11px;letter-spacing:1.5px;font-weight:500;">TOTAL</th></tr></thead>
         <tbody id="invItems"></tbody>
       </table>
-      <table style="width:100%;margin-left:auto;max-width:340px;margin-bottom:24px;">
-        <tbody id="invTotals"></tbody>
-      </table>
+      <table style="width:100%;margin-left:auto;max-width:340px;margin-bottom:24px;"><tbody id="invTotals"></tbody></table>
       <div style="border-top:1px solid #E6E4E0;padding-top:20px;margin-top:8px;">
-        <p style="margin:0 0 10px;font-size:11px;letter-spacing:2px;color:#7C7C7C;text-transform:uppercase;">Delivery
-          Address</p>
+        <p style="margin:0 0 10px;font-size:11px;letter-spacing:2px;color:#7C7C7C;text-transform:uppercase;">Delivery Address</p>
         <p id="invAddress" style="margin:0;font-size:13px;line-height:1.8;"></p>
       </div>
-      <div
-        style="background:#0A0A0A;color:#fff;padding:16px;margin-top:24px;text-align:center;font-size:12px;letter-spacing:1.5px;">
-        🚚 Expected Delivery: 4-5 Business Days</div>
-      <div style="text-align:center;padding:24px 0 8px;font-size:12px;color:#7C7C7C;line-height:1.7;">
-        <b style="color:#0A0A0A;">HINCHFIELD</b><br>WhatsApp: 7434053550 · support.hinchfield@gmail.com<br>hinchfield.store
-      </div>
-      <div
-        style="border-top:1px solid #E6E4E0;padding-top:14px;margin-top:8px;text-align:center;font-size:10px;letter-spacing:1.5px;color:#7C7C7C;text-transform:uppercase;">
-        No Return / No Exchange · Thank you for shopping</div>
+      <div style="background:#0A0A0A;color:#fff;padding:16px;margin-top:24px;text-align:center;font-size:12px;letter-spacing:1.5px;">🚚 Expected Delivery: 4-5 Business Days</div>
+      <div style="text-align:center;padding:24px 0 8px;font-size:12px;color:#7C7C7C;line-height:1.7;"><b style="color:#0A0A0A;">HINCHFIELD</b><br>WhatsApp: 7434053550 · support.hinchfield@gmail.com<br>hinchfield.store</div>
+      <div style="border-top:1px solid #E6E4E0;padding-top:14px;margin-top:8px;text-align:center;font-size:10px;letter-spacing:1.5px;color:#7C7C7C;text-transform:uppercase;">No Return / No Exchange · Thank you for shopping</div>
     </div>
-    <div class="invoice-buttons"
-      style="position:sticky;bottom:0;background:#fff;border-top:1px solid #E6E4E0;padding:14px 16px;display:flex;gap:10px;max-width:768px;margin:0 auto;">
+    <div class="invoice-buttons" style="position:sticky;bottom:0;background:#fff;border-top:1px solid #E6E4E0;padding:14px 16px;display:flex;gap:10px;max-width:768px;margin:0 auto;">
       <button onclick="window.print()" class="pill btn-gold" style="flex:1;padding:14px;">Download PDF</button>
-      <button onclick="closeModal('invoiceModal', true); if(typeof openHistory==='function') openHistory();" class="pill btn-line" style="flex:1;padding:14px;">Close</button>
+      <button onclick="closeModal('invoiceModal', true);" class="pill btn-line" style="flex:1;padding:14px;">Close</button>
     </div>
   </div>
 
   <div id="toasts" class="fixed top-20 right-3 md:right-5 z-[99] space-y-3 w-[19rem] max-w-[92vw]"></div>
 
-  <a id="waFloat" href="https://wa.me/917434053550?text=Hi%20HinchField!" target="_blank" rel="noopener"
-    aria-label="WhatsApp"
-    class="wa-float fixed bottom-6 right-6 z-[65] w-14 h-14 rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-lift transition hover:scale-110">
-    <svg class="w-7 h-7" viewBox="0 0 24 24" fill="currentColor">
-      <path
-        d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-    </svg>
+  <a id="waFloat" href="https://wa.me/917434053550?text=Hi%20HinchField!" target="_blank" rel="noopener" aria-label="WhatsApp" class="wa-float fixed bottom-6 right-6 z-[65] w-14 h-14 rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-lift transition hover:scale-110">
+    <svg class="w-7 h-7" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
   </a>
   <button id="toTop" class="fixed bottom-24 md:bottom-6 left-4 md:left-6 z-[65] w-11 h-11 border hairline shadow-lift opacity-0 pointer-events-none transition hover:bg-[var(--text)] hover:text-[var(--bg)]" style="background:var(--card); color:var(--text);" aria-label="Top">↑</button>
 
@@ -1948,7 +772,8 @@ shirt:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="
 tag:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>`,
 insta:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/></svg>`,
 share:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>`,
-menu:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 7h16M4 12h16M4 17h16"/></svg>`
+menu:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 7h16M4 12h16M4 17h16"/></svg>`,
+history:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`
 };
 function ic(n,c='w-4 h-4'){ return `<span class="inline-flex items-center justify-center ${c}">${ICONS[n]||''}</span>`; }
 function fmt(inr){
@@ -2101,6 +926,7 @@ const top = [
 { l:'Under ₹699', a:'data-catpage="under699"', i:ic('tag') },
 { l:'All Products', a:'data-catpage=""', i:ic('bag') },
 { l:'My Orders', a:'data-openhistory', i:ic('box') },
+{ l:'History', a:'data-openpast', i:ic('history') },
 { l:'Membership', a:'data-membership', i:'<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a8 8 0 0 1 16 0v1"/></svg>' },
 { l:'Contact', a:'href="#contact" data-close="mobileMenu"', i:ic('chat') }
 ];
@@ -2471,6 +1297,32 @@ function statusTimeline(order){
   html += '<p class="text-[11px] mt-4 text-center" style="color:var(--mut);">Expected Delivery: 9:00 AM – 7:00 PM</p>';
   return html;
 }
+
+/* ---- 🌐 Shared order card builder ---- */
+function buildOrderCard(o, opts){
+  opts = opts || {};
+  const showCancel = !!opts.showCancel;
+  const isOwner = localStorage.getItem('hf_is_admin') === 'true';
+  const st = getOrderStatus(o);
+  const canCancel = showCancel && !isOwner && (Date.now() - o.timestamp < 24*60*60*1000) && st.text !== 'Cancelled' && st.text !== 'Delivered';
+  const date = new Date(o.timestamp).toLocaleString('en-IN');
+  const payBadge = o.payment && o.payment.method === 'online' ? '<span class="chip" style="background:#0A0A0A; color:#fff;">PAID ONLINE</span>' : '<span class="chip border hairline" style="color:var(--text);">COD</span>';
+  return '<div class="card p-4 md:p-5 space-y-4">' +
+    '<div class="flex justify-between items-start gap-3 flex-wrap"><div><b class="disp text-sm">' + o.id + '</b><p class="text-[10px] mt-1" style="color:var(--mut);">' + date + '</p></div>' +
+    '<div class="flex gap-2 flex-wrap items-center">' + payBadge + '<span class="chip border hairline" style="color:' + st.color + ';">' + ic(st.icon,'w-3 h-3') + ' ' + st.text + '</span></div></div>' +
+    statusTimeline(o) +
+    '<div class="border-t hairline pt-3 space-y-2">' + o.items.map(l => {
+      const p = prodById(l.id);
+      if (!p) return '';
+      return '<div class="flex gap-3 items-center"><div class="w-12 h-14 overflow-hidden shrink-0" style="background:var(--bg2);">' + imgTag(p, l.color, 0, 'w-full h-full object-contain') + '</div><div class="flex-1 min-w-0"><p class="text-xs font-medium truncate">' + esc(p.name) + '</p><p class="text-[10px]" style="color:var(--mut);">Qty: ' + l.qty + ' • ' + fmt(p.price * l.qty) + '</p></div></div>';
+    }).join('') + '</div>' +
+    '<div class="flex justify-between items-center pt-3 border-t hairline flex-wrap gap-2"><b class="disp text-sm">Total: ' + fmt(o.totals.total) + '</b>' +
+    '<div class="flex gap-2"><button class="chip border hairline text-[10px]" style="color:var(--text);" data-download-invoice="' + o.id + '">Download Invoice</button>' + (canCancel ? '<button class="chip border hairline text-[10px]" style="color:#DC2626;" data-cancel-order="' + o.id + '">Cancel</button>' : '') + '</div></div>' +
+    (o.otp && st.text !== 'Cancelled' && st.text !== 'Delivered' ? '<p class="text-[10px] font-medium text-center py-2 tracking-wide2 uppercase" style="background:var(--bg2); color:var(--text);">Delivery OTP: ' + o.otp + '</p>' : '') +
+    (o.payment && o.payment.razorpay_payment_id ? '<p class="text-[10px] text-center" style="color:var(--mut);">Payment ID: ' + o.payment.razorpay_payment_id + '</p>' : '') +
+    '</div>';
+}
+
 let lock = false;
 function placeOrder(){
 if (lock) return;
@@ -2619,41 +1471,34 @@ async function handleOnlinePayment(){
   } catch(e){}
 })();
 
-/* ---- 🌐 Verify admin status (only 1 device allowed) ---- */
+/* ---- 🌐 Verify admin status (single-device lock, silent role switching) ---- */
 async function verifyAdminStatus(){
   try {
     const myDeviceId = await getDeviceId();
     const r = await fetch(`${API_BASE}/api/orders?action=get-admin`);
     const d = await r.json();
     if (!d.success) return;
-
     const serverAdminId = d.deviceId;
+    const wasAdmin = localStorage.getItem('hf_is_admin') === 'true';
 
-    // Case 1: Server has an admin, and it's ME → keep flag
     if (serverAdminId && serverAdminId === myDeviceId){
-      if (localStorage.getItem('hf_is_admin') !== 'true'){
+      if (!wasAdmin){
         localStorage.setItem('hf_is_admin', 'true');
-        console.log('✅ Admin verified');
+        store.set('orders', []);   // 🔄 Clean slate — will refetch as admin
+        console.log('✅ Admin verified — local orders reset');
       }
       return;
     }
-
-    // Case 2: Server has an admin, but NOT me → I'm a customer now
     if (serverAdminId && serverAdminId !== myDeviceId){
-      if (localStorage.getItem('hf_is_admin') === 'true'){
+      if (wasAdmin){
         localStorage.removeItem('hf_is_admin');
-        console.log('❌ Admin revoked — another device logged in');
+        store.set('orders', []);   // 🔄 Clean slate — will refetch as customer
+        console.log('❌ Admin revoked — local orders reset');
       }
       return;
     }
-
-    // Case 3: No admin on server, but I have local flag → register me
-    if (!serverAdminId && localStorage.getItem('hf_is_admin') === 'true'){
-      await fetch(`${API_BASE}/api/orders?action=set-admin`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ deviceId: myDeviceId, pwd: 'HF2026' })
-      });
+    if (!serverAdminId && wasAdmin){
+      await fetch(`${API_BASE}/api/orders?action=set-admin`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ deviceId: myDeviceId, pwd: 'HF2026' }) });
     }
   } catch(e){ /* silent */ }
 }
@@ -2692,6 +1537,8 @@ async function syncMyOrders(){
       store.set('orders', local);
       const hm = $('#historyModal');
       if (hm && !hm.classList.contains('hidden')) renderHistory();
+      const ph = $('#pastHistoryModal');
+      if (ph && !ph.classList.contains('hidden')) renderPastHistory();
       if ($('#trackModal') && !$('#trackModal').classList.contains('hidden')) { if ($('#trackInput') && $('#trackInput').value.trim()) track(); }
       const sm = $('#staffModal');
       if (sm && !sm.classList.contains('hidden')) {
@@ -2712,44 +1559,38 @@ function openHistory(){
   } catch(e){}
   syncMyOrders();
 }
+
 function renderHistory(){
-const isOwner = localStorage.getItem('hf_is_admin') === 'true';
-let orders = store.get('orders', []).sort((a,b) => b.timestamp - a.timestamp);
-
-// 👑 Owner device → active orders only (hide history)
-// 👤 Customer device → show ALL orders (preserve history)
-if (isOwner){
-  orders = orders.filter(o => {
-    const st = getOrderStatus(o).text;
-    return st !== 'Delivered' && st !== 'Cancelled';
-  });
+  let orders = store.get('orders', []).sort((a,b) => b.timestamp - a.timestamp);
+  orders = orders.filter(o => { const st = getOrderStatus(o).text; return st !== 'Delivered' && st !== 'Cancelled'; });
+  const box = $('#historyList');
+  if (!orders.length){
+    box.innerHTML = '<div class="text-center py-20 flex flex-col items-center" style="color:var(--mut);"><span class="mb-4">' + ic('box','w-14 h-14') + '</span><p class="text-sm font-medium">No active orders right now</p></div>';
+    return;
+  }
+  box.innerHTML = orders.map(o => buildOrderCard(o, { showCancel: true })).join('');
 }
 
-const box = $('#historyList');
-if (!orders.length){
-box.innerHTML = '<div class="text-center py-20 flex flex-col items-center" style="color:var(--mut);"><span class="mb-4">' + ic('box','w-14 h-14') + '</span><p class="text-sm font-medium">No active orders right now</p></div>';
-return;
+function openPastHistory(){
+  renderPastHistory();
+  openModal('pastHistoryModal');
+  try {
+    if (window.location.hash === '#history') { syncMyOrders(); return; }
+    if (window.location.hash) history.replaceState(null, '', window.location.pathname + window.location.search);
+    history.pushState({ modal: 'pastHistoryModal' }, '', '#history');
+  } catch(e){}
+  syncMyOrders();
 }
-box.innerHTML = orders.map(o => {
-const st = getOrderStatus(o);
-const isOwner = localStorage.getItem('hf_is_admin') === 'true'; const canCancel = !isOwner && (Date.now() - o.timestamp < 24*60*60*1000) && st.text !== 'Cancelled' && st.text !== 'Delivered';
-const date = new Date(o.timestamp).toLocaleString('en-IN');
-const payBadge = o.payment && o.payment.method === 'online' ? '<span class="chip" style="background:#0A0A0A; color:#fff;">PAID ONLINE</span>' : '<span class="chip border hairline" style="color:var(--text);">COD</span>';
-return '<div class="card p-4 md:p-5 space-y-4">' +
-'<div class="flex justify-between items-start gap-3 flex-wrap"><div><b class="disp text-sm">' + o.id + '</b><p class="text-[10px] mt-1" style="color:var(--mut);">' + date + '</p></div>' +
-'<div class="flex gap-2 flex-wrap items-center">' + payBadge + '<span class="chip border hairline" style="color:' + st.color + ';">' + ic(st.icon,'w-3 h-3') + ' ' + st.text + '</span></div></div>' +
-statusTimeline(o) +
-'<div class="border-t hairline pt-3 space-y-2">' + o.items.map(l => {
-const p = prodById(l.id);
-if (!p) return '';
-return '<div class="flex gap-3 items-center"><div class="w-12 h-14 overflow-hidden shrink-0" style="background:var(--bg2);">' + imgTag(p, l.color, 0, 'w-full h-full object-contain') + '</div><div class="flex-1 min-w-0"><p class="text-xs font-medium truncate">' + esc(p.name) + '</p><p class="text-[10px]" style="color:var(--mut);">Qty: ' + l.qty + ' • ' + fmt(p.price * l.qty) + '</p></div></div>';
-}).join('') + '</div>' +
-'<div class="flex justify-between items-center pt-3 border-t hairline flex-wrap gap-2"><b class="disp text-sm">Total: ' + fmt(o.totals.total) + '</b>' +
-'<div class="flex gap-2"><button class="chip border hairline text-[10px]" style="color:var(--text);" data-download-invoice="' + o.id + '">Download Invoice</button>' + (canCancel ? '<button class="chip border hairline text-[10px]" style="color:#DC2626;" data-cancel-order="' + o.id + '">Cancel</button>' : '') + '</div></div>' +
-(o.otp && st.text !== 'Cancelled' ? '<p class="text-[10px] font-medium text-center py-2 tracking-wide2 uppercase" style="background:var(--bg2); color:var(--text);">Delivery OTP: ' + o.otp + '</p>' : '') +
-(o.payment && o.payment.razorpay_payment_id ? '<p class="text-[10px] text-center" style="color:var(--mut);">Payment ID: ' + o.payment.razorpay_payment_id + '</p>' : '') +
-'</div>';
-}).join('');
+
+function renderPastHistory(){
+  let orders = store.get('orders', []).sort((a,b) => b.timestamp - a.timestamp);
+  orders = orders.filter(o => { const st = getOrderStatus(o).text; return st === 'Delivered' || st === 'Cancelled'; });
+  const box = $('#pastHistoryList');
+  if (!orders.length){
+    box.innerHTML = '<div class="text-center py-20 flex flex-col items-center" style="color:var(--mut);"><span class="mb-4">' + ic('history','w-14 h-14') + '</span><p class="text-sm font-medium">No past orders yet</p></div>';
+    return;
+  }
+  box.innerHTML = orders.map(o => buildOrderCard(o, { showCancel: false })).join('');
 }
 
 function saveOrderToServer(order){
@@ -2912,7 +1753,7 @@ document.body.style.overflow = '';
 if (!skipHistory && window.location.hash) { try { history.back(); } catch(e){} }
 }
 function closeAll(skipHistory){
-['cartDrawer','wishDrawer','productModal','sizeModal','trackModal','catPage','mobileMenu','historyModal','staffModal','memberModal','confirmCancelModal','policyModal','invoiceModal'].forEach(id => { const el = $('#'+id); if (el) el.classList.add('hidden'); });
+['cartDrawer','wishDrawer','productModal','sizeModal','trackModal','catPage','mobileMenu','historyModal','pastHistoryModal','staffModal','memberModal','confirmCancelModal','policyModal','invoiceModal'].forEach(id => { const el = $('#'+id); if (el) el.classList.add('hidden'); });
 document.body.style.overflow = '';
 }
 function handleRoute(){
@@ -2921,6 +1762,7 @@ closeAll(true);
 if (hash === '#cart') { renderCart(); openModal('cartDrawer'); }
 else if (hash === '#wishlist') { renderWish(); openModal('wishDrawer'); }
 else if (hash === '#orders') { renderHistory(); openModal('historyModal'); }
+else if (hash === '#history') { renderPastHistory(); openModal('pastHistoryModal'); }
 else if (hash === '#track') { openModal('trackModal'); }
 else if (hash === '#shop' || hash.indexOf('#shop/') === 0) {
 const seg = hash.split('/')[1] || '';
@@ -2937,13 +1779,19 @@ else if (hash === '#menu') { openModal('mobileMenu'); }
 }
 window.addEventListener('popstate', handleRoute);
 document.addEventListener('click', e => {
-const t = e.target.closest('[data-open-product],[data-add],[data-wish],[data-close],[data-slide-go],[data-catpage],[data-angle],[data-psize],[data-pq],[data-pm-add],[data-pm-buy],[data-pm-wa],[data-cq],[data-cr],[data-bnav],[data-share],[data-sizeopen],[data-cancel-order],[data-download-invoice],[data-track-wa],[data-openhistory],[data-membership],[data-policy]');
+const t = e.target.closest('[data-open-product],[data-add],[data-wish],[data-close],[data-slide-go],[data-catpage],[data-angle],[data-psize],[data-pq],[data-pm-add],[data-pm-buy],[data-pm-wa],[data-cq],[data-cr],[data-bnav],[data-share],[data-sizeopen],[data-cancel-order],[data-download-invoice],[data-track-wa],[data-openhistory],[data-openpast],[data-membership],[data-policy]');
 if (!t){ const sd = $('#searchDrop'); if (sd) sd.classList.add('hidden'); return; }
 if (t.hasAttribute('data-close')){ closeModal(t.getAttribute('data-close')); return; }
 if (t.hasAttribute('data-openhistory')){
   const mobileOpen = $('#mobileMenu') && !$('#mobileMenu').classList.contains('hidden');
   if (mobileOpen) { closeAll(true); renderHistory(); openModal('historyModal'); history.replaceState({ modal: 'historyModal' }, '', '#orders'); }
   else { closeAll(true); openHistory(); }
+  return;
+}
+if (t.hasAttribute('data-openpast')){
+  const mobileOpen = $('#mobileMenu') && !$('#mobileMenu').classList.contains('hidden');
+  if (mobileOpen) { closeAll(true); renderPastHistory(); openModal('pastHistoryModal'); history.replaceState({ modal: 'pastHistoryModal' }, '', '#history'); }
+  else { closeAll(true); openPastHistory(); }
   return;
 }
 if (t.hasAttribute('data-membership')){
@@ -2976,6 +1824,7 @@ const v = t.getAttribute('data-bnav');
 if (v==='home'){ closeAll(true); window.scrollTo({ top:0, behavior:'smooth' }); try{ if (window.location.hash) history.pushState(null, '', location.pathname); }catch(e){} }
 if (v==='shop') openCatPage('', '', '');
 if (v==='orders'){ closeAll(true); openHistory(); }
+if (v==='history'){ closeAll(true); openPastHistory(); }
 if (v==='track'){ closeAll(true); openModal('trackModal'); try{ history.pushState({ modal: 'trackModal' }, '', '#track'); }catch(e){} }
 return;
 }
@@ -3173,7 +2022,6 @@ o.deliveredAt = Date.now();
 o.status = 'Delivered';
 o.updatedAt = Date.now();
 store.set('orders', orders);
-// 🌐 Push delivery to server
 try { fetch(`${API_BASE}/api/orders?action=update`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: o.id, status: 'Delivered', pwd: 'HF2026' }) }).catch(() => {}); } catch(e){}
 toast('Delivery Confirmed!','check');
 $('#delOrderId').value = ''; $('#delOtp').value = '';
@@ -3184,25 +2032,18 @@ $('#adminLoginBtn').onclick = async () => {
   if ($('#adminPass').value === 'HF2026'){
     adminAuth = true;
     localStorage.setItem('hf_is_admin', 'true');
+    store.set('orders', []); // 🔄 Reset local — will refetch as admin
     $('#adminLoginBox').classList.add('hidden');
     $('#adminDashBox').classList.remove('hidden');
     toast('Admin Unlocked — Owner mode active','lock');
-
-    // 🌐 Register THIS device as the ONLY admin
     try {
       const deviceId = await getDeviceId();
-      await fetch(`${API_BASE}/api/orders?action=set-admin`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ deviceId, pwd: 'HF2026' })
-      });
+      await fetch(`${API_BASE}/api/orders?action=set-admin`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ deviceId, pwd: 'HF2026' }) });
     } catch(e){ console.error(e); }
-
     setTimeout(() => { syncMyOrders(); }, 500);
   } else { toast('Wrong Passcode','cross'); }
 };
 
-// Cancel Membership handler (single copy)
 $('#adminCancelBtn').onclick = async () => {
   const input = $('#adminCancelInput').value.trim();
   const result = $('#adminCancelResult');
@@ -3278,7 +2119,6 @@ if (e.key === 'ArrowLeft'){ pm.angle = (pm.angle+1) % 2; drawProduct(); }
 });
 window.addEventListener('resize', debounce(sizeHero, 300));
 
-// 🌐 Sync when tab becomes visible again (works for admin + customer)
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState !== 'visible') return;
   const isAdmin = localStorage.getItem('hf_is_admin') === 'true';
@@ -3292,20 +2132,19 @@ setInterval(() => {
   }
 }, 1000);
 
-// 🌐 Smart polling — 5s when My Orders open, 15s otherwise
 setInterval(() => {
   if (document.visibilityState !== 'visible') return;
   const isAdmin = localStorage.getItem('hf_is_admin') === 'true';
   const user = store.get('user', null);
   if (!isAdmin && !user) return;
   const hm = $('#historyModal');
-  const isOpen = hm && !hm.classList.contains('hidden');
+  const hpm = $('#pastHistoryModal');
+  const isOpen = (hm && !hm.classList.contains('hidden')) || (hpm && !hpm.classList.contains('hidden'));
   if (isOpen || (Date.now() - (syncMyOrders._last || 0) > 14000)) {
     syncMyOrders();
   }
 }, 5000);
 
-// 🌐 Sync immediately on page load
 setTimeout(syncMyOrders, 1500);
 }
 function refreshOrderTrackingUI(){
@@ -3345,9 +2184,9 @@ clearInterval(sTimer); startSlider();
 }
 handleRoute();
 updateMembershipPrices();
-// 🌐 Verify admin status on page load
+
+// 🌐 Verify admin status on load → then sync orders
 verifyAdminStatus().then(() => {
-  // Sync orders AFTER admin status is verified
   const isAdmin = localStorage.getItem('hf_is_admin') === 'true';
   const user = store.get('user', null);
   if (isAdmin || user) syncMyOrders();
