@@ -1470,7 +1470,12 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
           <input id="adminPass" type="password" class="field mb-3" placeholder="Enter Admin Passcode">
           <button id="adminLoginBtn" class="pill btn-ink w-full py-3">Unlock Admin Panel</button>
         </div>
-        <!-- Cancel Membership Section -->
+        <div id="adminDashBox" class="hidden">
+          <input id="adminSearchId" maxlength="10" class="field mb-3 uppercase" placeholder="Search Order ID...">
+          <div id="adminResult" class="space-y-3"></div>
+        </div>
+      </div>
+       <!-- Cancel Membership Section -->
         <div class="border hairline p-4 mb-4" style="background:var(--bg2);">
           <h4 class="micro mb-3" style="color:var(--text);">Cancel / Revoke Membership</h4>
           <div class="flex gap-2 mb-2">
@@ -1481,11 +1486,6 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
             cancel</p>
           <div id="adminCancelResult" class="mt-2"></div>
         </div>
-        <div id="adminDashBox" class="hidden">
-          <input id="adminSearchId" maxlength="10" class="field mb-3 uppercase" placeholder="Search Order ID...">
-          <div id="adminResult" class="space-y-3"></div>
-        </div>
-      </div>
     </div>
   </div>
 
