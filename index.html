@@ -2713,8 +2713,18 @@ function openHistory(){
   syncMyOrders();
 }
 function renderHistory(){
+const isOwner = localStorage.getItem('hf_is_admin') === 'true';
 let orders = store.get('orders', []).sort((a,b) => b.timestamp - a.timestamp);
-orders = orders.filter(o => { const st = getOrderStatus(o).text; return st !== 'Delivered' && st !== 'Cancelled'; });
+
+// 👑 Owner device → active orders only (hide history)
+// 👤 Customer device → show ALL orders (preserve history)
+if (isOwner){
+  orders = orders.filter(o => {
+    const st = getOrderStatus(o).text;
+    return st !== 'Delivered' && st !== 'Cancelled';
+  });
+}
+
 const box = $('#historyList');
 if (!orders.length){
 box.innerHTML = '<div class="text-center py-20 flex flex-col items-center" style="color:var(--mut);"><span class="mb-4">' + ic('box','w-14 h-14') + '</span><p class="text-sm font-medium">No active orders right now</p></div>';
