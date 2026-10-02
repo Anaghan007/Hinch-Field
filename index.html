@@ -3126,6 +3126,16 @@ function cancelOrder(orderId){
     pendingCancelId = null;
     renderHistory();
     toast('Order Cancelled Successfully','cross');
+
+    // 🌐 Push cancellation to server
+    try {
+      fetch(`${API_BASE}/api/orders?action=update`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: order.id, status: 'Cancelled', pwd: 'HF2026' })
+      }).catch(() => {});
+    } catch(e){}
+    
     // 📧 ફક્ત આ એક જ call — email + refund બધું backend માં થશે
     try {
       fetch(`${API_BASE}/api/cancel-notify`, {
@@ -3863,16 +3873,26 @@ if ($('#adminFetchAll')) $('#adminFetchAll').onclick = async () => {
 
     // 🔀 Merge server orders into local storage
     const local = store.get('orders', []);
-    const localIds = new Set(local.map(o => o.id));
+    const localMap = new Map(local.map(o => [o.id, o]));
     let added = 0;
     d.orders.forEach(o => {
-      if (!localIds.has(o.id)) {
+      const st = o.status || 'Order Placed';
+      const existing = localMap.get(o.id);
+
+      if (existing) {
+        // Already in local — silently update status only if changed
+        if (existing.status !== st) {
+          existing.status = st;
+          existing.updatedAt = o.updatedAt || Date.now();
+          if (st === 'Delivered') existing.deliveredAt = o.deliveredAt || Date.now();
+        }
+        return;
+      }
+
+      // 🆕 New order — only add if STILL ACTIVE
+      if (st !== 'Delivered' && st !== 'Cancelled') {
         local.push(o);
         added++;
-      } else {
-        // Update existing order status
-        const idx = local.findIndex(x => x.id === o.id);
-        if (idx !== -1) local[idx] = o;
       }
     });
     store.set('orders', local);
@@ -3920,19 +3940,27 @@ res.innerHTML =
 '<button id="adminUpdateBtn" class="pill btn-ink px-4 text-[10px]">Update</button>' +
 '</div></div>';
 $('#adminStatusSel').value = o.status || 'Order Placed';
-$('#adminUpdateBtn').onclick = () => {
-const v = $('#adminStatusSel').value;
-const orders2 = store.get('orders', []);
-const idx = orders2.findIndex(x => x.id === o.id);
-if (idx !== -1){
-orders2[idx].status = v || 'Order Placed';
-orders2[idx].updatedAt = Date.now();
-if (v === 'Delivered') { orders2[idx].deliveredAt = Date.now(); }
-else { orders2[idx].deliveredAt = null; }
-store.set('orders', orders2);
-toast('Status Updated','check');
-$('#adminSearchId').dispatchEvent(new Event('input'));
-}
+$('#adminUpdateBtn').onclick = async () => {
+  const v = $('#adminStatusSel').value || 'Order Placed';
+  const orders2 = store.get('orders', []);
+  const idx = orders2.findIndex(x => x.id === o.id);
+  if (idx !== -1){
+    orders2[idx].status = v;
+    orders2[idx].updatedAt = Date.now();
+    if (v === 'Delivered') { orders2[idx].deliveredAt = Date.now(); }
+    else { orders2[idx].deliveredAt = null; }
+    store.set('orders', orders2);
+  }
+  // 🌐 Push to server
+  try {
+    await fetch(`${API_BASE}/api/orders?action=update`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: o.id, status: v, pwd: 'HF2026' })
+    });
+  } catch(e){ console.error(e); }
+  toast('Status Updated','check');
+  $('#adminSearchId').dispatchEvent(new Event('input'));
 };
 }, 300));
 $$('details.faq').forEach(faq => {
