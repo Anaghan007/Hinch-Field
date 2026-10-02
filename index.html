@@ -3258,7 +3258,7 @@ function wire(){
 $('#cartOpen').onclick = () => { closeAll(true); renderCart(); try{ history.pushState({ modal:'cartDrawer' }, '', '#cart'); }catch(e){} handleRoute(); };
 $('#wishOpen').onclick = () => { closeAll(true); renderWish(); try{ history.pushState({ modal:'wishDrawer' }, '', '#wishlist'); }catch(e){} handleRoute(); };
 $('#menuOpen').onclick = () => { openModal('mobileMenu'); try{ history.pushState({ modal: 'mobileMenu' }, '', '#menu'); }catch(e){} };
-$('#mSearchOpen').onclick = () => { openModal('searchOverlay'); try{ history.pushState({ modal: 'searchOverlay' }, '', '#search'); }catch(e){} };
+$('#mSearchOpen').onclick = () => { openModal('searchOverlay'); try{ history.pushState({ modal: 'searchOverlay' }, '', '#search'); }catch(e){} setTimeout(() => { const i = $('#mSearchInput'); if (i) i.focus(); }, 150); };
 $('#trackOpen2').onclick = () => { openModal('trackModal'); try{ history.pushState({ modal: 'trackModal' }, '', '#track'); }catch(e){} };
 $('#sizeOpen').onclick = () => { openModal('sizeModal'); try{ history.pushState({ modal: 'sizeModal' }, '', '#size'); }catch(e){} };
 $('#placeOrder').onclick = placeOrder;
