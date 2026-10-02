@@ -1813,26 +1813,6 @@ share:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="
 menu:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 7h16M4 12h16M4 17h16"/></svg>`
 };
 function ic(n,c='w-4 h-4'){ return `<span class="inline-flex items-center justify-center ${c}">${ICONS[n]||''}</span>`; }
-/* ---- Fallback SVG generator ---- */
-const SC = {};
-function studio(cat, hex, a){
-const key = cat+'|'+hex+'|'+a;
-if (SC[key]) return SC[key];
-try{
-const h = (typeof hex === 'string' && /^#[0-9a-fA-F]{6}$/.test(hex)) ? hex : '#0A0A0A';
-const L = shade(h,30), D = shade(h,-22), HL = shade(h,64), G = '#0A0A0A', GD = '#555555';
-const print = a === 0
-? `<path d='M262 300 q38 -46 76 0 q-38 46 -76 0Z' fill='${HL}' opacity='.9'/><circle cx='300' cy='300' r='7' fill='${D}'/><path d='M262 380 h76' stroke='${D}' stroke-width='7'/>`
-: `<circle cx='300' cy='270' r='16' fill='none' stroke='${HL}' stroke-width='5'/><path d='M284 320 h32' stroke='${HL}' stroke-width='6'/>`;
-const motif = `<path d='M300 120 L225 145 L170 240 L232 278 L232 600 L368 600 L368 278 L430 240 L375 145 Z' fill='url(%23fab)'/><path d='M262 132 a38 26 0 0 0 76 0' fill='${D}'/>${print}<path d='M250 470 h100' stroke='${D}' stroke-width='4' opacity='.35'/>`;
-const T = a === 1 ? 'translate(600 0) scale(-1 1)' : '';
-const lbl = a === 1 ? 'Back' : 'Front';
-const svg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 750'><defs><linearGradient id='bg' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='#ffffff'/><stop offset='1' stop-color='#f0f0f0'/></linearGradient><linearGradient id='fab' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='${L}'/><stop offset='.55' stop-color='${h}'/><stop offset='1' stop-color='${D}'/></linearGradient></defs><rect width='600' height='750' fill='url(%23bg)'/><ellipse cx='300' cy='668' rx='200' ry='26' fill='#0a0a0a' opacity='.06'/><g transform='${T}'>${motif}</g><rect x='22' y='22' width='556' height='706' rx='0' fill='none' stroke='${G}' opacity='.35'/><text x='300' y='712' font-size='18' text-anchor='middle' fill='${GD}' font-family='Cinzel, serif' letter-spacing='8'>HF</text><rect x='220' y='40' width='160' height='32' rx='0' fill='#0a0a0a' opacity='.9'/><text x='300' y='62' font-size='14' text-anchor='middle' fill='#ffffff' font-family='Inter, sans-serif' letter-spacing='2'>${lbl}</text></svg>`;
-const uri = 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
-SC[key] = uri;
-return uri;
-}catch(e){ return 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 750"><rect width="600" height="750" fill="#F0F0F0"/></svg>'); }
-}
 /* ---- Currency / Location ---- */
 const MARKUP = 5.00;
 const COUNTRY_CUR = { IN:'INR',US:'USD',GB:'GBP',AE:'AED',SA:'SAR',QA:'QAR',KW:'KWD',BH:'BHD',OM:'OMR',JO:'JOD',EG:'EGP',ZA:'ZAR',NG:'NGN',KE:'KES',AU:'AUD',NZ:'NZD',CA:'CAD',SG:'SGD',MY:'MYR',TH:'THB',ID:'IDR',PH:'PHP',JP:'JPY',KR:'KRW',CN:'CNY',HK:'HKD',BD:'BDT',PK:'PKR',LK:'LKR',NP:'NPR',CH:'CHF',SE:'SEK',NO:'NOK',DK:'DKK',PL:'PLN',RU:'RUB',MX:'MXN',BR:'BRL',DE:'EUR',FR:'EUR',IT:'EUR',ES:'EUR',NL:'EUR',IE:'EUR',AT:'EUR',BE:'EUR',PT:'EUR',FI:'EUR',GR:'EUR' };
@@ -2059,21 +2039,8 @@ function imgTag(p,color,a,cls,extra,eager){
 return '<img ' + (extra||'') + ' class="' + cls + '" src="' + imgURLs(p)[a] + '" alt="' + esc(p.name) + ' ' + (['Front','Back'][a]||'') + '" loading="' + (eager?'eager':'lazy') + '" decoding="async" fetchpriority="' + (eager?'high':'low') + '" style="height:100%;width:100%;object-fit:contain;">';
 }
 function heroImg(p,color){
-const h = hexOf(p,color);
-const svg = studio(p.cat, h, 0);
 const real = imgURLs(p)[0];
-return '<img class="w-full h-full object-contain hero-img" src="' + svg + '" data-upgrade="' + real + '" alt="' + esc(p.name) + '" fetchpriority="high" decoding="async" style="height:100%;width:100%;object-fit:contain;">';
-}
-function upgradeHeroImgs(){
-$$('.hero-img').forEach(img => {
-const real = img.dataset.upgrade;
-if (!real || img.dataset.tried) return;
-img.dataset.tried = '1';
-const probe = new Image();
-probe.onload = () => { if (img.src !== real) img.src = real; };
-probe.onerror = () => {};
-probe.src = real;
-});
+return '<img class="w-full h-full object-contain hero-img" src="' + real + '" alt="' + esc(p.name) + '" fetchpriority="high" decoding="async" style="height:100%;width:100%;object-fit:contain;">';
 }
 function card(p, anim, delay){
 anim = anim || 'a-up';
@@ -3870,7 +3837,6 @@ safe(renderInsta, 'renderInsta');
 safe(renderFeatured, 'renderFeatured');
 safe(renderHero, 'renderHero');
 sizeHero();
-upgradeHeroImgs();
 safe(renderCart, 'renderCart');
 safe(renderWish, 'renderWish');
 reveal();
