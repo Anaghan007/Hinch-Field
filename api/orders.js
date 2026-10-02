@@ -83,6 +83,33 @@ export default async function handler(req, res) {
       return res.status(200).json({ success: true, orders });
     }
 
+    // CUSTOMER CANCEL (phone verification)
+    if (action === 'cancel' && req.method === 'POST') {
+      const { id, phone } = req.body || {};
+      if (!id || !phone) return res.status(400).json({ success: false, error: 'Missing id or phone' });
+
+      const raw = await redis.get('order:' + id);
+      if (!raw) return res.status(404).json({ success: false, error: 'Not found' });
+
+      const order = typeof raw === 'string' ? JSON.parse(raw) : raw;
+      const oPhone = (order.customer && order.customer.phone || '').replace(/[^0-9]/g, '');
+      const cPhone = phone.replace(/[^0-9]/g, '');
+      if (!oPhone.endsWith(cPhone.slice(-10))) {
+        return res.status(403).json({ success: false, error: 'Phone mismatch' });
+      }
+
+      // 24-hour check
+      if (Date.now() - order.timestamp > 24*60*60*1000) {
+        return res.status(400).json({ success: false, error: 'Cannot cancel after 24 hours' });
+      }
+
+      order.status = 'Cancelled';
+      order.updatedAt = Date.now();
+      await redis.set('order:' + id, order);
+
+      return res.status(200).json({ success: true });
+    }
+
     return res.status(400).json({ success: false, error: 'Invalid action' });
   } catch (e) {
     console.error('orders API error:', e);
