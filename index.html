@@ -2049,11 +2049,24 @@ function imgURLs(p){
 }
 const hexOf = (p,c) => { const f = p.colors.find(x => x[0] === c) || p.colors[0]; return f[1]; };
 function imgTag(p,color,a,cls,extra,eager){
-return '<img ' + (extra||'') + ' class="' + cls + '" src="' + imgURLs(p)[a] + '" alt="' + esc(p.name) + ' ' + (['Front','Back'][a]||'') + '" loading="' + (eager?'eager':'lazy') + '" decoding="async" fetchpriority="' + (eager?'high':'low') + '" style="height:100%;width:100%;object-fit:contain;">';
+  return '<img ' + (extra||'') + ' class="' + cls + '" '
+    + 'src="' + imgURLs(p)[a] + '" '
+    + 'alt="' + esc(p.name) + ' ' + (['Front','Back'][a]||'') + '" '
+    + 'loading="' + (eager?'eager':'lazy') + '" '
+    + 'decoding="async" '
+    + 'style="height:100%;width:100%;object-fit:contain;opacity:0;transition:opacity .35s ease;" '
+    + 'onload="this.style.opacity=\'1\';" '
+    + 'onerror="this.style.opacity=\'0\';this.style.visibility=\'hidden\';">';
 }
 function heroImg(p,color){
-const real = imgURLs(p)[0];
-return '<img class="w-full h-full object-contain hero-img" src="' + real + '" alt="' + esc(p.name) + '" fetchpriority="high" decoding="async" style="height:100%;width:100%;object-fit:contain;">';
+  const real = imgURLs(p)[0];
+  return '<img class="w-full h-full object-contain hero-img" '
+    + 'src="' + real + '" '
+    + 'alt="' + esc(p.name) + '" '
+    + 'fetchpriority="high" decoding="async" '
+    + 'style="height:100%;width:100%;object-fit:contain;opacity:0;transition:opacity .5s ease;" '
+    + 'onload="this.style.opacity=\'1\';" '
+    + 'onerror="this.style.opacity=\'0\';this.style.visibility=\'hidden\';">';
 }
 function card(p, anim, delay){
 anim = anim || 'a-up';
