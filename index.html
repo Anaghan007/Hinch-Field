@@ -3019,44 +3019,7 @@ function openHistory(){
     if (window.location.hash) history.replaceState(null, '', window.location.pathname + window.location.search);
     history.pushState({ modal: 'historyModal' }, '', '#orders');
   } catch(e){}
-  // 🌐 Sync from server in background
-  syncMyOrders();
 }
-
-/* ---- 🌐 Sync user's orders from server ---- */
-async function syncMyOrders(){
-  try {
-    const user = store.get('user', null);
-    if (!user || !user.phone) return;
-    const phone = user.phone.replace(/[^0-9]/g, '');
-    if (!phone) return;
-
-    const r = await fetch(`${API_BASE}/api/orders?action=my-orders&phone=${phone}`);
-    const d = await r.json();
-    if (!d.success || !d.orders.length) return;
-
-    const local = store.get('orders', []);
-    let changed = false;
-    d.orders.forEach(serverO => {
-      const idx = local.findIndex(x => x.id === serverO.id);
-      if (idx === -1) {
-        local.push(serverO);
-        changed = true;
-      } else {
-        // Server is source of truth for status
-        if (local[idx].status !== serverO.status) {
-          local[idx] = serverO;
-          changed = true;
-        }
-      }
-    });
-    if (changed){
-      store.set('orders', local);
-      renderHistory();
-    }
-  } catch(e){ /* silent */ }
-}
-    
 function renderHistory(){
 let orders = store.get('orders', []).sort((a,b) => b.timestamp - a.timestamp);
 orders = orders.filter(o => {
@@ -3155,53 +3118,38 @@ function cancelOrder(orderId){
   const idx = orders.findIndex(o => o.id === orderId);
   if (idx === -1) return;
   const order = orders[idx];
-  if (Date.now() - order.timestamp >= 24*60*60*1000){
+  if (Date.now() - order.timestamp < 24*60*60*1000){
+    order.status = 'Cancelled';
+    order.updatedAt = Date.now();
+    store.set('orders', orders);
+    closeModal('confirmCancelModal', true);
+    pendingCancelId = null;
+    renderHistory();
+    toast('Order Cancelled Successfully','cross');
+    // 📧 ફક્ત આ એક જ call — email + refund બધું backend માં થશે
+    try {
+      fetch(`${API_BASE}/api/cancel-notify`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          order: {
+            id: order.id,
+            customer: order.customer,
+            items: order.items.map(l => {
+              const p = prodById(l.id);
+              return { name: p ? p.name : 'Product', qty: l.qty, price: p ? p.price : 0 };
+            }),
+            totals: order.totals,
+            payment: order.payment
+          }
+        })
+      }).catch(() => {});
+    } catch(e){}
+  } else {
     closeModal('confirmCancelModal', true);
     pendingCancelId = null;
     toast('Cannot cancel after 24 hours','warn');
-    return;
   }
-
-  // Local update
-  order.status = 'Cancelled';
-  order.updatedAt = Date.now();
-  store.set('orders', orders);
-  closeModal('confirmCancelModal', true);
-  pendingCancelId = null;
-  renderHistory();
-  toast('Order Cancelled Successfully','cross');
-
-  // 🌐 Push to server
-  try {
-    const user = store.get('user', null);
-    const phone = user && user.phone ? user.phone : (order.customer && order.customer.phone) || '';
-    fetch(`${API_BASE}/api/orders?action=cancel`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: order.id, phone })
-    }).catch(() => {});
-  } catch(e){}
-
-  // 📧 Cancel email
-  try {
-    fetch(`${API_BASE}/api/cancel-notify`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        order: {
-          id: order.id,
-          customer: order.customer,
-          items: order.items.map(l => {
-            const p = prodById(l.id);
-            return { name: p ? p.name : 'Product', qty: l.qty, price: p ? p.price : 0 };
-          }),
-          totals: order.totals,
-          payment: order.payment
-        }
-      })
-    }).catch(() => {});
-  } catch(e){}
-}
 }
     
 /* ---- Admin ---- */
@@ -3527,8 +3475,6 @@ if (t.hasAttribute('data-policy')){
 });
 /* ---- Wire top-level handlers ---- */
 function wire(){
-// 🌐 Auto-sync orders on page load (every 30s)
-setInterval(() => { if (document.visibilityState === 'visible') syncMyOrders(); }, 30000);
 $('#cartOpen').onclick = () => { closeAll(true); renderCart(); try{ history.pushState({ modal:'cartDrawer' }, '', '#cart'); }catch(e){} handleRoute(); };
 $('#wishOpen').onclick = () => { closeAll(true); renderWish(); try{ history.pushState({ modal:'wishDrawer' }, '', '#wishlist'); }catch(e){} handleRoute(); };
 $('#menuOpen').onclick = () => { openModal('mobileMenu'); try{ history.pushState({ modal: 'mobileMenu' }, '', '#menu'); }catch(e){} };
@@ -3835,6 +3781,51 @@ $('#adminCancelBtn').onclick = async () => {
       $('#adminCancelInput').value = '';
       
       // Clear local storage if it's the current user's membership
+      const saved = store.get('membership_full', null);
+      if (saved && saved.code === d.code) {
+        store.set('membership_full', null);
+        appliedMembership = null;
+        if (typeof showMemberView === 'function') showMemberView();
+        if (typeof renderCart === 'function') renderCart();
+        toast('Membership cancelled', 'cross');
+      }
+    } else {
+      result.innerHTML = '<p class="text-[10px]" style="color:#DC2626;">❌ ' + (d.error || 'Not found') + '</p>';
+    }
+  } catch (e) {
+    result.innerHTML = '<p class="text-[10px]" style="color:#DC2626;">Error: ' + e.message + '</p>';
+  } finally {
+    $('#adminCancelBtn').disabled = false;
+    $('#adminCancelBtn').textContent = 'Cancel';
+  }
+};
+// Cancel Membership handler
+$('#adminCancelBtn').onclick = async () => {
+  const input = $('#adminCancelInput').value.trim();
+  const result = $('#adminCancelResult');
+  if (!input) {
+    result.innerHTML = '<p class="text-[10px]" style="color:#DC2626;">Enter phone or code</p>';
+    return;
+  }
+
+  const isCode = /^\d{4}$/.test(input);
+  const payload = isCode ? { code: input } : { phone: input };
+
+  $('#adminCancelBtn').disabled = true;
+  $('#adminCancelBtn').textContent = '…';
+
+  try {
+    const r = await fetch(`${API_BASE}/api/membership-cancel`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const d = await r.json();
+
+    if (d.success) {
+      result.innerHTML = '<p class="text-[10px]" style="color:#0A0A0A;">✅ Membership cancelled (Code: ' + d.code + ')</p>';
+      $('#adminCancelInput').value = '';
+      
       const saved = store.get('membership_full', null);
       if (saved && saved.code === d.code) {
         store.set('membership_full', null);
