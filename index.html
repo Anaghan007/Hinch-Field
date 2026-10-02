@@ -986,7 +986,8 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
         <button id="menuOpen" class="md:hidden p-2 -ml-1" aria-label="Menu">
           <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M4 7h16M4 12h10M4 17h16"/></svg>
         </button>
-        <a href="#home" id="secretLogo" class="flex items-center shrink-0" aria-label="HinchField home" style="cursor:default;">
+        <a href="#home" id="secretLogo" class="flex items-center shrink-0" aria-label="HinchField home"
+          style="cursor:default;">
           <img src="images/logo.png" class="h-12 md:h-14 w-auto object-contain" alt="HinchField" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
           <span class="h-12 items-center font-luxe text-xl md:text-2xl font-medium tracking-luxe" style="display:none;color:var(--text);">HINCHFIELD</span>
         </a>
@@ -1194,7 +1195,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
   </main>
 
   <footer class="w-full border-t hairline" style="background:var(--bg); color:var(--text);" id="contact">
-    <div class="wrap py-14 md:py-16 grid sm:grid-cols-2 md:grid-cols-4 gap-8 md:gap-10">
+    <div class="wrap py-14 md:py-16 grid sm:grid-cols-2 lg:grid-cols-5 gap-8 md:gap-10">
       <div>
         <a href="#home" class="inline-block" aria-label="Back to top">
           <img src="images/logo.png" class="h-14 w-auto object-contain mb-5" alt="HinchField" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
@@ -1237,6 +1238,21 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
         </ul>
       </div>
       <div>
+        <p class="micro mb-4" style="color:var(--text);">Policies</p>
+        <ul class="space-y-2 text-sm">
+          <li>
+            <button data-policy="shipping" class="hover:opacity-60 transition text-left">Shipping &amp; Delivery</button>
+          </li>
+          <li><button data-policy="refund" class="hover:opacity-60 transition text-left">Refund Policy</button></li>
+          <li><button data-policy="privacy" class="hover:opacity-60 transition text-left">Privacy Policy</button></li>
+          <li>
+            <button data-policy="no-return" class="hover:opacity-60 transition text-left">No Return / No Exchange</button>
+          </li>
+          <li><button data-policy="membership" class="hover:opacity-60 transition text-left">Membership Policy</button>
+          </li>
+        </ul>
+      </div>
+      <div>
         <p class="micro mb-4" style="color:var(--text);">Reach Us</p>
         <ul class="space-y-3 text-sm">
           <li><a href="tel:7434053550"
@@ -1252,8 +1268,9 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       <div class="wrap py-6 flex flex-col md:flex-row items-center justify-between gap-3 text-[11px]"
         style="color:var(--mut);">
         <p>© 2026 HinchField. All rights reserved.</p>
-        <p class="flex gap-4 items-center font-medium tracking-wide2 uppercase" style="color:var(--text);">
-          <span>COD India</span>•<span>Online Payment</span>•<span>Worldwide</span>•<span>No Return</span>
+        <p class="flex flex-wrap gap-4 items-center justify-center font-medium tracking-wide2 uppercase"
+          style="color:var(--text);">
+          <span>COD India</span>•<span>Online Payment</span>•<span>Worldwide</span>•<button data-policy="no-return" class="hover:opacity-60 transition uppercase tracking-wide2 font-medium">No Return</button>
         </p>
       </div>
     </div>
@@ -1451,16 +1468,16 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
         </div>
       </div>
       <!-- Cancel Membership Section -->
-        <div class="border hairline p-4 mt-6 mb-4" style="background:var(--bg2);">
-          <h4 class="micro mb-3" style="color:var(--text);">Cancel / Revoke Membership</h4>
-          <div class="flex gap-2 mb-2">
-            <input id="adminCancelInput" maxlength="15" class="field flex-1" placeholder="Phone or 4-digit code">
-            <button id="adminCancelBtn" class="pill btn-ink px-4 text-[10px]">Cancel</button>
-          </div>
-          <p class="text-[10px]" style="color:var(--mut);">Enter phone number OR 4-digit membership code to permanently
-            cancel</p>
-          <div id="adminCancelResult" class="mt-2"></div>
+      <div class="border hairline p-4 mt-6 mb-4" style="background:var(--bg2);">
+        <h4 class="micro mb-3" style="color:var(--text);">Cancel / Revoke Membership</h4>
+        <div class="flex gap-2 mb-2">
+          <input id="adminCancelInput" maxlength="15" class="field flex-1" placeholder="Phone or 4-digit code">
+          <button id="adminCancelBtn" class="pill btn-ink px-4 text-[10px]">Cancel</button>
         </div>
+        <p class="text-[10px]" style="color:var(--mut);">Enter phone number OR 4-digit membership code to permanently
+          cancel</p>
+        <div id="adminCancelResult" class="mt-2"></div>
+      </div>
     </div>
   </div>
 
@@ -1589,6 +1606,20 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
         <button id="confirmCancelYes" class="pill btn-gold py-3.5">Yes, Cancel</button>
       </div>
       <p class="text-[10px] text-center mt-4" style="color:var(--mut);">This action cannot be undone</p>
+    </div>
+  </div>
+
+  <!-- ═══ POLICY MODAL ═══ -->
+  <div id="policyModal" class="fixed inset-0 z-[88] hidden overflow-y-auto w-full"
+    style="background:var(--bg); color:var(--text);">
+    <header class="sticky top-0 z-10 glassbar border-b hairline w-full">
+      <div class="wrap flex items-center gap-3 py-3">
+        <button data-close="policyModal" class="w-10 h-10 border hairline transition" aria-label="Back">←</button>
+        <h3 id="policyTitle" class="disp editorial-h font-luxe text-lg md:text-xl flex-1 truncate">Policy</h3>
+      </div>
+    </header>
+    <div class="wrap max-w-6xl mx-auto py-8 md:py-12 pb-20">
+      <div id="policyContent"></div>
     </div>
   </div>
 
@@ -3106,6 +3137,140 @@ $('#trackResult').innerHTML =
 '<p class="text-xs mb-3" style="color:var(--mut);">Order not found on this device. Ask us live on WhatsApp:</p>' +
 '<a class="pill btn-ink w-full py-3" href="https://wa.me/' + WA + '?text=' + encodeURIComponent('Hi! Track my order ' + id) + '" target="_blank" rel="noopener">Live Status on WhatsApp</a>';
 }
+/* ============================================================
+   POLICIES SYSTEM
+   ============================================================ */
+const POLICIES = {
+  shipping: {
+    title: 'Shipping & Delivery Policy',
+    updated: 'Last updated · January 2026',
+    intro: 'Hinchfield is committed to delivering premium products safely and on time. This policy covers processing, dispatch, delivery timelines, and charges.',
+    sections: [
+      { h:'Order Processing', p:'All orders are processed within <b>24 hours</b> of confirmation, excluding Sundays and public holidays. You will receive an order confirmation on WhatsApp and email immediately after checkout.' },
+      { h:'Delivery Timeline', p:'<b>Within India:</b> 2–5 business days from dispatch.<br><b>International:</b> 7–14 business days, subject to customs clearance.' },
+      { h:'Shipping Charges', p:'<b>Orders below ₹999</b> → ₹99 flat<br><b>Orders ₹999 – ₹1,499</b> → ₹49 flat<br><b>Orders above ₹1,499</b> → FREE delivery across India.<br>Hinchfield Members enjoy <b>FREE delivery on every order</b>, regardless of value.' },
+      { h:'International Shipping', p:'We ship worldwide. International orders are confirmed via WhatsApp with live currency conversion and applicable duties/taxes handled transparently.' },
+      { h:'Order Tracking', p:'Track your order anytime via <b>My Orders</b> or the <b>Track Order</b> page. Live status updates are pushed at every stage — Placed, Confirmed, In Process, Ready, Dispatched, Out for Delivery, Delivered.' },
+      { h:'Delivery OTP Verification', p:'Every order is delivered with a <b>4-digit OTP</b> verification to ensure safe handover. Please share the OTP only with the assigned delivery agent.' },
+      { h:'Possible Delays', p:'Delivery timelines may be affected by weather, festivals, regional restrictions, or courier delays. We keep you informed on WhatsApp at every step.' }
+    ]
+  },
+  refund: {
+    title: 'Refund Policy',
+    updated: 'Last updated · January 2026',
+    intro: 'We believe in transparent and fair refund practices. Please read the eligibility criteria carefully before requesting a refund.',
+    sections: [
+      { h:'Refund Eligibility', p:'Refunds are applicable <b>only</b> in the following cases:<br>• Order not delivered within the promised timeline<br>• Product received is damaged or defective<br>• Wrong product delivered' },
+      { h:'Non-Refundable Cases', p:'• Customised products (custom name / photo / design)<br>• Products used, washed, or altered<br>• Products without original packaging<br>• Orders cancelled after 24 hours of placement' },
+      { h:'How to Request a Refund', p:'Report the issue within <b>24 hours of delivery</b> via WhatsApp at <b>7434053550</b> with:<br>• Order ID<br>• Unboxing video (mandatory)<br>• Clear photos of the product and packaging' },
+      { h:'Verification Process', p:'Our support team verifies the claim within <b>48 hours</b>. Once approved, the refund is initiated to the original payment method or via UPI / bank transfer.' },
+      { h:'Refund Timeline', p:'• UPI / Wallet → 24–48 hours<br>• Cards / Netbanking → 5–7 business days<br>• COD orders → Refunded via UPI or bank transfer only' },
+      { h:'Cancellation Refunds', p:'Orders cancelled within <b>24 hours</b> of placement are eligible for a full refund. COD orders carry no cancellation charges within this window.' }
+    ]
+  },
+  privacy: {
+    title: 'Privacy Policy',
+    updated: 'Last updated · January 2026',
+    intro: 'Your privacy matters to us. This policy explains what data we collect, how we use it, and how we protect it.',
+    sections: [
+      { h:'Information We Collect', p:'When you shop with Hinchfield, we collect:<br>• Full name, phone number, email address<br>• Delivery address (city, state, PIN / ZIP)<br>• Order history and product preferences<br>• Payment info — processed securely via <b>Razorpay</b> (we never store card details)' },
+      { h:'How We Use Your Information', p:'• To process and deliver your orders<br>• To send order updates via WhatsApp, email, or SMS<br>• To provide customer support<br>• To improve our products and shopping experience' },
+      { h:'Data Sharing', p:'We <b>never sell</b> your data. Information is shared only with:<br>• Logistics partners (for delivery)<br>• Payment gateways (Razorpay — PCI-DSS compliant)<br>• Legal authorities, when required by law' },
+      { h:'Cookies & Local Storage', p:'We use browser local storage and cookies to remember your cart, wishlist, and delivery preferences. No personal data is stored beyond what is functionally required.' },
+      { h:'Data Security', p:'All transactions are encrypted. Payment data is handled exclusively by Razorpay, a PCI-DSS Level 1 certified gateway. We have no access to your card or UPI credentials.' },
+      { h:'Your Rights', p:'You may request access, correction, or deletion of your personal data by emailing <b>support.hinchfield@gmail.com</b>. We respond within 7 business days.' },
+      { h:'Marketing Communication', p:'We only contact you for order-related updates and optional offers. You may opt out anytime by replying <b>STOP</b> on WhatsApp.' }
+    ]
+  },
+  'no-return': {
+    title: 'No Return / No Exchange Policy',
+    updated: 'Last updated · January 2026',
+    intro: 'Hinchfield follows a strict No Return / No Exchange policy across all product categories.',
+    sections: [
+      { h:'Strict Policy Notice', p:'All orders are <b>final</b> once delivered and accepted. We do not accept returns, exchanges, or size change requests.' },
+      { h:'Why This Policy', p:'Our T-Shirts are made-to-order and often customised (custom name, photo, colour, or text). Because of personalisation, hygiene standards, and print-on-demand production, returns and exchanges are not feasible.' },
+      { h:'Exceptions We Do Support', p:'We resolve the following cases at <b>no extra cost</b>:<br>• Product damaged in transit<br>• Wrong product delivered<br>• Product with manufacturing defect' },
+      { h:'Reporting Window', p:'Any issue must be reported within <b>24 hours of delivery</b> via WhatsApp at <b>7434053550</b> with an unboxing video and clear photos.' },
+      { h:'Resolution', p:'On verification, we will provide a <b>replacement or refund</b> — at our sole discretion, based on stock availability and case severity.' },
+      { h:'Customer Responsibility', p:'Please review <b>size (Free Size)</b>, colour, customisation details, and delivery address carefully before placing the order. For any clarification, message us on WhatsApp before ordering.' }
+    ]
+  },
+  membership: {
+    title: 'Membership Policy',
+    updated: 'Last updated · January 2026',
+    intro: 'Hinchfield Yearly Membership gives you unbeatable value — Flat 50% OFF + FREE delivery for 365 days.',
+    sections: [
+      { h:'Membership Benefits', p:'• <b>Flat 50% OFF</b> on all products<br>• <b>FREE delivery</b> on every order (no minimum)<br>• Priority customer support<br>• Early access to new drops and limited collections' },
+      { h:'Membership Fee & Validity', p:'One-time fee of <b>₹599</b> for <b>365 days</b> from the date of activation. No auto-renewal, no hidden charges.' },
+      { h:'How to Use', p:'After purchase, you receive a unique <b>4-digit code</b> instantly. Enter this code in the cart → Membership section → click <b>Apply</b>. The 50% discount and FREE delivery apply automatically.' },
+      { h:'Device Binding', p:'Each membership code is bound to <b>one device</b> and <b>one phone number</b>. Code sharing or simultaneous use across devices will lead to <b>immediate cancellation without refund</b>.' },
+      { h:'Non-Transferable', p:'Membership is strictly non-transferable. It cannot be gifted, resold, or combined with other accounts.' },
+      { h:'Cancellation & Refund', p:'Membership is <b>non-refundable</b> once activated. If your code is cancelled by us for misuse, no refund will be issued.' },
+      { h:'Lost Code Recovery', p:'If you lose your code, log in from the same device or contact us on WhatsApp with your registered phone number to retrieve it.' }
+    ]
+  }
+};
+
+function openPolicy(key, skipRoute){
+  const p = POLICIES[key];
+  if (!p) return;
+  $('#policyTitle').textContent = p.title;
+
+  let html = `
+    <div class="text-center mb-10 md:mb-14">
+      <p class="micro mb-3">Hinchfield · Legal</p>
+      <h1 class="disp editorial-h font-luxe text-2xl md:text-3xl mb-3">${p.title}</h1>
+    </div>
+
+    <p class="text-[13px] md:text-sm leading-relaxed mb-8 md:mb-10 text-center max-w-2xl mx-auto" style="color:var(--mut);">${p.intro}</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5 items-stretch">
+  `;
+
+  p.sections.forEach((s, i) => {
+    html += `
+        <div class="border hairline p-5 md:p-6 h-full" style="background:var(--card);">
+        <div class="flex items-start gap-3 mb-3">
+          <span class="w-8 h-8 border hairline flex items-center justify-center text-[11px] font-medium shrink-0"
+                style="background:var(--text); color:var(--bg);">${String(i+1).padStart(2,'0')}</span>
+          <h3 class="disp editorial-h font-luxe text-base md:text-lg pt-1">${s.h}</h3>
+        </div>
+        <div class="text-[13px] leading-relaxed md:pl-11" style="color:var(--mut);">${s.p}</div>
+      </div>
+    `;
+  });
+
+  html += `
+    </div>
+
+    <div class="border hairline p-5 md:p-6 mt-8 md:mt-10" style="background:var(--bg2);">
+      <p class="micro mb-2" style="color:var(--text);">Need Help?</p>
+      <p class="text-xs leading-relaxed" style="color:var(--mut);">
+        For any questions about this policy, contact our support team:
+      </p>
+      <div class="flex flex-wrap gap-3 mt-4">
+        <a href="https://wa.me/917434053550" target="_blank" rel="noopener"
+           class="pill btn-ink px-5 py-2.5 text-[10px] flex items-center gap-2">
+          ${ic('chat','w-3.5 h-3.5')} WhatsApp 7434053550
+        </a>
+        <a href="mailto:support.hinchfield@gmail.com"
+           class="pill btn-line px-5 py-2.5 text-[10px] flex items-center gap-2">
+          ${ic('pin','w-3.5 h-3.5')} support.hinchfield@gmail.com
+        </a>
+      </div>
+    </div>
+
+    <p class="text-[10px] text-center mt-8 tracking-wide2 uppercase" style="color:var(--mut);">
+      © 2026 Hinchfield · All rights reserved
+    </p>
+  `;
+
+  $('#policyContent').innerHTML = html;
+  openModal('policyModal');
+  if (!skipRoute) {
+    try { history.pushState({ modal:'policyModal', key }, '', '#policy/' + key); } catch(e){}
+  }
+}
 /* ---- Modal & Route Management ---- */
 function openModal(id){ const el = $('#'+id); if (el) el.classList.remove('hidden'); document.body.style.overflow = 'hidden'; }
 function closeModal(id, skipHistory){
@@ -3116,7 +3281,7 @@ try { history.back(); } catch(e){}
 }
 }
 function closeAll(skipHistory){
-['cartDrawer','wishDrawer','productModal','sizeModal','trackModal','catPage','mobileMenu','historyModal','staffModal','memberModal','confirmCancelModal'].forEach(id => {
+['cartDrawer','wishDrawer','productModal','sizeModal','trackModal','catPage','mobileMenu','historyModal','staffModal','memberModal','confirmCancelModal','policyModal','invoiceModal'].forEach(id => {
 const el = $('#'+id); if (el) el.classList.add('hidden');
 });
 document.body.style.overflow = '';
@@ -3140,12 +3305,13 @@ openProduct(pid, true);
 }
 else if (hash === '#size') { openModal('sizeModal'); }
 else if (hash === '#membership') { openMemberModal(true); }
+else if (hash.indexOf('#policy/') === 0) { openPolicy(hash.split('/')[1], true); }
 else if (hash === '#admin') { openAdmin(true); }
 else if (hash === '#menu') { openModal('mobileMenu'); }
 }
 window.addEventListener('popstate', handleRoute);
 document.addEventListener('click', e => {
-const t = e.target.closest('[data-open-product],[data-add],[data-wish],[data-close],[data-slide-go],[data-catpage],[data-angle],[data-psize],[data-pq],[data-pm-add],[data-pm-buy],[data-pm-wa],[data-cq],[data-cr],[data-bnav],[data-share],[data-sizeopen],[data-cancel-order],[data-download-invoice],[data-track-wa],[data-openhistory],[data-membership]');
+const t = e.target.closest('[data-open-product],[data-add],[data-wish],[data-close],[data-slide-go],[data-catpage],[data-angle],[data-psize],[data-pq],[data-pm-add],[data-pm-buy],[data-pm-wa],[data-cq],[data-cr],[data-bnav],[data-share],[data-sizeopen],[data-cancel-order],[data-download-invoice],[data-track-wa],[data-openhistory],[data-membership],[data-policy]');
 if (!t){ const sd = $('#searchDrop'); if (sd) sd.classList.add('hidden'); return; }
 if (t.hasAttribute('data-close')){ closeModal(t.getAttribute('data-close')); return; }
 if (t.hasAttribute('data-openhistory')){
@@ -3235,6 +3401,12 @@ if (t.hasAttribute('data-download-invoice')){
     return;
 }
 if (t.hasAttribute('data-cancel-order')){ askCancelOrder(t.getAttribute('data-cancel-order')); return; }
+if (t.hasAttribute('data-policy')){
+  const key = t.getAttribute('data-policy');
+  closeAll(true);
+  openPolicy(key);
+  return;
+}
 });
 /* ---- Wire top-level handlers ---- */
 function wire(){
