@@ -3013,6 +3013,7 @@ async function handleOnlinePayment(){
 /* ---- 🌐 Sync user's orders from server ---- */
 async function syncMyOrders(){
   try {
+    syncMyOrders._last = Date.now();   // track last call
     const user = store.get('user', null);
     if (!user || !user.phone) return;
     const phone = String(user.phone).replace(/[^0-9]/g, '');
@@ -3049,6 +3050,12 @@ async function syncMyOrders(){
       if ($('#trackModal') && !$('#trackModal').classList.contains('hidden')) {
         if ($('#trackInput') && $('#trackInput').value.trim()) track();
       }
+      // Refresh admin panel if open
+      const sm = $('#staffModal');
+      if (sm && !sm.classList.contains('hidden')) {
+        const q = $('#adminSearchId') && $('#adminSearchId').value.trim();
+        if (q && q.length >= 3) $('#adminSearchId').dispatchEvent(new Event('input'));
+      }
     }
   } catch(e){ /* silent */ }
 }
@@ -3058,7 +3065,7 @@ function openHistory(){
   renderHistory();
   openModal('historyModal');
   try {
-    if (window.location.hash === '#orders') return;
+    if (window.location.hash === '#orders') { syncMyOrders(); return; }
     if (window.location.hash) history.replaceState(null, '', window.location.pathname + window.location.search);
     history.pushState({ modal: 'historyModal' }, '', '#orders');
   } catch(e){}
@@ -4039,15 +4046,20 @@ setInterval(() => {
   }
 }, 1000);
 
-// 🌐 Auto-sync orders every 30s when visible
+// 🌐 Smart polling — fast when My Orders open, slow otherwise
 setInterval(() => {
-  if (document.visibilityState === 'visible' && store.get('user', null)) {
+  if (document.visibilityState !== 'visible') return;
+  if (!store.get('user', null)) return;
+  const hm = $('#historyModal');
+  const isOpen = hm && !hm.classList.contains('hidden');
+  // 5s when My Orders open, 15s otherwise
+  if (isOpen || (Date.now() - (syncMyOrders._last || 0) > 14000)) {
     syncMyOrders();
   }
-}, 30000);
+}, 5000);
 
-// 🌐 Sync once on page load
-setTimeout(syncMyOrders, 2000);
+// 🌐 Sync immediately on page load
+setTimeout(syncMyOrders, 1500);
 }
 function refreshOrderTrackingUI(){
   if ($('#trackModal') && !$('#trackModal').classList.contains('hidden')) {
