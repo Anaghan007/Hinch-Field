@@ -3,7 +3,8 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
   <title>Hinch Field — Premium Oversized, Custom, Anime & Polo T-Shirt </title>
   <meta property="og:site_name" content="HINCHFIELD">
   <meta property="og:title" content="HINCHFIELD">
@@ -33,6 +34,241 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
 }
   </script>
   <style>
+    /* ═══════════════════════════════════════════════════════
+   UNIVERSAL RESPONSIVE RESET
+   Works on: iOS Safari, Android Chrome, Samsung Internet,
+   Firefox, Edge, all screen sizes (320px → 4K)
+   ═══════════════════════════════════════════════════════ */
+
+    /* 1. Prevent browser font auto-adjust (iOS/Safari/Chrome Android) */
+    html {
+      -webkit-text-size-adjust: 100%;
+      -moz-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%;
+    }
+
+    /* 2. Prevent font boosting on Android Chrome */
+    body,
+    p,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    span,
+    div,
+    li,
+    a,
+    button,
+    input,
+    textarea,
+    select {
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+      font-optical-sizing: auto;
+    }
+
+    /* 3. Consistent base font sizing (immune to user's default font size) */
+    html {
+      font-size: 16px;
+    }
+
+    @media (max-width: 360px) {
+      html {
+        font-size: 15px;
+      }
+    }
+
+    @media (max-width: 320px) {
+      html {
+        font-size: 14px;
+      }
+    }
+
+    /* 4. Prevent iOS input zoom (font-size < 16px triggers zoom) */
+    @media (max-width: 767px) {
+
+      input,
+      select,
+      textarea {
+        font-size: 16px !important;
+      }
+    }
+
+    /* 5. Prevent horizontal overflow on ALL devices */
+    html,
+    body {
+      max-width: 100vw;
+      overflow-x: hidden;
+      overscroll-behavior-x: none;
+    }
+
+    /* 6. Safe area for notched phones (iPhone X+, Android punch-hole) */
+    body {
+      padding-left: env(safe-area-inset-left, 0);
+      padding-right: env(safe-area-inset-right, 0);
+    }
+
+    /* 7. Minimum touch target (44px per Apple HIG / 48px per Google) */
+    button,
+    a,
+    [role="button"],
+    .pill,
+    .sizechip,
+    .qtybtn {
+      min-height: 40px;
+    }
+
+    .sizechip,
+    .qtybtn {
+      min-height: 36px;
+    }
+
+    /* 8. Responsive images — never overflow */
+    img,
+    svg,
+    video,
+    canvas {
+      max-width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* 9. Long words don't break layout (names, custom text) */
+    p,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    span,
+    div,
+    td,
+    th,
+    li {
+      overflow-wrap: break-word;
+      word-wrap: break-word;
+      word-break: break-word;
+      hyphens: auto;
+    }
+
+    /* 10. Grid/flex children min-width 0 (prevents overflow) */
+    .grid>*,
+    .flex>* {
+      min-width: 0;
+      min-height: 0;
+    }
+
+    /* 11. Consistent form appearance across browsers */
+    input,
+    select,
+    textarea,
+    button {
+      font-family: inherit;
+      font-size: inherit;
+      line-height: inherit;
+      -webkit-appearance: none;
+      appearance: none;
+      border-radius: 0;
+    }
+
+    input[type="checkbox"],
+    input[type="radio"] {
+      -webkit-appearance: auto;
+      appearance: auto;
+    }
+
+    /* 12. Table overflow protection */
+    table {
+      width: 100%;
+      table-layout: fixed;
+      border-collapse: collapse;
+      word-break: break-word;
+    }
+
+    table td,
+    table th {
+      overflow-wrap: break-word;
+    }
+
+    /* 13. Fixed elements don't overlap content */
+    @supports (padding: max(0px)) {
+      body {
+        padding-left: max(0px, env(safe-area-inset-left));
+        padding-right: max(0px, env(safe-area-inset-right));
+      }
+    }
+
+    /* 14. Prevents text selection on tap (mobile UX) */
+    button,
+    .pill,
+    .cat-card,
+    .card button,
+    [role="button"] {
+      -webkit-tap-highlight-color: transparent;
+      -webkit-touch-callout: none;
+    }
+
+    /* 15. Smooth font rendering everywhere */
+    * {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+    }
+
+    /* 16. Ultra-wide screens (>1920px) — keep content centered */
+    @media (min-width: 1921px) {
+      .wrap {
+        max-width: 1800px;
+      }
+    }
+
+    /* 17. Very small screens (< 360px) — compact layout */
+    @media (max-width: 359px) {
+      :root {
+        --pad: 12px;
+        --fs-hero: clamp(1.2rem, 5vw, 1.8rem);
+        --fs-h2: clamp(0.95rem, 3vw, 1.25rem);
+      }
+
+      .cat-card-content {
+        padding: 8px 8px 10px;
+      }
+
+      .card .p-3 {
+        padding: 8px;
+      }
+    }
+
+    /* 18. Zoom accessibility — respect user's zoom but cap max */
+    @media (min-resolution: 2dppx) {
+
+      img,
+      svg {
+        image-rendering: -webkit-optimize-contrast;
+      }
+    }
+
+    /* 19. Focus visible for keyboard users (accessibility) */
+    :focus-visible {
+      outline: 2px solid var(--text);
+      outline-offset: 2px;
+    }
+
+    /* 20. Prevent double-tap zoom on iOS */
+    * {
+      touch-action: manipulation;
+    }
+
+    input,
+    textarea,
+    select {
+      touch-action: auto;
+    }
+
     :root {
       --bg: #FFFFFF;
       --bg2: #F5F4F2;
@@ -420,8 +656,14 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       -webkit-backface-visibility: hidden;
       will-change: opacity;
     }
-    .cardimg .swap.front { opacity: 1; }
-    .cardimg .swap.back  { opacity: 0; }
+
+    .cardimg .swap.front {
+      opacity: 1;
+    }
+
+    .cardimg .swap.back {
+      opacity: 0;
+    }
 
     @media(hover:hover) {
       .card:hover .cardimg .swap.front {
@@ -1525,7 +1767,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       </div>
     </header>
     <div id="catPageGrid"
-      class="wrap py-6 md:py-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6 w-full">
+      class="wrap py-6 md:py-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-6 w-full">
     </div>
   </div>
 
