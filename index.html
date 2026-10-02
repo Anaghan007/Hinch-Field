@@ -1966,11 +1966,37 @@ function updateCardPrices(){
     else if (t === 'save') el.textContent = 'Save ' + fmt(Math.round(p.price * 0.5)) + ' with Membership';
   });
 }
+/* ---- In-place cart price update (NO image re-render) ---- */
+function updateCartPrices(){
+  // ફક્ત ત્યારે જ જો cart drawer ખુલ્લું હોય
+  const drawer = $('#cartDrawer');
+  if (!drawer || drawer.classList.contains('hidden')) {
+    // બંધ હોય તો પણ totals update કરો (sidebar numerals)
+    const t = totals();
+    const s = $('#sumSub'), d = $('#sumDel'), tot = $('#sumTotal');
+    if (s) s.textContent = fmt(t.sub);
+    if (d) d.innerHTML = t.del ? fmt(t.del) : '<span style="color:var(--text);">FREE</span>';
+    if (tot) tot.textContent = fmt(t.total);
+    return;
+  }
+  // Drawer ખુલ્લું હોય તો items ના line-total + totals update કરો
+  $$('[data-cart-line]').forEach(el => {
+    const l = cart.find(x => x.key === el.dataset.cartLine);
+    const p = l && prodById(l.id);
+    if (!p || !l) return;
+    el.textContent = fmt(p.price * l.qty);
+  });
+  const t = totals();
+  const s = $('#sumSub'), d = $('#sumDel'), tot = $('#sumTotal');
+  if (s) s.textContent = fmt(t.sub);
+  if (d) d.innerHTML = t.del ? fmt(t.del) : '<span style="color:var(--text);">FREE</span>';
+  if (tot) tot.textContent = fmt(t.total);
+}
 function refreshPrices(){
 safe(updateCardPrices, 'refreshPrices.cardPrices');           // ← cards in-place
 safe(updateHeroPrices, 'refreshPrices.hero');
 safe(updateMembershipPrices, 'refreshPrices.membership');
-safe(renderCart, 'refreshPrices.cart');                       // cart drawer (hidden હોય તો effect નહીં)
+safe(updateCartPrices, 'refreshPrices.cart');                       // cart drawer (hidden હોય તો effect નહીં)
 if ($('#catPage') && !$('#catPage').classList.contains('hidden')) safe(updateCardPrices, 'refreshPrices.cat');
 if ($('#productModal') && !$('#productModal').classList.contains('hidden')) safe(drawProduct, 'refreshPrices.pm');
 }
@@ -2254,10 +2280,10 @@ return `
 </div>
 <div class="p-3 md:p-4 text-center border-l hairline" style="background:var(--text); color:var(--bg);">
 <p class="text-[9px] md:text-[10px] tracking-wide2 uppercase mb-1">⭐ Member</p>
-<b class="disp text-xl md:text-2xl" style="font-weight:500;">${fmt(Math.round(p.price * 0.5))}</b>
+<b class="disp text-xl md:text-2xl hero-price-mem" style="font-weight:500;">${fmt(Math.round(p.price * 0.5))}</b>
 </div>
 </div>
-<p class="ha-up text-[10px] text-center md:text-left py-2 tracking-wide2 uppercase" style="color:var(--text); animation-delay:.15s;">
+<p class="ha-up hero-price-save text-[10px] text-center md:text-left py-2 tracking-wide2 uppercase" style="color:var(--text); animation-delay:.15s;">
 💡 Save ${fmt(Math.round(p.price * 0.5))} with Membership
 </p>
 <p class="ha-up text-sm md:text-base max-w-md mx-auto md:mx-0" style="color:var(--mut); animation-delay:.15s; line-height:1.6;">${esc(p.desc)}</p>
@@ -2292,6 +2318,8 @@ if (!slide) return;
 const p = s.rep;
 const set = (sel,val) => { const el = slide.querySelector(sel); if (el) el.textContent = val; };
 set('.hero-price', fmt(p.price));
+set('.hero-price-mem', fmt(Math.round(p.price * 0.5)));
+set('.hero-price-save', '💡 Save ' + fmt(Math.round(p.price * 0.5)) + ' with Membership');
 });
 }
 function renderDots(){
@@ -2414,7 +2442,7 @@ return '<div class="flex gap-3 border hairline p-3 a-up w-full" style="backgroun
 '<b class="text-xs w-4 text-center">' + l.qty + '</b>' +
 '<button class="qtybtn" data-cq="' + l.key + '" data-d="1">+</button>' +
 '</div>' +
-'<b class="disp">' + fmt(p.price * l.qty) + '</b>' +
+'<b class="disp" data-cart-line="' + l.key + '">' + fmt(p.price * l.qty) + '</b>' +
 '</div>' +
 '</div>' +
 '<button class="self-start" style="color:var(--mut);" data-cr="' + l.key + '" aria-label="Remove">✕</button>' +
