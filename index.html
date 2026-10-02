@@ -3089,16 +3089,18 @@ drop.innerHTML = r.length ? r.map(p =>
 '<b class="text-xs">' + fmt(p.price) + '</b></button>'
 ).join('') : '<p class="p-5 text-sm" style="color:var(--mut);">No results for "' + esc(q) + '"</p>';
 drop.classList.remove('hidden');
-}, 50);
+}, 220);
 // 🔄 Restore last search on page load
 const lastSearch = store.get('last_search', '');
 if (lastSearch){
+  setTimeout(() => {
     const di = $('#searchInput'); if (di) di.value = lastSearch;
     const mi = $('#mSearchInput'); if (mi) mi.value = lastSearch;
     if (lastSearch.length >= 2){
       try { doSearch(); } catch(e){}
       try { doMSearch(); } catch(e){}
     }
+  }, 400);
 }
 
 const doMSearch = debounce(() => {
@@ -3114,7 +3116,7 @@ if (q) store.set('last_search', q); else store.set('last_search', '');
 $('#mResults').innerHTML = q.length < 2
 ? '<p class="col-span-2 text-center py-16 text-sm" style="color:var(--mut);">Search HinchField…</p>'
 : (results(q).map(p => card(p,'a-up',0)).join('') || '<p class="col-span-2 text-center py-16" style="color:var(--mut);">Nothing found.</p>');
-}, 50);
+}, 220);
 function track(){
 const id = $('#trackInput').value.trim().toUpperCase().replace(/[^A-Z0-9]/g,'');
 if (!/^HF\d{6}$/.test(id)){ $('#trackResult').innerHTML = '<p class="text-xs" style="color:#DC2626;">Format: HF123456</p>'; return; }
