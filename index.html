@@ -3019,6 +3019,39 @@ function openHistory(){
     if (window.location.hash) history.replaceState(null, '', window.location.pathname + window.location.search);
     history.pushState({ modal: 'historyModal' }, '', '#orders');
   } catch(e){}
+  // 🌐 Sync from server in background
+  syncMyOrders();
+}
+
+/* ---- 🌐 Sync user's orders from server ---- */
+async function syncMyOrders(){
+  try {
+    const user = store.get('user', null);
+    if (!user || !user.phone) return;
+    const phone = user.phone.replace(/[^0-9]/g, '');
+    if (!phone) return;
+
+    const r = await fetch(`${API_BASE}/api/orders?action=my-orders&phone=${phone}`);
+    const d = await r.json();
+    if (!d.success || !d.orders.length) return;
+
+    const local = store.get('orders', []);
+    let changed = false;
+    d.orders.forEach(serverO => {
+      const idx = local.findIndex(x => x.id === serverO.id);
+      if (idx === -1) {
+        local.push(serverO);
+        changed = true;
+      } else if (local[idx].status !== serverO.status) {
+        local[idx] = serverO;
+        changed = true;
+      }
+    });
+    if (changed){
+      store.set('orders', local);
+      renderHistory();
+    }
+  } catch(e){ /* silent */ }
 }
 function renderHistory(){
 let orders = store.get('orders', []).sort((a,b) => b.timestamp - a.timestamp);
@@ -3475,6 +3508,8 @@ if (t.hasAttribute('data-policy')){
 });
 /* ---- Wire top-level handlers ---- */
 function wire(){
+// 🌐 Auto-sync orders on page load (every 30s)
+setInterval(() => { if (document.visibilityState === 'visible') syncMyOrders(); }, 30000);
 $('#cartOpen').onclick = () => { closeAll(true); renderCart(); try{ history.pushState({ modal:'cartDrawer' }, '', '#cart'); }catch(e){} handleRoute(); };
 $('#wishOpen').onclick = () => { closeAll(true); renderWish(); try{ history.pushState({ modal:'wishDrawer' }, '', '#wishlist'); }catch(e){} handleRoute(); };
 $('#menuOpen').onclick = () => { openModal('mobileMenu'); try{ history.pushState({ modal: 'mobileMenu' }, '', '#menu'); }catch(e){} };
