@@ -1267,6 +1267,9 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
           <li><a href="mailto:support.hinchfield@gmail.com"
               class="flex items-center gap-3 hover:opacity-60 transition"><span class="text-[var(--text)]"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></span>support.hinchfield@gmail.com</a>
           </li>
+          <li>
+            <button id="footAdmin" class="hover:opacity-60 transition text-[10px] tracking-widest uppercase" style="color:var(--mut);">Staff / Admin Portal</button>
+          </li>
         </ul>
       </div>
     </div>
@@ -3277,18 +3280,6 @@ $('#mSearchInput').addEventListener('input', doMSearch);
 $('#sortSel').onchange = e => { cp.sort = e.target.value; drawCatPage(); };
 $('#trackGo').onclick = track;
 $('#toTop').onclick = () => window.scrollTo({ top:0, behavior:'smooth' });
-
-//  Secret Admin Access via Search Bar
-const searchBox = $('#searchInput'); // જો તારા સર્ચ બાર ની ID અલગ હોય તો અહીં બદલજે
-if (searchBox) {
-  searchBox.addEventListener('input', (e) => {
-    const val = e.target.value.trim().toUpperCase();
-    if (val === 'AP') {
-      e.target.value = ''; // સર્ચ બાર સાફ કરો
-      if (typeof openAdmin === 'function') openAdmin(); // એડમિન પેનલ ખોલો
-    }
-  });
-}
 
 function showMemberView(){
   const active = $('#memViewActive');
