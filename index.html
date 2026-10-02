@@ -3010,6 +3010,49 @@ async function handleOnlinePayment(){
   }
 }
 
+/* ---- 🌐 Sync user's orders from server ---- */
+async function syncMyOrders(){
+  try {
+    const user = store.get('user', null);
+    if (!user || !user.phone) return;
+    const phone = String(user.phone).replace(/[^0-9]/g, '');
+    if (!phone) return;
+
+    const r = await fetch(`${API_BASE}/api/orders?action=my-orders&phone=${phone}`);
+    const d = await r.json();
+    if (!d.success || !d.orders.length) return;
+
+    const local = store.get('orders', []);
+    let changed = false;
+
+    d.orders.forEach(serverO => {
+      const idx = local.findIndex(x => x.id === serverO.id);
+      if (idx === -1) {
+        // 🆕 Order from another device — add it
+        local.push(serverO);
+        changed = true;
+      } else if (local[idx].status !== serverO.status) {
+        // 🔄 Status changed on server — update locally
+        local[idx].status = serverO.status;
+        local[idx].updatedAt = serverO.updatedAt || Date.now();
+        if (serverO.status === 'Delivered') local[idx].deliveredAt = serverO.deliveredAt || Date.now();
+        changed = true;
+      }
+    });
+
+    if (changed){
+      store.set('orders', local);
+      // Auto-refresh history if visible
+      const hm = $('#historyModal');
+      if (hm && !hm.classList.contains('hidden')) renderHistory();
+      // Refresh tracking modal too if open
+      if ($('#trackModal') && !$('#trackModal').classList.contains('hidden')) {
+        if ($('#trackInput') && $('#trackInput').value.trim()) track();
+      }
+    }
+  } catch(e){ /* silent */ }
+}
+    
 /* ---- History ---- */
 function openHistory(){
   renderHistory();
@@ -3019,6 +3062,7 @@ function openHistory(){
     if (window.location.hash) history.replaceState(null, '', window.location.pathname + window.location.search);
     history.pushState({ modal: 'historyModal' }, '', '#orders');
   } catch(e){}
+  syncMyOrders();
 }
 function renderHistory(){
 let orders = store.get('orders', []).sort((a,b) => b.timestamp - a.timestamp);
@@ -3983,11 +4027,27 @@ if (e.key === 'ArrowLeft'){ pm.angle = (pm.angle+1) % 2; drawProduct(); }
 }
 });
 window.addEventListener('resize', debounce(sizeHero, 300));
+// 🌐 Sync when tab becomes visible again
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && store.get('user', null)) {
+    syncMyOrders();
+  }
+});
 setInterval(() => {
   if (document.visibilityState === 'visible') {
     refreshOrderTrackingUI();
   }
 }, 1000);
+
+// 🌐 Auto-sync orders every 30s when visible
+setInterval(() => {
+  if (document.visibilityState === 'visible' && store.get('user', null)) {
+    syncMyOrders();
+  }
+}, 30000);
+
+// 🌐 Sync once on page load
+setTimeout(syncMyOrders, 2000);
 }
 function refreshOrderTrackingUI(){
   if ($('#trackModal') && !$('#trackModal').classList.contains('hidden')) {
