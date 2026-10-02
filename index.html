@@ -1047,8 +1047,8 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
     @media (max-width: 360px) {
       :root {
         --pad: 12px;
-        --fs-hero: 1.35rem;
-        --fs-h2: 1rem;
+        --fs-hero: 1.25rem;
+        --fs-h2: .95rem;
       }
 
       .wrap {
@@ -1114,7 +1114,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
     @media (max-width: 340px) {
       :root {
         --pad: 10px;
-        --fs-hero: 1.2rem;
+        --fs-hero: 1.1rem;
       }
 
       .wrap {
@@ -1165,6 +1165,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
     @media (min-width: 415px) and (max-width: 480px) {
       :root {
         --pad: 16px;
+        --fs-hero: 1.5rem;
       }
 
       .wrap {
@@ -1218,8 +1219,8 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
     /* 10. Touch devices — 44px minimum touch targets (Apple HIG) */
     @media (hover: none) and (pointer: coarse) {
 
-      button,
-      a,
+      button:not([data-slide-go]):not([data-close]):not(.dot),
+      a:not(.link-u),
       .pill,
       .sizechip,
       .qtybtn,
@@ -1239,7 +1240,6 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
         padding: .65rem 1rem;
       }
 
-      /* Hover effects બંધ કરો — mobile પર sticky hover ના થાય */
       .cat-card:hover .cat-card-img img {
         transform: none;
       }
@@ -1250,6 +1250,13 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
 
       .link-u:hover::after {
         transform: scaleX(0);
+      }
+
+      /* Slider dots — જરૂરી નાના રહે */
+      [data-slide-go] {
+        min-height: 2px !important;
+        height: 2px !important;
+        touch-action: manipulation;
       }
     }
 
