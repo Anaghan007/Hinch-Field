@@ -3201,11 +3201,7 @@ function cancelOrder(orderId){
       })
     }).catch(() => {});
   } catch(e){}
-} else {
-    closeModal('confirmCancelModal', true);
-    pendingCancelId = null;
-    toast('Cannot cancel after 24 hours','warn');
-  }
+}
 }
     
 /* ---- Admin ---- */
@@ -3839,51 +3835,6 @@ $('#adminCancelBtn').onclick = async () => {
       $('#adminCancelInput').value = '';
       
       // Clear local storage if it's the current user's membership
-      const saved = store.get('membership_full', null);
-      if (saved && saved.code === d.code) {
-        store.set('membership_full', null);
-        appliedMembership = null;
-        if (typeof showMemberView === 'function') showMemberView();
-        if (typeof renderCart === 'function') renderCart();
-        toast('Membership cancelled', 'cross');
-      }
-    } else {
-      result.innerHTML = '<p class="text-[10px]" style="color:#DC2626;">❌ ' + (d.error || 'Not found') + '</p>';
-    }
-  } catch (e) {
-    result.innerHTML = '<p class="text-[10px]" style="color:#DC2626;">Error: ' + e.message + '</p>';
-  } finally {
-    $('#adminCancelBtn').disabled = false;
-    $('#adminCancelBtn').textContent = 'Cancel';
-  }
-};
-// Cancel Membership handler
-$('#adminCancelBtn').onclick = async () => {
-  const input = $('#adminCancelInput').value.trim();
-  const result = $('#adminCancelResult');
-  if (!input) {
-    result.innerHTML = '<p class="text-[10px]" style="color:#DC2626;">Enter phone or code</p>';
-    return;
-  }
-
-  const isCode = /^\d{4}$/.test(input);
-  const payload = isCode ? { code: input } : { phone: input };
-
-  $('#adminCancelBtn').disabled = true;
-  $('#adminCancelBtn').textContent = '…';
-
-  try {
-    const r = await fetch(`${API_BASE}/api/membership-cancel`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    const d = await r.json();
-
-    if (d.success) {
-      result.innerHTML = '<p class="text-[10px]" style="color:#0A0A0A;">✅ Membership cancelled (Code: ' + d.code + ')</p>';
-      $('#adminCancelInput').value = '';
-      
       const saved = store.get('membership_full', null);
       if (saved && saved.code === d.code) {
         store.set('membership_full', null);
