@@ -1032,10 +1032,6 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
         <button id="openMembership" class="flex items-center gap-1.5" style="color:var(--text);"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a8 8 0 0 1 16 0v1"/></svg>Membership</button>
         <a href="#contact"
           class="text-[11px] font-medium tracking-wide2 uppercase hover:opacity-60 transition shrink-0">Contact</a>
-        <button id="curChip" class="chip border hairline shrink-0 hover:border-[var(--text)] gap-1.5 transition" style="color:var(--text);">
-          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-          Detecting…
-        </button>
       </div>
     </nav>
   </header>
@@ -1352,12 +1348,6 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
 
           <div class="p-4 md:p-5 space-y-3 w-full">
             <p class="micro" style="color:var(--text);">Delivery Details</p>
-            <div class="flex items-center justify-between gap-2 border hairline px-4 py-2"
-              style="background:var(--bg2);">
-              <p class="text-[11px] font-medium" style="color:var(--text);"><span id="coCountryTxt">Detecting…</span>
-              </p>
-              <button id="coDetect" class="pill btn-line px-3 py-1.5 text-[10px]" style="padding:6px 12px;">Re-detect</button>
-            </div>
             <input id="coName" maxlength="60" class="field" placeholder="Full name *">
             <input id="coPhone" inputmode="numeric" maxlength="15" class="field" placeholder="Mobile / WhatsApp number *">
             <input id="coEmail" type="email" maxlength="60" class="field" placeholder="Email address * (for order updates)">
@@ -1813,205 +1803,17 @@ share:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="
 menu:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 7h16M4 12h16M4 17h16"/></svg>`
 };
 function ic(n,c='w-4 h-4'){ return `<span class="inline-flex items-center justify-center ${c}">${ICONS[n]||''}</span>`; }
-/* ---- Currency / Location ---- */
-const MARKUP = 5.00;
-const COUNTRY_CUR = { IN:'INR',US:'USD',GB:'GBP',AE:'AED',SA:'SAR',QA:'QAR',KW:'KWD',BH:'BHD',OM:'OMR',JO:'JOD',EG:'EGP',ZA:'ZAR',NG:'NGN',KE:'KES',AU:'AUD',NZ:'NZD',CA:'CAD',SG:'SGD',MY:'MYR',TH:'THB',ID:'IDR',PH:'PHP',JP:'JPY',KR:'KRW',CN:'CNY',HK:'HKD',BD:'BDT',PK:'PKR',LK:'LKR',NP:'NPR',CH:'CHF',SE:'SEK',NO:'NOK',DK:'DKK',PL:'PLN',RU:'RUB',MX:'MXN',BR:'BRL',DE:'EUR',FR:'EUR',IT:'EUR',ES:'EUR',NL:'EUR',IE:'EUR',AT:'EUR',BE:'EUR',PT:'EUR',FI:'EUR',GR:'EUR' };
-const COUNTRY_NAME = { IN:'India',US:'United States',GB:'United Kingdom',AE:'UAE',SA:'Saudi Arabia',QA:'Qatar',KW:'Kuwait',BH:'Bahrain',OM:'Oman',JO:'Jordan',EG:'Egypt',ZA:'South Africa',NG:'Nigeria',KE:'Kenya',AU:'Australia',NZ:'New Zealand',CA:'Canada',SG:'Singapore',MY:'Malaysia',TH:'Thailand',ID:'Indonesia',PH:'Philippines',JP:'Japan',KR:'South Korea',CN:'China',HK:'Hong Kong',BD:'Bangladesh',PK:'Pakistan',LK:'Sri Lanka',NP:'Nepal',CH:'Switzerland',SE:'Sweden',NO:'Norway',DK:'Denmark',PL:'Poland',RU:'Russia',MX:'Mexico',BR:'Brazil',DE:'Germany',FR:'France',IT:'Italy',ES:'Spain',NL:'Netherlands',BE:'Belgium',PT:'Portugal',IE:'Ireland',AT:'Austria',FI:'Finland',GR:'Greece' };
-const TZC = { 'Asia/Kolkata':'IN','Asia/Calcutta':'IN','Asia/Dubai':'AE','Asia/Riyadh':'SA','Asia/Karachi':'PK','Asia/Dhaka':'BD','Asia/Singapore':'SG','Asia/Kuala_Lumpur':'MY','Asia/Tokyo':'JP','Asia/Seoul':'KR','Asia/Shanghai':'CN','Asia/Hong_Kong':'HK','America/New_York':'US','America/Chicago':'US','America/Denver':'US','America/Los_Angeles':'US','America/Toronto':'CA','America/Vancouver':'CA','America/Mexico_City':'MX','America/Sao_Paulo':'BR','Europe/London':'GB','Europe/Paris':'FR','Europe/Berlin':'DE','Europe/Rome':'IT','Europe/Madrid':'ES','Europe/Amsterdam':'NL','Europe/Moscow':'RU','Australia/Sydney':'AU','Australia/Perth':'AU','Pacific/Auckland':'NZ','Africa/Cairo':'EG','Africa/Lagos':'NG','Africa/Johannesburg':'ZA','Africa/Nairobi':'KE' };
-const RATE_REFRESH_MS = 60 * 60 * 1000;
-const RATE_CACHE_MAX_MS = 6 * 60 * 60 * 1000;
-const RATE_DRIFT_MAX = 0.4;
-let RATES = null, RATES_AT = 0, RATES_SRC = '', fxStatus = 'connecting', fxRetry = 0;
-let country = 'IN';
-async function fetchJSON(url, ms=8000){
-const ctl = new AbortController();
-const t = setTimeout(() => ctl.abort(), ms);
-try{
-const r = await fetch(url, { signal: ctl.signal, cache: 'no-store' });
-if (!r.ok) throw new Error('HTTP ' + r.status);
-return await r.json();
-} finally { clearTimeout(t); }
-}
-const RATE_SOURCES = [
-{ name:'open.er-api.com', get:async () => {
-const j = await fetchJSON('https://open.er-api.com/v6/latest/INR');
-return (j && j.result === 'success' && j.rates) ? j.rates : null;
-}},
-{ name:'currency-api', get:async () => {
-const j = await fetchJSON('https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/inr.json');
-if (!j || !j.inr) return null;
-const up = {}; for (const k in j.inr) up[k.toUpperCase()] = j.inr[k];
-return up;
-}},
-{ name:'frankfurter.app', get:async () => {
-const j = await fetchJSON('https://api.frankfurter.app/latest?from=INR');
-return (j && j.rates) ? j.rates : null;
-}}
-];
-function ratesSane(next){
-if (!next || typeof next !== 'object') return false;
-for (const k of ['USD','EUR','GBP']){ const v = Number(next[k]); if (!(v > 0)) return false; }
-if (RATES){ for (const k of ['USD','EUR','GBP']){ const a = Number(next[k]), b = Number(RATES[k]); if (b > 0 && Math.abs(a - b) / b > RATE_DRIFT_MAX) return false; } }
-return true;
-}
-function loadCachedRates(){
-const c = store.get('fx', null);
-if (c && c.rates && c.at && (Date.now() - c.at) < RATE_CACHE_MAX_MS && ratesSane(c.rates)){
-RATES = c.rates; RATES_AT = c.at; RATES_SRC = c.src || 'cached-live';
-return true;
-}
-return false;
-}
-async function loadLiveRates(){
-for (const s of RATE_SOURCES){
-try{
-const r = await s.get();
-if (r && ratesSane(r)){
-RATES = r; RATES_AT = Date.now(); RATES_SRC = s.name;
-store.set('fx', { at:RATES_AT, rates:r, src:s.name });
-return true;
-}
-}catch(e){}
-}
-return false;
-}
-async function ensureLive(note){
-const ok = await loadLiveRates();
-if (ok){
-const wasDown = fxStatus !== 'live';
-fxStatus = 'live'; fxRetry = 0;
-updateCountryUI(); refreshPrices();
-if (note || wasDown) toast('Live exchange rates connected','globe');
-return true;
-}
-fxStatus = 'retry';
-updateCountryUI();
-fxRetry = Math.min(300000, fxRetry ? fxRetry * 2 : 15000);
-setTimeout(() => ensureLive(false), fxRetry);
-return false;
-}
-function tzCountry(){
-try{
-const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
-if (TZC[tz]) return TZC[tz];
-}catch(e){}
-return 'IN';
-}
-async function ipCountry(){
-try{
-const ctl = new AbortController();
-const to = setTimeout(() => ctl.abort(), 6000);
-const r = await fetch('https://ipapi.co/json/', { signal: ctl.signal });
-clearTimeout(to);
-const j = await r.json();
-if (j && j.country_code && COUNTRY_CUR[j.country_code]) return j.country_code;
-}catch(e){}
-try{
-const r2 = await fetch('https://ipwho.is/');
-const j2 = await r2.json();
-if (j2 && j2.country_code && COUNTRY_CUR[j2.country_code]) return j2.country_code;
-}catch(e){}
-return null;
-}
-async function detectCountry(showNote){
-let c = await ipCountry();
-if (!c) c = tzCountry();
-const changed = !!(c && COUNTRY_CUR[c] && c !== country);
-if (c && COUNTRY_CUR[c]) {
-  country = c;
-  store.set('country', c);           // ← cache country
-}
-updateCountryUI();
-if (changed) refreshPrices();         // ← INSTANT (rates cache હોય તો તરત દેખાય)
-if (showNote) toast('Location: ' + (COUNTRY_NAME[country] || country), 'pin');
-return changed;
-}
-function updateCountryUI(){
-const c = curCode();
-const chip = $('#curChip');
-if (chip){
-const dot = fxStatus === 'live' ? '●' : fxStatus === 'retry' ? '○' : '◐';
-chip.innerHTML = dot + ' ' + country + ' · ' + c;
-chip.title = fxStatus === 'live' ? ('LIVE rates via ' + RATES_SRC) : 'Connecting to live exchange rates…';
-}
-const ct = $('#coCountryTxt');
-if (ct) ct.textContent = (COUNTRY_NAME[country] || country) + ' (' + c + ')';
-}
-const curCode = () => COUNTRY_CUR[country] || 'INR';
+/* ---- Price format (INR only) ---- */
 function fmt(inr){
-const n = Number(inr);
-if (!isFinite(n)) return '₹0';
-if (country === 'IN' || !RATES) {
-return '₹' + n.toLocaleString('en-IN');
+  const n = Number(inr);
+  if (!isFinite(n)) return '₹0';
+  return '₹' + n.toLocaleString('en-IN');
 }
-const c = curCode();
-if (RATES && Number(RATES[c]) > 0){
-const v = n * MARKUP * RATES[c];
-try{ return new Intl.NumberFormat(undefined, { style:'currency', currency:c, minimumFractionDigits:0, maximumFractionDigits:2 }).format(v); }
-catch(e){ return c + ' ' + Math.round(v); }
-}
-return '₹' + n.toLocaleString('en-IN');
-}
-/* ---- Membership prices ને currency મુજબ update કરો ---- */
 function updateMembershipPrices(){
   const mp = $('#memPrice'); if (mp) mp.textContent = fmt(599);
   const mm = $('#memMrp'); if (mm) mm.textContent = fmt(1199);
   const mb = $('#memBuyBtn');
   if (mb && !mb.disabled) mb.textContent = 'Pay ' + fmt(599) + ' — Get Membership';
-}
-/* ---- In-place card price update (NO image re-render) ---- */
-function updateCardPrices(){
-  $$('[data-price]').forEach(el => {
-    const p = prodById(el.dataset.pid);
-    if (!p) return;
-    const t = el.dataset.price;
-    if (t === 'reg')       el.textContent = fmt(p.price);
-    else if (t === 'mem')  el.textContent = fmt(Math.round(p.price * 0.5));
-    else if (t === 'save') el.textContent = 'Save ' + fmt(Math.round(p.price * 0.5)) + ' with Membership';
-  });
-}
-/* ---- In-place cart price update (NO image re-render) ---- */
-function updateCartPrices(){
-  // ફક્ત ત્યારે જ જો cart drawer ખુલ્લું હોય
-  const drawer = $('#cartDrawer');
-  if (!drawer || drawer.classList.contains('hidden')) {
-    // બંધ હોય તો પણ totals update કરો (sidebar numerals)
-    const t = totals();
-    const s = $('#sumSub'), d = $('#sumDel'), tot = $('#sumTotal');
-    if (s) s.textContent = fmt(t.sub);
-    if (d) d.innerHTML = t.del ? fmt(t.del) : '<span style="color:var(--text);">FREE</span>';
-    if (tot) tot.textContent = fmt(t.total);
-    return;
-  }
-  // Drawer ખુલ્લું હોય તો items ના line-total + totals update કરો
-  $$('[data-cart-line]').forEach(el => {
-    const l = cart.find(x => x.key === el.dataset.cartLine);
-    const p = l && prodById(l.id);
-    if (!p || !l) return;
-    el.textContent = fmt(p.price * l.qty);
-  });
-  const t = totals();
-  const s = $('#sumSub'), d = $('#sumDel'), tot = $('#sumTotal');
-  if (s) s.textContent = fmt(t.sub);
-  if (d) d.innerHTML = t.del ? fmt(t.del) : '<span style="color:var(--text);">FREE</span>';
-  if (tot) tot.textContent = fmt(t.total);
-}
-let _lastPriceKey = '';
-function refreshPrices(){
-  // signature = country + rates snapshot
-  const rk = RATES
-    ? (Number(RATES.USD)||0).toFixed(4) + '|' + (Number(RATES.EUR)||0).toFixed(4) + '|' + (Number(RATES[curCode()])||0).toFixed(4)
-    : 'norates';
-  const sig = country + '|' + rk;
-  if (sig === _lastPriceKey) return;    // ← nothing changed → skip
-  _lastPriceKey = sig;
-
-  safe(updateCardPrices, 'refreshPrices.cardPrices');
-  safe(updateHeroPrices, 'refreshPrices.hero');
-  safe(updateMembershipPrices, 'refreshPrices.membership');
-  safe(updateCartPrices, 'refreshPrices.cart');
-  if ($('#catPage') && !$('#catPage').classList.contains('hidden')) safe(updateCardPrices, 'refreshPrices.cat');
-  if ($('#productModal') && !$('#productModal').classList.contains('hidden')) safe(drawProduct, 'refreshPrices.pm');
 }
 /* ---- Categories ---- */
 const CATMETA = {
@@ -2118,14 +1920,14 @@ ${multi
 <div class="mt-3 grid grid-cols-2 border hairline">
 <div class="p-2 text-center">
 <p class="text-[9px] tracking-wide2 uppercase mb-1" style="color:var(--mut);">Regular</p>
-<b class="disp text-[15px] md:text-base" data-price="reg" data-pid="${p.id}">${fmt(p.price)}</b>
+<b class="disp text-[15px] md:text-base">${fmt(p.price)}</b>
 </div>
 <div class="p-2 text-center border-l hairline" style="background:var(--text); color:var(--bg);">
 <p class="text-[9px] tracking-wide2 uppercase mb-1">⭐ Member</p>
-<b class="disp text-[15px] md:text-base" data-price="mem" data-pid="${p.id}">${fmt(Math.round(p.price * 0.5))}</b>
+<b class="disp text-[15px] md:text-base">${fmt(Math.round(p.price * 0.5))}</b>
 </div>
 </div>
-<div class="text-[9px] text-center py-1.5 tracking-wide2 uppercase hairline border border-t-0" style="color:var(--text);" data-price="save" data-pid="${p.id}">
+<div class="text-[9px] text-center py-1.5 tracking-wide2 uppercase hairline border border-t-0" style="color:var(--text);">
 Save ${fmt(Math.round(p.price * 0.5))} with Membership
 </div>
 <button class="pill btn-line w-full mt-3 py-2.5 text-[10px] flex items-center justify-center gap-1.5" data-add="${p.id}">${ic('cart','w-3 h-3')} Add to Cart</button>
@@ -2293,10 +2095,10 @@ return `
 </div>
 <div class="p-3 md:p-4 text-center border-l hairline" style="background:var(--text); color:var(--bg);">
 <p class="text-[9px] md:text-[10px] tracking-wide2 uppercase mb-1">⭐ Member</p>
-<b class="disp text-xl md:text-2xl hero-price-mem" style="font-weight:500;">${fmt(Math.round(p.price * 0.5))}</b>
+<b class="disp text-xl md:text-2xl" style="font-weight:500;">${fmt(Math.round(p.price * 0.5))}</b>
 </div>
 </div>
-<p class="ha-up hero-price-save text-[10px] text-center md:text-left py-2 tracking-wide2 uppercase" style="color:var(--text); animation-delay:.15s;">
+<p class="ha-up text-[10px] text-center md:text-left py-2 tracking-wide2 uppercase" style="color:var(--text); animation-delay:.15s;">
 💡 Save ${fmt(Math.round(p.price * 0.5))} with Membership
 </p>
 <p class="ha-up text-sm md:text-base max-w-md mx-auto md:mx-0" style="color:var(--mut); animation-delay:.15s; line-height:1.6;">${esc(p.desc)}</p>
@@ -2322,18 +2124,6 @@ ${heroImg(p,p.colors[0][0])}
 </div>`;
 }).join('');
 renderDots();
-}
-function updateHeroPrices(){
-const S = buildSlides();
-S.forEach((s,i) => {
-const slide = document.querySelector('[data-slide="' + i + '"]');
-if (!slide) return;
-const p = s.rep;
-const set = (sel,val) => { const el = slide.querySelector(sel); if (el) el.textContent = val; };
-set('.hero-price', fmt(p.price));
-set('.hero-price-mem', fmt(Math.round(p.price * 0.5)));
-set('.hero-price-save', '💡 Save ' + fmt(Math.round(p.price * 0.5)) + ' with Membership');
-});
 }
 function renderDots(){
 const total = buildSlides().length;
@@ -2455,7 +2245,7 @@ return '<div class="flex gap-3 border hairline p-3 a-up w-full" style="backgroun
 '<b class="text-xs w-4 text-center">' + l.qty + '</b>' +
 '<button class="qtybtn" data-cq="' + l.key + '" data-d="1">+</button>' +
 '</div>' +
-'<b class="disp" data-cart-line="' + l.key + '">' + fmt(p.price * l.qty) + '</b>' +
+'<b class="disp">' + fmt(p.price * l.qty) + '</b>' +
 '</div>' +
 '</div>' +
 '<button class="self-start" style="color:var(--mut);" data-cr="' + l.key + '" aria-label="Remove">✕</button>' +
@@ -2722,7 +2512,6 @@ if (lock) return;
 const err = m => { const e = $('#coErr'); e.textContent = m; e.classList.remove('hidden'); };
 $('#coErr').classList.add('hidden');
 if (!cart.length) return err('Cart is empty — add products first.');
-if (country !== 'IN' && (!RATES || Number(RATES[curCode()]) <= 0)) return err('Connecting live rates — please wait a moment and tap again.');
 if ($('#coHoney').value) return;
 const name = $('#coName').value.trim();
 const phone = $('#coPhone').value.trim();
@@ -2747,7 +2536,7 @@ const otp = String(Math.floor(1000 + Math.random() * 9000));
 const order = {
   id: oid, otp, timestamp: Date.now(),
   status: 'Order Placed', updatedAt: Date.now(),
-  customer: { name, phone, email, addr, country, city, state, pin },
+  customer: { name, phone, email, addr, city, state, pin },
   items: JSON.parse(JSON.stringify(cart)),
   totals: t, deliveredAt: null,
   payment: { method: 'cod' }
@@ -2829,7 +2618,6 @@ function readCustomer(){
     city: $('#coCity').value.trim(),
     state: $('#coState').value.trim(),
     pin: $('#coPin').value.trim(),
-    country,
   };
 }
 
@@ -3456,8 +3244,6 @@ $$('#payRadCod, #payRadOnline').forEach(lbl => {
   });
 });
 
-$('#coDetect').onclick = () => { detectCountry(true).then(() => refreshPrices()); ensureLive(true); };
-$('#curChip').onclick = () => { detectCountry(true).then(() => refreshPrices()); ensureLive(true); };
 $('#sortSel').onchange = e => { cp.sort = e.target.value; drawCatPage(); };
 $('#trackGo').onclick = track;
 $('#toTop').onclick = () => window.scrollTo({ top:0, behavior:'smooth' });
@@ -3860,11 +3646,7 @@ setInterval(() => {
     refreshOrderTrackingUI();
   }
 }, 1000);
-document.addEventListener('visibilitychange', () => {
-if (!document.hidden && (!RATES || Date.now() - RATES_AT > RATE_REFRESH_MS)) ensureLive(false);
-});
-window.addEventListener('online', () => ensureLive(true));
-}
+
 function refreshOrderTrackingUI(){
   if ($('#trackModal') && !$('#trackModal').classList.contains('hidden')) {
     const input = $('#trackInput');
@@ -3881,10 +3663,6 @@ if (oldMem && !oldMem.deviceId) {
 }
 // Cache હોય તો તરત વાપરો — first render જ સાચી currency માં
 const _cachedCountry = store.get('country', null);
-country = (_cachedCountry && COUNTRY_CUR[_cachedCountry]) ? _cachedCountry : tzCountry();
-loadCachedRates();
-fxStatus = RATES ? 'live' : 'connecting';
-updateCountryUI();
 safe(renderMobileNav, 'renderMobileNav');
 safe(renderShopCats, 'renderShopCats');
 safe(renderInsta, 'renderInsta');
@@ -3911,10 +3689,7 @@ clearInterval(sTimer); startSlider();
 }, { passive:true });
 }
 handleRoute();
-(async () => {
-await safe(() => detectCountry(false), 'detectCountry');
-await safe(() => ensureLive(false), 'ensureLive');
-})();
+updateMembershipPrices();
 })();
   </script>
 </body>
