@@ -2619,6 +2619,46 @@ async function handleOnlinePayment(){
   } catch(e){}
 })();
 
+/* ---- 🌐 Verify admin status (only 1 device allowed) ---- */
+async function verifyAdminStatus(){
+  try {
+    const myDeviceId = await getDeviceId();
+    const r = await fetch(`${API_BASE}/api/orders?action=get-admin`);
+    const d = await r.json();
+    if (!d.success) return;
+
+    const serverAdminId = d.deviceId;
+
+    // Case 1: Server has an admin, and it's ME → keep flag
+    if (serverAdminId && serverAdminId === myDeviceId){
+      if (localStorage.getItem('hf_is_admin') !== 'true'){
+        localStorage.setItem('hf_is_admin', 'true');
+        console.log('✅ Admin verified');
+      }
+      return;
+    }
+
+    // Case 2: Server has an admin, but NOT me → I'm a customer now
+    if (serverAdminId && serverAdminId !== myDeviceId){
+      if (localStorage.getItem('hf_is_admin') === 'true'){
+        localStorage.removeItem('hf_is_admin');
+        console.log('❌ Admin revoked — another device logged in');
+        toast('Owner mode moved to another device','warn');
+      }
+      return;
+    }
+
+    // Case 3: No admin on server, but I have local flag → register me
+    if (!serverAdminId && localStorage.getItem('hf_is_admin') === 'true'){
+      await fetch(`${API_BASE}/api/orders?action=set-admin`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ deviceId: myDeviceId, pwd: 'HF2026' })
+      });
+    }
+  } catch(e){ /* silent */ }
+}
+
 /* ---- 🌐 Sync user's orders from server ---- */
 async function syncMyOrders(){
   try {
@@ -3131,15 +3171,26 @@ $('#delOrderId').value = ''; $('#delOtp').value = '';
 } else { toast('Invalid OTP','cross'); }
 };
 
-$('#adminLoginBtn').onclick = () => {
-if ($('#adminPass').value === 'HF2026'){
-adminAuth = true;
-localStorage.setItem('hf_is_admin', 'true');
-$('#adminLoginBox').classList.add('hidden');
-$('#adminDashBox').classList.remove('hidden');
-toast('Admin Unlocked — Owner mode active','lock');
-setTimeout(() => { syncMyOrders(); }, 500);
-} else { toast('Wrong Passcode','cross'); }
+$('#adminLoginBtn').onclick = async () => {
+  if ($('#adminPass').value === 'HF2026'){
+    adminAuth = true;
+    localStorage.setItem('hf_is_admin', 'true');
+    $('#adminLoginBox').classList.add('hidden');
+    $('#adminDashBox').classList.remove('hidden');
+    toast('Admin Unlocked — Owner mode active','lock');
+
+    // 🌐 Register THIS device as the ONLY admin
+    try {
+      const deviceId = await getDeviceId();
+      await fetch(`${API_BASE}/api/orders?action=set-admin`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ deviceId, pwd: 'HF2026' })
+      });
+    } catch(e){ console.error(e); }
+
+    setTimeout(() => { syncMyOrders(); }, 500);
+  } else { toast('Wrong Passcode','cross'); }
 };
 
 // Cancel Membership handler (single copy)
@@ -3285,6 +3336,13 @@ clearInterval(sTimer); startSlider();
 }
 handleRoute();
 updateMembershipPrices();
+// 🌐 Verify admin status on page load
+verifyAdminStatus().then(() => {
+  // Sync orders AFTER admin status is verified
+  const isAdmin = localStorage.getItem('hf_is_admin') === 'true';
+  const user = store.get('user', null);
+  if (isAdmin || user) syncMyOrders();
+});
 })();
   </script>
 </body>
