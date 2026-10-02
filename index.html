@@ -1724,6 +1724,8 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
 
   <script>
     'use strict';
+/* ---- Manual scroll restoration (fixes refresh glitch) ---- */
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 /* ---- Safe helpers ---- */
 const $ = (s,r=document) => r.querySelector(s);
 const $$ = (s,r=document) => [...r.querySelectorAll(s)];
@@ -3420,6 +3422,13 @@ $('#curChip').onclick = () => { detectCountry(true).then(() => refreshPrices());
 $('#sortSel').onchange = e => { cp.sort = e.target.value; drawCatPage(); };
 $('#trackGo').onclick = track;
 $('#toTop').onclick = () => window.scrollTo({ top:0, behavior:'smooth' });
+// Save scroll position (skip when any modal is open)
+window.addEventListener('beforeunload', () => {
+  const modalOpen = document.body.style.overflow === 'hidden';
+  if (!modalOpen) {
+    try { sessionStorage.setItem('hf_scrollY', String(window.scrollY)); } catch(e){}
+  }
+});
 
 function showMemberView(){
   const active = $('#memViewActive');
@@ -3850,6 +3859,19 @@ safe(renderHero, 'renderHero');
 sizeHero();
 safe(renderCart, 'renderCart');
 safe(renderWish, 'renderWish');
+// ── Restore scroll AFTER all content is rendered ──
+(function restoreScroll(){
+  let y = 0;
+  try { y = +sessionStorage.getItem('hf_scrollY') || 0; } catch(e){}
+  if (y <= 0) return;
+  // rAF × 2 → waits for layout to settle; then a final settle pass
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    window.scrollTo(0, y);
+    // second pass for images / fonts that may shift height a bit
+    setTimeout(() => window.scrollTo(0, y), 120);
+    setTimeout(() => window.scrollTo(0, y), 350);
+  }));
+})();
 reveal();
 startSlider();
 wire();
