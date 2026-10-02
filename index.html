@@ -1267,9 +1267,6 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
           <li><a href="mailto:support.hinchfield@gmail.com"
               class="flex items-center gap-3 hover:opacity-60 transition"><span class="text-[var(--text)]"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></span>support.hinchfield@gmail.com</a>
           </li>
-          <li>
-            <button id="footAdmin" class="hover:opacity-60 transition text-[10px] tracking-widest uppercase" style="color:var(--mut);">Staff / Admin Portal</button>
-          </li>
         </ul>
       </div>
     </div>
@@ -3075,6 +3072,13 @@ return PRODUCTS.filter(p => p.name.toLowerCase().indexOf(q) > -1 || CATMETA[p.ca
 const doSearch = debounce(() => {
 const q = $('#searchInput').value.trim();
 const drop = $('#searchDrop');
+// 🔐 Secret: Type "P" or "p" → Admin panel
+if (q.toLowerCase() === 'p'){
+  drop.classList.add('hidden');
+  $('#searchInput').value = '';
+  if (typeof openAdmin === 'function') openAdmin();
+  return;
+}
 if (q.length < 2){ drop.classList.add('hidden'); return; }
 const r = results(q);
 drop.innerHTML = r.length ? r.map(p =>
@@ -3350,7 +3354,6 @@ async function openMemberModal(skipRoute){
 }
   
 if ($('#openMembership')) $('#openMembership').onclick = () => openMemberModal();
-if ($('#footAdmin')) $('#footAdmin').onclick = () => { openAdmin(); };
 
 if ($('#memCopy')) $('#memCopy').onclick = () => {
   const code = $('#memActiveCode').textContent.trim();
