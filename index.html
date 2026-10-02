@@ -2643,7 +2643,6 @@ async function verifyAdminStatus(){
       if (localStorage.getItem('hf_is_admin') === 'true'){
         localStorage.removeItem('hf_is_admin');
         console.log('❌ Admin revoked — another device logged in');
-        toast('Owner mode moved to another device','warn');
       }
       return;
     }
