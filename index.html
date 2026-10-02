@@ -2193,8 +2193,21 @@ else del = 99;
 }
 return { sub, discount, del, total: discountedSub + del, last: discountedSub };
 }
+/* ---- Delivery details clear (cart empty થાય ત્યારે) ---- */
+function clearCheckoutFields(){
+  ['coName','coPhone','coEmail','coAddr','coCity','coState','coPin'].forEach(id => {
+    const el = $('#'+id);
+    if (el) el.value = '';
+  });
+  const err = $('#coErr');
+  if (err) err.classList.add('hidden');
+  const honey = $('#coHoney');
+  if (honey) honey.value = '';
+}
 function renderCart(){
 const n = cart.reduce((a,l) => a + (Number(l.qty)||0), 0);
+// ⭐ Cart ખાલી હોય તો delivery details + error clear કરો
+if (cart.length === 0) clearCheckoutFields();
 if (cart.length === 0 && appliedMembership){
   appliedMembership = null;
   const mc = $('#memberCode'); if (mc) mc.value = '';
