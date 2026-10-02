@@ -3042,9 +3042,12 @@ async function syncMyOrders(){
       if (idx === -1) {
         local.push(serverO);
         changed = true;
-      } else if (local[idx].status !== serverO.status) {
-        local[idx] = serverO;
-        changed = true;
+      } else {
+        // Server is source of truth for status
+        if (local[idx].status !== serverO.status) {
+          local[idx] = serverO;
+          changed = true;
+        }
       }
     });
     if (changed){
@@ -3053,6 +3056,7 @@ async function syncMyOrders(){
     }
   } catch(e){ /* silent */ }
 }
+    
 function renderHistory(){
 let orders = store.get('orders', []).sort((a,b) => b.timestamp - a.timestamp);
 orders = orders.filter(o => {
@@ -3151,34 +3155,53 @@ function cancelOrder(orderId){
   const idx = orders.findIndex(o => o.id === orderId);
   if (idx === -1) return;
   const order = orders[idx];
-  if (Date.now() - order.timestamp < 24*60*60*1000){
-    order.status = 'Cancelled';
-    order.updatedAt = Date.now();
-    store.set('orders', orders);
+  if (Date.now() - order.timestamp >= 24*60*60*1000){
     closeModal('confirmCancelModal', true);
     pendingCancelId = null;
-    renderHistory();
-    toast('Order Cancelled Successfully','cross');
-    // 📧 ફક્ત આ એક જ call — email + refund બધું backend માં થશે
-    try {
-      fetch(`${API_BASE}/api/cancel-notify`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          order: {
-            id: order.id,
-            customer: order.customer,
-            items: order.items.map(l => {
-              const p = prodById(l.id);
-              return { name: p ? p.name : 'Product', qty: l.qty, price: p ? p.price : 0 };
-            }),
-            totals: order.totals,
-            payment: order.payment
-          }
-        })
-      }).catch(() => {});
-    } catch(e){}
-  } else {
+    toast('Cannot cancel after 24 hours','warn');
+    return;
+  }
+
+  // Local update
+  order.status = 'Cancelled';
+  order.updatedAt = Date.now();
+  store.set('orders', orders);
+  closeModal('confirmCancelModal', true);
+  pendingCancelId = null;
+  renderHistory();
+  toast('Order Cancelled Successfully','cross');
+
+  // 🌐 Push to server
+  try {
+    const user = store.get('user', null);
+    const phone = user && user.phone ? user.phone : (order.customer && order.customer.phone) || '';
+    fetch(`${API_BASE}/api/orders?action=cancel`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: order.id, phone })
+    }).catch(() => {});
+  } catch(e){}
+
+  // 📧 Cancel email
+  try {
+    fetch(`${API_BASE}/api/cancel-notify`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        order: {
+          id: order.id,
+          customer: order.customer,
+          items: order.items.map(l => {
+            const p = prodById(l.id);
+            return { name: p ? p.name : 'Product', qty: l.qty, price: p ? p.price : 0 };
+          }),
+          totals: order.totals,
+          payment: order.payment
+        }
+      })
+    }).catch(() => {});
+  } catch(e){}
+} else {
     closeModal('confirmCancelModal', true);
     pendingCancelId = null;
     toast('Cannot cancel after 24 hours','warn');
