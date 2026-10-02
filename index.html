@@ -3844,7 +3844,7 @@ $('#adminCancelBtn').onclick = async () => {
     $('#adminCancelBtn').textContent = 'Cancel';
   }
 };
-/* ---- 🌐 Admin: Load all orders ---- */
+/* ---- 🌐 Admin: Load all orders (My Orders જેવો UI) ---- */
 if ($('#adminFetchAll')) $('#adminFetchAll').onclick = async () => {
   const btn = $('#adminFetchAll');
   const box = $('#adminAllOrders');
@@ -3853,6 +3853,7 @@ if ($('#adminFetchAll')) $('#adminFetchAll').onclick = async () => {
   const orig = btn.textContent;
   btn.textContent = 'Loading…';
   box.innerHTML = '<p class="text-xs text-center" style="color:var(--mut);">Fetching…</p>';
+
   try {
     const r = await fetch(`${API_BASE}/api/orders?action=list&pwd=HF2026`);
     const d = await r.json();
@@ -3861,30 +3862,71 @@ if ($('#adminFetchAll')) $('#adminFetchAll').onclick = async () => {
       box.innerHTML = '<p class="text-xs text-center py-4" style="color:var(--mut);">No orders yet.</p>';
       return;
     }
+
+    // 🔥 My Orders જેવો rendering
     box.innerHTML = d.orders.sort((a,b)=>b.timestamp-a.timestamp).map(o => {
       const st = getOrderStatus(o);
       const date = new Date(o.timestamp).toLocaleString('en-IN');
       const payBadge = o.payment && o.payment.method === 'online'
-        ? '<span class="chip" style="background:#0A0A0A;color:#fff;">PAID</span>'
-        : '<span class="chip border hairline">COD</span>';
-      return '<div class="border hairline p-3 mb-2" style="background:var(--card);">' +
-        '<div class="flex justify-between items-start gap-2 mb-2">' +
-        '<div><b class="text-xs">' + o.id + '</b><p class="text-[10px]" style="color:var(--mut);">' + date + '</p></div>' +
-        '<div class="flex gap-1 flex-wrap">' + payBadge + '<span class="chip border hairline" style="color:' + st.color + ';">' + st.text + '</span></div>' +
+        ? '<span class="chip" style="background:#0A0A0A; color:#fff;">PAID ONLINE</span>'
+        : '<span class="chip border hairline" style="color:var(--text);">COD</span>';
+
+      return '<div class="card p-4 md:p-5 space-y-4 mb-3">' +
+        // Header: ID + date + badges
+        '<div class="flex justify-between items-start gap-3 flex-wrap">' +
+          '<div><b class="disp text-sm">' + o.id + '</b>' +
+          '<p class="text-[10px] mt-1" style="color:var(--mut);">' + date + '</p></div>' +
+          '<div class="flex gap-2 flex-wrap items-center">' + payBadge +
+          '<span class="chip border hairline" style="color:' + st.color + ';">' + ic(st.icon,'w-3 h-3') + ' ' + st.text + '</span>' +
+          '<select class="field text-[10px] py-1" data-admst="' + o.id + '" style="width:auto;">' +
+            ['Order Placed','Order Confirmed','In Process','Order Ready','Dispatched','Out For Delivery','Delivered','Cancelled']
+              .map(v => '<option ' + (o.status === v ? 'selected' : '') + '>' + v + '</option>').join('') +
+          '</select>' +
+          '<button class="chip border hairline text-[10px]" style="color:var(--text);" data-admupdate="' + o.id + '">Update</button>' +
+          '</div>' +
         '</div>' +
-        '<p class="text-[10px] mb-2" style="color:var(--mut);">' + 
-          (o.customer ? o.customer.name + ' • ' + o.customer.phone : '—') + '<br>' +
-          (o.customer ? o.customer.city + ', ' + o.customer.state + ' — ' + o.customer.pin : '') +
-        '</p>' +
-        '<p class="text-[10px] mb-2"><b>' + o.items.length + '</b> item(s) • <b>' + fmt(o.totals.total) + '</b></p>' +
-        '<select class="field text-[10px] py-1 mb-2" data-admst="' + o.id + '">' +
-          ['Order Placed','Order Confirmed','In Process','Order Ready','Dispatched','Out For Delivery','Delivered','Cancelled']
-            .map(v => '<option ' + (o.status === v ? 'selected' : '') + '>' + v + '</option>').join('') +
-        '</select>' +
-        '<button class="pill btn-ink w-full py-2 text-[10px]" data-admupdate="' + o.id + '">Update Status</button>' +
+
+        // Timeline
+        statusTimeline(o) +
+
+        // Customer details
+        '<div class="border-t hairline pt-3 text-[11px]" style="color:var(--mut);">' +
+          '<p><b style="color:var(--text);">Customer:</b> ' + (o.customer ? o.customer.name : '—') + ' • ' + (o.customer ? o.customer.phone : '—') + '</p>' +
+          '<p><b style="color:var(--text);">Address:</b> ' + (o.customer ? o.customer.addr + ', ' + o.customer.city + ', ' + o.customer.state + ' — ' + o.customer.pin : '—') + '</p>' +
+          (o.customer && o.customer.email ? '<p><b style="color:var(--text);">Email:</b> ' + o.customer.email + '</p>' : '') +
+        '</div>' +
+
+        // Products (images + details)
+        '<div class="border-t hairline pt-3 space-y-2">' +
+          o.items.map(l => {
+            const p = prodById(l.id);
+            if (!p) return '<div class="text-[11px]" style="color:var(--mut);">Product unavailable</div>';
+            return '<div class="flex gap-3 items-center">' +
+              '<div class="w-12 h-14 overflow-hidden shrink-0" style="background:var(--bg2);">' + imgTag(p, l.color, 0, 'w-full h-full object-contain') + '</div>' +
+              '<div class="flex-1 min-w-0">' +
+                '<p class="text-xs font-medium truncate">' + esc(p.name) + '</p>' +
+                '<p class="text-[10px]" style="color:var(--mut);">Qty: ' + l.qty + ' • ' + fmt(p.price * l.qty) + 
+                  (l.colorChoice ? ' • ' + esc(l.colorChoice) : '') +
+                  (l.custom ? ' • Custom (' + l.custom.pos + ')' : '') +
+                '</p>' +
+              '</div>' +
+            '</div>';
+          }).join('') +
+        '</div>' +
+
+        // Totals + actions
+        '<div class="flex justify-between items-center pt-3 border-t hairline flex-wrap gap-2">' +
+          '<b class="disp text-sm">Total: ' + fmt(o.totals.total) + '</b>' +
+          '<button class="chip border hairline text-[10px]" style="color:var(--text);" data-adm-invoice="' + o.id + '">Download Invoice</button>' +
+        '</div>' +
+
+        // OTP + Payment ID
+        (o.otp && st.text !== 'Cancelled' ? '<p class="text-[10px] font-medium text-center py-2 tracking-wide2 uppercase" style="background:var(--bg2); color:var(--text);">Delivery OTP: ' + o.otp + '</p>' : '') +
+        (o.payment && o.payment.razorpay_payment_id ? '<p class="text-[10px] text-center" style="color:var(--mut);">Payment ID: ' + o.payment.razorpay_payment_id + '</p>' : '') +
       '</div>';
     }).join('');
 
+    // Wire Update buttons
     $$('#adminAllOrders [data-admupdate]').forEach(b => {
       b.onclick = async () => {
         const id = b.getAttribute('data-admupdate');
@@ -3900,9 +3942,22 @@ if ($('#adminFetchAll')) $('#adminFetchAll').onclick = async () => {
           if (d2.success) toast('Updated — ' + id, 'check');
           else toast(d2.error || 'Failed', 'cross');
         } catch(e){ toast('Error', 'cross'); }
-        finally { b.disabled = false; b.textContent = 'Update Status'; }
+        finally { b.disabled = false; b.textContent = 'Update'; }
       };
     });
+
+    // Wire Invoice buttons
+    $$('#adminAllOrders [data-adm-invoice]').forEach(b => {
+      b.onclick = () => {
+        const id = b.getAttribute('data-adm-invoice');
+        const order = d.orders.find(x => x.id === id);
+        if (order) {
+          // Ensure product lookup works — order items reference products from this device's PRODUCTS list
+          showInvoice(order);
+        }
+      };
+    });
+
   } catch(e) {
     box.innerHTML = '<p class="text-xs text-center py-4" style="color:#DC2626;">' + e.message + '</p>';
   } finally {
