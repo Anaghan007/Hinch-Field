@@ -414,6 +414,15 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       opacity: 0;
     }
 
+    .cardimg .swap.front,
+    .cardimg .swap.back {
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      will-change: opacity;
+    }
+    .cardimg .swap.front { opacity: 1; }
+    .cardimg .swap.back  { opacity: 0; }
+
     @media(hover:hover) {
       .card:hover .cardimg .swap.front {
         opacity: 0;
@@ -1824,15 +1833,6 @@ SC[key] = uri;
 return uri;
 }catch(e){ return 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 750"><rect width="600" height="750" fill="#F0F0F0"/></svg>'); }
 }
-window.__imgfb = function(t){
-try{
-if (!t || t.dataset.fbed) return;
-t.dataset.fbed = '1';
-t.src = studio(t.dataset.fbcat || 'graphic-T-Shirt', t.dataset.fbhex || '#0A0A0A', +(t.dataset.fba || 0));
-}catch(e){}
-};
-window.__imgld = function(){};
-window.__imgld = function(t){ try{ t.classList.add('ld'); }catch(e){} };
 /* ---- Currency / Location ---- */
 const MARKUP = 5.00;
 const COUNTRY_CUR = { IN:'INR',US:'USD',GB:'GBP',AE:'AED',SA:'SAR',QA:'QAR',KW:'KWD',BH:'BHD',OM:'OMR',JO:'JOD',EG:'EGP',ZA:'ZAR',NG:'NGN',KE:'KES',AU:'AUD',NZ:'NZD',CA:'CAD',SG:'SGD',MY:'MYR',TH:'THB',ID:'IDR',PH:'PHP',JP:'JPY',KR:'KRW',CN:'CNY',HK:'HKD',BD:'BDT',PK:'PKR',LK:'LKR',NP:'NPR',CH:'CHF',SE:'SEK',NO:'NOK',DK:'DKK',PL:'PLN',RU:'RUB',MX:'MXN',BR:'BRL',DE:'EUR',FR:'EUR',IT:'EUR',ES:'EUR',NL:'EUR',IE:'EUR',AT:'EUR',BE:'EUR',PT:'EUR',FI:'EUR',GR:'EUR' };
@@ -2056,8 +2056,7 @@ function imgURLs(p){
 }
 const hexOf = (p,c) => { const f = p.colors.find(x => x[0] === c) || p.colors[0]; return f[1]; };
 function imgTag(p,color,a,cls,extra,eager){
-const h = hexOf(p,color);
-return '<img ' + (extra||'') + ' class="' + cls + '" onerror="__imgfb(this)" onload="__imgld(this)" data-fbcat="' + p.cat + '" data-fbhex="' + h + '" data-fba="' + a + '" src="' + imgURLs(p)[a] + '" alt="' + esc(p.name) + ' ' + (['Front','Back'][a]||'') + '" loading="' + (eager?'eager':'lazy') + '" decoding="async" style="height:100%;width:100%;object-fit:contain;">';
+return '<img ' + (extra||'') + ' class="' + cls + '" src="' + imgURLs(p)[a] + '" alt="' + esc(p.name) + ' ' + (['Front','Back'][a]||'') + '" loading="' + (eager?'eager':'lazy') + '" decoding="async" fetchpriority="' + (eager?'high':'low') + '" style="height:100%;width:100%;object-fit:contain;">';
 }
 function heroImg(p,color){
 const h = hexOf(p,color);
@@ -2090,9 +2089,9 @@ ${tag ? `<span class="absolute top-3 left-3 z-10 chip" style="${tag[1]}">${tag[0
 </button>
 <div class="cardimg relative aspect-[4/5] overflow-hidden cursor-pointer" style="background:var(--bg2);" data-open-product="${p.id}">
 ${multi
-? imgTag(p,p.colors[0][0],0,'swap front')
-+ imgTag(p,p.colors[0][0],1,'swap back','',true)
-: imgTag(p,p.colors[0][0],0,'w-full h-full object-contain')}
+? imgTag(p,p.colors[0][0],0,'swap front','',true)
++ imgTag(p,p.colors[0][0],1,'swap back')
+: imgTag(p,p.colors[0][0],0,'w-full h-full object-contain','',true)}
 <span class="absolute inset-x-0 bottom-0 quickadd text-center py-3">${multi ? 'Front ⇄ Back' : 'Quick View'}</span>
 </div>
 <div class="p-3 md:p-4">
