@@ -3079,6 +3079,7 @@ if (q.toLowerCase() === 'p'){
   if (typeof openAdmin === 'function') openAdmin();
   return;
 }
+if (q) store.set('last_search', q); else store.set('last_search', '');
 if (q.length < 2){ drop.classList.add('hidden'); return; }
 const r = results(q);
 drop.innerHTML = r.length ? r.map(p =>
@@ -3089,6 +3090,19 @@ drop.innerHTML = r.length ? r.map(p =>
 ).join('') : '<p class="p-5 text-sm" style="color:var(--mut);">No results for "' + esc(q) + '"</p>';
 drop.classList.remove('hidden');
 }, 220);
+// 🔄 Restore last search on page load
+const lastSearch = store.get('last_search', '');
+if (lastSearch){
+  setTimeout(() => {
+    const di = $('#searchInput'); if (di) di.value = lastSearch;
+    const mi = $('#mSearchInput'); if (mi) mi.value = lastSearch;
+    if (lastSearch.length >= 2){
+      try { doSearch(); } catch(e){}
+      try { doMSearch(); } catch(e){}
+    }
+  }, 400);
+}
+
 const doMSearch = debounce(() => {
 const q = $('#mSearchInput').value.trim();
 // 🔐 Secret: Type "P" or "p" → Admin panel
@@ -3098,6 +3112,7 @@ if (q.toLowerCase() === 'p'){
   setTimeout(() => { if (typeof openAdmin === 'function') openAdmin(); }, 200);
   return;
 }
+if (q) store.set('last_search', q); else store.set('last_search', '');
 $('#mResults').innerHTML = q.length < 2
 ? '<p class="col-span-2 text-center py-16 text-sm" style="color:var(--mut);">Search HinchField…</p>'
 : (results(q).map(p => card(p,'a-up',0)).join('') || '<p class="col-span-2 text-center py-16" style="color:var(--mut);">Nothing found.</p>');
