@@ -790,7 +790,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       }
 
       .hero-slide {
-        padding-bottom: 2.75rem;
+        padding-bottom: 5.5rem;
       }
     }
 
@@ -1065,7 +1065,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
   <main class="w-full">
     <section id="heroSec" class="relative overflow-hidden w-full" aria-label="Hero" style="background:var(--bg);">
       <div id="heroSlides" class="w-full"></div>
-      <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 z-10 flex-wrap justify-center px-4 w-full"
+      <div class="absolute bottom-20 md:bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 z-10 flex-wrap justify-center px-4 w-full"
         id="heroDots"></div>
     </section>
 
@@ -2139,7 +2139,8 @@ sTimer = setInterval(() => goSlide(sIdx+1), 5200);
 }
 function sizeHero(){
 const hh = $('#header') ? $('#header').offsetHeight : 0;
-const avail = Math.max(320, window.innerHeight - hh);
+const bn = (window.innerWidth < 768 && $('#bottomNav')) ? $('#bottomNav').offsetHeight : 0;
+const avail = Math.max(320, window.innerHeight - hh - bn);
 const sec = $('#heroSec');
 if (sec) sec.style.minHeight = avail + 'px';
 $$('.hero-slide').forEach(s => { s.style.minHeight = avail + 'px'; });
