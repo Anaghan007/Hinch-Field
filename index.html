@@ -1070,7 +1070,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
     </div>
   </div>
 
-  <div id="searchOverlay" class="fixed inset-0 z-[60] hidden flex flex-col w-full" style="background:var(--bg); color:var(--text);">
+  <div id="searchOverlay" class="fixed inset-0 z-[60] hidden w-full" style="background:var(--bg); color:var(--text); overflow-y:auto; -webkit-overflow-scrolling:touch;">
   <div class="p-3 border-b hairline flex gap-2 items-center shrink-0">
     <input id="mSearchInput" maxlength="60" class="field" placeholder="Search HinchField…" autocomplete="off">
     <button data-close="searchOverlay" class="w-11 h-11 border hairline shrink-0" aria-label="Close">✕</button>
