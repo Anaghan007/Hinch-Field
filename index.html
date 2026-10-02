@@ -1998,7 +1998,6 @@ safe(updateHeroPrices, 'refreshPrices.hero');
 safe(updateMembershipPrices, 'refreshPrices.membership');
 safe(updateCartPrices, 'refreshPrices.cart');                       // cart drawer (hidden હોય તો effect નહીં)
 if ($('#catPage') && !$('#catPage').classList.contains('hidden')) safe(updateCardPrices, 'refreshPrices.cat');
-if ($('#productModal') && !$('#productModal').classList.contains('hidden')) safe(drawProduct, 'refreshPrices.pm');
 }
 /* ---- Categories ---- */
 const CATMETA = {
