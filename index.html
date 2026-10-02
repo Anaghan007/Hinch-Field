@@ -986,26 +986,12 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
         <button id="menuOpen" class="md:hidden p-2 -ml-1" aria-label="Menu">
           <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M4 7h16M4 12h10M4 17h16"/></svg>
         </button>
-        <a href="#home" class="flex items-center shrink-0" aria-label="HinchField home">
+        <a href="#home" id="secretLogo" class="flex items-center shrink-0" aria-label="HinchField home" style="cursor:default;">
           <img src="images/logo.png" class="h-12 md:h-14 w-auto object-contain" alt="HinchField" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
           <span class="h-12 items-center font-luxe text-xl md:text-2xl font-medium tracking-luxe" style="display:none;color:var(--text);">HINCHFIELD</span>
         </a>
       </div>
-      <div class="relative hidden md:flex justify-center w-full max-w-2xl mx-auto">
-        <div class="flex items-center border-b hairline w-full" style="background:transparent;">
-          <input id="searchInput" type="search" maxlength="60" placeholder="Search" class="flex-1 bg-transparent px-2 py-2.5 text-sm min-w-0 uppercase tracking-wide2" style="color:var(--text);" autocomplete="off">
-          <button id="searchBtn" class="px-2" style="color:var(--text);" aria-label="Search">
-            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-          </button>
-        </div>
-        <div id="searchDrop"
-          class="absolute left-1/2 -translate-x-1/2 w-full top-[112%] border hairline shadow-lift overflow-hidden hidden z-50"
-          style="background:var(--card);"></div>
-      </div>
       <div class="flex items-center gap-1 md:gap-4 justify-end min-w-0">
-        <button id="mSearchOpen" class="md:hidden p-2" aria-label="Search">
-          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-        </button>
         <button id="wishOpen" class="relative flex flex-col items-center justify-center px-2 md:px-3" style="color:var(--text);" aria-label="Wishlist">
           <div class="relative">
             <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M12 21s-7.5-4.7-10-9.3C.5 8 2.6 4.5 6.2 4.5c2.2 0 3.7 1.2 4.6 2.6.9-1.4 2.4-2.6 4.6-2.6 3.6 0 5.7 3.5 4.2 7.2C19.5 16.3 12 21 12 21z"/></svg>
@@ -1068,14 +1054,6 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
         </a>
       </div>
     </div>
-  </div>
-
-  <div id="searchOverlay" class="fixed inset-0 z-[60] hidden w-full" style="background:var(--bg); color:var(--text); overflow-y:auto; -webkit-overflow-scrolling:touch;">
-  <div class="p-3 border-b hairline flex gap-2 items-center shrink-0">
-    <input id="mSearchInput" maxlength="60" class="field" placeholder="Search HinchField…" autocomplete="off">
-    <button data-close="searchOverlay" class="w-11 h-11 border hairline shrink-0" aria-label="Close">✕</button>
-  </div>
-  <div id="mResults" class="p-3 grid grid-cols-2 gap-3 overflow-y-auto w-full flex-1"></div>
   </div>
 
   <main class="w-full">
@@ -3065,58 +3043,28 @@ else { $('#adminLoginBox').classList.remove('hidden'); $('#adminDashBox').classL
 openModal('staffModal');
 if (!skipRoute) history.pushState({ modal: 'staffModal' }, '', '#admin');
 }
+// 🔐 SECRET ADMIN: 5 clicks on logo within 2 sec
+let _logoTaps = 0, _logoTimer = null;
+const secretLogo = $('#secretLogo');
+if (secretLogo){
+  secretLogo.addEventListener('click', (e) => {
+    e.preventDefault();
+    _logoTaps++;
+    if (_logoTaps === 1){
+      _logoTimer = setTimeout(() => { _logoTaps = 0; }, 2000);
+    }
+    if (_logoTaps >= 5){
+      clearTimeout(_logoTimer);
+      _logoTaps = 0;
+      if (typeof openAdmin === 'function') openAdmin();
+    }
+  });
+}
 function results(q){
 q = q.toLowerCase();
 return PRODUCTS.filter(p => p.name.toLowerCase().indexOf(q) > -1 || CATMETA[p.cat].name.toLowerCase().indexOf(q) > -1).slice(0,8);
 }
-const doSearch = debounce(() => {
-const q = $('#searchInput').value.trim();
-const drop = $('#searchDrop');
-// 🔐 Secret: Type "P" or "p" → Admin panel
-if (q.toLowerCase() === 'p'){
-  drop.classList.add('hidden');
-  $('#searchInput').value = '';
-  if (typeof openAdmin === 'function') openAdmin();
-  return;
-}
-if (q) store.set('last_search', q); else store.set('last_search', '');
-if (q.length < 2){ drop.classList.add('hidden'); return; }
-const r = results(q);
-drop.innerHTML = r.length ? r.map(p =>
-'<button class="w-full flex items-center gap-3 px-4 py-3 text-left border-b hairline" style="color:var(--text);" data-open-product="' + p.id + '">' +
-'<span class="w-10 h-12 overflow-hidden shrink-0" style="background:var(--bg2);">' + imgTag(p, p.colors[0][0], 0, 'w-full h-full object-contain') + '</span>' +
-'<span class="flex-1 min-w-0"><span class="block text-xs font-medium truncate">' + esc(p.name) + '</span><span class="text-[10px] tracking-wide2 uppercase" style="color:var(--mut);">' + esc(CATMETA[p.cat].name) + '</span></span>' +
-'<b class="text-xs">' + fmt(p.price) + '</b></button>'
-).join('') : '<p class="p-5 text-sm" style="color:var(--mut);">No results for "' + esc(q) + '"</p>';
-drop.classList.remove('hidden');
-}, 220);
-// 🔄 Restore last search on page load
-const lastSearch = store.get('last_search', '');
-if (lastSearch){
-  setTimeout(() => {
-    const di = $('#searchInput'); if (di) di.value = lastSearch;
-    const mi = $('#mSearchInput'); if (mi) mi.value = lastSearch;
-    if (lastSearch.length >= 2){
-      try { doSearch(); } catch(e){}
-      try { doMSearch(); } catch(e){}
-    }
-  }, 50);
-}
-
-const doMSearch = debounce(() => {
-const q = $('#mSearchInput').value.trim();
-// 🔐 Secret: Type "P" or "p" → Admin panel
-if (q.toLowerCase() === 'p'){
-  $('#mSearchInput').value = '';
-  closeModal('searchOverlay');
-  setTimeout(() => { if (typeof openAdmin === 'function') openAdmin(); }, 200);
-  return;
-}
-if (q) store.set('last_search', q); else store.set('last_search', '');
-$('#mResults').innerHTML = q.length < 2
-? '<p class="col-span-2 text-center py-16 text-sm" style="color:var(--mut);">Search HinchField…</p>'
-: (results(q).map(p => card(p,'a-up',0)).join('') || '<p class="col-span-2 text-center py-16" style="color:var(--mut);">Nothing found.</p>');
-}, 220);
+    
 function track(){
 const id = $('#trackInput').value.trim().toUpperCase().replace(/[^A-Z0-9]/g,'');
 if (!/^HF\d{6}$/.test(id)){ $('#trackResult').innerHTML = '<p class="text-xs" style="color:#DC2626;">Format: HF123456</p>'; return; }
@@ -3147,7 +3095,7 @@ try { history.back(); } catch(e){}
 }
 }
 function closeAll(skipHistory){
-['cartDrawer','wishDrawer','productModal','sizeModal','trackModal','catPage','mobileMenu','searchOverlay','historyModal','staffModal','memberModal','confirmCancelModal'].forEach(id => {
+['cartDrawer','wishDrawer','productModal','sizeModal','trackModal','catPage','mobileMenu','historyModal','staffModal','memberModal','confirmCancelModal'].forEach(id => {
 const el = $('#'+id); if (el) el.classList.add('hidden');
 });
 document.body.style.overflow = '';
@@ -3173,7 +3121,6 @@ else if (hash === '#size') { openModal('sizeModal'); }
 else if (hash === '#membership') { openMemberModal(true); }
 else if (hash === '#admin') { openAdmin(true); }
 else if (hash === '#menu') { openModal('mobileMenu'); }
-else if (hash === '#search') { openModal('searchOverlay'); }
 }
 window.addEventListener('popstate', handleRoute);
 document.addEventListener('click', e => {
@@ -3273,7 +3220,6 @@ function wire(){
 $('#cartOpen').onclick = () => { closeAll(true); renderCart(); try{ history.pushState({ modal:'cartDrawer' }, '', '#cart'); }catch(e){} handleRoute(); };
 $('#wishOpen').onclick = () => { closeAll(true); renderWish(); try{ history.pushState({ modal:'wishDrawer' }, '', '#wishlist'); }catch(e){} handleRoute(); };
 $('#menuOpen').onclick = () => { openModal('mobileMenu'); try{ history.pushState({ modal: 'mobileMenu' }, '', '#menu'); }catch(e){} };
-$('#mSearchOpen').onclick = () => { openModal('searchOverlay'); try{ history.pushState({ modal: 'searchOverlay' }, '', '#search'); }catch(e){} setTimeout(() => { const i = $('#mSearchInput'); if (i) i.focus(); }, 150); };
 $('#trackOpen2').onclick = () => { openModal('trackModal'); try{ history.pushState({ modal: 'trackModal' }, '', '#track'); }catch(e){} };
 $('#sizeOpen').onclick = () => { openModal('sizeModal'); try{ history.pushState({ modal: 'sizeModal' }, '', '#size'); }catch(e){} };
 $('#placeOrder').onclick = placeOrder;
@@ -3301,8 +3247,6 @@ $$('#payRadCod, #payRadOnline').forEach(lbl => {
 
 $('#coDetect').onclick = () => { detectCountry(true).then(() => refreshPrices()); ensureLive(true); };
 $('#curChip').onclick = () => { detectCountry(true).then(() => refreshPrices()); ensureLive(true); };
-$('#searchInput').addEventListener('input', doSearch);
-$('#mSearchInput').addEventListener('input', doMSearch);
 $('#sortSel').onchange = e => { cp.sort = e.target.value; drawCatPage(); };
 $('#trackGo').onclick = track;
 $('#toTop').onclick = () => window.scrollTo({ top:0, behavior:'smooth' });
