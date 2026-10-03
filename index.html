@@ -2162,8 +2162,9 @@ function showInvoice(order){
     const p = prodById(l.id);
     const name = p ? p.name : 'Product';
     const price = p ? p.price : 0;
-    const extras = (l.colorChoice ? '<br><span style="font-size:11px;color:#7C7C7C;">Colour: ' + l.colorChoice + '</span>' : '')
+    const extras = (l.size ? '<br><span style="font-size:11px;color:#7C7C7C;">Size: ' + l.size + '</span>' : '')
                  + (l.color ? '<br><span style="font-size:11px;color:#7C7C7C;">Colour: ' + l.color + '</span>' : '')
+                 + (l.colorChoice ? '<br><span style="font-size:11px;color:#7C7C7C;">Custom Colour: ' + l.colorChoice + '</span>' : '')
                  + (l.custom ? '<br><span style="font-size:11px;color:#7C7C7C;">Custom (' + l.custom.pos + '): ' + (l.custom.note || '') + '</span>' : '');
     return '<tr><td style="padding:14px 10px;border-bottom:1px solid #E6E4E0;font-size:13px;"><b>' + (i+1) + '. ' + name + '</b>' + extras + '</td><td style="padding:14px 10px;border-bottom:1px solid #E6E4E0;text-align:center;font-size:13px;">' + l.qty + '</td><td style="padding:14px 10px;border-bottom:1px solid #E6E4E0;text-align:right;font-size:13px;">₹' + price.toLocaleString('en-IN') + '</td><td style="padding:14px 10px;border-bottom:1px solid #E6E4E0;text-align:right;font-size:13px;font-weight:600;">₹' + (price * l.qty).toLocaleString('en-IN') + '</td></tr>';
   }).join('');
