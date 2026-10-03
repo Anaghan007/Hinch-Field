@@ -1853,7 +1853,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
         <input id="memBuyName" maxlength="60" class="field mb-3" placeholder="Full Name *">
         <input id="memBuyPhone" inputmode="numeric" maxlength="15" class="field mb-3" placeholder="Number *">
         <p id="memBuyErr" class="text-[11px] hidden mb-3" style="color:#DC2626;"></p>
-        <button id="memBuyBtn" class="pill btn-gold w-full py-4">Pay ₹1 — Get Membership</button>
+        <button id="memBuyBtn" class="pill btn-gold w-full py-4">Get Membership</button>
         <p class="text-[10px] text-center mt-3" style="color:var(--mut);">Secure payment</p>
       </div>
     </div>
@@ -2112,7 +2112,7 @@ function updateMembershipPrices(){
   const mp = $('#memPrice'); if (mp) mp.textContent = fmt(599);
   const mm = $('#memMrp'); if (mm) mm.textContent = fmt(1199);
   const mb = $('#memBuyBtn');
-  if (mb && !mb.disabled) mb.textContent = 'Pay ' + fmt(599) + ' — Get Membership';
+  if (mb && !mb.disabled) mb.textContent = 'Get Membership';
 }
 /* ---- Categories ---- */
 const CATMETA = {
@@ -3535,7 +3535,7 @@ if ($('#memBuyBtn')) $('#memBuyBtn').onclick = async () => {
     const d = await r.json();
     if (!d.success) throw new Error('Order create failed');
     const options = {
-      key: RAZORPAY_KEY_ID, amount: d.amount, currency: d.currency, name: 'HinchField Membership', description: 'Yearly Membership — ₹1', image: 'images/logo.png', order_id: d.order_id,
+      key: RAZORPAY_KEY_ID, amount: d.amount, currency: d.currency, name: 'HinchField Membership', description: 'Yearly Membership — ₹599', image: 'images/logo.png', order_id: d.order_id,
       prefill: { name, contact: phone }, theme: { color: '#0A0A0A' },
       handler: async function(resp){
         try {
@@ -3565,7 +3565,7 @@ if ($('#memBuyBtn')) $('#memBuyBtn').onclick = async () => {
     rzp.on('payment.failed', r => toast((r.error && r.error.description) || 'Payment failed', 'cross'));
     rzp.open();
   } catch(e){ console.error(e); err('Something went wrong'); }
-  finally { btn.disabled = false; btn.textContent = 'Pay ' + fmt(1) + ' — Get Membership'; }
+  finally { btn.disabled = false; btn.textContent = 'Get Membership'; }
 };
 
 function updateMemberUI(){
