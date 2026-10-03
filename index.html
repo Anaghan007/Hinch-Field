@@ -2463,7 +2463,7 @@ const isT = p.cat.indexOf('tee') > -1;
 const mp = memPrice(p);
 $('#productBody').innerHTML = `
 <div class="grid md:grid-cols-2 w-full">
-<div class="p-3 md:p-8 md:sticky md:top-0 md:self-start" style="background:var(--bg2);">
+<div class="p-3 md:p-8" style="background:var(--bg2);">
 <div class="md:flex md:gap-4 w-full">
 ${imgs.length > 1 ? '<div class="hidden md:flex flex-col gap-2 order-1">' + imgs.map((im,i) => '<button class="w-14 h-16 overflow-hidden border" style="border-color:' + (i===pm.angle ? 'var(--text)' : 'var(--line)') + ';" data-angle="' + i + '">' + imgTag(p, cn, i, 'w-full h-full object-contain') + '</button>').join('') + '</div>' : ''}
 <div class="relative flex-1 order-2 min-w-0">
@@ -2496,6 +2496,11 @@ ${imgs.length > 1 ? '<button class="absolute left-2 top-1/2 -translate-y-1/2 w-9
 </div>
 <div class="mt-5 flex items-center gap-4"><p class="micro">Qty</p><div class="flex items-center gap-2"><button class="qtybtn" data-pq="-1">−</button><b id="pmQty" class="w-6 text-center">${pm.qty}</b><button class="qtybtn" data-pq="1">+</button></div></div>
 ${isT ? `
+<div class="border hairline p-4 mt-5" style="background:var(--bg2);">
+<p class="text-xs font-medium tracking-tight flex items-center gap-2">${ic('palette','w-4 h-4')} Want a colour that's not listed?</p>
+<p class="text-[10px] mt-1" style="color:var(--mut);">Tell us your choice — we'll confirm on WhatsApp.</p>
+<input id="pmColorChoice" maxlength="40" class="field mt-2" placeholder="e.g. Olive Green, Mustard…" value="${esc(pm.colorChoice)}">
+</div>
 <div class="border hairline p-4 mt-3" style="background:var(--bg2);">
 <label class="flex items-center gap-2 text-xs font-medium cursor-pointer"><input type="checkbox" id="pmCustomOn" class="accent-[#0A0A0A]" ${pm.customOn ? 'checked' : ''}>Customise this T-Shirt (own text / design)</label>
 <div id="pmCustomBox" class="${pm.customOn ? '' : 'hidden'} mt-3 space-y-2">
