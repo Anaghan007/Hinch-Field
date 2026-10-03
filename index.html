@@ -3421,14 +3421,30 @@ async function openMemberModal(skipRoute){
   $('#memBuyErr').classList.add('hidden');
   if (typeof updateMembershipPrices === 'function') updateMembershipPrices();
   openModal('memberModal');
-  $('#memViewActive').classList.add('hidden');
-  $('#memViewBuy').classList.remove('hidden');
+
+  // ⚡ STEP 1: Check localStorage FIRST — instant show
+  const saved = store.get('membership_full', null);
+  const hasLocal = saved && saved.code && Date.now() < saved.expiresAt;
+
+  if (hasLocal){
+    $('#memViewActive').classList.remove('hidden');
+    $('#memViewBuy').classList.add('hidden');
+    $('#memActiveCode').textContent = saved.code;
+    $('#memActiveName').textContent = saved.name || '';
+    $('#memActiveExpiry').textContent = 'Valid till: ' + new Date(saved.expiresAt).toLocaleDateString('en-IN');
+  } else {
+    $('#memViewActive').classList.add('hidden');
+    $('#memViewBuy').classList.remove('hidden');
+  }
+
   if (!skipRoute) {
     try {
       if (window.location.hash === '#menu') { history.replaceState({ modal:'memberModal' }, '', '#membership'); }
       else { history.pushState({ modal:'memberModal' }, '', '#membership'); }
     } catch(e){}
   }
+
+  // 🌐 STEP 2: Background verify with server
   try {
     const deviceId = await getDeviceId();
     const r = await fetch(`${API_BASE}/api/membership-check-device`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ deviceId }) });
@@ -3441,10 +3457,15 @@ async function openMemberModal(skipRoute){
       $('#memActiveCode').textContent = deviceMembership.code;
       $('#memActiveName').textContent = deviceMembership.name || '';
       $('#memActiveExpiry').textContent = 'Valid till: ' + new Date(deviceMembership.expiresAt).toLocaleDateString('en-IN');
+    } else if (!hasLocal){
+      // No local + no server → stay on buy view
+      $('#memViewActive').classList.add('hidden');
+      $('#memViewBuy').classList.remove('hidden');
     }
   } catch(e){ console.error(e); }
-  const saved = store.get('membership_full', null);
-  if (!saved || !saved.code){
+
+  // 📞 STEP 3: Fallback lookup by phone (only if no membership found)
+  if (!hasLocal){
     const lastPhone = store.get('last_phone', null);
     if (lastPhone) autoLookup(lastPhone);
   }
