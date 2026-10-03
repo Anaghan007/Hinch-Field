@@ -2626,6 +2626,7 @@ saveOrderToServer(order);
 cart = []; store.set('cart', []);
 renderCart();
 closeModal('cartDrawer', true);
+try { history.replaceState(null, '', location.pathname + location.search); } catch(e){}
 toast('Order placed — ' + oid, 'check');
 setTimeout(() => { try { showInvoice(order); } catch(e){ console.error('Invoice error:', e); alert('Invoice error: ' + e.message); } }, 400);
 }
@@ -2708,6 +2709,7 @@ async function handleOnlinePayment(){
             cart = []; store.set('cart', []);
             renderCart();
             closeModal('cartDrawer', true);
+            try { history.replaceState(null, '', location.pathname + location.search); } catch(e){}
             toast('Payment successful — ' + order.id, 'check');
             setTimeout(() => { try { showInvoice(order); } catch(e){ console.error('Invoice error:', e); alert('Invoice error: ' + e.message); } }, 400);
           } else { toast('Payment verification failed. Contact support.', 'cross'); }
@@ -2778,6 +2780,7 @@ async function syncMyOrders(){
     d.orders.forEach(serverO => {
       const idx = local.findIndex(x => x.id === serverO.id);
       if (idx === -1) { local.push(serverO); changed = true; }
+      else if (local[idx]._localOnly) { /* skip — just cancelled locally */ }
       else if (local[idx].status !== serverO.status) {
         local[idx].status = serverO.status;
         local[idx].updatedAt = serverO.updatedAt || Date.now();
@@ -2867,7 +2870,8 @@ function askCancelOrder(orderId){
   payTxt.style.color = isOnline ? '#0A0A0A' : 'var(--mut)';
   openModal('confirmCancelModal');
 }
-function cancelOrder(orderId){
+    
+async function cancelOrder(orderId){
   const orders = store.get('orders', []);
   const idx = orders.findIndex(o => o.id === orderId);
   if (idx === -1) return;
@@ -2875,15 +2879,25 @@ function cancelOrder(orderId){
   if (Date.now() - order.timestamp < 24*60*60*1000){
     order.status = 'Cancelled';
     order.updatedAt = Date.now();
+    order._localOnly = Date.now();   // 🔒 block sync overwrite
     store.set('orders', orders);
     closeModal('confirmCancelModal', true);
     pendingCancelId = null;
     renderHistory();
     toast('Order Cancelled Successfully','cross');
-    try { fetch(`${API_BASE}/api/orders?action=update`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: order.id, status: 'Cancelled', pwd: 'HF2026' }) }).catch(() => {}); } catch(e){}
+    // 🌐 Await server push
     try {
-      fetch(`${API_BASE}/api/cancel-notify`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ order: { id: order.id, customer: order.customer, items: order.items.map(l => { const p = prodById(l.id); return { name: p ? p.name : 'Product', qty: l.qty, price: p ? p.price : 0, size: l.size || '', color: l.color || '', colorChoice: l.colorChoice || '', custom: l.custom || null }; }), totals: order.totals, payment: order.payment } }) }).catch(() => {});
+      await fetch(`${API_BASE}/api/orders?action=update`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: order.id, status: 'Cancelled', pwd: 'HF2026' }) });
     } catch(e){}
+    try {
+      await fetch(`${API_BASE}/api/cancel-notify`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ order: { id: order.id, customer: order.customer, items: order.items.map(l => { const p = prodById(l.id); return { name: p ? p.name : 'Product', qty: l.qty, price: p ? p.price : 0, size: l.size || '', color: l.color || '', colorChoice: l.colorChoice || '', custom: l.custom || null }; }), totals: order.totals, payment: order.payment } }) });
+    } catch(e){}
+    // 🔓 Remove flag after 10s (server now has it)
+    setTimeout(() => {
+      const os = store.get('orders', []);
+      const i2 = os.findIndex(o => o.id === orderId);
+      if (i2 !== -1) { delete os[i2]._localOnly; store.set('orders', os); }
+    }, 10000);
   } else {
     closeModal('confirmCancelModal', true);
     pendingCancelId = null;
