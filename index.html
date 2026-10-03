@@ -3469,15 +3469,7 @@ async function openMemberModal(skipRoute){
   $('#memBuyErr').classList.add('hidden');
   if (typeof updateMembershipPrices === 'function') updateMembershipPrices();
 
-  openModal('memberModal');
-
-  if (!skipRoute) {
-    try {
-      if (window.location.hash === '#menu') { history.replaceState({ modal:'memberModal' }, '', '#membership'); }
-      else { history.pushState({ modal:'memberModal' }, '', '#membership'); }
-    } catch(e){}
-  }
-
+  // 🌐 STEP 1: Server fetch FIRST (modal open પહેલા)
   try {
     const deviceId = await getDeviceId();
     const r = await fetch(`${API_BASE}/api/membership-check-device`, {
@@ -3495,6 +3487,17 @@ async function openMemberModal(skipRoute){
     }
   } catch(e){ console.error('[membership-check]', e); }
 
+  // 🎬 STEP 2: હવે modal open કરો (already correct view ready)
+  openModal('memberModal');
+
+  if (!skipRoute) {
+    try {
+      if (window.location.hash === '#menu') { history.replaceState({ modal:'memberModal' }, '', '#membership'); }
+      else { history.pushState({ modal:'memberModal' }, '', '#membership'); }
+    } catch(e){}
+  }
+
+  // ✅ STEP 3: View set
   if (typeof showMemberView === 'function') showMemberView();
 
   const saved = store.get('membership_full', null);
