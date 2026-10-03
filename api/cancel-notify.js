@@ -16,7 +16,9 @@ export default async function handler(req, res) {
     const isOnline = order.payment && order.payment.method === 'online';
 
     const itemsHtml = order.items.map((l, i) => {
-      const extras = (l.colorChoice ? '<br><span class="text-muted" style="font-size:11px;">Colour: ' + l.colorChoice + '</span>' : '')
+      const extras = (l.size ? '<br><span class="text-muted" style="font-size:11px;">Size: ' + l.size + '</span>' : '')
+                   + (l.color ? '<br><span class="text-muted" style="font-size:11px;">Colour: ' + l.color + '</span>' : '')
+                   + (l.colorChoice ? '<br><span class="text-muted" style="font-size:11px;">Custom Colour: ' + l.colorChoice + '</span>' : '')
                    + (l.custom ? '<br><span class="text-muted" style="font-size:11px;">Custom (' + l.custom.pos + '): ' + (l.custom.note || '') + '</span>' : '');
       return '<tr>' +
         '<td class="bg-card text-main" style="padding:14px 8px;border-bottom:1px solid #E6E4E0;font-size:13px;font-weight:500;">' +
