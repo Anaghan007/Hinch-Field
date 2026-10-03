@@ -1806,6 +1806,30 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
   </div>
 </div>
 
+  <div id="customModal" class="fixed inset-0 z-[97] hidden flex items-center justify-center px-4 w-full">
+  <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" data-close="customModal"></div>
+  <div class="modalcard relative p-6 md:p-8 max-w-md w-full" style="background:var(--bg); color:var(--text); box-shadow:var(--shadow);">
+    <div class="flex justify-between items-center mb-5">
+      <h3 class="disp editorial-h font-luxe text-xl">Customise T-Shirt</h3>
+      <button data-close="customModal" class="w-9 h-9 border hairline" aria-label="Close">✕</button>
+    </div>
+    <p class="text-[11px] mb-4" style="color:var(--mut);">Tell us what you'd like printed — we'll confirm on WhatsApp before printing.</p>
+    <p class="micro mb-2" style="color:var(--text);">Print Position</p>
+    <select id="cmPos" class="field mb-4">
+      <option value="Front">Front</option>
+      <option value="Back">Back</option>
+      <option value="Front + Back" selected>Front + Back</option>
+    </select>
+    <p class="micro mb-2" style="color:var(--text);">Your Text / Design</p>
+    <textarea id="cmNote" maxlength="200" rows="3" class="field mb-2" placeholder="e.g. Print text: RIYA ❤ SURAT"></textarea>
+    <p class="text-[10px] mb-4" style="color:var(--mut);"><span id="cmCount">0</span>/200 characters</p>
+    <div class="grid grid-cols-2 gap-3">
+      <button id="cmCancel" class="pill btn-line py-3.5">Cancel</button>
+      <button id="cmSave" class="pill btn-gold py-3.5">Save</button>
+    </div>
+  </div>
+</div>
+
   <div id="confirmCancelModal" class="fixed inset-0 z-[96] hidden flex items-center justify-center px-4 w-full">
     <div id="confirmCancelBackdrop" class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
     <div class="modalcard relative p-6 md:p-8 max-w-sm w-full"
@@ -2497,11 +2521,22 @@ ${imgs.length > 1 ? '<button class="absolute left-2 top-1/2 -translate-y-1/2 w-9
 <div class="mt-5 flex items-center gap-4"><p class="micro">Qty</p><div class="flex items-center gap-2"><button class="qtybtn" data-pq="-1">−</button><b id="pmQty" class="w-6 text-center">${pm.qty}</b><button class="qtybtn" data-pq="1">+</button></div></div>
 ${isT ? `
 <div class="border hairline p-4 mt-3" style="background:var(--bg2);">
-<label class="flex items-center gap-2 text-xs font-medium cursor-pointer"><input type="checkbox" id="pmCustomOn" class="accent-[#0A0A0A]" ${pm.customOn ? 'checked' : ''}>Customise this T-Shirt (own text / design)</label>
-<div id="pmCustomBox" class="${pm.customOn ? '' : 'hidden'} mt-3 space-y-2">
-<select id="pmCustomPos" class="field"><option ${pm.customPos==='Front' ? 'selected' : ''}>Front</option><option ${pm.customPos==='Back' ? 'selected' : ''}>Back</option><option ${pm.customPos==='Front + Back' ? 'selected' : ''}>Front + Back</option></select>
-<textarea id="pmCustomNote" maxlength="200" rows="2" class="field" placeholder="e.g. Print text: RIYA ❤ SURAT">${esc(pm.customNote)}</textarea>
-</div></div>` : ''}
+  <button type="button" id="openCustomBtn" class="w-full text-left flex items-center justify-between gap-3">
+    <div class="flex items-center gap-2 min-w-0">
+      ${ic('palette','w-4 h-4')}
+      <span class="text-xs font-medium truncate">${pm.customOn && pm.customNote ? 'Customisation Added' : 'Add Custom Text / Design'}</span>
+    </div>
+    <span class="text-[10px] tracking-wide2 uppercase shrink-0" style="color:var(--mut);">${pm.customOn && pm.customNote ? 'Edit' : 'Add'}</span>
+  </button>
+  <div id="pmCustomSummary" class="${pm.customOn && pm.customNote ? '' : 'hidden'} mt-3 pt-3 border-t hairline text-[11px]" style="color:var(--mut);">
+    <div class="flex items-start justify-between gap-2">
+      <div class="min-w-0">
+        <p><b style="color:var(--text);">${esc(pm.customPos || 'Front + Back')}</b> — ${esc(pm.customNote || '')}</p>
+      </div>
+      <button type="button" id="removeCustomBtn" class="text-[10px] underline shrink-0">Remove</button>
+    </div>
+  </div>
+</div>` : ''}
 <div class="border hairline p-4 md:p-5 mt-5 text-xs space-y-1.5" style="background:var(--bg2);">
 <p class="micro mb-2">Highlights</p>
 <p>— ${esc(p.desc)}</p>
@@ -2513,15 +2548,47 @@ ${isT ? `
 <div class="hidden md:grid grid-cols-2 gap-3 mt-6"><button class="pill btn-line py-3.5" data-pm-add>Add to Cart</button><button class="pill btn-gold py-3.5" data-pm-buy>Buy Now</button></div>
 </div></div>
 <div class="md:hidden sticky bottom-0 border-t hairline p-3 flex gap-2 glassbar w-full"><button class="pill btn-line flex-1 py-3.5" data-pm-add>Add</button><button class="pill btn-gold flex-1 py-3.5" data-pm-buy>Buy</button></div>`;
-const on = $('#pmCustomOn');
-if (on){ on.addEventListener('change', () => { pm.customOn = on.checked; $('#pmCustomBox').classList.toggle('hidden', !on.checked); }); }
+const ocBtn = $('#openCustomBtn');
+if (ocBtn){ ocBtn.addEventListener('click', () => openCustomModal()); }
+const rmBtn = $('#removeCustomBtn');
+if (rmBtn){ rmBtn.addEventListener('click', () => { pm.customOn = false; pm.customNote = ''; pm.customPos = 'Front + Back'; drawProduct(); }); }
+}
+/* ---- Customisation Modal ---- */
+function openCustomModal(){
+  const posEl = $('#cmPos'); const noteEl = $('#cmNote'); const cntEl = $('#cmCount');
+  if (!posEl || !noteEl) return;
+  posEl.value = pm.customPos || 'Front + Back';
+  noteEl.value = pm.customNote || '';
+  if (cntEl) cntEl.textContent = noteEl.value.length;
+  noteEl.oninput = () => { if (cntEl) cntEl.textContent = noteEl.value.length; };
+  openModal('customModal');
+}
+
+function saveCustom(){
+  const posEl = $('#cmPos'); const noteEl = $('#cmNote');
+  if (!posEl || !noteEl) return;
+  const note = noteEl.value.trim();
+  if (!note){ toast('Please enter your text / design', 'warn'); return; }
+  pm.customOn = true;
+  pm.customPos = posEl.value || 'Front + Back';
+  pm.customNote = note;
+  closeModal('customModal', true);
+  drawProduct();
+  toast('Customisation saved', 'check');
+}
+
+function clearCustom(){
+  pm.customOn = false;
+  pm.customNote = '';
+  pm.customPos = 'Front + Back';
+  closeModal('customModal', true);
+  drawProduct();
 }
 function readExtras(p){
 if (p.cat.indexOf('tee') < 0) return null;
-const cc = $('#pmColorChoice') ? $('#pmColorChoice').value.trim() : '';
 let custom = null;
-if (pm.customOn){ custom = { pos: $('#pmCustomPos') ? $('#pmCustomPos').value : pm.customPos, note: $('#pmCustomNote') ? $('#pmCustomNote').value.trim() : pm.customNote }; }
-return { custom, colorChoice: cc };
+if (pm.customOn && pm.customNote){ custom = { pos: pm.customPos, note: pm.customNote }; }
+return { custom, colorChoice: '' };
 }
 let cp = { cat:'', special:'', sort:'feat' };
 function openCatPage(cat, type, special, skipRoute){
@@ -3089,7 +3156,7 @@ document.body.style.overflow = '';
 if (!skipHistory && window.location.hash) { try { history.back(); } catch(e){} }
 }
 function closeAll(skipHistory){
-['cartDrawer','wishDrawer','productModal','sizeModal','trackModal','catPage','mobileMenu','historyModal','pastHistoryModal','staffModal','memberModal','confirmCancelModal','policyModal','invoiceModal','orderDeliveredModal'].forEach(id => { const el = $('#'+id); if (el) el.classList.add('hidden'); });
+['cartDrawer','wishDrawer','productModal','sizeModal','trackModal','catPage','mobileMenu','historyModal','pastHistoryModal','staffModal','memberModal','confirmCancelModal','policyModal','invoiceModal','orderDeliveredModal','customModal'].forEach(id => { const el = $('#'+id); if (el) el.classList.add('hidden'); });
 document.body.style.overflow = '';
 }
 function handleRoute(){
@@ -3189,6 +3256,9 @@ $('#payOnline').onclick = handleOnlinePayment;
 if ($('#confirmCancelNo')) $('#confirmCancelNo').onclick = () => { pendingCancelId = null; closeModal('confirmCancelModal', true); };
 if ($('#confirmCancelBackdrop')) $('#confirmCancelBackdrop').onclick = () => { pendingCancelId = null; closeModal('confirmCancelModal', true); };
 if ($('#confirmCancelYes')) $('#confirmCancelYes').onclick = () => { if (pendingCancelId) cancelOrder(pendingCancelId); };
+// Customisation modal buttons
+if ($('#cmSave')) $('#cmSave').onclick = saveCustom;
+if ($('#cmCancel')) $('#cmCancel').onclick = () => closeModal('customModal', true);
 // 🎉 Delivered popup OK → move to history
 if ($('#deliveredOk')) $('#deliveredOk').onclick = () => {
   closeModal('orderDeliveredModal', true);
