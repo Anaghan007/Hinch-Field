@@ -2520,18 +2520,19 @@ ${imgs.length > 1 ? '<button class="absolute left-2 top-1/2 -translate-y-1/2 w-9
 </div>
 <div class="mt-5 flex items-center gap-4"><p class="micro">Qty</p><div class="flex items-center gap-2"><button class="qtybtn" data-pq="-1">−</button><b id="pmQty" class="w-6 text-center">${pm.qty}</b><button class="qtybtn" data-pq="1">+</button></div></div>
 ${isT ? `
-<div class="mt-5">
-  <button type="button" id="openCustomBtn" class="pill btn-gold w-full py-3.5 flex items-center justify-center gap-2">
+<div class="mt-5 flex items-center justify-between gap-3">
+  <div class="flex items-center gap-2 min-w-0">
     ${ic('palette','w-4 h-4')}
-    <span>${pm.customOn && pm.customNote ? 'Edit Customisation' : 'Add Custom Text / Design'}</span>
-  </button>
-  <div id="pmCustomSummary" class="${pm.customOn && pm.customNote ? '' : 'hidden'} mt-3 p-3 border hairline text-[11px]" style="background:var(--bg2); color:var(--mut);">
-    <div class="flex items-start justify-between gap-2">
-      <div class="min-w-0">
-        <p><b style="color:var(--text);">${esc(pm.customPos || 'Front + Back')}</b> — ${esc(pm.customNote || '')}</p>
-      </div>
-      <button type="button" id="removeCustomBtn" class="text-[10px] underline shrink-0">Remove</button>
+    <span class="text-xs font-medium truncate">${pm.customOn && pm.customNote ? 'Customised T-Shirt' : 'Customise this T-Shirt'}</span>
+  </div>
+  <button type="button" id="openCustomBtn" class="chip border hairline shrink-0" style="color:var(--text);">${pm.customOn && pm.customNote ? 'Edit' : 'Add'}</button>
+</div>
+<div id="pmCustomSummary" class="${pm.customOn && pm.customNote ? '' : 'hidden'} mt-3 p-3 border hairline text-[11px]" style="background:var(--bg2); color:var(--mut);">
+  <div class="flex items-start justify-between gap-2">
+    <div class="min-w-0">
+      <p><b style="color:var(--text);">${esc(pm.customPos || 'Front + Back')}</b> — ${esc(pm.customNote || '')}</p>
     </div>
+    <button type="button" id="removeCustomBtn" class="text-[10px] underline shrink-0">Remove</button>
   </div>
 </div>` : ''}
 <div class="border hairline p-4 md:p-5 mt-5 text-xs space-y-1.5" style="background:var(--bg2);">
