@@ -3633,11 +3633,14 @@ $('#adminCancelBtn').onclick = async () => {
       $('#adminCancelInput').value = '';
       const saved = store.get('membership_full', null);
       if (saved && saved.code === d.code) {
-        store.set('membership_full', null);
-        appliedMembership = null;
-        if (typeof showMemberView === 'function') showMemberView();
-        if (typeof renderCart === 'function') renderCart();
-        toast('Membership cancelled', 'cross');
+  store.set('membership_full', null);
+  appliedMembership = null;
+  // 🎯 Reset member modal views — show Buy again
+  const mBuy = $('#memViewBuy'); if (mBuy) mBuy.style.display = '';
+  const mActive = $('#memViewActive'); if (mActive) mActive.classList.add('hidden');
+  if (typeof showMemberView === 'function') showMemberView();
+  if (typeof renderCart === 'function') renderCart();
+  toast('Membership cancelled', 'cross');
       }
     } else { result.innerHTML = '<p class="text-[10px]" style="color:#DC2626;">❌ ' + (d.error || 'Not found') + '</p>'; }
   } catch (e) { result.innerHTML = '<p class="text-[10px]" style="color:#DC2626;">Error: ' + e.message + '</p>'; }
