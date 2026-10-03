@@ -2572,6 +2572,22 @@ function currentStageIdx(order){
   const map = { 'Order Placed': 0,'Order Confirmed': 1,'In Process': 2,'Order Ready': 3,'Dispatched': 4,'Out For Delivery': 5,'Delivered': 6,'Cancelled': -1 };
   return map[status] ?? 0;
 }
+/* ---- Compact timeline (only final status for History) ---- */
+function statusTimelineCompact(order){
+  const st = getOrderStatus(order);
+  const isCancelled = st.text === 'Cancelled';
+  const color = isCancelled ? '#DC2626' : '#0A0A0A';
+  const iconName = isCancelled ? 'cross' : 'check';
+  return '<div class="flex items-stretch border hairline" style="background:var(--bg2);">' +
+    '<div style="width:64px;display:flex;align-items:center;justify-content:center;background:' + color + ';color:#fff;flex-shrink:0;">' +
+      ic(iconName, 'w-6 h-6') +
+    '</div>' +
+    '<div class="flex-1 py-4 px-5">' +
+      '<p class="text-[10px] tracking-wide2 uppercase mb-1" style="color:var(--mut);">Order</p>' +
+      '<p class="disp text-base font-medium" style="color:' + color + ';">' + st.text + '</p>' +
+    '</div>' +
+  '</div>';
+}
 function statusTimeline(order){
   const ci = currentStageIdx(order);
   if (ci === -1) { return '<p class="text-xs font-medium flex items-center gap-2" style="color:#DC2626;">' + ic('cross','w-4 h-4') + 'Order Cancelled</p>'; }
@@ -2588,15 +2604,17 @@ function statusTimeline(order){
 function buildOrderCard(o, opts){
   opts = opts || {};
   const showCancel = !!opts.showCancel;
+  const compact = !!opts.compact;
   const isOwner = localStorage.getItem('hf_is_admin') === 'true';
   const st = getOrderStatus(o);
   const canCancel = showCancel && !isOwner && (Date.now() - o.timestamp < 24*60*60*1000) && st.text !== 'Cancelled' && st.text !== 'Delivered';
   const date = new Date(o.timestamp).toLocaleString('en-IN');
   const payBadge = o.payment && o.payment.method === 'online' ? '<span class="chip" style="background:#0A0A0A; color:#fff;">PAID ONLINE</span>' : '<span class="chip border hairline" style="color:var(--text);">COD</span>';
-    return '<div class="card p-4 md:p-5 space-y-4" data-orderid="' + o.id + '">' +
+  const timeline = compact ? statusTimelineCompact(o) : statusTimeline(o);
+  return '<div class="card p-4 md:p-5 space-y-4" data-orderid="' + o.id + '">' +
     '<div class="flex justify-between items-start gap-3 flex-wrap"><div><b class="disp text-sm">' + o.id + '</b><p class="text-[10px] mt-1" style="color:var(--mut);">' + date + '</p></div>' +
-    '<div class="flex gap-2 flex-wrap items-center">' + payBadge + '<span class="chip border hairline" style="color:' + st.color + ';">' + ic(st.icon,'w-3 h-3') + ' ' + st.text + '</span></div></div>' +
-    statusTimeline(o) +
+    '<div class="flex gap-2 flex-wrap items-center">' + payBadge + (compact ? '' : '<span class="chip border hairline" style="color:' + st.color + ';">' + ic(st.icon,'w-3 h-3') + ' ' + st.text + '</span>') + '</div></div>' +
+    timeline +
     '<div class="border-t hairline pt-3 space-y-2">' + o.items.map(l => {
       const p = prodById(l.id);
       if (!p) return '';
@@ -2902,7 +2920,7 @@ function renderPastHistory(){
     box.innerHTML = '<div class="text-center py-20 flex flex-col items-center" style="color:var(--mut);"><span class="mb-4">' + ic('history','w-14 h-14') + '</span><p class="text-sm font-medium">No past orders yet</p></div>';
     return;
   }
-  box.innerHTML = orders.map(o => buildOrderCard(o, { showCancel: false })).join('');
+  box.innerHTML = orders.map(o => buildOrderCard(o, { showCancel: false, compact: true })).join('');
 }
 
 function saveOrderToServer(order){
