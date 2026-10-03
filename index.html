@@ -1877,7 +1877,6 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
         <b id="deliveredOrderId" style="color:var(--text);letter-spacing:.08em;"></b> has been delivered successfully
       </p>
       <p class="text-xs mb-6" style="color:var(--mut);">Thank you for shopping with us ❤️</p>
-      <button id="deliveredOk" class="pill btn-gold w-full py-3.5">View in History</button>
     </div>
   </div>
 
@@ -3021,6 +3020,22 @@ async function syncMyOrders(){
                       const idEl = $('#deliveredOrderId');
                       if (idEl) idEl.textContent = serverO.id;
                       openModal('orderDeliveredModal');
+
+                      // 🎬 Auto-close popup after animation (2.8s) → go Home
+                      setTimeout(() => {
+                        if ($('#orderDeliveredModal') && !$('#orderDeliveredModal').classList.contains('hidden')){
+                          closeModal('orderDeliveredModal', true);
+                        }
+                        // Clear flags
+                        if (window.__delivering) Object.keys(window.__delivering).forEach(id => delete window.__delivering[id]);
+                        // Close all modals & scroll to hero
+                        closeAll(true);
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                        try { history.replaceState(null, '', location.pathname + location.search); } catch(e){}
+                        safe(renderHistory, 'delivered.autoClose');
+                        safe(renderPastHistory, 'delivered.autoClose.past');
+                      }, 2800);
+
                   }, 1400);
               }
             // Auto-clear after 6s → moves to History
@@ -3369,17 +3384,7 @@ $('#payOnline').onclick = handleOnlinePayment;
 if ($('#confirmCancelNo')) $('#confirmCancelNo').onclick = () => { pendingCancelId = null; closeModal('confirmCancelModal', true); };
 if ($('#confirmCancelBackdrop')) $('#confirmCancelBackdrop').onclick = () => { pendingCancelId = null; closeModal('confirmCancelModal', true); };
 if ($('#confirmCancelYes')) $('#confirmCancelYes').onclick = () => { if (pendingCancelId) cancelOrder(pendingCancelId); };
-// 🎉 Delivered popup OK → move to history
-if ($('#deliveredOk')) $('#deliveredOk').onclick = () => {
-  closeModal('orderDeliveredModal', true);
-  // Clear all delivering flags
-  if (window.__delivering) Object.keys(window.__delivering).forEach(id => delete window.__delivering[id]);
-  // Close everything and open History
-  closeAll(true);
-  renderPastHistory();
-  openModal('pastHistoryModal');
-  try { history.replaceState({ modal: 'pastHistoryModal' }, '', '#history'); } catch(e){}
-};
+  
 // Auto-clear on backdrop close too
 const dlm = $('#orderDeliveredModal');
 if (dlm){
