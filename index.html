@@ -3034,7 +3034,7 @@ async function syncMyOrders(){
                         try { history.replaceState(null, '', location.pathname + location.search); } catch(e){}
                         safe(renderHistory, 'delivered.autoClose');
                         safe(renderPastHistory, 'delivered.autoClose.past');
-                      }, 1800);
+                      }, 900);
 
                   }, 1400);
               }
