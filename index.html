@@ -3458,9 +3458,9 @@ function showMemberView(){
 async function openMemberModal(skipRoute){
   $('#memBuyErr').classList.add('hidden');
   if (typeof updateMembershipPrices === 'function') updateMembershipPrices();
-  openModal('memberModal');
   // ✅ FIX: Show correct view IMMEDIATELY from localStorage (no waiting for server)
   showMemberView();
+  openModal('memberModal');
   if (!skipRoute) {
     try {
       if (window.location.hash === '#menu') { history.replaceState({ modal:'memberModal' }, '', '#membership'); }
