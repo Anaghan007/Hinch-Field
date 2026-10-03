@@ -2496,11 +2496,6 @@ ${imgs.length > 1 ? '<button class="absolute left-2 top-1/2 -translate-y-1/2 w-9
 </div>
 <div class="mt-5 flex items-center gap-4"><p class="micro">Qty</p><div class="flex items-center gap-2"><button class="qtybtn" data-pq="-1">−</button><b id="pmQty" class="w-6 text-center">${pm.qty}</b><button class="qtybtn" data-pq="1">+</button></div></div>
 ${isT ? `
-<div class="border hairline p-4 mt-5" style="background:var(--bg2);">
-<p class="text-xs font-medium tracking-tight flex items-center gap-2">${ic('palette','w-4 h-4')} Want a colour that's not listed?</p>
-<p class="text-[10px] mt-1" style="color:var(--mut);">Tell us your choice — we'll confirm on WhatsApp.</p>
-<input id="pmColorChoice" maxlength="40" class="field mt-2" placeholder="e.g. Olive Green, Mustard…" value="${esc(pm.colorChoice)}">
-</div>
 <div class="border hairline p-4 mt-3" style="background:var(--bg2);">
 <label class="flex items-center gap-2 text-xs font-medium cursor-pointer"><input type="checkbox" id="pmCustomOn" class="accent-[#0A0A0A]" ${pm.customOn ? 'checked' : ''}>Customise this T-Shirt (own text / design)</label>
 <div id="pmCustomBox" class="${pm.customOn ? '' : 'hidden'} mt-3 space-y-2">
