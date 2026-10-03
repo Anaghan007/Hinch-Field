@@ -2083,6 +2083,12 @@ function saveAmt(p){
   if (!p) return 0;
   return p.price - memPrice(p);
 }
+/* ---- 🔒 Membership validity helper (handles both number & ISO string) ---- */
+function isMembershipValid(m){
+  if (!m || !m.code) return false;
+  const exp = new Date(m.expiresAt).getTime();
+  return !isNaN(exp) && exp > Date.now();
+}
 function updateMembershipPrices(){
   const mp = $('#memPrice'); if (mp) mp.textContent = fmt(599);
   const mm = $('#memMrp'); if (mm) mm.textContent = fmt(1199);
