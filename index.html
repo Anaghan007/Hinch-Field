@@ -2578,14 +2578,14 @@ function statusTimelineCompact(order){
   const isCancelled = st.text === 'Cancelled';
   const color = isCancelled ? '#DC2626' : 'var(--text)';
   const iconName = isCancelled ? 'cross' : 'check';
-  return '<div class="flex items-center gap-3 py-3 px-4 border hairline" style="background:var(--bg2);">' +
-    '<div style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:' + color + ';color:var(--bg);flex-shrink:0;">' +
-      ic(iconName, 'w-4 h-4') +
+  return '<div class="flex items-center gap-3 py-4 border-t border-b hairline">' +
+    '<div style="width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:' + color + ';color:var(--bg);flex-shrink:0;">' +
+      ic(iconName, 'w-3.5 h-3.5') +
     '</div>' +
-    '<div>' +
-      '<p class="text-sm font-medium" style="color:' + color + ';">' + st.text + '</p>' +
-      '<p class="text-[10px] tracking-wide2 uppercase" style="color:var(--mut);">Final Status</p>' +
+    '<div class="flex-1 min-w-0">' +
+      '<p class="text-sm font-medium tracking-tight" style="color:' + color + ';">' + st.text + '</p>' +
     '</div>' +
+    '<p class="text-[10px] tracking-wide2 uppercase" style="color:var(--mut);">Final</p>' +
   '</div>';
 }
 function statusTimeline(order){
