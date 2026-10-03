@@ -1997,7 +1997,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
     <div class="invoice-buttons"
       style="position:sticky;bottom:0;background:#fff;border-top:1px solid #E6E4E0;padding:14px 16px;display:flex;gap:10px;max-width:768px;margin:0 auto;">
       <button onclick="window.print()" class="pill btn-gold" style="flex:1;padding:14px;">Download PDF</button>
-      <button onclick="closeModal('invoiceModal', true);" class="pill btn-line" style="flex:1;padding:14px;">Close</button>
+      <button onclick="closeModal('invoiceModal', true); setTimeout(()=>{ if(typeof openHistory==='function') openHistory(); }, 200);" class="pill btn-line" style="flex:1;padding:14px;">Close</button>
     </div>
   </div>
 
@@ -2015,6 +2015,10 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
 
   <script>
     'use strict';
+// 🔝 Force scroll to top on refresh
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+window.addEventListener('beforeunload', () => { window.scrollTo(0, 0); });
+window.addEventListener('load', () => { setTimeout(() => window.scrollTo(0, 0), 0); });
 const $ = (s,r=document) => r.querySelector(s);
 const $$ = (s,r=document) => [...r.querySelectorAll(s)];
 const esc = (s='') => String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
@@ -3778,7 +3782,8 @@ clearInterval(sTimer); startSlider();
 }
 handleRoute();
 updateMembershipPrices();
-
+window.scrollTo(0, 0);
+  
 verifyAdminStatus().then(() => {
   const isAdmin = localStorage.getItem('hf_is_admin') === 'true';
   const user = store.get('user', null);
