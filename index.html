@@ -2463,8 +2463,8 @@ const isT = p.cat.indexOf('tee') > -1;
 const mp = memPrice(p);
 $('#productBody').innerHTML = `
 <div class="grid md:grid-cols-2 w-full">
-<div class="p-3 md:p-8 md:sticky md:top-0 md:self-start" style="background:var(--bg2);">
-<div class="md:flex md:gap-4 w-full">
+<div class="p-3 md:p-8" style="background:var(--bg2);">
+<div class="md:flex md:gap-4 w-full md:sticky md:top-4">
 ${imgs.length > 1 ? '<div class="hidden md:flex flex-col gap-2 order-1">' + imgs.map((im,i) => '<button class="w-14 h-16 overflow-hidden border" style="border-color:' + (i===pm.angle ? 'var(--text)' : 'var(--line)') + ';" data-angle="' + i + '">' + imgTag(p, cn, i, 'w-full h-full object-contain') + '</button>').join('') + '</div>' : ''}
 <div class="relative flex-1 order-2 min-w-0">
 <span class="absolute top-3 left-3 z-10 chip" style="background:var(--text); color:var(--bg);">COD</span>
