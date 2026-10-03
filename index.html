@@ -1802,6 +1802,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
     <div class="modalcard relative p-6 md:p-8 max-w-md w-full max-h-[90vh] overflow-y-auto"
       style="background:var(--bg); color:var(--text); box-shadow:var(--shadow);">
       <button class="absolute top-3 right-3 w-9 h-9 border hairline" data-close="memberModal" aria-label="Close">✕</button>
+      
       <div id="memViewActive" class="hidden" style="display:none;">
         <div class="text-center mb-6">
           <svg class="w-14 h-14 mx-auto mb-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"
@@ -3467,25 +3468,43 @@ function showMemberView(){
 async function openMemberModal(skipRoute){
   $('#memBuyErr').classList.add('hidden');
   if (typeof updateMembershipPrices === 'function') updateMembershipPrices();
-  // ✅ FIX: Show correct view IMMEDIATELY from localStorage (no waiting for server)
-  showMemberView();
+
+  const mm = $('#memberModal');
+  mm.classList.remove('mready');         // 🔒 lock views
+  $('#memLoading').classList.remove('hidden');  // 🌀 spinner ON
   openModal('memberModal');
+
   if (!skipRoute) {
     try {
       if (window.location.hash === '#menu') { history.replaceState({ modal:'memberModal' }, '', '#membership'); }
       else { history.pushState({ modal:'memberModal' }, '', '#membership'); }
     } catch(e){}
   }
+
+  // 🌐 Server fetch
   try {
     const deviceId = await getDeviceId();
-    const r = await fetch(`${API_BASE}/api/membership-check-device`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ deviceId }) });
+    const r = await fetch(`${API_BASE}/api/membership-check-device`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ deviceId })
+    });
     const d = await r.json();
-      if (d.success && d.membership){
-      const deviceMembership = d.membership;
-      store.set('membership_full', deviceMembership);
-      showMemberView();   // ← update view with server data
+    if (d.success && d.membership){
+      store.set('membership_full', d.membership);
+    } else if (d.success && !d.membership){
+      const local = store.get('membership_full', null);
+      if (local && local.code && Date.now() >= local.expiresAt){
+        store.set('membership_full', null);
+      }
     }
-  } catch(e){ console.error(e); }
+  } catch(e){ console.error('[membership-check]', e); }
+
+  // 🌀 Spinner OFF + show correct view
+  $('#memLoading').classList.add('hidden');
+  showMemberView();
+  mm.classList.add('mready');            // 🔓 unlock views
+
+  // 📱 Fallback lookup
   const saved = store.get('membership_full', null);
   if (!saved || !saved.code){
     const lastPhone = store.get('last_phone', null);
