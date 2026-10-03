@@ -2585,7 +2585,6 @@ function statusTimelineCompact(order){
     '<div class="flex-1 min-w-0">' +
       '<p class="text-sm font-medium tracking-tight" style="color:' + color + ';">' + st.text + '</p>' +
     '</div>' +
-    '<p class="text-[10px] tracking-wide2 uppercase" style="color:var(--mut);">Final</p>' +
   '</div>';
 }
 function statusTimeline(order){
@@ -2610,10 +2609,19 @@ function buildOrderCard(o, opts){
   const canCancel = showCancel && !isOwner && (Date.now() - o.timestamp < 24*60*60*1000) && st.text !== 'Cancelled' && st.text !== 'Delivered';
   const date = new Date(o.timestamp).toLocaleString('en-IN');
   const payBadge = o.payment && o.payment.method === 'online' ? '<span class="chip" style="background:#0A0A0A; color:#fff;">PAID ONLINE</span>' : '<span class="chip border hairline" style="color:var(--text);">COD</span>';
-  const timeline = compact ? statusTimelineCompact(o) : statusTimeline(o);
+  // Premium status pill (History mode) — replaces the plain chip
+  const isCancelled = st.text === 'Cancelled';
+  const statusColor = isCancelled ? '#DC2626' : 'var(--text)';
+  const statusPill = '<div class="flex items-center gap-1.5 px-3 py-1.5" style="border:1px solid ' + statusColor + ';">' +
+      '<span style="color:' + statusColor + ';">' + ic(st.icon, 'w-3 h-3') + '</span>' +
+      '<span class="text-[10px] font-medium tracking-wide2 uppercase" style="color:' + statusColor + ';">' + st.text + '</span>' +
+    '</div>';
+  const statusChip = '<span class="chip border hairline" style="color:' + st.color + ';">' + ic(st.icon,'w-3 h-3') + ' ' + st.text + '</span>';
+  const rightSide = compact ? (payBadge + statusPill) : (payBadge + statusChip);
+  const timeline = compact ? '' : statusTimeline(o);
   return '<div class="card p-4 md:p-5 space-y-4" data-orderid="' + o.id + '">' +
     '<div class="flex justify-between items-start gap-3 flex-wrap"><div><b class="disp text-sm">' + o.id + '</b><p class="text-[10px] mt-1" style="color:var(--mut);">' + date + '</p></div>' +
-    '<div class="flex gap-2 flex-wrap items-center">' + payBadge + '<span class="chip border hairline" style="color:' + st.color + ';">' + ic(st.icon,'w-3 h-3') + ' ' + st.text + '</span></div></div>' +
+    '<div class="flex gap-2 flex-wrap items-center">' + rightSide + '</div></div>' +
     timeline +
     '<div class="border-t hairline pt-3 space-y-2">' + o.items.map(l => {
       const p = prodById(l.id);
