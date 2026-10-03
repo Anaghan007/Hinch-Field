@@ -1805,20 +1805,33 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
             <path d="M2 18h20" />
           </svg>
           <p class="micro mb-2">HINCHFIELD</p>
-          <h3 class="disp editorial-h font-luxe text-2xl mb-1">Active Member</h3>
-          <p class="text-xs" style="color:var(--mut);">Welcome back!</p>
+          <h3 id="memActiveTitle" class="disp editorial-h font-luxe text-2xl mb-1">Active Member</h3>
+          <p id="memActiveSubtitle" class="text-xs" style="color:var(--mut);">Welcome back!</p>
         </div>
-        <div class="border hairline p-5 mb-5 text-center" style="background:var(--bg2);">
+
+        <!-- Active Code Box -->
+        <div id="memCodeBox" class="border hairline p-5 mb-5 text-center" style="background:var(--bg2);">
           <p class="micro mb-2">YOUR MEMBERSHIP CODE</p>
           <p id="memActiveCode" class="disp" style="font-size:2.4rem;letter-spacing:.4em;font-weight:500;">0000</p>
           <p id="memActiveName" class="text-xs mt-3" style="color:var(--mut);"></p>
           <p id="memActiveExpiry" class="text-xs" style="color:var(--mut);"></p>
         </div>
-        <div class="grid grid-cols-2 gap-2 mb-3">
+
+        <!-- Expired Box -->
+        <div id="memExpiredBox" class="hidden border p-5 mb-5 text-center"
+          style="background:#FEF2F2;border-color:#FECACA;">
+          <p class="micro mb-3" style="color:#DC2626;">MEMBERSHIP EXPIRED</p>
+          <p class="disp text-lg mb-2" style="font-weight:500;color:var(--text);">Renew to Continue<br>Saving 50% OFF
+          </p>
+          <p id="memExpiredDate" class="text-xs" style="color:var(--mut);"></p>
+        </div>
+
+        <div id="memActions" class="grid grid-cols-2 gap-2 mb-3">
           <button id="memCopy" class="pill btn-line py-3.5">Copy Code</button>
           <button id="memShare" class="pill btn-ink py-3.5">Share</button>
         </div>
         <button id="memGoCart" class="pill btn-gold w-full py-3.5">Shop & Save 50%</button>
+        <button id="memRenew" class="pill btn-gold w-full py-3.5 hidden">Renew Membership — ₹599</button>
       </div>
       <div id="memViewBuy">
         <div class="text-center mb-6">
@@ -1865,6 +1878,28 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       </p>
       <p class="text-xs mb-6" style="color:var(--mut);">Thank you for shopping with us ❤️</p>
       <button id="deliveredOk" class="pill btn-gold w-full py-3.5">View in History</button>
+    </div>
+  </div>
+
+  <!-- ═══ MEMBERSHIP WELCOME POPUP ═══ -->
+  <div id="memberWelcomeModal" class="fixed inset-0 z-[97] hidden flex items-center justify-center px-4 w-full">
+    <div class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
+    <div class="modalcard delivered-pop relative p-8 md:p-10 max-w-sm w-full text-center"
+      style="background:var(--bg); color:var(--text); box-shadow:var(--shadow);">
+      <div class="delivered-anim mx-auto mb-5"
+        style="width:80px;height:80px;border-radius:50%;background:var(--text);display:flex;align-items:center;justify-content:center;">
+        <svg class="w-12 h-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+          stroke-linecap="round" stroke-linejoin="round" style="color:var(--bg);">
+          <path d="M5 13l4 4L19 7"
+            style="stroke-dasharray:30;stroke-dashoffset:30;animation:drawCheck .55s .35s forwards cubic-bezier(.5,.9,.3,1)" />
+        </svg>
+      </div>
+      <p class="micro mb-2">HINCHFIELD</p>
+      <h3 class="disp editorial-h font-luxe text-2xl mb-2">Welcome to the Family! 🎉</h3>
+      <p class="text-xs mb-1" style="color:var(--mut);">Your <b style="color:var(--text);">Hinchfield Membership</b> has
+        been activated successfully</p>
+      <p class="text-xs mb-6" style="color:var(--mut);">Thanks for being part of our Hinchfield family ❤️</p>
+      <button id="memWelcomeOk" class="pill btn-gold w-full py-3.5">View My Membership Code</button>
     </div>
   </div>
 
@@ -2960,23 +2995,30 @@ async function syncMyOrders(){
           local[idx].deliveredAt = serverO.deliveredAt || Date.now();
           // 🎉 ANIMATION + POPUP on transition
           if (wasNotDelivered) {
-            window.__delivering = window.__delivering || {};
-            window.__delivering[serverO.id] = true;
-            const isOwner = localStorage.getItem('hf_is_admin') === 'true';
-            // Animate card
-            setTimeout(() => {
-              const el = document.querySelector('.card[data-orderid="' + serverO.id + '"]');
-              if (el) el.classList.add('delivering-anim');
-            }, 60);
-            // Show popup (only to customer)
-            if (!isOwner && document.visibilityState === 'visible') {
+              window.__delivering = window.__delivering || {};
+              window.__delivering[serverO.id] = true;
+              const isOwner = localStorage.getItem('hf_is_admin') === 'true';
+              const isAdminPanelOpen = $('#staffModal') && !$('#staffModal').classList.contains('hidden');
+
+              // Animate card
               setTimeout(() => {
-                if (!window.__delivering || !window.__delivering[serverO.id]) return;
-                const idEl = $('#deliveredOrderId');
-                if (idEl) idEl.textContent = serverO.id;
-                openModal('orderDeliveredModal');
-              }, 1400);
-            }
+                  const el = document.querySelector('.card[data-orderid="' + serverO.id + '"]');
+                  if (el) el.classList.add('delivering-anim');
+              }, 60);
+
+              // Show popup (only to customer, NOT on admin device or when admin panel is open)
+              if (!isOwner && !isAdminPanelOpen && document.visibilityState === 'visible') {
+                    setTimeout(() => {
+                      if (!window.__delivering || !window.__delivering[serverO.id]) return;
+            
+                      // Double check inside timeout to prevent race conditions
+                      if (localStorage.getItem('hf_is_admin') === 'true') return;
+            
+                      const idEl = $('#deliveredOrderId');
+                      if (idEl) idEl.textContent = serverO.id;
+                      openModal('orderDeliveredModal');
+                  }, 1400);
+              }
             // Auto-clear after 6s → moves to History
             setTimeout(() => {
               if (window.__delivering) delete window.__delivering[serverO.id];
@@ -3223,7 +3265,7 @@ document.body.style.overflow = '';
 if (!skipHistory && window.location.hash) { try { history.back(); } catch(e){} }
 }
 function closeAll(skipHistory){
-['cartDrawer','wishDrawer','productModal','sizeModal','trackModal','catPage','mobileMenu','historyModal','pastHistoryModal','staffModal','memberModal','confirmCancelModal','policyModal','invoiceModal','orderDeliveredModal'].forEach(id => { const el = $('#'+id); if (el) el.classList.add('hidden'); });
+['cartDrawer','wishDrawer','productModal','sizeModal','trackModal','catPage','mobileMenu','historyModal','pastHistoryModal','staffModal','memberModal','memberWelcomeModal','confirmCancelModal','policyModal','invoiceModal','orderDeliveredModal'].forEach(id => { const el = $('#'+id); if (el) el.classList.add('hidden'); });
 document.body.style.overflow = '';
 }
 function handleRoute(){
@@ -3357,15 +3399,51 @@ $('#trackGo').onclick = track;
 $('#toTop').onclick = () => window.scrollTo({ top:0, behavior:'smooth' });
 
 function showMemberView(){
-  const active = $('#memViewActive'); const buy = $('#memViewBuy');
+  const active = $('#memViewActive');
+  const buy = $('#memViewBuy');
   if (!active || !buy) return;
   const saved = store.get('membership_full', null);
-  if (saved && saved.code && Date.now() < saved.expiresAt){
-    active.classList.remove('hidden'); buy.classList.add('hidden');
-    $('#memActiveCode').textContent = saved.code;
-    $('#memActiveName').textContent = saved.name || '';
-    $('#memActiveExpiry').textContent = 'Valid till: ' + new Date(saved.expiresAt).toLocaleDateString('en-IN');
-  } else { active.classList.add('hidden'); buy.classList.remove('hidden'); }
+  const now = Date.now();
+
+  if (saved && saved.code){
+    active.classList.remove('hidden');
+    buy.classList.add('hidden');
+
+    const isExpired = now >= saved.expiresAt;
+    const codeBox = $('#memCodeBox');
+    const expiredBox = $('#memExpiredBox');
+    const actions = $('#memActions');
+    const goBtn = $('#memGoCart');
+    const renewBtn = $('#memRenew');
+    const title = $('#memActiveTitle');
+    const subtitle = $('#memActiveSubtitle');
+
+    if (isExpired){
+      if (codeBox) codeBox.classList.add('hidden');
+      if (expiredBox) expiredBox.classList.remove('hidden');
+      if (actions) actions.classList.add('hidden');
+      if (goBtn) goBtn.classList.add('hidden');
+      if (renewBtn) renewBtn.classList.remove('hidden');
+      if (title) title.textContent = 'Membership Expired';
+      if (subtitle) subtitle.textContent = 'Renew to continue enjoying 50% OFF';
+      const ed = $('#memExpiredDate');
+      if (ed) ed.textContent = 'Expired on: ' + new Date(saved.expiresAt).toLocaleDateString('en-IN');
+    } else {
+      if (codeBox) codeBox.classList.remove('hidden');
+      if (expiredBox) expiredBox.classList.add('hidden');
+      if (actions) actions.classList.remove('hidden');
+      if (goBtn) goBtn.classList.remove('hidden');
+      if (renewBtn) renewBtn.classList.add('hidden');
+      if (title) title.textContent = 'Active Member';
+      if (subtitle) subtitle.textContent = 'Welcome back!';
+      $('#memActiveCode').textContent = saved.code;
+      $('#memActiveName').textContent = saved.name || '';
+      $('#memActiveExpiry').textContent = 'Valid till: ' + new Date(saved.expiresAt).toLocaleDateString('en-IN');
+    }
+  } else {
+    active.classList.add('hidden');
+    buy.classList.remove('hidden');
+  }
 }
 
 async function openMemberModal(skipRoute){
@@ -3411,6 +3489,26 @@ if ($('#memShare')) $('#memShare').onclick = () => {
   else { try { navigator.clipboard.writeText(txt); toast('Copied — share anywhere', 'check'); } catch(e){} }
 };
 if ($('#memGoCart')) $('#memGoCart').onclick = () => { closeAll(true); openCatPage('', '', ''); };
+// 🎉 Membership Welcome OK → show code popup
+if ($('#memWelcomeOk')) $('#memWelcomeOk').onclick = () => {
+  closeModal('memberWelcomeModal', true);
+  setTimeout(() => {
+    openModal('memberModal');
+    showMemberView();
+    try { if (window.location.hash !== '#membership') history.pushState({ modal:'memberModal' }, '', '#membership'); } catch(e){}
+  }, 300);
+};
+
+// 🔁 Renew Membership button
+if ($('#memRenew')) $('#memRenew').onclick = () => {
+  const saved = store.get('membership_full', null);
+  $('#memViewActive').classList.add('hidden');
+  $('#memViewBuy').classList.remove('hidden');
+  if (saved){
+    if ($('#memBuyName')) $('#memBuyName').value = saved.name || '';
+    if ($('#memBuyPhone')) $('#memBuyPhone').value = saved.phone || '';
+  }
+};
 
 if ($('#memBuyBtn')) $('#memBuyBtn').onclick = async () => {
   const btn = $('#memBuyBtn');
@@ -3444,8 +3542,12 @@ if ($('#memBuyBtn')) $('#memBuyBtn').onclick = async () => {
           store.set('membership_full', full);
           store.set('last_phone', clean);
           toast('Membership activated!', 'check');
-          showMemberView();
           if (typeof renderCart === 'function') renderCart();
+
+          // 🎉 Show welcome popup
+          closeModal('memberModal', true);
+          setTimeout(() => { openModal('memberWelcomeModal'); }, 300);
+
         } catch(e){ console.error(e); toast('Verification failed', 'cross'); }
       },
       modal: { ondismiss: () => toast('Payment cancelled', 'warn') }
