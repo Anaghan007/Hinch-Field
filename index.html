@@ -1204,11 +1204,6 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       accent-color: var(--text);
     }
 
-    /* 🚫 Kill member modal animation flash */
-    #memberModal .modalcard { animation: none !important; }
-    #memberModal #memViewActive,
-    #memberModal #memViewBuy { will-change: auto; }
-
     @keyframes deliverPulse {
       0% {
         box-shadow: 0 0 0 0 rgba(10, 10, 10, .55)
@@ -1301,7 +1296,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       </div>
     </div>
     <nav class="hidden md:block border-t hairline w-full">
-      <div class="wrap flex items-center justify-center gap-5 lg:gap-8 py-3 overflow-x-auto no-scrollbar">
+      <div class="wrap flex items-center justify-center gap-8 py-3 overflow-x-auto no-scrollbar">
         <a href="#home" class="text-[11px] font-medium tracking-wide2 uppercase hover:opacity-60 transition shrink-0"
           style="color:var(--text);">Home</a>
         <button class="text-[11px] font-medium tracking-wide2 uppercase hover:opacity-60 transition shrink-0" data-catpage="oversized">Oversized & Minimal</button>
@@ -1310,7 +1305,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
         <button class="text-[11px] font-medium tracking-wide2 uppercase hover:opacity-60 transition shrink-0" data-catpage="best">Best Sell</button>
         <button class="text-[11px] font-medium tracking-wide2 uppercase hover:opacity-60 transition shrink-0" data-catpage="">All Products</button>
         <button class="text-[11px] font-medium tracking-wide2 uppercase hover:opacity-60 transition shrink-0" data-openhistory>My Orders</button>
-        <button id="openMembership" class="flex items-center gap-1.5 shrink-0 whitespace-nowrap text-[11px] font-medium tracking-wide2 uppercase hover:opacity-60 transition" style="color:var(--text);"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a8 8 0 0 1 16 0v1"/></svg>Membership</button>
+        <button id="openMembership" class="flex items-center gap-1.5" style="color:var(--text);"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a8 8 0 0 1 16 0v1"/></svg>Membership</button>
         <button class="text-[11px] font-medium tracking-wide2 uppercase hover:opacity-60 transition shrink-0" data-openpast>History</button>
         <a href="#contact"
           class="text-[11px] font-medium tracking-wide2 uppercase hover:opacity-60 transition shrink-0">Contact</a>
@@ -1350,7 +1345,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
         id="heroDots"></div>
     </section>
 
-    <section class="py-12 md:hidden w-full" style="background:var(--bg2);" id="shopCatSec">
+    <section class="py-12 md:py-20 w-full" style="background:var(--bg2);" id="shopCatSec">
       <div class="wrap text-center mb-10">
         <p class="micro mb-3">Shop by Category</p>
         <h2 class="disp editorial-h font-luxe" style="font-size:var(--fs-h2);">Find Your Style</h2>
@@ -1802,8 +1797,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
     <div class="modalcard relative p-6 md:p-8 max-w-md w-full max-h-[90vh] overflow-y-auto"
       style="background:var(--bg); color:var(--text); box-shadow:var(--shadow);">
       <button class="absolute top-3 right-3 w-9 h-9 border hairline" data-close="memberModal" aria-label="Close">✕</button>
-      
-      <div id="memViewActive" class="hidden" style="display:none;">
+      <div id="memViewActive" class="hidden">
         <div class="text-center mb-6">
           <svg class="w-14 h-14 mx-auto mb-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"
             stroke-linecap="round" stroke-linejoin="round">
@@ -1811,35 +1805,22 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
             <path d="M2 18h20" />
           </svg>
           <p class="micro mb-2">HINCHFIELD</p>
-          <h3 id="memActiveTitle" class="disp editorial-h font-luxe text-2xl mb-1">Active Member</h3>
-          <p id="memActiveSubtitle" class="text-xs" style="color:var(--mut);">Welcome back!</p>
+          <h3 class="disp editorial-h font-luxe text-2xl mb-1">Active Member</h3>
+          <p class="text-xs" style="color:var(--mut);">Welcome back!</p>
         </div>
-
-        <!-- Active Code Box -->
-        <div id="memCodeBox" class="border hairline p-5 mb-5 text-center" style="background:var(--bg2);">
+        <div class="border hairline p-5 mb-5 text-center" style="background:var(--bg2);">
           <p class="micro mb-2">YOUR MEMBERSHIP CODE</p>
           <p id="memActiveCode" class="disp" style="font-size:2.4rem;letter-spacing:.4em;font-weight:500;">0000</p>
           <p id="memActiveName" class="text-xs mt-3" style="color:var(--mut);"></p>
           <p id="memActiveExpiry" class="text-xs" style="color:var(--mut);"></p>
         </div>
-
-        <!-- Expired Box -->
-        <div id="memExpiredBox" class="hidden border p-5 mb-5 text-center"
-          style="background:#FEF2F2;border-color:#FECACA;">
-          <p class="micro mb-3" style="color:#DC2626;">MEMBERSHIP EXPIRED</p>
-          <p class="disp text-lg mb-2" style="font-weight:500;color:var(--text);">Renew to Continue<br>Saving 50% OFF
-          </p>
-          <p id="memExpiredDate" class="text-xs" style="color:var(--mut);"></p>
-        </div>
-
-        <div id="memActions" class="grid grid-cols-2 gap-2 mb-3">
+        <div class="grid grid-cols-2 gap-2 mb-3">
           <button id="memCopy" class="pill btn-line py-3.5">Copy Code</button>
           <button id="memShare" class="pill btn-ink py-3.5">Share</button>
         </div>
         <button id="memGoCart" class="pill btn-gold w-full py-3.5">Shop & Save 50%</button>
-        <button id="memRenew" class="pill btn-gold w-full py-3.5 hidden">Renew Membership — ₹599</button>
       </div>
-      <div id="memViewBuy" class="hidden" style="display:none;">
+      <div id="memViewBuy">
         <div class="text-center mb-6">
           <p class="micro mb-2">HINCHFIELD</p>
           <h3 class="disp editorial-h font-luxe text-2xl mb-2">Yearly Membership</h3>
@@ -1859,7 +1840,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
         <input id="memBuyName" maxlength="60" class="field mb-3" placeholder="Full Name *">
         <input id="memBuyPhone" inputmode="numeric" maxlength="15" class="field mb-3" placeholder="Number *">
         <p id="memBuyErr" class="text-[11px] hidden mb-3" style="color:#DC2626;"></p>
-        <button id="memBuyBtn" class="pill btn-gold w-full py-4">Get Membership</button>
+        <button id="memBuyBtn" class="pill btn-gold w-full py-4">Pay ₹1 — Get Membership</button>
         <p class="text-[10px] text-center mt-3" style="color:var(--mut);">Secure payment</p>
       </div>
     </div>
@@ -1883,28 +1864,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
         <b id="deliveredOrderId" style="color:var(--text);letter-spacing:.08em;"></b> has been delivered successfully
       </p>
       <p class="text-xs mb-6" style="color:var(--mut);">Thank you for shopping with us ❤️</p>
-    </div>
-  </div>
-
-  <!-- ═══ MEMBERSHIP WELCOME POPUP ═══ -->
-  <div id="memberWelcomeModal" class="fixed inset-0 z-[97] hidden flex items-center justify-center px-4 w-full">
-    <div class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
-    <div class="modalcard delivered-pop relative p-8 md:p-10 max-w-sm w-full text-center"
-      style="background:var(--bg); color:var(--text); box-shadow:var(--shadow);">
-      <div class="delivered-anim mx-auto mb-5"
-        style="width:80px;height:80px;border-radius:50%;background:var(--text);display:flex;align-items:center;justify-content:center;">
-        <svg class="w-12 h-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-          stroke-linecap="round" stroke-linejoin="round" style="color:var(--bg);">
-          <path d="M5 13l4 4L19 7"
-            style="stroke-dasharray:30;stroke-dashoffset:30;animation:drawCheck .55s .35s forwards cubic-bezier(.5,.9,.3,1)" />
-        </svg>
-      </div>
-      <p class="micro mb-2">HINCHFIELD</p>
-      <h3 class="disp editorial-h font-luxe text-2xl mb-2">Welcome to the Family! 🎉</h3>
-      <p class="text-xs mb-1" style="color:var(--mut);">Your <b style="color:var(--text);">Hinchfield Membership</b> has
-        been activated successfully</p>
-      <p class="text-xs mb-6" style="color:var(--mut);">Thanks for being part of our Hinchfield family ❤️</p>
-      <button id="memWelcomeOk" class="pill btn-gold w-full py-3.5">View My Membership Code</button>
+      <button id="deliveredOk" class="pill btn-gold w-full py-3.5">View in History</button>
     </div>
   </div>
 
@@ -2002,7 +1962,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
     <div class="invoice-buttons"
       style="position:sticky;bottom:0;background:#fff;border-top:1px solid #E6E4E0;padding:14px 16px;display:flex;gap:10px;max-width:768px;margin:0 auto;">
       <button onclick="window.print()" class="pill btn-gold" style="flex:1;padding:14px;">Download PDF</button>
-      <button onclick="closeModal('invoiceModal', true); setTimeout(()=>{ if(typeof openHistory==='function') openHistory(); }, 200);" class="pill btn-line" style="flex:1;padding:14px;">Close</button>
+      <button onclick="closeModal('invoiceModal', true);" class="pill btn-line" style="flex:1;padding:14px;">Close</button>
     </div>
   </div>
 
@@ -2020,10 +1980,6 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
 
   <script>
     'use strict';
-// 🔝 Force scroll to top on refresh
-if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
-window.addEventListener('beforeunload', () => { window.scrollTo(0, 0); });
-window.addEventListener('load', () => { setTimeout(() => window.scrollTo(0, 0), 0); });
 const $ = (s,r=document) => r.querySelector(s);
 const $$ = (s,r=document) => [...r.querySelectorAll(s)];
 const esc = (s='') => String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
@@ -2118,7 +2074,7 @@ function updateMembershipPrices(){
   const mp = $('#memPrice'); if (mp) mp.textContent = fmt(599);
   const mm = $('#memMrp'); if (mm) mm.textContent = fmt(1199);
   const mb = $('#memBuyBtn');
-  if (mb && !mb.disabled) mb.textContent = 'Get Membership';
+  if (mb && !mb.disabled) mb.textContent = 'Pay ' + fmt(599) + ' — Get Membership';
 }
 /* ---- Categories ---- */
 const CATMETA = {
@@ -3004,46 +2960,23 @@ async function syncMyOrders(){
           local[idx].deliveredAt = serverO.deliveredAt || Date.now();
           // 🎉 ANIMATION + POPUP on transition
           if (wasNotDelivered) {
-              window.__delivering = window.__delivering || {};
-              window.__delivering[serverO.id] = true;
-              const isOwner = localStorage.getItem('hf_is_admin') === 'true';
-              const isAdminPanelOpen = $('#staffModal') && !$('#staffModal').classList.contains('hidden');
-
-              // Animate card
+            window.__delivering = window.__delivering || {};
+            window.__delivering[serverO.id] = true;
+            const isOwner = localStorage.getItem('hf_is_admin') === 'true';
+            // Animate card
+            setTimeout(() => {
+              const el = document.querySelector('.card[data-orderid="' + serverO.id + '"]');
+              if (el) el.classList.add('delivering-anim');
+            }, 60);
+            // Show popup (only to customer)
+            if (!isOwner && document.visibilityState === 'visible') {
               setTimeout(() => {
-                  const el = document.querySelector('.card[data-orderid="' + serverO.id + '"]');
-                  if (el) el.classList.add('delivering-anim');
-              }, 60);
-
-              // Show popup (only to customer, NOT on admin device or when admin panel is open)
-              if (!isOwner && !isAdminPanelOpen && document.visibilityState === 'visible') {
-                    setTimeout(() => {
-                      if (!window.__delivering || !window.__delivering[serverO.id]) return;
-            
-                      // Double check inside timeout to prevent race conditions
-                      if (localStorage.getItem('hf_is_admin') === 'true') return;
-            
-                      const idEl = $('#deliveredOrderId');
-                      if (idEl) idEl.textContent = serverO.id;
-                      openModal('orderDeliveredModal');
-
-                      // 🎬 Auto-close popup after animation (2.8s) → go Home
-                      setTimeout(() => {
-                        if ($('#orderDeliveredModal') && !$('#orderDeliveredModal').classList.contains('hidden')){
-                          closeModal('orderDeliveredModal', true);
-                        }
-                        // Clear flags
-                        if (window.__delivering) Object.keys(window.__delivering).forEach(id => delete window.__delivering[id]);
-                        // Close all modals & scroll to hero
-                        closeAll(true);
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                        try { history.replaceState(null, '', location.pathname + location.search); } catch(e){}
-                        safe(renderHistory, 'delivered.autoClose');
-                        safe(renderPastHistory, 'delivered.autoClose.past');
-                      }, 900);
-
-                  }, 1400);
-              }
+                if (!window.__delivering || !window.__delivering[serverO.id]) return;
+                const idEl = $('#deliveredOrderId');
+                if (idEl) idEl.textContent = serverO.id;
+                openModal('orderDeliveredModal');
+              }, 1400);
+            }
             // Auto-clear after 6s → moves to History
             setTimeout(() => {
               if (window.__delivering) delete window.__delivering[serverO.id];
@@ -3290,7 +3223,7 @@ document.body.style.overflow = '';
 if (!skipHistory && window.location.hash) { try { history.back(); } catch(e){} }
 }
 function closeAll(skipHistory){
-['cartDrawer','wishDrawer','productModal','sizeModal','trackModal','catPage','mobileMenu','historyModal','pastHistoryModal','staffModal','memberModal','memberWelcomeModal','confirmCancelModal','policyModal','invoiceModal','orderDeliveredModal'].forEach(id => { const el = $('#'+id); if (el) el.classList.add('hidden'); });
+['cartDrawer','wishDrawer','productModal','sizeModal','trackModal','catPage','mobileMenu','historyModal','pastHistoryModal','staffModal','memberModal','confirmCancelModal','policyModal','invoiceModal','orderDeliveredModal'].forEach(id => { const el = $('#'+id); if (el) el.classList.add('hidden'); });
 document.body.style.overflow = '';
 }
 function handleRoute(){
@@ -3390,7 +3323,17 @@ $('#payOnline').onclick = handleOnlinePayment;
 if ($('#confirmCancelNo')) $('#confirmCancelNo').onclick = () => { pendingCancelId = null; closeModal('confirmCancelModal', true); };
 if ($('#confirmCancelBackdrop')) $('#confirmCancelBackdrop').onclick = () => { pendingCancelId = null; closeModal('confirmCancelModal', true); };
 if ($('#confirmCancelYes')) $('#confirmCancelYes').onclick = () => { if (pendingCancelId) cancelOrder(pendingCancelId); };
-  
+// 🎉 Delivered popup OK → move to history
+if ($('#deliveredOk')) $('#deliveredOk').onclick = () => {
+  closeModal('orderDeliveredModal', true);
+  // Clear all delivering flags
+  if (window.__delivering) Object.keys(window.__delivering).forEach(id => delete window.__delivering[id]);
+  // Close everything and open History
+  closeAll(true);
+  renderPastHistory();
+  openModal('pastHistoryModal');
+  try { history.replaceState({ modal: 'pastHistoryModal' }, '', '#history'); } catch(e){}
+};
 // Auto-clear on backdrop close too
 const dlm = $('#orderDeliveredModal');
 if (dlm){
@@ -3414,96 +3357,47 @@ $('#trackGo').onclick = track;
 $('#toTop').onclick = () => window.scrollTo({ top:0, behavior:'smooth' });
 
 function showMemberView(){
-  const active = $('#memViewActive');
-  const buy = $('#memViewBuy');
+  const active = $('#memViewActive'); const buy = $('#memViewBuy');
   if (!active || !buy) return;
   const saved = store.get('membership_full', null);
-  const now = Date.now();
-
-  // 🛡️ Hide BOTH via display:none (strongest)
-  active.classList.add('hidden'); active.style.display = 'none';
-  buy.classList.add('hidden');    buy.style.display = 'none';
-
-  if (saved && saved.code){
-    active.classList.remove('hidden'); active.style.display = 'block';
-    buy.classList.add('hidden');       buy.style.display = 'none';
-
-    const isExpired = now >= saved.expiresAt;
-    const codeBox = $('#memCodeBox');
-    const expiredBox = $('#memExpiredBox');
-    const actions = $('#memActions');
-    const goBtn = $('#memGoCart');
-    const renewBtn = $('#memRenew');
-    const title = $('#memActiveTitle');
-    const subtitle = $('#memActiveSubtitle');
-
-    if (isExpired){
-      if (codeBox) codeBox.classList.add('hidden');
-      if (expiredBox) expiredBox.classList.remove('hidden');
-      if (actions) actions.classList.add('hidden');
-      if (goBtn) goBtn.classList.add('hidden');
-      if (renewBtn) renewBtn.classList.remove('hidden');
-      if (title) title.textContent = 'Membership Expired';
-      if (subtitle) subtitle.textContent = 'Renew to continue enjoying 50% OFF';
-      const ed = $('#memExpiredDate');
-      if (ed) ed.textContent = 'Expired on: ' + new Date(saved.expiresAt).toLocaleDateString('en-IN');
-    } else {
-      if (codeBox) codeBox.classList.remove('hidden');
-      if (expiredBox) expiredBox.classList.add('hidden');
-      if (actions) actions.classList.remove('hidden');
-      if (goBtn) goBtn.classList.remove('hidden');
-      if (renewBtn) renewBtn.classList.add('hidden');
-      if (title) title.textContent = 'Active Member';
-      if (subtitle) subtitle.textContent = 'Welcome back!';
-      $('#memActiveCode').textContent = saved.code;
-      $('#memActiveName').textContent = saved.name || '';
-      $('#memActiveExpiry').textContent = 'Valid till: ' + new Date(saved.expiresAt).toLocaleDateString('en-IN');
-    }
-  } else {
-    active.classList.add('hidden'); active.style.display = 'none';
-    buy.classList.remove('hidden'); buy.style.display = 'block';
-  }
+  if (saved && saved.code && Date.now() < saved.expiresAt){
+    active.classList.remove('hidden'); buy.classList.add('hidden');
+    $('#memActiveCode').textContent = saved.code;
+    $('#memActiveName').textContent = saved.name || '';
+    $('#memActiveExpiry').textContent = 'Valid till: ' + new Date(saved.expiresAt).toLocaleDateString('en-IN');
+  } else { active.classList.add('hidden'); buy.classList.remove('hidden'); }
 }
 
 async function openMemberModal(skipRoute){
   $('#memBuyErr').classList.add('hidden');
   if (typeof updateMembershipPrices === 'function') updateMembershipPrices();
-
-  // 🌐 STEP 1: Server fetch FIRST (modal open પહેલા)
-  try {
-    const deviceId = await getDeviceId();
-    const r = await fetch(`${API_BASE}/api/membership-check-device`, {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ deviceId })
-    });
-    const d = await r.json();
-    if (d.success && d.membership){
-      store.set('membership_full', d.membership);
-    } else if (d.success && !d.membership){
-      const local = store.get('membership_full', null);
-      if (local && local.code && Date.now() >= local.expiresAt){
-        store.set('membership_full', null);
-      }
-    }
-  } catch(e){ console.error('[membership-check]', e); }
-
-  // 🎬 STEP 2: હવે modal open કરો (already correct view ready)
   openModal('memberModal');
-
+  $('#memViewActive').classList.add('hidden');
+  $('#memViewBuy').classList.remove('hidden');
   if (!skipRoute) {
     try {
       if (window.location.hash === '#menu') { history.replaceState({ modal:'memberModal' }, '', '#membership'); }
       else { history.pushState({ modal:'memberModal' }, '', '#membership'); }
     } catch(e){}
   }
-
-  // ✅ STEP 3: View set
-  if (typeof showMemberView === 'function') showMemberView();
-
+  try {
+    const deviceId = await getDeviceId();
+    const r = await fetch(`${API_BASE}/api/membership-check-device`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ deviceId }) });
+    const d = await r.json();
+    if (d.success && d.membership){
+      const deviceMembership = d.membership;
+      store.set('membership_full', deviceMembership);
+      $('#memViewActive').classList.remove('hidden');
+      $('#memViewBuy').classList.add('hidden');
+      $('#memActiveCode').textContent = deviceMembership.code;
+      $('#memActiveName').textContent = deviceMembership.name || '';
+      $('#memActiveExpiry').textContent = 'Valid till: ' + new Date(deviceMembership.expiresAt).toLocaleDateString('en-IN');
+    }
+  } catch(e){ console.error(e); }
   const saved = store.get('membership_full', null);
   if (!saved || !saved.code){
     const lastPhone = store.get('last_phone', null);
-    if (lastPhone && typeof autoLookup === 'function') autoLookup(lastPhone);
+    if (lastPhone) autoLookup(lastPhone);
   }
 }
   
@@ -3517,26 +3411,6 @@ if ($('#memShare')) $('#memShare').onclick = () => {
   else { try { navigator.clipboard.writeText(txt); toast('Copied — share anywhere', 'check'); } catch(e){} }
 };
 if ($('#memGoCart')) $('#memGoCart').onclick = () => { closeAll(true); openCatPage('', '', ''); };
-// 🎉 Membership Welcome OK → show code popup
-if ($('#memWelcomeOk')) $('#memWelcomeOk').onclick = () => {
-  closeModal('memberWelcomeModal', true);
-  setTimeout(() => {
-    showMemberView();
-    openModal('memberModal');
-    try { if (window.location.hash !== '#membership') history.pushState({ modal:'memberModal' }, '', '#membership'); } catch(e){}
-  }, 300);
-};
-
-// 🔁 Renew Membership button
-if ($('#memRenew')) $('#memRenew').onclick = () => {
-  const saved = store.get('membership_full', null);
-  $('#memViewActive').classList.add('hidden');
-  $('#memViewBuy').classList.remove('hidden');
-  if (saved){
-    if ($('#memBuyName')) $('#memBuyName').value = saved.name || '';
-    if ($('#memBuyPhone')) $('#memBuyPhone').value = saved.phone || '';
-  }
-};
 
 if ($('#memBuyBtn')) $('#memBuyBtn').onclick = async () => {
   const btn = $('#memBuyBtn');
@@ -3554,7 +3428,7 @@ if ($('#memBuyBtn')) $('#memBuyBtn').onclick = async () => {
     const d = await r.json();
     if (!d.success) throw new Error('Order create failed');
     const options = {
-      key: RAZORPAY_KEY_ID, amount: d.amount, currency: d.currency, name: 'HinchField Membership', description: 'Yearly Membership — ₹599', image: 'images/logo.png', order_id: d.order_id,
+      key: RAZORPAY_KEY_ID, amount: d.amount, currency: d.currency, name: 'HinchField Membership', description: 'Yearly Membership — ₹1', image: 'images/logo.png', order_id: d.order_id,
       prefill: { name, contact: phone }, theme: { color: '#0A0A0A' },
       handler: async function(resp){
         try {
@@ -3570,12 +3444,8 @@ if ($('#memBuyBtn')) $('#memBuyBtn').onclick = async () => {
           store.set('membership_full', full);
           store.set('last_phone', clean);
           toast('Membership activated!', 'check');
+          showMemberView();
           if (typeof renderCart === 'function') renderCart();
-
-          // 🎉 Show welcome popup
-          closeModal('memberModal', true);
-          setTimeout(() => { openModal('memberWelcomeModal'); }, 300);
-
         } catch(e){ console.error(e); toast('Verification failed', 'cross'); }
       },
       modal: { ondismiss: () => toast('Payment cancelled', 'warn') }
@@ -3584,7 +3454,7 @@ if ($('#memBuyBtn')) $('#memBuyBtn').onclick = async () => {
     rzp.on('payment.failed', r => toast((r.error && r.error.description) || 'Payment failed', 'cross'));
     rzp.open();
   } catch(e){ console.error(e); err('Something went wrong'); }
-  finally { btn.disabled = false; btn.textContent = 'Get Membership'; }
+  finally { btn.disabled = false; btn.textContent = 'Pay ' + fmt(1) + ' — Get Membership'; }
 };
 
 function updateMemberUI(){
@@ -3806,8 +3676,7 @@ clearInterval(sTimer); startSlider();
 }
 handleRoute();
 updateMembershipPrices();
-window.scrollTo(0, 0);
-  
+
 verifyAdminStatus().then(() => {
   const isAdmin = localStorage.getItem('hf_is_admin') === 'true';
   const user = store.get('user', null);
