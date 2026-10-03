@@ -2544,18 +2544,28 @@ $('#productBody').innerHTML = `
     </div>
 
     ${isT ? `
-    <div class="mt-5 flex items-center justify-between gap-3">
-      <div class="flex items-center gap-2 min-w-0">
-        ${ic('palette','w-4 h-4')}
-        <span class="text-xs font-medium truncate">${pm.customOn && pm.customNote ? 'Customised T-Shirt' : 'Customise this T-Shirt'}</span>
+    <div class="mt-5 border hairline p-4" style="background:var(--bg2);">
+      <div class="flex items-start gap-3">
+        <div class="shrink-0 flex items-center justify-center" style="width:36px;height:36px;background:var(--text);color:var(--bg);">
+          ${ic('palette','w-4 h-4')}
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="micro mb-1" style="color:var(--text);">Personalise</p>
+          <p class="disp text-[13px] font-medium leading-tight">${pm.customOn && pm.customNote ? 'Your custom design added' : 'Make it uniquely yours'}</p>
+          <p class="text-[10px] mt-1 leading-snug" style="color:var(--mut);">${pm.customOn && pm.customNote ? esc(pm.customPos || 'Front + Back') : 'Add your own text, name, or design'}</p>
+        </div>
       </div>
-      <button type="button" id="openCustomBtn" class="chip border hairline shrink-0" style="color:var(--text);">${pm.customOn && pm.customNote ? 'Edit' : 'Add'}</button>
-    </div>
-    <div id="pmCustomSummary" class="${pm.customOn && pm.customNote ? '' : 'hidden'} mt-3 p-3 border hairline text-[11px]" style="background:var(--bg2); color:var(--mut);">
-      <div class="flex items-start justify-between gap-2">
-        <div class="min-w-0"><p><b style="color:var(--text);">${esc(pm.customPos || 'Front + Back')}</b> — ${esc(pm.customNote || '')}</p></div>
-        <button type="button" id="removeCustomBtn" class="text-[10px] underline shrink-0">Remove</button>
-      </div>
+      ${pm.customOn && pm.customNote ? `
+      <div class="mt-3 pt-3 border-t hairline">
+        <div class="flex items-start justify-between gap-2 mb-3">
+          <p class="text-[11px] leading-relaxed min-w-0" style="color:var(--text);">"${esc(pm.customNote || '')}"</p>
+          <button type="button" id="removeCustomBtn" class="text-[10px] underline shrink-0" style="color:#DC2626;">Remove</button>
+        </div>
+        <button type="button" id="openCustomBtn" class="pill btn-line w-full py-2.5 text-[10px]">Edit Customisation</button>
+      </div>` : `
+      <button type="button" id="openCustomBtn" class="pill btn-gold w-full py-3 mt-3 text-[10px] flex items-center justify-center gap-2">
+        ${ic('sparkle','w-3.5 h-3.5')} Add Custom Text / Design
+      </button>`}
     </div>` : ''}
 
     <div class="border hairline p-4 md:p-5 mt-5 text-xs space-y-1.5" style="background:var(--bg2);">
