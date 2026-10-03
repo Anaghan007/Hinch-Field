@@ -2882,7 +2882,7 @@ function cancelOrder(orderId){
     toast('Order Cancelled Successfully','cross');
     try { fetch(`${API_BASE}/api/orders?action=update`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: order.id, status: 'Cancelled', pwd: 'HF2026' }) }).catch(() => {}); } catch(e){}
     try {
-      fetch(`${API_BASE}/api/cancel-notify`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ order: { id: order.id, customer: order.customer, items: order.items.map(l => { const p = prodById(l.id); return { name: p ? p.name : 'Product', qty: l.qty, price: p ? p.price : 0 }; }), totals: order.totals, payment: order.payment } }) }).catch(() => {});
+      fetch(`${API_BASE}/api/cancel-notify`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ order: { id: order.id, customer: order.customer, items: order.items.map(l => { const p = prodById(l.id); return { name: p ? p.name : 'Product', qty: l.qty, price: p ? p.price : 0, size: l.size || '', color: l.color || '', colorChoice: l.colorChoice || '', custom: l.custom || null }; }), totals: order.totals, payment: order.payment } }) }).catch(() => {});
     } catch(e){}
   } else {
     closeModal('confirmCancelModal', true);
