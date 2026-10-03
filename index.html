@@ -1833,7 +1833,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
         <button id="memGoCart" class="pill btn-gold w-full py-3.5">Shop & Save 50%</button>
         <button id="memRenew" class="pill btn-gold w-full py-3.5 hidden">Renew Membership — ₹599</button>
       </div>
-      <div id="memViewBuy">
+      <div id="memViewBuy" class="hidden">
         <div class="text-center mb-6">
           <p class="micro mb-2">HINCHFIELD</p>
           <h3 class="disp editorial-h font-luxe text-2xl mb-2">Yearly Membership</h3>
@@ -3414,6 +3414,10 @@ function showMemberView(){
   const saved = store.get('membership_full', null);
   const now = Date.now();
 
+  // 🛡️ Hide BOTH first
+  active.classList.add('hidden');
+  buy.classList.add('hidden');
+
   if (saved && saved.code){
     active.classList.remove('hidden');
     buy.classList.add('hidden');
@@ -3498,8 +3502,8 @@ if ($('#memGoCart')) $('#memGoCart').onclick = () => { closeAll(true); openCatPa
 if ($('#memWelcomeOk')) $('#memWelcomeOk').onclick = () => {
   closeModal('memberWelcomeModal', true);
   setTimeout(() => {
-    openModal('memberModal');
     showMemberView();
+    openModal('memberModal');
     try { if (window.location.hash !== '#membership') history.pushState({ modal:'memberModal' }, '', '#membership'); } catch(e){}
   }, 300);
 };
