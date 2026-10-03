@@ -1200,15 +1200,68 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       background: var(--bg2);
     }
 
-    .pay-radio input[type="radio"] { accent-color: var(--text); }
-    @keyframes deliverPulse { 0%{box-shadow:0 0 0 0 rgba(10,10,10,.55)} 100%{box-shadow:0 0 0 18px rgba(10,10,10,0)} }
-    @keyframes drawCheck { to { stroke-dashoffset: 0; } }
-    @keyframes bounceIn { 0%{transform:scale(.85);opacity:0} 60%{transform:scale(1.05)} 100%{transform:scale(1);opacity:1} }
-    @keyframes fadeInPop { from{opacity:0;transform:scale(.9)} to{opacity:1;transform:scale(1)} }
-    .card.delivering-anim .track-step:last-child .track-icon { animation: deliverPulse 1.2s ease-out 2; background: var(--text) !important; border-color: var(--text) !important; color: var(--bg) !important; }
-    .delivered-anim { animation: bounceIn .5s cubic-bezier(.2,.7,.2,1) both; }
-    .modalcard.delivered-pop { animation: fadeInPop .45s cubic-bezier(.2,.7,.2,1) both; }
-    
+    .pay-radio input[type="radio"] {
+      accent-color: var(--text);
+    }
+
+    @keyframes deliverPulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(10, 10, 10, .55)
+      }
+
+      100% {
+        box-shadow: 0 0 0 18px rgba(10, 10, 10, 0)
+      }
+    }
+
+    @keyframes drawCheck {
+      to {
+        stroke-dashoffset: 0;
+      }
+    }
+
+    @keyframes bounceIn {
+      0% {
+        transform: scale(.85);
+        opacity: 0
+      }
+
+      60% {
+        transform: scale(1.05)
+      }
+
+      100% {
+        transform: scale(1);
+        opacity: 1
+      }
+    }
+
+    @keyframes fadeInPop {
+      from {
+        opacity: 0;
+        transform: scale(.9)
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1)
+      }
+    }
+
+    .card.delivering-anim .track-step:last-child .track-icon {
+      animation: deliverPulse 1.2s ease-out 2;
+      background: var(--text) !important;
+      border-color: var(--text) !important;
+      color: var(--bg) !important;
+    }
+
+    .delivered-anim {
+      animation: bounceIn .5s cubic-bezier(.2, .7, .2, 1) both;
+    }
+
+    .modalcard.delivered-pop {
+      animation: fadeInPop .45s cubic-bezier(.2, .7, .2, 1) both;
+    }
   </style>
 </head>
 
@@ -1517,7 +1570,8 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
         style="background:var(--bg); color:var(--text); animation:slideR .45s both;">
         <div class="flex items-center justify-between p-4 md:p-5 border-b hairline" style="background:var(--card);">
           <h3 class="disp editorial-h font-luxe text-xl">Your Cart
-            <span id="cartN" class="text-[var(--mut)] text-sm"></span></h3>
+            <span id="cartN" class="text-[var(--mut)] text-sm"></span>
+          </h3>
           <button data-close="cartDrawer" class="w-9 h-9 border hairline transition" aria-label="Close">✕</button>
         </div>
         <div class="flex-1 overflow-y-auto w-full">
@@ -1535,7 +1589,8 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
             <div class="flex justify-between text-sm"><span style="color:var(--mut);">Delivery</span><b id="sumDel"></b>
             </div>
             <div class="flex justify-between disp text-lg border-t hairline pt-3">
-              <span>Total</span><b id="sumTotal"></b></div>
+              <span>Total</span><b id="sumTotal"></b>
+            </div>
           </div>
           <div class="border hairline p-4" style="background:var(--bg2);">
             <p class="micro mb-2" style="color:var(--text);">Membership Code</p>
@@ -1608,8 +1663,8 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
 
   <div id="productModal" class="fixed inset-0 z-[80] hidden overflow-y-auto w-full">
     <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" data-close="productModal"></div>
-    <div class="pm-wrap relative max-w-6xl mx-auto my-0 md:my-8 px-0 md:px-4 w-full">
-      <div class="modalcard overflow-hidden md:rounded-none"
+    <div class="pm-wrap relative max-w-6xl mx-auto my-0 md:my-4 px-0 md:px-4 w-full md:h-[calc(100vh-32px)]">
+      <div class="modalcard overflow-hidden md:rounded-none md:h-full"
         style="background:var(--bg); color:var(--text); box-shadow:var(--shadow);" id="productBody"></div>
     </div>
   </div>
@@ -1791,20 +1846,26 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
   </div>
 
   <div id="orderDeliveredModal" class="fixed inset-0 z-[97] hidden flex items-center justify-center px-4 w-full">
-  <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" data-close="orderDeliveredModal"></div>
-  <div class="modalcard delivered-pop relative p-8 md:p-10 max-w-sm w-full text-center" style="background:var(--bg); color:var(--text); box-shadow:var(--shadow);">
-    <div class="delivered-anim mx-auto mb-5" style="width:80px;height:80px;border-radius:50%;background:var(--text);display:flex;align-items:center;justify-content:center;">
-      <svg class="w-12 h-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--bg);">
-        <path d="M5 13l4 4L19 7" style="stroke-dasharray:30;stroke-dashoffset:30;animation:drawCheck .55s .35s forwards cubic-bezier(.5,.9,.3,1)"/>
-      </svg>
+    <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" data-close="orderDeliveredModal"></div>
+    <div class="modalcard delivered-pop relative p-8 md:p-10 max-w-sm w-full text-center"
+      style="background:var(--bg); color:var(--text); box-shadow:var(--shadow);">
+      <div class="delivered-anim mx-auto mb-5"
+        style="width:80px;height:80px;border-radius:50%;background:var(--text);display:flex;align-items:center;justify-content:center;">
+        <svg class="w-12 h-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+          stroke-linecap="round" stroke-linejoin="round" style="color:var(--bg);">
+          <path d="M5 13l4 4L19 7"
+            style="stroke-dasharray:30;stroke-dashoffset:30;animation:drawCheck .55s .35s forwards cubic-bezier(.5,.9,.3,1)" />
+        </svg>
+      </div>
+      <p class="micro mb-2">HINCHFIELD</p>
+      <h3 class="disp editorial-h font-luxe text-2xl mb-2">Order Delivered! 🎉</h3>
+      <p class="text-xs mb-1" style="color:var(--mut);">Your order
+        <b id="deliveredOrderId" style="color:var(--text);letter-spacing:.08em;"></b> has been delivered successfully
+      </p>
+      <p class="text-xs mb-6" style="color:var(--mut);">Thank you for shopping with us ❤️</p>
+      <button id="deliveredOk" class="pill btn-gold w-full py-3.5">View in History</button>
     </div>
-    <p class="micro mb-2">HINCHFIELD</p>
-    <h3 class="disp editorial-h font-luxe text-2xl mb-2">Order Delivered! 🎉</h3>
-    <p class="text-xs mb-1" style="color:var(--mut);">Your order <b id="deliveredOrderId" style="color:var(--text);letter-spacing:.08em;"></b> has been delivered successfully</p>
-    <p class="text-xs mb-6" style="color:var(--mut);">Thank you for shopping with us ❤️</p>
-    <button id="deliveredOk" class="pill btn-gold w-full py-3.5">View in History</button>
   </div>
-</div>
 
   <div id="confirmCancelModal" class="fixed inset-0 z-[96] hidden flex items-center justify-center px-4 w-full">
     <div id="confirmCancelBackdrop" class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
@@ -1863,7 +1924,8 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       </div>
       <div id="invPayIdBox"
         style="background:#f5f4f2;padding:10px 14px;margin-bottom:24px;font-size:11px;display:none;">
-        <span style="color:#7C7C7C;">Payment ID: </span><b id="invPayId"></b></div>
+        <span style="color:#7C7C7C;">Payment ID: </span><b id="invPayId"></b>
+      </div>
       <table style="width:100%;border-collapse:collapse;margin-bottom:24px;">
         <thead>
           <tr style="background:#0A0A0A;color:#fff;">
@@ -2445,11 +2507,11 @@ return '<div class="flex gap-3 border hairline p-3 a-left w-full" style="backgro
 '</div></div>';
 }).join('');
 }
-let pm = { id:null, color:0, size:0, qty:1, angle:0, customOn:false, customPos:'Front + Back', customNote:'', colorChoice:'' };
+let pm = { id:null, color:0, size:0, qty:1, angle:0 };
 function openProduct(id, skipRoute){
 const p = prodById(id);
 if (!p) return;
-pm = { id, color:0, size:0, qty:1, angle:0, customOn:false, customPos:'Front + Back', customNote:'', colorChoice:'' };
+pm = { id, color:0, size:0, qty:1, angle:0 };
 drawProduct();
 openModal('productModal');
 if (!skipRoute) history.pushState({ modal: 'productModal', id }, '', '#product/' + id);
@@ -2462,8 +2524,8 @@ const imgs = imgURLs(p);
 const isT = p.cat.indexOf('tee') > -1;
 const mp = memPrice(p);
 $('#productBody').innerHTML = `
-<div class="grid md:grid-cols-2 w-full">
-<div class="p-3 md:p-8 md:sticky md:top-0 md:self-start" style="background:var(--bg2);">
+<div class="grid md:grid-cols-2 w-full md:h-full md:overflow-hidden">
+<div class="p-3 md:p-8 md:overflow-y-auto" style="background:var(--bg2);">
 <div class="md:flex md:gap-4 w-full">
 ${imgs.length > 1 ? '<div class="hidden md:flex flex-col gap-2 order-1">' + imgs.map((im,i) => '<button class="w-14 h-16 overflow-hidden border" style="border-color:' + (i===pm.angle ? 'var(--text)' : 'var(--line)') + ';" data-angle="' + i + '">' + imgTag(p, cn, i, 'w-full h-full object-contain') + '</button>').join('') + '</div>' : ''}
 <div class="relative flex-1 order-2 min-w-0">
@@ -2473,7 +2535,7 @@ ${imgs.length > 1 ? '<div class="hidden md:flex flex-col gap-2 order-1">' + imgs
 ${imgs.length > 1 ? '<button class="absolute left-2 top-1/2 -translate-y-1/2 w-9 h-9 border hairline" style="background:var(--card);" data-angle="-1">‹</button><button class="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 border hairline" style="background:var(--card);" data-angle="1">›</button>' : ''}
 <p class="text-[10px] text-center mt-3 tracking-wide2 uppercase" style="color:var(--mut);">View ${pm.angle+1}/2 • ${['FRONT','BACK'][pm.angle]||''}</p>
 </div></div></div>
-<div class="p-4 md:p-8 pb-28 md:pb-8 min-w-0">
+<div class="p-4 md:p-8 pb-28 md:pb-8 min-w-0 md:overflow-y-auto">
 <div class="flex items-start justify-between gap-3">
 <div class="min-w-0"><p class="micro mb-2">${esc(CATMETA[p.cat].name)}</p><h2 class="disp editorial-h font-luxe text-xl md:text-2xl">${esc(p.name)}</h2></div>
 <button class="w-9 h-9 border hairline shrink-0" data-close="productModal" aria-label="Close">✕</button>
@@ -2496,32 +2558,57 @@ ${imgs.length > 1 ? '<button class="absolute left-2 top-1/2 -translate-y-1/2 w-9
 </div>
 <div class="mt-5 flex items-center gap-4"><p class="micro">Qty</p><div class="flex items-center gap-2"><button class="qtybtn" data-pq="-1">−</button><b id="pmQty" class="w-6 text-center">${pm.qty}</b><button class="qtybtn" data-pq="1">+</button></div></div>
 ${isT ? `
-<div class="border hairline p-4 mt-3" style="background:var(--bg2);">
-<label class="flex items-center gap-2 text-xs font-medium cursor-pointer"><input type="checkbox" id="pmCustomOn" class="accent-[#0A0A0A]" ${pm.customOn ? 'checked' : ''}>Customise this T-Shirt (own text / design)</label>
-<div id="pmCustomBox" class="${pm.customOn ? '' : 'hidden'} mt-3 space-y-2">
-<select id="pmCustomPos" class="field"><option ${pm.customPos==='Front' ? 'selected' : ''}>Front</option><option ${pm.customPos==='Back' ? 'selected' : ''}>Back</option><option ${pm.customPos==='Front + Back' ? 'selected' : ''}>Front + Back</option></select>
-<textarea id="pmCustomNote" maxlength="200" rows="2" class="field" placeholder="e.g. Print text: RIYA ❤ SURAT">${esc(pm.customNote)}</textarea>
-</div></div>` : ''}
-<div class="border hairline p-4 md:p-5 mt-5 text-xs space-y-1.5" style="background:var(--bg2);">
-<p class="micro mb-2">Highlights</p>
-<p>— ${esc(p.desc)}</p>
-<p>— Sizes: ${p.sizes.join(' · ')}</p>
-<p>— ${p.colors.length} colour options</p>
-<p class="border hairline px-3 py-2 mt-2 font-medium text-[10px] tracking-wide2 uppercase text-center" style="color:var(--text);">No Return / No Exchange</p>
+<div class="mt-5 relative overflow-hidden" style="background:#0A0A0A;color:#fff;">
+  <div class="p-5 md:p-6 relative" style="background:linear-gradient(135deg, #0A0A0A 0%, #1A1A1A 100%);">
+    <div class="flex items-start gap-3 mb-4">
+      <div style="width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        ${ic('palette','w-4 h-4')}
+      </div>
+      <div class="flex-1 min-w-0">
+        <p class="text-[10px] tracking-wide2 uppercase mb-1" style="color:rgba(255,255,255,.6);">Personalised Orders</p>
+        <p class="font-luxe editorial-h text-lg md:text-xl leading-tight" style="color:#fff;">Want Custom Design?</p>
+      </div>
+    </div>
+    <p class="text-[13px] leading-relaxed mb-4" style="color:rgba(255,255,255,.65);">
+      Customization Your Design - Send Us Your Design on WhatsApp or Email. We'll Confirm The Mockup and Apply It On Your Product.
+    </p>
+    <div class="grid grid-cols-2 gap-2">
+      <a href="https://wa.me/917434053550?text=${encodeURIComponent('Hi! I want custom design on a T-Shirt.')}" target="_blank" rel="noopener" class="flex items-center justify-center gap-1.5 py-3 text-[10px] tracking-wide2 uppercase font-medium transition" style="background:#fff;color:#0A0A0A;">
+        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> WhatsApp
+      </a>
+      <a href="mailto:support.hinchfield@gmail.com?subject=Custom T-Shirt Design" class="flex items-center justify-center gap-1.5 py-3 text-[10px] tracking-wide2 uppercase font-medium transition" style="background:transparent;color:#fff;border:1px solid rgba(255,255,255,.3);">
+        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Email
+      </a>
+    </div>
+  </div>
+</div>` : ''}
+<div class="mt-5 border hairline" style="background:var(--card);">
+  <div class="grid grid-cols-[auto_1fr]">
+    <div class="flex items-center justify-center py-6 px-4" style="background:#0A0A0A;">
+      <p class="text-[10px] tracking-wide2 uppercase font-semibold" style="color:#fff;writing-mode:vertical-rl;transform:rotate(180deg);letter-spacing:.35em;">Fabric Details</p>
+    </div>
+    <div class="p-5 md:p-6">
+      <div class="mb-4">
+        <p class="text-[9px] tracking-wide2 uppercase mb-1" style="color:var(--mut);">Fabric</p>
+        <p class="disp font-luxe editorial-h text-base md:text-lg" style="color:var(--text);">100% Pure Cotton</p>
+      </div>
+      <div class="pt-4 border-t hairline">
+        <p class="text-[9px] tracking-wide2 uppercase mb-1" style="color:var(--mut);">GSM</p>
+        <p class="disp font-luxe editorial-h text-base md:text-lg" style="color:var(--text);">250 GSM Bio Wash</p>
+      </div>
+    </div>
+  </div>
+  <div class="p-3 flex items-center justify-center gap-2 border-t hairline">
+    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="color:#DC2626;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    <p class="text-[10px] tracking-wide2 uppercase font-semibold" style="color:#DC2626;">No Return / No Exchange</p>
+  </div>
 </div>
-<p class="text-sm leading-relaxed mt-4" style="color:var(--mut);">${esc(p.desc)}</p>
 <div class="hidden md:grid grid-cols-2 gap-3 mt-6"><button class="pill btn-line py-3.5" data-pm-add>Add to Cart</button><button class="pill btn-gold py-3.5" data-pm-buy>Buy Now</button></div>
 </div></div>
 <div class="md:hidden sticky bottom-0 border-t hairline p-3 flex gap-2 glassbar w-full"><button class="pill btn-line flex-1 py-3.5" data-pm-add>Add</button><button class="pill btn-gold flex-1 py-3.5" data-pm-buy>Buy</button></div>`;
-const on = $('#pmCustomOn');
-if (on){ on.addEventListener('change', () => { pm.customOn = on.checked; $('#pmCustomBox').classList.toggle('hidden', !on.checked); }); }
 }
 function readExtras(p){
-if (p.cat.indexOf('tee') < 0) return null;
-const cc = $('#pmColorChoice') ? $('#pmColorChoice').value.trim() : '';
-let custom = null;
-if (pm.customOn){ custom = { pos: $('#pmCustomPos') ? $('#pmCustomPos').value : pm.customPos, note: $('#pmCustomNote') ? $('#pmCustomNote').value.trim() : pm.customNote }; }
-return { custom, colorChoice: cc };
+return { custom: null, colorChoice: '' };
 }
 let cp = { cat:'', special:'', sort:'feat' };
 function openCatPage(cat, type, special, skipRoute){
