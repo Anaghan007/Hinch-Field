@@ -2462,8 +2462,8 @@ const imgs = imgURLs(p);
 const isT = p.cat.indexOf('tee') > -1;
 const mp = memPrice(p);
 $('#productBody').innerHTML = `
-<div class="grid md:grid-cols-2 w-full md:items-stretch">
-<div class="p-3 md:p-8 md:h-full" style="background:var(--bg2);">
+<div class="grid md:grid-cols-2 w-full" style="background:var(--bg2);">
+<div class="p-3 md:p-8">
 <div class="md:flex md:gap-4 w-full">
 ${imgs.length > 1 ? '<div class="hidden md:flex flex-col gap-2 order-1">' + imgs.map((im,i) => '<button class="w-14 h-16 overflow-hidden border" style="border-color:' + (i===pm.angle ? 'var(--text)' : 'var(--line)') + ';" data-angle="' + i + '">' + imgTag(p, cn, i, 'w-full h-full object-contain') + '</button>').join('') + '</div>' : ''}
 <div class="relative flex-1 order-2 min-w-0">
@@ -2473,7 +2473,7 @@ ${imgs.length > 1 ? '<div class="hidden md:flex flex-col gap-2 order-1">' + imgs
 ${imgs.length > 1 ? '<button class="absolute left-2 top-1/2 -translate-y-1/2 w-9 h-9 border hairline" style="background:var(--card);" data-angle="-1">‹</button><button class="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 border hairline" style="background:var(--card);" data-angle="1">›</button>' : ''}
 <p class="text-[10px] text-center mt-3 tracking-wide2 uppercase" style="color:var(--mut);">View ${pm.angle+1}/2 • ${['FRONT','BACK'][pm.angle]||''}</p>
 </div></div></div>
-<div class="p-4 md:p-8 pb-28 md:pb-8 min-w-0">
+<div class="p-4 md:p-8 pb-28 md:pb-8 min-w-0" style="background:var(--bg);">
 <div class="flex items-start justify-between gap-3">
 <div class="min-w-0"><p class="micro mb-2">${esc(CATMETA[p.cat].name)}</p><h2 class="disp editorial-h font-luxe text-xl md:text-2xl">${esc(p.name)}</h2></div>
 <button class="w-9 h-9 border hairline shrink-0" data-close="productModal" aria-label="Close">✕</button>
