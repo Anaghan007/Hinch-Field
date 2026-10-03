@@ -2409,8 +2409,6 @@ function refreshOrderTrackingUI(){
 }
 (function init(){
 safe(generateProducts, 'generateProducts');
-const oldMem = store.get('membership_full', null);
-if (oldMem && !oldMem.deviceId) { store.set('membership_full', null); console.log('Old legacy membership cleared'); }
 safe(renderMobileNav, 'renderMobileNav');
 safe(renderShopCats, 'renderShopCats');
 safe(renderInsta, 'renderInsta');
