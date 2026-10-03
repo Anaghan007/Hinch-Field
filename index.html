@@ -1204,6 +1204,11 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       accent-color: var(--text);
     }
 
+    /* 🚫 Kill member modal animation flash */
+    #memberModal .modalcard { animation: none !important; }
+    #memberModal #memViewActive,
+    #memberModal #memViewBuy { will-change: auto; }
+
     @keyframes deliverPulse {
       0% {
         box-shadow: 0 0 0 0 rgba(10, 10, 10, .55)
@@ -1797,7 +1802,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
     <div class="modalcard relative p-6 md:p-8 max-w-md w-full max-h-[90vh] overflow-y-auto"
       style="background:var(--bg); color:var(--text); box-shadow:var(--shadow);">
       <button class="absolute top-3 right-3 w-9 h-9 border hairline" data-close="memberModal" aria-label="Close">✕</button>
-      <div id="memViewActive" class="hidden">
+      <div id="memViewActive" class="hidden" style="display:none;">
         <div class="text-center mb-6">
           <svg class="w-14 h-14 mx-auto mb-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"
             stroke-linecap="round" stroke-linejoin="round">
@@ -1833,7 +1838,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
         <button id="memGoCart" class="pill btn-gold w-full py-3.5">Shop & Save 50%</button>
         <button id="memRenew" class="pill btn-gold w-full py-3.5 hidden">Renew Membership — ₹599</button>
       </div>
-      <div id="memViewBuy" class="hidden">
+      <div id="memViewBuy" class="hidden" style="display:none;">
         <div class="text-center mb-6">
           <p class="micro mb-2">HINCHFIELD</p>
           <h3 class="disp editorial-h font-luxe text-2xl mb-2">Yearly Membership</h3>
@@ -3414,13 +3419,13 @@ function showMemberView(){
   const saved = store.get('membership_full', null);
   const now = Date.now();
 
-  // 🛡️ Hide BOTH first
-  active.classList.add('hidden');
-  buy.classList.add('hidden');
+  // 🛡️ Hide BOTH via display:none (strongest)
+  active.classList.add('hidden'); active.style.display = 'none';
+  buy.classList.add('hidden');    buy.style.display = 'none';
 
   if (saved && saved.code){
-    active.classList.remove('hidden');
-    buy.classList.add('hidden');
+    active.classList.remove('hidden'); active.style.display = 'block';
+    buy.classList.add('hidden');       buy.style.display = 'none';
 
     const isExpired = now >= saved.expiresAt;
     const codeBox = $('#memCodeBox');
@@ -3454,8 +3459,8 @@ function showMemberView(){
       $('#memActiveExpiry').textContent = 'Valid till: ' + new Date(saved.expiresAt).toLocaleDateString('en-IN');
     }
   } else {
-    active.classList.add('hidden');
-    buy.classList.remove('hidden');
+    active.classList.add('hidden'); active.style.display = 'none';
+    buy.classList.remove('hidden'); buy.style.display = 'block';
   }
 }
 
