@@ -3459,8 +3459,8 @@ async function openMemberModal(skipRoute){
   $('#memBuyErr').classList.add('hidden');
   if (typeof updateMembershipPrices === 'function') updateMembershipPrices();
   openModal('memberModal');
-  $('#memViewActive').classList.add('hidden');
-  $('#memViewBuy').classList.remove('hidden');
+  // ✅ FIX: Show correct view IMMEDIATELY from localStorage (no waiting for server)
+  showMemberView();
   if (!skipRoute) {
     try {
       if (window.location.hash === '#menu') { history.replaceState({ modal:'memberModal' }, '', '#membership'); }
@@ -3471,14 +3471,10 @@ async function openMemberModal(skipRoute){
     const deviceId = await getDeviceId();
     const r = await fetch(`${API_BASE}/api/membership-check-device`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ deviceId }) });
     const d = await r.json();
-    if (d.success && d.membership){
+      if (d.success && d.membership){
       const deviceMembership = d.membership;
       store.set('membership_full', deviceMembership);
-      $('#memViewActive').classList.remove('hidden');
-      $('#memViewBuy').classList.add('hidden');
-      $('#memActiveCode').textContent = deviceMembership.code;
-      $('#memActiveName').textContent = deviceMembership.name || '';
-      $('#memActiveExpiry').textContent = 'Valid till: ' + new Date(deviceMembership.expiresAt).toLocaleDateString('en-IN');
+      showMemberView();   // ← update view with server data
     }
   } catch(e){ console.error(e); }
   const saved = store.get('membership_full', null);
