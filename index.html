@@ -3469,9 +3469,6 @@ async function openMemberModal(skipRoute){
   $('#memBuyErr').classList.add('hidden');
   if (typeof updateMembershipPrices === 'function') updateMembershipPrices();
 
-  const mm = $('#memberModal');
-  mm.classList.remove('mready');         // 🔒 lock views
-  $('#memLoading').classList.remove('hidden');  // 🌀 spinner ON
   openModal('memberModal');
 
   if (!skipRoute) {
@@ -3481,7 +3478,6 @@ async function openMemberModal(skipRoute){
     } catch(e){}
   }
 
-  // 🌐 Server fetch
   try {
     const deviceId = await getDeviceId();
     const r = await fetch(`${API_BASE}/api/membership-check-device`, {
@@ -3499,16 +3495,12 @@ async function openMemberModal(skipRoute){
     }
   } catch(e){ console.error('[membership-check]', e); }
 
-  // 🌀 Spinner OFF + show correct view
-  $('#memLoading').classList.add('hidden');
-  showMemberView();
-  mm.classList.add('mready');            // 🔓 unlock views
+  if (typeof showMemberView === 'function') showMemberView();
 
-  // 📱 Fallback lookup
   const saved = store.get('membership_full', null);
   if (!saved || !saved.code){
     const lastPhone = store.get('last_phone', null);
-    if (lastPhone) autoLookup(lastPhone);
+    if (lastPhone && typeof autoLookup === 'function') autoLookup(lastPhone);
   }
 }
   
