@@ -1606,10 +1606,10 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
     </aside>
   </div>
 
-  <div id="productModal" class="fixed inset-0 z-[80] hidden w-full">
+  <div id="productModal" class="fixed inset-0 z-[80] hidden overflow-y-auto w-full">
     <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" data-close="productModal"></div>
-    <div class="absolute inset-0 md:p-6 lg:p-10 flex justify-center pointer-events-none">
-      <div class="modalcard pointer-events-auto relative w-full max-w-6xl overflow-y-auto md:overflow-hidden flex flex-col md:flex-row md:h-full" style="background:var(--bg); color:var(--text); box-shadow:var(--shadow);" id="productBody"></div>
+    <div class="pm-wrap relative max-w-6xl mx-auto my-0 md:my-8 px-0 md:px-4 w-full">
+      <div class="modalcard overflow-hidden md:rounded-none" style="background:var(--bg2); color:var(--text); box-shadow:var(--shadow);" id="productBody"></div>
     </div>
   </div>
 
@@ -2485,109 +2485,76 @@ const imgs = imgURLs(p);
 const isT = p.cat.indexOf('tee') > -1;
 const mp = memPrice(p);
 $('#productBody').innerHTML = `
-<!-- Close button -->
-<button class="absolute top-3 right-3 z-30 w-10 h-10 border hairline flex items-center justify-center" style="background:var(--card); color:var(--text);" data-close="productModal" aria-label="Close">✕</button>
-
-<!-- LEFT: Image (fixed on desktop) -->
-<div class="w-full md:w-1/2 md:h-full flex-none relative flex items-center justify-center p-4 md:p-8" style="background:var(--bg2);">
-  <div class="md:flex md:gap-4 w-full max-w-md items-center">
-    ${imgs.length > 1 ? '<div class="hidden md:flex flex-col gap-2 order-1">' + imgs.map((im,i) => '<button class="w-14 h-16 overflow-hidden border" style="border-color:' + (i===pm.angle ? 'var(--text)' : 'var(--line)') + '; background:var(--card);" data-angle="' + i + '">' + imgTag(p, cn, i, 'w-full h-full object-contain') + '</button>').join('') + '</div>' : ''}
-    <div class="relative flex-1 order-2 min-w-0">
-      <span class="absolute top-3 left-3 z-10 chip" style="background:var(--text); color:var(--bg);">COD</span>
-      <button class="hidden md:block absolute top-3 right-3 z-10 w-9 h-9 border hairline" style="background:var(--card);" data-share>${ic('share','w-4 h-4')}</button>
-      <div class="overflow-hidden aspect-[4/5] w-full">${imgTag(p, cn, pm.angle, 'w-full h-full object-contain','id="pmMain"')}</div>
-      ${imgs.length > 1 ? '<button class="absolute left-2 top-1/2 -translate-y-1/2 w-9 h-9 border hairline" style="background:var(--card);" data-angle="-1">‹</button><button class="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 border hairline" style="background:var(--card);" data-angle="1">›</button>' : ''}
-      <p class="text-[10px] text-center mt-3 tracking-wide2 uppercase" style="color:var(--mut);">View ${pm.angle+1}/${imgs.length} • ${['FRONT','BACK'][pm.angle]||''}</p>
+<div class="grid md:grid-cols-2 w-full">
+<div class="p-3 md:p-8">
+<div class="md:flex md:gap-4 w-full">
+${imgs.length > 1 ? '<div class="hidden md:flex flex-col gap-2 order-1">' + imgs.map((im,i) => '<button class="w-14 h-16 overflow-hidden border" style="border-color:' + (i===pm.angle ? 'var(--text)' : 'var(--line)') + '; background:var(--card);" data-angle="' + i + '">' + imgTag(p, cn, i, 'w-full h-full object-contain') + '</button>').join('') + '</div>' : ''}
+<div class="relative flex-1 order-2 min-w-0">
+<span class="absolute top-3 left-3 z-10 chip" style="background:var(--text); color:var(--bg);">COD</span>
+<button class="absolute top-3 right-3 z-10 w-9 h-9 border hairline" style="background:var(--card);" data-share>${ic('share','w-4 h-4')}</button>
+<div class="overflow-hidden aspect-[4/5] w-full">${imgTag(p, cn, pm.angle, 'w-full h-full object-contain','id="pmMain"')}</div>
+${imgs.length > 1 ? '<button class="absolute left-2 top-1/2 -translate-y-1/2 w-9 h-9 border hairline" style="background:var(--card);" data-angle="-1">‹</button><button class="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 border hairline" style="background:var(--card);" data-angle="1">›</button>' : ''}
+<p class="text-[10px] text-center mt-3 tracking-wide2 uppercase" style="color:var(--mut);">View ${pm.angle+1}/${imgs.length} • ${['FRONT','BACK'][pm.angle]||''}</p>
+</div>
+</div>
+</div>
+<div class="p-4 md:p-8 pb-28 md:pb-8 min-w-0" style="background:var(--bg);">
+<div class="flex items-start justify-between gap-3">
+<div class="min-w-0"><p class="micro mb-2">${esc(CATMETA[p.cat].name)}</p><h2 class="disp editorial-h font-luxe text-xl md:text-2xl">${esc(p.name)}</h2></div>
+<button class="w-9 h-9 border hairline shrink-0" data-close="productModal" aria-label="Close">✕</button>
+</div>
+<div class="mt-4 grid grid-cols-2 border hairline">
+<div class="p-3 text-center"><p class="text-[10px] tracking-wide2 uppercase mb-1" style="color:var(--mut);">Regular Price</p><b class="disp text-xl md:text-2xl" style="font-weight:500;">${fmt(p.price)}</b></div>
+<div class="p-3 text-center border-l hairline" style="background:var(--text); color:var(--bg);"><p class="text-[10px] tracking-wide2 uppercase mb-1">⭐ Member Price</p><b class="disp text-xl md:text-2xl" style="font-weight:500;">${fmt(mp)}</b></div>
+</div>
+<div class="text-[10px] text-center py-2 tracking-wide2 uppercase hairline border border-t-0" style="color:var(--text);">💡 Save ${fmt(saveAmt(p))} with Hinchfield Membership</div>
+<div class="flex items-center gap-2 mt-2">${stars(p.rating)}<span class="text-xs" style="color:var(--mut);">${p.rating} · ${p.reviews} reviews</span></div>
+<div class="mt-5">
+<p class="micro mb-3">Colour: <span style="color:var(--text);font-weight:500;letter-spacing:.02em;">${esc(cn)}</span></p>
+<div class="flex gap-2.5 flex-wrap items-center">
+${p.colors.map((c,i) => '<button class="swatch ' + (i===pm.color ? 'active' : '') + '" style="background:' + c[1] + ';' + (c[1]==='#FFFFFF' ? 'box-shadow:inset 0 0 0 1px #E6E4E0;' : '') + '" data-pcolor="' + i + '" title="' + esc(c[0]) + '" aria-label="' + esc(c[0]) + '"></button>').join('')}
+</div>
+</div>
+<div class="mt-5 flex items-end justify-between gap-3 flex-wrap">
+<div><p class="micro mb-3">Size</p><div class="flex gap-2 flex-wrap">${p.sizes.map((s,i) => '<button class="sizechip ' + (i===pm.size ? 'active' : '') + '" data-psize="' + i + '">' + esc(s) + '</button>').join('')}</div></div>
+<button class="link-u transition hover:opacity-60" data-sizeopen>Size Guide</button>
+</div>
+<div class="mt-5 flex items-center gap-4"><p class="micro">Qty</p><div class="flex items-center gap-2"><button class="qtybtn" data-pq="-1">−</button><b id="pmQty" class="w-6 text-center">${pm.qty}</b><button class="qtybtn" data-pq="1">+</button></div></div>
+${isT ? `
+<div class="mt-5 border hairline p-4" style="background:var(--bg2);">
+  <div class="flex items-start gap-3">
+    <div class="shrink-0 flex items-center justify-center" style="width:36px;height:36px;background:var(--text);color:var(--bg);">
+      ${ic('palette','w-4 h-4')}
+    </div>
+    <div class="flex-1 min-w-0">
+      <p class="micro mb-1" style="color:var(--text);">Personalise</p>
+      <p class="disp text-[13px] font-medium leading-tight">${pm.customOn && pm.customNote ? 'Your custom design added' : 'Make it uniquely yours'}</p>
+      <p class="text-[10px] mt-1 leading-snug" style="color:var(--mut);">${pm.customOn && pm.customNote ? esc(pm.customPos || 'Front + Back') : 'Add your own text, name, or design'}</p>
     </div>
   </div>
+  ${pm.customOn && pm.customNote ? `
+  <div class="mt-3 pt-3 border-t hairline">
+    <div class="flex items-start justify-between gap-2 mb-3">
+      <p class="text-[11px] leading-relaxed min-w-0" style="color:var(--text);">"${esc(pm.customNote || '')}"</p>
+      <button type="button" id="removeCustomBtn" class="text-[10px] underline shrink-0" style="color:#DC2626;">Remove</button>
+    </div>
+    <button type="button" id="openCustomBtn" class="pill btn-line w-full py-2.5 text-[10px]">Edit Customisation</button>
+  </div>` : `
+  <button type="button" id="openCustomBtn" class="pill btn-gold w-full py-3 mt-3 text-[10px] flex items-center justify-center gap-2">
+    ${ic('sparkle','w-3.5 h-3.5')} Add Custom Text / Design
+  </button>`}
+</div>` : ''}
+<div class="border hairline p-4 md:p-5 mt-5 text-xs space-y-1.5" style="background:var(--bg2);">
+<p class="micro mb-2">Highlights</p>
+<p>— ${esc(p.desc)}</p>
+<p>— Sizes: ${p.sizes.join(' · ')}</p>
+<p>— ${p.colors.length} colour options</p>
+<p class="border hairline px-3 py-2 mt-2 font-medium text-[10px] tracking-wide2 uppercase text-center" style="color:var(--text);">No Return / No Exchange</p>
 </div>
-
-<!-- RIGHT: Details (internal scroll on desktop) -->
-<div class="w-full md:w-1/2 md:h-full md:overflow-y-auto" style="background:var(--bg);">
-  <div class="p-4 md:p-8 pb-24 md:pb-8 pr-14 md:pr-8 min-w-0">
-
-    <div class="min-w-0 mb-4">
-      <p class="micro mb-2">${esc(CATMETA[p.cat].name)}</p>
-      <h2 class="disp editorial-h font-luxe text-xl md:text-2xl">${esc(p.name)}</h2>
-    </div>
-
-    <div class="grid grid-cols-2 border hairline">
-      <div class="p-3 text-center"><p class="text-[10px] tracking-wide2 uppercase mb-1" style="color:var(--mut);">Regular Price</p><b class="disp text-xl md:text-2xl" style="font-weight:500;">${fmt(p.price)}</b></div>
-      <div class="p-3 text-center border-l hairline" style="background:var(--text); color:var(--bg);"><p class="text-[10px] tracking-wide2 uppercase mb-1">⭐ Member Price</p><b class="disp text-xl md:text-2xl" style="font-weight:500;">${fmt(mp)}</b></div>
-    </div>
-    <div class="text-[10px] text-center py-2 tracking-wide2 uppercase hairline border border-t-0" style="color:var(--text);">💡 Save ${fmt(saveAmt(p))} with Membership</div>
-
-    <div class="flex items-center gap-2 mt-3">${stars(p.rating)}<span class="text-xs" style="color:var(--mut);">${p.rating} · ${p.reviews} reviews</span></div>
-
-    <div class="mt-5">
-      <p class="micro mb-3">Colour: <span style="color:var(--text);font-weight:500;letter-spacing:.02em;">${esc(cn)}</span></p>
-      <div class="flex gap-2.5 flex-wrap items-center">
-        ${p.colors.map((c,i) => '<button class="swatch ' + (i===pm.color ? 'active' : '') + '" style="background:' + c[1] + ';' + (c[1]==='#FFFFFF' ? 'box-shadow:inset 0 0 0 1px #E6E4E0;' : '') + '" data-pcolor="' + i + '" title="' + esc(c[0]) + '" aria-label="' + esc(c[0]) + '"></button>').join('')}
-      </div>
-    </div>
-
-    <div class="mt-5 flex items-end justify-between gap-3 flex-wrap">
-      <div>
-        <p class="micro mb-3">Size</p>
-        <div class="flex gap-2 flex-wrap">${p.sizes.map((s,i) => '<button class="sizechip ' + (i===pm.size ? 'active' : '') + '" data-psize="' + i + '">' + esc(s) + '</button>').join('')}</div>
-      </div>
-      <button class="link-u transition hover:opacity-60" data-sizeopen>Size Guide</button>
-    </div>
-
-    <div class="mt-5 flex items-center gap-4">
-      <p class="micro">Qty</p>
-      <div class="flex items-center gap-2">
-        <button class="qtybtn" data-pq="-1">−</button>
-        <b id="pmQty" class="w-6 text-center">${pm.qty}</b>
-        <button class="qtybtn" data-pq="1">+</button>
-      </div>
-    </div>
-
-    ${isT ? `
-    <div class="mt-5 border hairline p-4" style="background:var(--bg2);">
-      <div class="flex items-start gap-3">
-        <div class="shrink-0 flex items-center justify-center" style="width:36px;height:36px;background:var(--text);color:var(--bg);">
-          ${ic('palette','w-4 h-4')}
-        </div>
-        <div class="flex-1 min-w-0">
-          <p class="micro mb-1" style="color:var(--text);">Personalise</p>
-          <p class="disp text-[13px] font-medium leading-tight">${pm.customOn && pm.customNote ? 'Your custom design added' : 'Make it uniquely yours'}</p>
-          <p class="text-[10px] mt-1 leading-snug" style="color:var(--mut);">${pm.customOn && pm.customNote ? esc(pm.customPos || 'Front + Back') : 'Add your own text, name, or design'}</p>
-        </div>
-      </div>
-      ${pm.customOn && pm.customNote ? `
-      <div class="mt-3 pt-3 border-t hairline">
-        <div class="flex items-start justify-between gap-2 mb-3">
-          <p class="text-[11px] leading-relaxed min-w-0" style="color:var(--text);">"${esc(pm.customNote || '')}"</p>
-          <button type="button" id="removeCustomBtn" class="text-[10px] underline shrink-0" style="color:#DC2626;">Remove</button>
-        </div>
-        <button type="button" id="openCustomBtn" class="pill btn-line w-full py-2.5 text-[10px]">Edit Customisation</button>
-      </div>` : `
-      <button type="button" id="openCustomBtn" class="pill btn-gold w-full py-3 mt-3 text-[10px] flex items-center justify-center gap-2">
-        ${ic('sparkle','w-3.5 h-3.5')} Add Custom Text / Design
-      </button>`}
-    </div>` : ''}
-
-    <div class="border hairline p-4 md:p-5 mt-5 text-xs space-y-1.5" style="background:var(--bg2);">
-      <p class="micro mb-2">Highlights</p>
-      <p>— ${esc(p.desc)}</p>
-      <p>— Sizes: ${p.sizes.join(' · ')}</p>
-      <p>— ${p.colors.length} colour options</p>
-      <p class="border hairline px-3 py-2 mt-2 font-medium text-[10px] tracking-wide2 uppercase text-center" style="color:var(--text);">No Return / No Exchange</p>
-    </div>
-
-    <div class="hidden md:grid grid-cols-2 gap-3 mt-6">
-      <button class="pill btn-line py-3.5" data-pm-add>Add to Cart</button>
-      <button class="pill btn-gold py-3.5" data-pm-buy>Buy Now</button>
-    </div>
-  </div>
+<div class="hidden md:grid grid-cols-2 gap-3 mt-6"><button class="pill btn-line py-3.5" data-pm-add>Add to Cart</button><button class="pill btn-gold py-3.5" data-pm-buy>Buy Now</button></div>
 </div>
-
-<!-- Mobile sticky buttons -->
-<div class="md:hidden fixed bottom-0 left-0 right-0 border-t hairline p-3 flex gap-2 glassbar w-full z-30">
-  <button class="pill btn-line flex-1 py-3.5" data-pm-add>Add to Cart</button>
-  <button class="pill btn-gold flex-1 py-3.5" data-pm-buy>Buy Now</button>
-</div>`;
+</div>
+<div class="md:hidden sticky bottom-0 border-t hairline p-3 flex gap-2 w-full" style="background:var(--glass);backdrop-filter:blur(16px);"><button class="pill btn-line flex-1 py-3.5" data-pm-add>Add</button><button class="pill btn-gold flex-1 py-3.5" data-pm-buy>Buy</button></div>`;
 const ocBtn = $('#openCustomBtn');
 if (ocBtn){ ocBtn.addEventListener('click', () => openCustomModal()); }
 const rmBtn = $('#removeCustomBtn');
