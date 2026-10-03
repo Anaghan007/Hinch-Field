@@ -2563,7 +2563,7 @@ const p = prodById(pm.id);
 if (!p) return;
 const cn = p.colors[pm.color] ? p.colors[pm.color][0] : p.colors[0][0];
 const imgs = imgURLs(p);
-const isT = p.cat.indexOf('tee') > -1;
+const isT = p.cat === 'oversized';
 const mp = memPrice(p);
 $('#productBody').innerHTML = `
 <div class="grid md:grid-cols-2 w-full md:h-full md:overflow-hidden">
