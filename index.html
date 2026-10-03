@@ -1639,14 +1639,14 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
     <div id="historyList" class="flex-1 overflow-y-auto overflow-x-hidden wrap py-6 space-y-4 w-full"></div>
   </div>
 
-  <div id="pastHistoryModal" class="fixed inset-0 z-[85] hidden overflow-y-auto w-full" style="background:var(--bg);">
-    <header class="sticky top-0 z-10 glassbar border-b hairline w-full">
+  <div id="pastHistoryModal" class="fixed inset-0 z-[85] hidden flex flex-col w-full" style="background:var(--bg);">
+    <header class="shrink-0 glassbar border-b hairline w-full">
       <div class="wrap flex items-center gap-3 py-3">
         <button data-close="pastHistoryModal" class="w-10 h-10 border hairline transition" aria-label="Back">←</button>
         <h3 class="disp editorial-h font-luxe text-lg md:text-xl flex-1 truncate">Order History
       </div>
     </header>
-    <div id="pastHistoryList" class="wrap py-6 space-y-4 w-full"></div>
+    <div id="pastHistoryList" class="flex-1 overflow-y-auto overflow-x-hidden wrap py-6 space-y-4 w-full"></div>
   </div>
 
   <div id="staffModal" class="fixed inset-0 z-[95] hidden flex items-center justify-center px-4 w-full">
