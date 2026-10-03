@@ -2419,14 +2419,14 @@ const p = prodById(l.id);
 if (!p) return '';
 return '<div class="flex gap-3 border hairline p-3 a-up w-full" style="background:var(--card);">' +
 '<div class="w-20 h-24 overflow-hidden shrink-0 cursor-pointer" style="background:var(--bg2);" data-open-product="' + p.id + '">' + imgTag(p, l.color, 0, 'w-full h-full object-contain') + '</div>' +
-'<div class="flex-1 min-w-0">' +
+'<div class="flex-1 min-w-0 pr-2">' +
 '<h4 class="text-xs font-medium truncate">' + esc(p.name) + '</h4>' +
 '<p class="text-[10px] mt-0.5 tracking-wide2 uppercase" style="color:var(--mut);">Size: ' + esc(l.size) + ' • Colour: ' + esc(l.color) + (l.colorChoice ? ' • ' + esc(l.colorChoice) : '') + (l.custom ? ' • Custom' : '') + '</p>' +
 '<div class="flex items-center justify-between mt-3">' +
 '<div class="flex items-center gap-2"><button class="qtybtn" data-cq="' + l.key + '" data-d="-1">−</button><b class="text-xs w-4 text-center">' + l.qty + '</b><button class="qtybtn" data-cq="' + l.key + '" data-d="1">+</button></div>' +
 '<b class="disp">' + fmt(p.price * l.qty) + '</b>' +
 '</div></div>' +
-'<button class="self-start" style="color:var(--mut);" data-cr="' + l.key + '" aria-label="Remove">✕</button>' +
+'<button type="button" class="self-start w-8 h-8 flex items-center justify-center border hairline shrink-0" style="color:var(--mut);background:var(--card);cursor:pointer;" data-cr="' + l.key + '" aria-label="Remove">✕</button>' +
 '</div>';
 }).join('');
 }
@@ -3246,7 +3246,7 @@ if (t.hasAttribute('data-pq')){ pm.qty = Math.min(9, Math.max(1, pm.qty + (+t.ge
 if (t.hasAttribute('data-pm-add')){ const p = prodById(pm.id); if (!p) return; addToCart(p.id, p.colors[pm.color][0], p.sizes[pm.size], pm.qty, readExtras(p)); closeAll(true); try{ history.replaceState(null, '', location.pathname + location.search); history.pushState({ modal:'cartDrawer' }, '', '#cart'); handleRoute(); }catch(e){} return; }
 if (t.hasAttribute('data-pm-buy')){ const p = prodById(pm.id); if (!p) return; addToCart(p.id, p.colors[pm.color][0], p.sizes[pm.size], pm.qty, readExtras(p)); closeAll(true); try{ history.replaceState(null, '', location.pathname + location.search); history.pushState({ modal:'cartDrawer' }, '', '#cart'); handleRoute(); }catch(e){} return; }
 if (t.hasAttribute('data-cq')){ const l = cart.find(x => x.key === t.getAttribute('data-cq')); if (!l) return; l.qty = Math.min(9, Math.max(1, l.qty + (+t.getAttribute('data-d')))); store.set('cart', cart); renderCart(); return; }
-if (t.hasAttribute('data-cr')){ cart = cart.filter(x => x.key !== t.getAttribute('data-cr')); store.set('cart', cart); renderCart(); return; }
+if (t.hasAttribute('data-cr')){   const k = t.getAttribute('data-cr');   const before = cart.length;   cart = cart.filter(x => String(x.key) !== String(k));   store.set('cart', cart);   renderCart();   toast('Item removed', 'cross');   console.log('Cart remove:', before, '→', cart.length);   return; }
 if (t.hasAttribute('data-download-invoice')){ const id = t.getAttribute('data-download-invoice'); const orders = store.get('orders', []); const order = orders.find(o => o.id === id); if (order) { showInvoice(order); } return; }
 if (t.hasAttribute('data-cancel-order')){ askCancelOrder(t.getAttribute('data-cancel-order')); return; }
 if (t.hasAttribute('data-policy')){ const key = t.getAttribute('data-policy'); closeAll(true); openPolicy(key); return; }
