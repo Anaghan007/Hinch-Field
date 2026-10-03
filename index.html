@@ -1438,7 +1438,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
         <details class="faq card p-5">
           <summary class="flex justify-between items-center font-medium text-sm">What is the fabric
             quality?<span class="faqicon text-[var(--text)] text-lg">+</span></summary>
-          <p class="text-xs mt-3 leading-relaxed" style="color:var(--mut);">Oversized & Minimal: 100% Pure Cotton, 205
+          <p class="text-xs mt-3 leading-relaxed" style="color:var(--mut);">Oversized & Minimal: 100% Pure Cotton, 250
             GSM Bio Wash. Polo: 100% Pure Cotton, 270 GSM Bio Wash with Tipping &amp; Velvet Strip.</p>
         </details>
         <details class="faq card p-5">
@@ -2257,7 +2257,7 @@ store.set('cart', cart);
 
 function renderFeatured(){
 const html = CATKEYS.map((cat, ci) => {
-const prods = PRODUCTS.filter(p => p.cat === cat).slice(0, 5);
+const prods = PRODUCTS.filter(p => p.cat === cat).slice(0, 10);
 const cname = CATMETA[cat].name;
 return `
 <div class="${ci === 0 ? '' : 'border-t hairline pt-12 md:pt-16'}">
