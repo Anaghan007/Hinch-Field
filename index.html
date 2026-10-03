@@ -504,7 +504,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
     <header class="shrink-0 glassbar border-b hairline w-full">
       <div class="wrap flex items-center gap-3 py-3">
         <button data-close="historyModal" class="w-10 h-10 border hairline transition" aria-label="Back">←</button>
-        <h3 class="disp editorial-h font-luxe text-lg md:text-xl flex-1 truncate">My Orders
+        <h3 class="disp editorial-h font-luxe text-lg md:text-xl flex-1 truncate">My Orders</h3>
       </div>
     </header>
     <div id="historyList" class="flex-1 overflow-y-auto overflow-x-hidden wrap py-6 space-y-4 w-full"></div>
@@ -514,7 +514,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
     <header class="sticky top-0 z-10 glassbar border-b hairline w-full">
       <div class="wrap flex items-center gap-3 py-3">
         <button data-close="pastHistoryModal" class="w-10 h-10 border hairline transition" aria-label="Back">←</button>
-        <h3 class="disp editorial-h font-luxe text-lg md:text-xl flex-1 truncate">Order History
+        <h3 class="disp editorial-h font-luxe text-lg md:text-xl flex-1 truncate">Order History</h3>
       </div>
     </header>
     <div id="pastHistoryList" class="wrap py-6 space-y-4 w-full"></div>
@@ -587,58 +587,12 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
     <div id="catPageGrid" class="wrap py-6 md:py-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-6 w-full"></div>
   </div>
 
+  <!-- ═══ MEMBERSHIP MODAL — NEW STRUCTURE ═══ -->
   <div id="memberModal" class="fixed inset-0 z-[85] hidden flex items-center justify-center px-4 w-full">
     <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" data-close="memberModal"></div>
     <div class="modalcard relative p-6 md:p-8 max-w-md w-full max-h-[90vh] overflow-y-auto" style="background:var(--bg); color:var(--text); box-shadow:var(--shadow);">
       <button class="absolute top-3 right-3 w-9 h-9 border hairline" data-close="memberModal" aria-label="Close">✕</button>
-      <div id="memViewActive" class="hidden">
-        <div class="text-center mb-6">
-          <svg class="w-14 h-14 mx-auto mb-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6l4 4 6-8 6 8 4-4v12H2z"/><path d="M2 18h20"/></svg>
-          <p class="micro mb-2">HINCHFIELD</p>
-          <h3 id="memActiveTitle" class="disp editorial-h font-luxe text-2xl mb-1">Active Member</h3>
-          <p id="memActiveSubtitle" class="text-xs" style="color:var(--mut);">Welcome back!</p>
-        </div>
-        <div id="memCodeBox" class="border hairline p-5 mb-5 text-center" style="background:var(--bg2);">
-          <p class="micro mb-2">YOUR MEMBERSHIP CODE</p>
-          <p id="memActiveCode" class="disp" style="font-size:2.4rem;letter-spacing:.4em;font-weight:500;">0000</p>
-          <p id="memActiveName" class="text-xs mt-3" style="color:var(--mut);"></p>
-          <p id="memActiveExpiry" class="text-xs" style="color:var(--mut);"></p>
-        </div>
-        <div id="memExpiredBox" class="hidden border p-5 mb-5 text-center" style="background:#FEF2F2;border-color:#FECACA;">
-          <p class="micro mb-3" style="color:#DC2626;">MEMBERSHIP EXPIRED</p>
-          <p class="disp text-lg mb-2" style="font-weight:500;color:var(--text);">Renew to Continue<br>Saving 50% OFF</p>
-          <p id="memExpiredDate" class="text-xs" style="color:var(--mut);"></p>
-        </div>
-        <div id="memActions" class="grid grid-cols-2 gap-2 mb-3">
-          <button id="memCopy" class="pill btn-line py-3.5">Copy Code</button>
-          <button id="memShare" class="pill btn-ink py-3.5">Share</button>
-        </div>
-        <button id="memGoCart" class="pill btn-gold w-full py-3.5">Shop & Save 50%</button>
-        <button id="memRenew" class="pill btn-gold w-full py-3.5 hidden">Renew Membership — ₹599</button>
-      </div>
-      <div id="memViewBuy">
-        <div class="text-center mb-6">
-          <p class="micro mb-2">HINCHFIELD</p>
-          <h3 class="disp editorial-h font-luxe text-2xl mb-2">Yearly Membership</h3>
-          <div class="flex items-baseline justify-center gap-3 my-4">
-            <b class="disp text-3xl" id="memPrice" style="font-weight:500;">₹599</b>
-            <s class="text-sm" id="memMrp" style="color:var(--mut);">₹1,199</s>
-            <span class="chip" style="background:var(--text); color:var(--bg);">50%</span>
-          </div>
-          <p class="text-xs" style="color:var(--mut);">1 year validity · Instant digital delivery</p>
-        </div>
-        <div class="border hairline p-4 space-y-2.5 mb-5" style="background:var(--bg2);">
-          <p class="text-xs">✅ <b>Flat 50% OFF</b> on ALL products</p>
-          <p class="text-xs">✅ <b>FREE delivery</b> on every order</p>
-          <p class="text-xs">✅ Unique 4-digit code instantly after payment</p>
-          <p class="text-xs">✅ Valid for 365 days</p>
-        </div>
-        <input id="memBuyName" maxlength="60" class="field mb-3" placeholder="Full Name *">
-        <input id="memBuyPhone" inputmode="numeric" maxlength="15" class="field mb-3" placeholder="Number *">
-        <p id="memBuyErr" class="text-[11px] hidden mb-3" style="color:#DC2626;"></p>
-        <button id="memBuyBtn" class="pill btn-gold w-full py-4">Get Membership</button>
-        <p class="text-[10px] text-center mt-3" style="color:var(--mut);">Secure payment</p>
-      </div>
+      <div id="memberModalBody"></div>
     </div>
   </div>
 
@@ -729,8 +683,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
   <button id="toTop" class="fixed bottom-24 md:bottom-6 left-4 md:left-6 z-[65] w-11 h-11 border hairline shadow-lift opacity-0 pointer-events-none transition hover:bg-[var(--text)] hover:text-[var(--bg)]" style="background:var(--card); color:var(--text);" aria-label="Top">↑</button>
 
   <script>
-  // 🔝 Force scroll to top on refresh
-if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 window.addEventListener('beforeunload', () => { window.scrollTo(0, 0); });
 window.addEventListener('load', () => { setTimeout(() => window.scrollTo(0, 0), 0); });
 
@@ -815,7 +768,6 @@ function fmt(inr){
   if (!isFinite(n)) return '₹0';
   return '₹' + n.toLocaleString('en-IN');
 }
-/* ---- Member price helper (exact 50% off, rounded down) ---- */
 function memPrice(p){
   if (!p) return 0;
   if (p.memberPrice != null) return p.memberPrice;
@@ -825,18 +777,16 @@ function saveAmt(p){
   if (!p) return 0;
   return p.price - memPrice(p);
 }
-/* ---- 🔒 Membership validity helper (handles both number & ISO string) ---- */
 function isMembershipValid(m){
   if (!m || !m.code) return false;
   const exp = new Date(m.expiresAt).getTime();
   return !isNaN(exp) && exp > Date.now();
 }
 function updateMembershipPrices(){
-  const mp = $('#memPrice'); if (mp) mp.textContent = fmt(599);
-  const mm = $('#memMrp'); if (mm) mm.textContent = fmt(1199);
   const mb = $('#memBuyBtn');
   if (mb && !mb.disabled) mb.textContent = 'Get Membership';
 }
+
 /* ---- Categories ---- */
 const CATMETA = {
 'oversized': { name:'Oversized & Minimal T-Shirts', main:'T-Shirt', views:2 },
@@ -844,7 +794,6 @@ const CATMETA = {
 };
 const CATKEYS = Object.keys(CATMETA);
 
-/* ---- Size & Color presets ---- */
 const SIZES_STD  = ['S','M','L','XL','XXL'];
 const COLORS_STD = [
   ['Black',     '#0A0A0A'],
@@ -870,51 +819,18 @@ function generateProducts() {
 if (PRODUCTS.some(p => p.id === 'p1')) return;
 const names = {
 'oversized': [
-  'Washed Black Oversized Tee',
-  'Acid Wash Vintage Oversized',
-  'Bold Typography Back Print Tee',
-  'Retro 90s College Oversized',
-  'Sun-Faded Streetwear Oversized',
-  'Y2K Chrome Graphic Oversized',
-  'Distressed Grunge Boxy Tee',
-  'Essential Plain Heavyweight Tee',
-  'Premium Solid Crew Tee',
-  'Clean Street Minimal Tee',
-  'Tonal Neutral Minimal Tee',
-  'Essential Heavyweight T-Shirt',
-  'Micro Chest Logo Tee',
-  'Clean Serif Typography Tee',
-  'Small Signature Script Tee',
-  'Minimal Wave Print Tee',
-  'Clean Text Statement Tee',
-  'Vintage Washed Minimal Tee',
-  'Tonal Embroidered T-Shirt',
-  'Micro Dot Graphic Tee',
-  'Signature Chest Print Tee',
-  'Statement Oversized Print Tee',
-  'Sunset Gradient Oversized',
-  'Minimal Arrow Print Tee',
-  'Clean Block Text Tee'
+  'Washed Black Oversized Tee','Acid Wash Vintage Oversized','Bold Typography Back Print Tee','Retro 90s College Oversized',
+  'Sun-Faded Streetwear Oversized','Y2K Chrome Graphic Oversized','Distressed Grunge Boxy Tee','Essential Plain Heavyweight Tee',
+  'Premium Solid Crew Tee','Clean Street Minimal Tee','Tonal Neutral Minimal Tee','Essential Heavyweight T-Shirt',
+  'Micro Chest Logo Tee','Clean Serif Typography Tee','Small Signature Script Tee','Minimal Wave Print Tee',
+  'Clean Text Statement Tee','Vintage Washed Minimal Tee','Tonal Embroidered T-Shirt','Micro Dot Graphic Tee',
+  'Signature Chest Print Tee','Statement Oversized Print Tee','Sunset Gradient Oversized','Minimal Arrow Print Tee','Clean Block Text Tee'
 ],
 'polo': [
-  'Solid Pique Cotton Polo',
-  'Classic Solid Polo T-Shirt',
-  'Premium Heavyweight Polo',
-  'Slim Fit Signature Polo',
-  'Navy Heritage Polo',
-  'Contrast Tipping Collar Polo',
-  'Two-Tone Collar Polo',
-  'Colorblock Sporty Polo',
-  'Maroon Signature Polo',
-  'Striped Retro Rugby Polo',
-  'Bottle Green Classic Polo',
-  'Striped Summer Polo',
-  'Textured Jacquard Knit Polo',
-  'Embroidered Logo Polo',
-  'Textured Cotton Polo',
-  'Big Logo Embroidered Polo',
-  'Summer Breathable Polo',
-  'Classic Heritage Polo'
+  'Solid Pique Cotton Polo','Classic Solid Polo T-Shirt','Premium Heavyweight Polo','Slim Fit Signature Polo','Navy Heritage Polo',
+  'Contrast Tipping Collar Polo','Two-Tone Collar Polo','Colorblock Sporty Polo','Maroon Signature Polo','Striped Retro Rugby Polo',
+  'Bottle Green Classic Polo','Striped Summer Polo','Textured Jacquard Knit Polo','Embroidered Logo Polo','Textured Cotton Polo',
+  'Big Logo Embroidered Polo','Summer Breathable Polo','Classic Heritage Polo'
 ]
 };
 let pid = 1;
@@ -928,33 +844,21 @@ for (const cat of CATKEYS) {
   const desc        = isPolo ? DESC_POLO : DESC_STD;
   names[cat].forEach((name, i) => {
     PRODUCTS.push({
-      id: 'p' + (pid++),
-      cat, name,
+      id: 'p' + (pid++), cat, name,
       price, memberPrice, mrp,
       rating: +(4.5 + (i % 5) * 0.1).toFixed(1),
       reviews: 50 + (i * 13) % 150,
       tags: i < 3 ? 'new' : (i < 6 ? 'best' : (i < 8 ? 'hot' : '')),
-      sizes, desc,
-      colors,
-      hasColors: true
+      sizes, desc, colors, hasColors: true
     });
   });
 }
 }
 PRODUCTS.push({
-  id: 'test1',
-  cat: 'oversized',
-  name: '🧪 TEST ORDER ₹1',
-  price: 1,
-  memberPrice: 1,
-  mrp: 500,
-  rating: 5.0,
-  reviews: 1,
-  tags: 'new',
-  sizes: [...SIZES_STD],
-  desc: 'Internal test product for Razorpay live testing.',
-  colors: [['Default', '#0A0A0A']],
-  hasColors: false
+  id: 'test1', cat: 'oversized', name: '🧪 TEST ORDER ₹1',
+  price: 1, memberPrice: 1, mrp: 500, rating: 5.0, reviews: 1, tags: 'new',
+  sizes: [...SIZES_STD], desc: 'Internal test product for Razorpay live testing.',
+  colors: [['Default', '#0A0A0A']], hasColors: false
 });
 const prodById = id => PRODUCTS.find(p => p.id === id);
 const offPct = p => Math.max(0, Math.round((1 - p.price / p.mrp) * 100));
@@ -1461,7 +1365,6 @@ function currentStageIdx(order){
   const map = { 'Order Placed': 0,'Order Confirmed': 1,'In Process': 2,'Order Ready': 3,'Dispatched': 4,'Out For Delivery': 5,'Delivered': 6,'Cancelled': -1 };
   return map[status] ?? 0;
 }
-/* ---- Compact timeline (only final status for History) ---- */
 function statusTimelineCompact(order){
   const st = getOrderStatus(order);
   const isCancelled = st.text === 'Cancelled';
@@ -1966,6 +1869,219 @@ function openPolicy(key, skipRoute){
   if (!skipRoute) { try { history.pushState({ modal:'policyModal', key }, '', '#policy/' + key); } catch(e){} }
 }
 
+/* ══════════════════════════════════════════
+   MEMBERSHIP MODAL — DYNAMIC BUILDERS
+   ══════════════════════════════════════════ */
+
+function buildMemberActiveHTML(saved){
+  return `
+    <div class="text-center mb-6">
+      <svg class="w-14 h-14 mx-auto mb-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6l4 4 6-8 6 8 4-4v12H2z"/><path d="M2 18h20"/></svg>
+      <p class="micro mb-2">HINCHFIELD</p>
+      <h3 class="disp editorial-h font-luxe text-2xl mb-1">Active Member</h3>
+      <p class="text-xs" style="color:var(--mut);">Welcome back!</p>
+    </div>
+    <div class="border hairline p-5 mb-5 text-center" style="background:var(--bg2);">
+      <p class="micro mb-2">YOUR MEMBERSHIP CODE</p>
+      <p class="disp" style="font-size:2.4rem;letter-spacing:.4em;font-weight:500;">${esc(saved.code)}</p>
+      <p class="text-xs mt-3" style="color:var(--mut);">${esc(saved.name || '')}</p>
+      <p class="text-xs" style="color:var(--mut);">Valid till: ${new Date(saved.expiresAt).toLocaleDateString('en-IN')}</p>
+    </div>
+    <div class="grid grid-cols-2 gap-2 mb-3">
+      <button data-member-action="copy" class="pill btn-line py-3.5">Copy Code</button>
+      <button data-member-action="share" class="pill btn-ink py-3.5">Share</button>
+    </div>
+    <button data-member-action="shop" class="pill btn-gold w-full py-3.5">Shop & Save 50%</button>
+  `;
+}
+
+function buildMemberExpiredHTML(saved){
+  return `
+    <div class="text-center mb-6">
+      <svg class="w-14 h-14 mx-auto mb-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <p class="micro mb-2">HINCHFIELD</p>
+      <h3 class="disp editorial-h font-luxe text-2xl mb-1" style="color:#DC2626;">Membership Expired</h3>
+      <p class="text-xs" style="color:var(--mut);">Renew to continue saving 50% OFF</p>
+    </div>
+    <div class="border p-5 mb-5 text-center" style="background:#FEF2F2;border-color:#FECACA;">
+      <p class="micro mb-3" style="color:#DC2626;">EXPIRED ON</p>
+      <p class="disp text-lg" style="font-weight:500;color:var(--text);">${new Date(saved.expiresAt).toLocaleDateString('en-IN')}</p>
+    </div>
+    <div class="border hairline p-4 space-y-2.5 mb-5" style="background:var(--bg2);">
+      <p class="text-xs">✅ <b>Flat 50% OFF</b> on ALL products</p>
+      <p class="text-xs">✅ <b>FREE delivery</b> on every order</p>
+      <p class="text-xs">✅ Fresh 4-digit code instantly</p>
+      <p class="text-xs">✅ Valid for 365 days</p>
+    </div>
+    <button data-member-action="renew" class="pill btn-gold w-full py-4">Renew — ₹599</button>
+  `;
+}
+
+function buildMemberBuyHTML(prefill){
+  prefill = prefill || {};
+  return `
+    <div class="text-center mb-6">
+      <p class="micro mb-2">HINCHFIELD</p>
+      <h3 class="disp editorial-h font-luxe text-2xl mb-2">Yearly Membership</h3>
+      <div class="flex items-baseline justify-center gap-3 my-4">
+        <b class="disp text-3xl" style="font-weight:500;">${fmt(599)}</b>
+        <s class="text-sm" style="color:var(--mut);">${fmt(1199)}</s>
+        <span class="chip" style="background:var(--text); color:var(--bg);">50%</span>
+      </div>
+      <p class="text-xs" style="color:var(--mut);">1 year validity · Instant digital delivery</p>
+    </div>
+    <div class="border hairline p-4 space-y-2.5 mb-5" style="background:var(--bg2);">
+      <p class="text-xs">✅ <b>Flat 50% OFF</b> on ALL products</p>
+      <p class="text-xs">✅ <b>FREE delivery</b> on every order</p>
+      <p class="text-xs">✅ Unique 4-digit code instantly after payment</p>
+      <p class="text-xs">✅ Valid for 365 days</p>
+    </div>
+    <input id="memBuyName" maxlength="60" class="field mb-3" placeholder="Full Name *" value="${esc(prefill.name || '')}">
+    <input id="memBuyPhone" inputmode="numeric" maxlength="15" class="field mb-3" placeholder="Number *" value="${esc(prefill.phone || '')}">
+    <p id="memBuyErr" class="text-[11px] hidden mb-3" style="color:#DC2626;"></p>
+    <button data-member-action="buy" class="pill btn-gold w-full py-4">Get Membership — ${fmt(599)}</button>
+    <p class="text-[10px] text-center mt-3" style="color:var(--mut);">Secure payment · Razorpay</p>
+  `;
+}
+
+function renderMemberModal(){
+  const saved = store.get('membership_full', null);
+  const isValid = isMembershipValid(saved);
+  const isExpired = saved && saved.code && !isValid;
+  const body = $('#memberModalBody');
+  if (!body) return;
+
+  if (isValid){
+    body.innerHTML = buildMemberActiveHTML(saved);
+  } else if (isExpired){
+    body.innerHTML = buildMemberExpiredHTML(saved);
+  } else {
+    body.innerHTML = buildMemberBuyHTML();
+  }
+}
+
+async function openMemberModal(skipRoute){
+  // 1️⃣ Build content FIRST
+  renderMemberModal();
+  // 2️⃣ Open modal
+  openModal('memberModal');
+  // 3️⃣ History
+  if (!skipRoute) {
+    try {
+      if (window.location.hash === '#menu') { history.replaceState({ modal:'memberModal' }, '', '#membership'); }
+      else { history.pushState({ modal:'memberModal' }, '', '#membership'); }
+    } catch(e){}
+  }
+  // 4️⃣ Background server verify
+  try {
+    const deviceId = await getDeviceId();
+    const r = await fetch(`${API_BASE}/api/membership-check-device`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ deviceId }) });
+    const d = await r.json();
+    const saved = store.get('membership_full', null);
+    if (d.success && d.membership){
+      const deviceMembership = d.membership;
+      if (!saved || saved.code !== deviceMembership.code){
+        store.set('membership_full', deviceMembership);
+        renderMemberModal();
+      }
+    } else if (!saved || !saved.code){
+      const lastPhone = store.get('last_phone', null);
+      if (lastPhone) autoLookup(lastPhone);
+    }
+  } catch(e){ console.error(e); }
+}
+
+/* ═══ Membership Modal — Event Delegation ═══ */
+document.addEventListener('click', async (e) => {
+  const t = e.target.closest('[data-member-action]');
+  if (!t) return;
+  const action = t.getAttribute('data-member-action');
+  const saved = store.get('membership_full', null);
+
+  // ── COPY CODE ──
+  if (action === 'copy'){
+    if (!saved || !saved.code) return;
+    try { navigator.clipboard.writeText(saved.code); toast('Code copied!', 'check'); }
+    catch(e){ toast('Copy failed', 'cross'); }
+    return;
+  }
+
+  // ── SHARE ──
+  if (action === 'share'){
+    if (!saved || !saved.code) return;
+    const txt = '⭐ HINCHFIELD Membership\n\nMy Code: ' + saved.code + '\n\nFlat 50% OFF + Free delivery on hinchfield.store';
+    if (navigator.share){ navigator.share({ title:'HinchField Membership', text: txt }).catch(()=>{}); }
+    else { try { navigator.clipboard.writeText(txt); toast('Copied — share anywhere', 'check'); } catch(e){} }
+    return;
+  }
+
+  // ── SHOP ──
+  if (action === 'shop'){
+    closeAll(true);
+    openCatPage('', '', '');
+    return;
+  }
+
+  // ── RENEW ──
+  if (action === 'renew'){
+    const body = $('#memberModalBody');
+    if (body) body.innerHTML = buildMemberBuyHTML({ name: saved?.name || '', phone: saved?.phone || '' });
+    return;
+  }
+
+  // ── BUY MEMBERSHIP ──
+  if (action === 'buy'){
+    if (t.disabled) return;
+    const err = m => { const el = $('#memBuyErr'); if (el) { el.textContent=m; el.classList.remove('hidden'); } return false; };
+    const nameEl = $('#memBuyName');
+    const phoneEl = $('#memBuyPhone');
+    if (!nameEl || !phoneEl) return;
+    const name = nameEl.value.trim();
+    const phone = phoneEl.value.trim();
+    if (!/^[A-Za-z .]{3,60}$/.test(name)) return err('Enter valid name');
+    if (!/^\d{10,15}$/.test(phone.replace(/[^0-9]/g,''))) return err('Enter valid WhatsApp number');
+    if (typeof Razorpay === 'undefined') return err('Payment SDK missing');
+    t.disabled = true;
+    const orig = t.textContent;
+    t.textContent = 'Creating Order…';
+    try {
+      const r = await fetch(`${API_BASE}/api/membership-order`, { method:'POST' });
+      const d = await r.json();
+      if (!d.success) throw new Error('Order create failed');
+      const options = {
+        key: RAZORPAY_KEY_ID, amount: d.amount, currency: d.currency,
+        name: 'HinchField Membership', description: 'Yearly Membership — ₹599',
+        image: 'images/logo.png', order_id: d.order_id,
+        prefill: { name, contact: phone }, theme: { color: '#0A0A0A' },
+        handler: async function(resp){
+          try {
+            const v = await fetch(`${API_BASE}/api/verify-payment`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ razorpay_order_id: resp.razorpay_order_id, razorpay_payment_id: resp.razorpay_payment_id, razorpay_signature: resp.razorpay_signature }) });
+            const vd = await v.json();
+            if (!vd.success) throw new Error('Verify failed');
+            const currentDeviceId = await getDeviceId();
+            const c = await fetch(`${API_BASE}/api/membership-create`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ name, phone, deviceId: currentDeviceId }) });
+            const cd = await c.json();
+            if (!cd.success) throw new Error('Code generation failed');
+            const clean = phone.replace(/[^0-9]/g, '');
+            const full = { code: cd.code, name, phone: clean, expiresAt: cd.expiresAt };
+            store.set('membership_full', full);
+            store.set('last_phone', clean);
+            toast('Membership activated!', 'check');
+            renderMemberModal();
+            if (typeof renderCart === 'function') renderCart();
+          } catch(e){ console.error(e); toast('Verification failed', 'cross'); }
+        },
+        modal: { ondismiss: () => toast('Payment cancelled', 'warn') }
+      };
+      const rzp = new Razorpay(options);
+      rzp.on('payment.failed', r => toast((r.error && r.error.description) || 'Payment failed', 'cross'));
+      rzp.open();
+    } catch(e){ console.error(e); err('Something went wrong'); }
+    finally { t.disabled = false; t.textContent = orig; }
+    return;
+  }
+});
+
 function openModal(id){ const el = $('#'+id); if (el) el.classList.remove('hidden'); document.body.style.overflow = 'hidden'; }
 function closeModal(id, skipHistory){
 const el = $('#'+id); if (el) el.classList.add('hidden');
@@ -2102,172 +2218,7 @@ $('#sortSel').onchange = e => { cp.sort = e.target.value; drawCatPage(); };
 $('#trackGo').onclick = track;
 $('#toTop').onclick = () => window.scrollTo({ top:0, behavior:'smooth' });
 
-function showMemberView(){
-  const active = $('#memViewActive');
-  const buy = $('#memViewBuy');
-  if (!active || !buy) return;
-  const saved = store.get('membership_full', null);
-
-  if (saved && saved.code){
-    active.classList.remove('hidden');
-    buy.classList.add('hidden');
-
-    const expMs = new Date(saved.expiresAt).getTime();
-    const isExpired = isNaN(expMs) || expMs <= Date.now();
-    const codeBox = $('#memCodeBox');
-    const expiredBox = $('#memExpiredBox');
-    const actions = $('#memActions');
-    const goBtn = $('#memGoCart');
-    const renewBtn = $('#memRenew');
-    const title = $('#memActiveTitle');
-    const subtitle = $('#memActiveSubtitle');
-
-    if (isExpired){
-      if (codeBox) codeBox.classList.add('hidden');
-      if (expiredBox) expiredBox.classList.remove('hidden');
-      if (actions) actions.classList.add('hidden');
-      if (goBtn) goBtn.classList.add('hidden');
-      if (renewBtn) renewBtn.classList.remove('hidden');
-      if (title) title.textContent = 'Membership Expired';
-      if (subtitle) subtitle.textContent = 'Renew to continue enjoying 50% OFF';
-      const ed = $('#memExpiredDate');
-      if (ed) ed.textContent = 'Expired on: ' + new Date(saved.expiresAt).toLocaleDateString('en-IN');
-    } else {
-      if (codeBox) codeBox.classList.remove('hidden');
-      if (expiredBox) expiredBox.classList.add('hidden');
-      if (actions) actions.classList.remove('hidden');
-      if (goBtn) goBtn.classList.remove('hidden');
-      if (renewBtn) renewBtn.classList.add('hidden');
-      if (title) title.textContent = 'Active Member';
-      if (subtitle) subtitle.textContent = 'Welcome back!';
-      $('#memActiveCode').textContent = saved.code;
-      $('#memActiveName').textContent = saved.name || '';
-      $('#memActiveExpiry').textContent = 'Valid till: ' + new Date(saved.expiresAt).toLocaleDateString('en-IN');
-    }
-  } else {
-    active.classList.add('hidden');
-    buy.classList.remove('hidden');
-  }
-}
-
-async function openMemberModal(skipRoute){
-  $('#memBuyErr').classList.add('hidden');
-  if (typeof updateMembershipPrices === 'function') updateMembershipPrices();
-
-  const saved = store.get('membership_full', null);
-  const hasLocal = isMembershipValid(saved);
-
-  if (hasLocal){
-    $('#memViewBuy').style.display = 'none';
-    $('#memViewBuy').classList.add('hidden');
-    $('#memViewActive').classList.remove('hidden');
-    showMemberView();
-  } else if (saved && saved.code) {
-    $('#memViewBuy').style.display = 'none';
-    $('#memViewBuy').classList.add('hidden');
-    $('#memViewActive').classList.remove('hidden');
-    showMemberView();
-  } else {
-    $('#memViewActive').classList.add('hidden');
-    $('#memViewBuy').style.display = '';
-    $('#memViewBuy').classList.remove('hidden');
-  }
-
-  openModal('memberModal');
-
-  if (!skipRoute) {
-    try {
-      if (window.location.hash === '#menu') { history.replaceState({ modal:'memberModal' }, '', '#membership'); }
-      else { history.pushState({ modal:'memberModal' }, '', '#membership'); }
-    } catch(e){}
-  }
-
-  try {
-    const deviceId = await getDeviceId();
-    const r = await fetch(`${API_BASE}/api/membership-check-device`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ deviceId }) });
-    const d = await r.json();
-    if (d.success && d.membership){
-      const deviceMembership = d.membership;
-      store.set('membership_full', deviceMembership);
-      if (!hasLocal || !saved || saved.code !== deviceMembership.code){
-        $('#memViewBuy').style.display = 'none';
-        $('#memViewBuy').classList.add('hidden');
-        $('#memViewActive').classList.remove('hidden');
-        showMemberView();
-      }
-    } else if (!hasLocal){
-      const lastPhone = store.get('last_phone', null);
-      if (lastPhone) autoLookup(lastPhone);
-    }
-  } catch(e){ console.error(e); }
-}
-  
 if ($('#openMembership')) $('#openMembership').onclick = () => openMemberModal();
-
-if ($('#memCopy')) $('#memCopy').onclick = () => { const code = $('#memActiveCode').textContent.trim(); try { navigator.clipboard.writeText(code); toast('Code copied!', 'check'); } catch(e){ toast('Copy failed', 'cross'); } };
-if ($('#memShare')) $('#memShare').onclick = () => {
-  const code = $('#memActiveCode').textContent.trim();
-  const txt = '⭐ HINCHFIELD Membership\n\nMy Code: ' + code + '\n\nFlat 50% OFF + Free delivery on hinchfield.store';
-  if (navigator.share){ navigator.share({ title:'HinchField Membership', text: txt }).catch(()=>{}); }
-  else { try { navigator.clipboard.writeText(txt); toast('Copied — share anywhere', 'check'); } catch(e){} }
-};
-if ($('#memGoCart')) $('#memGoCart').onclick = () => { closeAll(true); openCatPage('', '', ''); };
-
-if ($('#memRenew')) $('#memRenew').onclick = () => {
-  const saved = store.get('membership_full', null);
-  $('#memViewActive').classList.add('hidden');
-  $('#memViewBuy').style.display = '';
-  $('#memViewBuy').classList.remove('hidden');
-  if (saved){
-    if ($('#memBuyName')) $('#memBuyName').value = saved.name || '';
-    if ($('#memBuyPhone')) $('#memBuyPhone').value = saved.phone || '';
-  }
-};
- 
-if ($('#memBuyBtn')) $('#memBuyBtn').onclick = async () => {
-  const btn = $('#memBuyBtn');
-  if (btn.disabled) return;
-  const err = m => { const e=$('#memBuyErr'); e.textContent=m; e.classList.remove('hidden'); return false; };
-  $('#memBuyErr').classList.add('hidden');
-  const name = $('#memBuyName').value.trim();
-  const phone = $('#memBuyPhone').value.trim();
-  if (!/^[A-Za-z .]{3,60}$/.test(name)) return err('Enter valid name');
-  if (!/^\d{10,15}$/.test(phone.replace(/[^0-9]/g,''))) return err('Enter valid WhatsApp number');
-  if (typeof Razorpay === 'undefined') return err('Payment SDK missing');
-  btn.disabled = true; btn.textContent = 'Creating Order…';
-  try {
-    const r = await fetch(`${API_BASE}/api/membership-order`, { method:'POST' });
-    const d = await r.json();
-    if (!d.success) throw new Error('Order create failed');
-    const options = {
-      key: RAZORPAY_KEY_ID, amount: d.amount, currency: d.currency, name: 'HinchField Membership', description: 'Yearly Membership — ₹599', image: 'images/logo.png', order_id: d.order_id,
-      prefill: { name, contact: phone }, theme: { color: '#0A0A0A' },
-      handler: async function(resp){
-        try {
-          const v = await fetch(`${API_BASE}/api/verify-payment`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ razorpay_order_id: resp.razorpay_order_id, razorpay_payment_id: resp.razorpay_payment_id, razorpay_signature: resp.razorpay_signature }) });
-          const vd = await v.json();
-          if (!vd.success) throw new Error('Verify failed');
-          const currentDeviceId = await getDeviceId();
-          const c = await fetch(`${API_BASE}/api/membership-create`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ name, phone, deviceId: currentDeviceId }) });
-          const cd = await c.json();
-          if (!cd.success) throw new Error('Code generation failed');
-          const clean = phone.replace(/[^0-9]/g, '');
-          const full = { code: cd.code, name, phone: clean, expiresAt: cd.expiresAt };
-          store.set('membership_full', full);
-          store.set('last_phone', clean);
-          toast('Membership activated!', 'check');
-          showMemberView();
-          if (typeof renderCart === 'function') renderCart();
-        } catch(e){ console.error(e); toast('Verification failed', 'cross'); }
-      },
-      modal: { ondismiss: () => toast('Payment cancelled', 'warn') }
-    };
-    const rzp = new Razorpay(options);
-    rzp.on('payment.failed', r => toast((r.error && r.error.description) || 'Payment failed', 'cross'));
-    rzp.open();
-  } catch(e){ console.error(e); err('Something went wrong'); }
-  finally { btn.disabled = false; btn.textContent = 'Get Membership'; }
-};
 
 function updateMemberUI(){
   const na=$('#memberNotApplied'),ap=$('#memberApplied');
@@ -2366,8 +2317,6 @@ $('#adminCancelBtn').onclick = async () => {
       if (saved && saved.code === d.code) {
         store.set('membership_full', null);
         appliedMembership = null;
-        const mBuy = $('#memViewBuy'); if (mBuy) { mBuy.style.display = ''; mBuy.classList.remove('hidden'); }
-        const mActive = $('#memViewActive'); if (mActive) mActive.classList.add('hidden');
         if (typeof renderCart === 'function') renderCart();
         toast('Membership cancelled', 'cross');
       }
