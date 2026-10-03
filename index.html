@@ -3418,28 +3418,29 @@ function showMemberView(){
 }
 
 async function openMemberModal(skipRoute){
-  // ⚡ STEP 1: Set correct view BEFORE opening modal (no flash)
   $('#memBuyErr').classList.add('hidden');
   if (typeof updateMembershipPrices === 'function') updateMembershipPrices();
 
   const saved = store.get('membership_full', null);
   const hasLocal = saved && saved.code && Date.now() < saved.expiresAt;
 
+  // ⚡ Set DOM completely BEFORE opening modal
   if (hasLocal){
+    // 🔒 HARD HIDE buy view — completely remove from display
+    $('#memViewBuy').style.display = 'none';
     $('#memViewActive').classList.remove('hidden');
-    $('#memViewBuy').classList.add('hidden');
     $('#memActiveCode').textContent = saved.code;
     $('#memActiveName').textContent = saved.name || '';
     $('#memActiveExpiry').textContent = 'Valid till: ' + new Date(saved.expiresAt).toLocaleDateString('en-IN');
   } else {
     $('#memViewActive').classList.add('hidden');
-    $('#memViewBuy').classList.remove('hidden');
+    $('#memViewBuy').style.display = '';
   }
 
-  // ⚡ STEP 2: NOW open modal (view already correct)
+  // ⚡ Open modal — view already 100% correct, no flash possible
   openModal('memberModal');
 
-  // ⚡ STEP 3: History management
+  // ⚡ History
   if (!skipRoute) {
     try {
       if (window.location.hash === '#menu') { history.replaceState({ modal:'memberModal' }, '', '#membership'); }
@@ -3447,7 +3448,7 @@ async function openMemberModal(skipRoute){
     } catch(e){}
   }
 
-  // 🌐 STEP 4: Background server verify (silent)
+  // 🌐 Silent server check
   try {
     const deviceId = await getDeviceId();
     const r = await fetch(`${API_BASE}/api/membership-check-device`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ deviceId }) });
@@ -3455,10 +3456,10 @@ async function openMemberModal(skipRoute){
     if (d.success && d.membership){
       const deviceMembership = d.membership;
       store.set('membership_full', deviceMembership);
-      // Only update if different from local (avoid re-render flash)
+      // Only re-render if different from local
       if (!hasLocal || saved.code !== deviceMembership.code){
+        $('#memViewBuy').style.display = 'none';
         $('#memViewActive').classList.remove('hidden');
-        $('#memViewBuy').classList.add('hidden');
         $('#memActiveCode').textContent = deviceMembership.code;
         $('#memActiveName').textContent = deviceMembership.name || '';
         $('#memActiveExpiry').textContent = 'Valid till: ' + new Date(deviceMembership.expiresAt).toLocaleDateString('en-IN');
