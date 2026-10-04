@@ -1249,6 +1249,16 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       }
     }
 
+    /* ═══ LAST CIRCLE BLINK (once) ═══ */
+    @keyframes blinkOnce {
+      0%   { background: var(--text); border-color: var(--text); color: var(--bg); transform: scale(1); }
+      45%  { background: var(--card); border-color: var(--line); color: var(--mut); transform: scale(1.2); }
+      100% { background: var(--text); border-color: var(--text); color: var(--bg); transform: scale(1); }
+    }
+    .track-icon.blink-once {
+      animation: blinkOnce .7s cubic-bezier(.4, 0, .2, 1) 1 both;
+    }
+    
     .delivered-anim {
       animation: bounceIn .5s cubic-bezier(.2, .7, .2, 1) both;
     }
@@ -2577,16 +2587,23 @@ function statusTimelineCompact(order){
 function statusTimeline(order, animate){
   const ci = currentStageIdx(order);
   if (ci === -1) { return '<p class="text-xs font-medium flex items-center gap-2" style="color:#DC2626;">' + ic('cross','w-4 h-4') + 'Order Cancelled</p>'; }
-  
+
+  // 🔑 Only blink when stage ADVANCED (not on every render)
+  window.__blinkStage = window.__blinkStage || {};
+  const lastBlinked = window.__blinkStage[order.id];
+  const shouldBlink = (lastBlinked === undefined || ci > lastBlinked);
+  if (shouldBlink) window.__blinkStage[order.id] = ci;
+
   let html = '<div class="track-wrap"><div class="track-timeline">';
   html += STAGES.map((s, i) => {
     const done = i <= ci;
     const active = i === ci;
     const cls = done ? 'done' : (active ? 'active' : '');
-    
+    const blinkCls = (shouldBlink && i === ci && done) ? ' blink-once' : '';
+
     return '<div class="track-step ' + cls + '">' +
-      '<div class="track-icon">' + 
-        (done ? ic('check','w-4 h-4') : ic(s.icon,'w-4 h-4')) + 
+      '<div class="track-icon' + blinkCls + '">' +
+        (done ? ic('check','w-4 h-4') : ic(s.icon,'w-4 h-4')) +
       '</div>' +
       '<div class="pt-1">' +
         '<p class="text-[11px] font-medium" style="color:' + (done ? 'var(--text)' : 'var(--mut)') + ';">' + s.t + '</p>' +
@@ -2595,7 +2612,6 @@ function statusTimeline(order, animate){
   }).join('');
   html += '</div></div>';
   html += '<p class="text-[11px] mt-4 text-center" style="color:var(--mut);">Expected Delivery: 9:00 AM – 7:00 PM</p>';
-  
   return html;
 }
 function buildOrderCard(o, opts){
@@ -3119,27 +3135,27 @@ async function syncOrders(silent){
 }
 
 function handleDeliveredTransition(orderId, isAdmin){
-  // 🔑 Admin device — no popup, just refresh lists
+  // 🔑 Admin — no popup, just refresh
   if (isAdmin){
     safe(renderHistory, 'admin.render');
     safe(renderPastHistory, 'admin.render.past');
     return;
   }
 
-  // 🔑 Customer — show popup INSTANTLY (0ms)
+  // 🔑 Customer — popup with its natural animation, then close
   if (document.visibilityState === 'visible'){
     const idEl = $('#deliveredOrderId');
     if (idEl) idEl.textContent = orderId;
     openModal('orderDeliveredModal');
 
-    // Auto-redirect after 1.8s
+    // Popup animation (.45s) + hold ~1.8s → total ~2.2s, then close
     setTimeout(() => {
       closeModal('orderDeliveredModal', true);
       safe(renderHistory, 'delivered.clear');
       safe(renderPastHistory, 'delivered.clear.past');
       openModal('pastHistoryModal');
       try { history.replaceState({ modal: 'pastHistoryModal' }, '', '#history'); } catch(e){}
-    }, 1800);
+    }, 2200);
   }
 }
 
