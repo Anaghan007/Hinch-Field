@@ -3254,26 +3254,36 @@ async function syncOrders(silent){
     }
 
     // 🔑 Membership — always from userData (works on admin device too)
-    if (userData.membership !== undefined) {
+        if (userData.membership !== undefined) {
         let mem = userData.membership || null;
 
         if (mem && mem.status && String(mem.status).toLowerCase() === 'cancelled') mem = null;
         if (mem && mem.cancelled === true) mem = null;
 
         const oldMem = store.get('membership_full', null);
-        const changed = JSON.stringify(mem) !== JSON.stringify(oldMem);
 
-        store.set('membership_full', mem);
+        // 🛡️ GRACE PERIOD: fresh purchase (< 60s) — don't let server null wipe it
+        const freshBuy = !mem && oldMem && oldMem.code && oldMem.activatedAt
+            && (Date.now() - oldMem.activatedAt < 60000);
 
-        if (!mem && appliedMembership){
-            clearAppliedMembershipUI();
+        if (!freshBuy) {
+            // Carry forward activatedAt for same code
+            if (mem && oldMem && oldMem.code === mem.code && oldMem.activatedAt) {
+                mem.activatedAt = oldMem.activatedAt;
+            }
+            if (mem && !mem.status) mem.status = 'active';
+
+            const changed = JSON.stringify(mem) !== JSON.stringify(oldMem);
+            store.set('membership_full', mem);
+
+            if (!mem && appliedMembership){
+                clearAppliedMembershipUI();
+            }
+            if (mem && appliedMembership && appliedMembership.code !== mem.code){
+                clearAppliedMembershipUI();
+            }
+            if (changed) renderCart();
         }
-
-        if (mem && appliedMembership && appliedMembership.code !== mem.code){
-            clearAppliedMembershipUI();
-        }
-
-        if (changed) renderCart();
     }
     if (userData.user && userData.user.phone) store.set('last_phone', userData.user.phone);
 
@@ -3691,7 +3701,7 @@ document.addEventListener('click', async (e) => {
             const c = await fetch(`${API_BASE}/api/membership-create`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ name, phone, email: getUserEmail(), deviceId, session_key: store.get('session_key', null) }) });
             const cd = await c.json(); if (!cd.success) throw new Error('Code generation failed');
             const clean = phone.replace(/[^0-9]/g, '');
-            const full = { code: cd.code, name, phone: clean, expiresAt: cd.expiresAt };
+            const full = { code: cd.code, name, phone: clean, expiresAt: cd.expiresAt, status: 'active', activatedAt: Date.now() };
             store.set('membership_full', full); store.set('last_phone', clean);
             renderCart();
             closeModal('memberModal', true);
@@ -3858,6 +3868,22 @@ async function applyMemberFn(){
 
     const code = ($('#memberCode')?.value || '').trim();
     if(!/^\d{4}$/.test(code)) return toast('Enter Your 4-digit code','warn');
+
+    // 🛡️ LOCAL FIRST — instant apply if code matches cache
+    const localMem = store.get('membership_full', null);
+    if (localMem && localMem.code === code && isMembershipValid(localMem)) {
+        appliedMembership = { code, name: localMem.name || '', expiresAt: localMem.expiresAt };
+        store.set('membership_full', Object.assign({}, localMem, { status: 'active', activatedAt: localMem.activatedAt || Date.now() }));
+        const na = $('#memberNotApplied');
+        const ap = $('#memberApplied');
+        const txt = $('#memCodeTxt');
+        if (na) na.classList.add('hidden');
+        if (ap) ap.classList.remove('hidden');
+        if (txt) txt.textContent = code;
+        renderCart();
+        toast('Member applied — 50% off!', 'check');
+        return;
+    }
 
     const deviceId = await getDeviceId();
 
