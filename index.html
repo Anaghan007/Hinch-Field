@@ -3614,8 +3614,14 @@ function openMemberModal(skipRoute){
 
             const oldMem = store.get('membership_full', null);
 
-            // ⚡ New membership just bought? Don't let slow server sync remove it instantly
+            // 🛡️ Protection 1: fresh purchase (<60s) — never wipe
             if (!newMem && oldMem && oldMem.code && oldMem.activatedAt && (Date.now() - oldMem.activatedAt < 60000)) {
+                return;
+            }
+
+            // 🛡️ Protection 2: server returned null, but local has valid code → don't wipe
+            // (server may not have synced yet, or email mismatch on backend)
+            if (!newMem && oldMem && oldMem.code && isMembershipValid(oldMem)) {
                 return;
             }
 
@@ -3623,6 +3629,7 @@ function openMemberModal(skipRoute){
             if (newMem && oldMem && oldMem.code === newMem.code && oldMem.activatedAt){
                 newMem.activatedAt = oldMem.activatedAt;
             }
+            if (newMem && !newMem.status) newMem.status = 'active';
 
             const changed = JSON.stringify(newMem) !== JSON.stringify(oldMem);
             if (!changed) return;
@@ -3917,7 +3924,8 @@ async function applyMemberFn(){
                     code,
                     name: d.name || '',
                     expiresAt: d.expiresAt,
-                    status: 'active'
+                    status: 'active',
+                    activatedAt: Date.now()
                 });
 
                 const na = $('#memberNotApplied');
@@ -3931,11 +3939,17 @@ async function applyMemberFn(){
                 renderCart();
                 toast('Member applied — 50% off!','check');
             } else {
-                store.set('membership_full', null);
-                clearAppliedMembershipUI();
-                toast(d.error || 'Invalid or cancelled code','cross');
+                // 🛡️ Only clear cache if the entered code MATCHES saved code.
+                // Random wrong code → just show invalid, DO NOT touch cache.
+                const savedMem = store.get('membership_full', null);
+                if (savedMem && savedMem.code === code){
+                    store.set('membership_full', null);
+                    clearAppliedMembershipUI();
+                }
+                toast(d.error || 'Invalid code','cross');
             }
         } catch(e){
+            // 🛡️ Network error → don't wipe cache, just notify
             toast('Server verification failed','cross');
         } finally {
             btn.disabled = false;
