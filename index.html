@@ -1249,11 +1249,25 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       }
     }
 
-    .card.delivering-anim .track-step:last-child .track-icon {
-      animation: deliverPulse 1.2s ease-out 2;
-      background: var(--text) !important;
-      border-color: var(--text) !important;
-      color: var(--bg) !important;
+    /* ═══ PROGRESSIVE TIMELINE ANIMATION ═══ */
+    @keyframes popCircle {
+      0% { transform: scale(0.3); opacity: 0.4; background: var(--card); border-color: var(--line); color: var(--mut); }
+      50% { transform: scale(1.2); background: var(--text); border-color: var(--text); color: var(--bg); opacity: 1; }
+      100% { transform: scale(1); background: var(--text); border-color: var(--text); color: var(--bg); opacity: 1; }
+    }
+    @keyframes lineGrow {
+      from { background: var(--line); }
+      to { background: var(--text); }
+    }
+    .track-icon.anim-circle {
+      animation: popCircle .5s cubic-bezier(.4, 0, .2, 1) both;
+    }
+    .track-step.anim-line::after {
+      animation: lineGrow .35s ease both;
+      animation-delay: var(--line-delay, 0ms);
+    }
+    .track-step .track-icon {
+      transition: none;
     }
 
     /* ═══ PROGRESSIVE TIMELINE ANIMATION ═══ */
@@ -2612,28 +2626,53 @@ function statusTimeline(order, animate){
   const ci = currentStageIdx(order);
   if (ci === -1) { return '<p class="text-xs font-medium flex items-center gap-2" style="color:#DC2626;">' + ic('cross','w-4 h-4') + 'Order Cancelled</p>'; }
   
-  // 🎬 Check if we should animate (only when status changed)
-  const animateKey = 'anim_' + order.id;
-  const lastAnimated = window[animateKey] || -1;
-  const shouldAnimate = animate && lastAnimated < ci;
-  if (shouldAnimate) window[animateKey] = ci;
+  // 🔑 Track last animated stage per order
+  window.__timelineStage = window.__timelineStage || {};
+  const lastStage = window.__timelineStage[order.id];
+  const shouldAnimate = animate && (lastStage === undefined || ci > lastStage);
+  const baseStage = (lastStage === undefined) ? -1 : lastStage;
   
   let html = '<div class="track-wrap"><div class="track-timeline">';
   html += STAGES.map((s, i) => {
-    const done = i <= ci; const active = i === ci;
+    const done = i <= ci;
+    const active = i === ci;
     const cls = done ? 'done' : (active ? 'active' : '');
-    // 🎬 Add animate class with delay based on index
-    const delay = shouldAnimate ? (i * 280) : 0;
-    const animCls = (shouldAnimate && done) ? ' animate-in' : '';
-    const animStyle = (shouldAnimate && done) ? ' style="animation-delay:' + delay + 'ms;"' : '';
-    return '<div class="track-step ' + cls + animCls + '"' + animStyle + '>' +
-      '<div class="track-icon"' + animStyle + '>' + (done ? ic('check','w-4 h-4') : ic(s.icon,'w-4 h-4')) + '</div>' +
-      '<div class="pt-1"><p class="text-[11px] font-medium" style="color:' + (done ? 'var(--text)' : 'var(--mut)') + ';">' + s.t + '</p>' +
-      (active ? '<p class="text-[10px] mt-0.5 tracking-wide2 uppercase" style="color:var(--text);">Current</p>' : '') +
+    
+    // 🎬 Determine if THIS circle needs animation
+    let animCls = '';
+    let animDelay = 0;
+    let lineAnimCls = '';
+    let lineAnimDelay = 0;
+    
+    if (shouldAnimate && done && i > baseStage){
+      // New circle — animate
+      const newIdx = i - baseStage - 1;
+      animDelay = newIdx * 250;
+      animCls = ' anim-circle';
+      // Line to next step also new
+      if (i < ci){
+        lineAnimCls = ' anim-line';
+        lineAnimDelay = animDelay + 125;
+      }
+    }
+    
+    return '<div class="track-step ' + cls + lineAnimCls + '" style="--line-delay:' + lineAnimDelay + 'ms;">' +
+      '<div class="track-icon ' + animCls + '" style="animation-delay:' + animDelay + 'ms;">' + 
+        (done ? ic('check','w-4 h-4') : ic(s.icon,'w-4 h-4')) + 
+      '</div>' +
+      '<div class="pt-1">' +
+        '<p class="text-[11px] font-medium" style="color:' + (done ? 'var(--text)' : 'var(--mut)') + ';">' + s.t + '</p>' +
+        (active ? '<p class="text-[10px] mt-0.5 tracking-wide2 uppercase" style="color:var(--text);">Current</p>' : '') +
       '</div></div>';
   }).join('');
   html += '</div></div>';
   html += '<p class="text-[11px] mt-4 text-center" style="color:var(--mut);">Expected Delivery: 9:00 AM – 7:00 PM</p>';
+  
+  // 🔑 Update tracker AFTER render
+  if (shouldAnimate || lastStage === undefined){
+    window.__timelineStage[order.id] = ci;
+  }
+  
   return html;
 }
 function buildOrderCard(o, opts){
@@ -3115,22 +3154,24 @@ async function syncOrders(silent){
           existing.updatedAt = serverO.updatedAt || Date.now();
           if (serverO.status === 'Delivered') existing.deliveredAt = serverO.deliveredAt || Date.now();
           
-          // 🎬 Trigger progressive animation for ANY stage change
+          // 🎬 Only animate if stage ADVANCED (not backward)
           if (newStage > oldStage){
             window.__delivering = window.__delivering || {};
             window.__delivering[serverO.id] = true;
             
-            // Full Delivered transition
+            // Full Delivered transition (with popup)
             if (serverO.status === 'Delivered' && wasNotDelivered){
               setTimeout(() => handleDeliveredTransition(serverO.id, isAdmin), 100);
             } else {
-              // Mid-stage change — just re-render with animation
+              // Mid-stage change — just re-render with progressive animation
               setTimeout(() => {
                 const hm = $('#historyModal');
                 if (hm && !hm.classList.contains('hidden')) renderHistory();
+                const ph = $('#pastHistoryModal');
+                if (ph && !ph.classList.contains('hidden')) renderPastHistory();
                 setTimeout(() => {
                   if (window.__delivering) delete window.__delivering[serverO.id];
-                }, 2200);
+                }, 3000);
               }, 100);
             }
           }
@@ -3167,7 +3208,7 @@ function handleDeliveredTransition(orderId, isAdmin){
   safe(renderHistory, 'delivered.render');
 
   // 🔑 7 stages × 280ms = ~2000ms for full timeline animation
-  const fullAnimMs = 2000;
+  const fullAnimMs = 1800;
 
   // 🔑 Admin device — only animation, no popup
   if (isAdmin){
@@ -3209,6 +3250,8 @@ function openHistory(){
     toast('Login to view orders', 'warn');
     return;
   }
+  // 🔑 Reset tracker — fresh open shows current state without animation
+  window.__timelineStage = {};
   renderHistory();
   openModal('historyModal');
   try {
@@ -3240,6 +3283,8 @@ function openPastHistory(){
     toast('Login to view history', 'warn');
     return;
   }
+  // 🔑 Reset tracker
+  window.__timelineStage = {};
   renderPastHistory();
   openModal('pastHistoryModal');
   try {
@@ -3759,8 +3804,8 @@ function wire(){
       }
       try { await fetch(`${API_BASE}/api/orders?action=update`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: o.id, status: v, pwd: 'HF2026' }) }); } catch(e){}
       toast('Status Updated','check');
-      // 🎉 Trigger animation for ANY status change (progressive fill)
-      if (idx !== -1 && wasNotDelivered){
+      // 🎬 Trigger animation for new stage
+      if (idx !== -1){
         window.__delivering = window.__delivering || {};
         window.__delivering[o.id] = true;
         // Re-render with animation
@@ -3769,7 +3814,7 @@ function wire(){
         // Clear flag after animation
         setTimeout(() => {
           if (window.__delivering) delete window.__delivering[o.id];
-        }, 2200);
+        }, 3000);
       }
       $('#adminSearchId').dispatchEvent(new Event('input'));
     };
