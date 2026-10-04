@@ -14,12 +14,23 @@ export default async function handler(req, res) {
     let deleted = false;
     let deletedCode = null;
 
+    // 🔑 Helper — clean up all related keys for a membership record
+    async function nukeMembership(data, codeStr) {
+      await redis.del('mem:code:' + codeStr);
+      if (data.deviceId) await redis.del('mem:device:' + data.deviceId);
+      // 🔑 THE FIX — also delete the user-linked membership (used by user-data API)
+      if (data.email) {
+        await redis.del('user:' + data.email.toLowerCase().trim() + ':membership');
+        console.log('🗑️ Deleted user:' + data.email + ':membership');
+      }
+    }
+
     // Option 1: By 4-digit code
     if (code && /^\d{4}$/.test(code)) {
       const data = await redis.get('mem:code:' + code);
       if (data) {
-        await redis.del('mem:code:' + code);
-        if (data.deviceId) await redis.del('mem:device:' + data.deviceId);
+        const d = typeof data === 'string' ? JSON.parse(data) : data;
+        await nukeMembership(d, code);
         deleted = true;
         deletedCode = code;
       }
@@ -28,16 +39,16 @@ export default async function handler(req, res) {
     // Option 2: By phone number (scan all codes)
     if (phone && !deleted) {
       const cleanPhone = phone.replace(/[^0-9]/g, '');
-      // Get all membership codes
       const keys = await redis.keys('mem:code:*');
       for (const key of keys) {
-        const data = await redis.get(key);
+        const raw = await redis.get(key);
+        if (!raw) continue;
+        const data = typeof raw === 'string' ? JSON.parse(raw) : raw;
         if (data && data.phone && data.phone.replace(/[^0-9]/g, '') === cleanPhone) {
-          const code = key.replace('mem:code:', '');
-          await redis.del(key);
-          if (data.deviceId) await redis.del('mem:device:' + data.deviceId);
+          const foundCode = key.replace('mem:code:', '');
+          await nukeMembership(data, foundCode);
           deleted = true;
-          deletedCode = code;
+          deletedCode = foundCode;
           break;
         }
       }
