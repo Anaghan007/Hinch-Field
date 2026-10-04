@@ -22,22 +22,45 @@ export default async function handler(req, res) {
     });
 
     /* ═══ SAVE ORDER ═══ */
-      if (action === 'save' && req.method === 'POST') {
-      const { order } = req.body || {};
+    if (action === 'save' && req.method === 'POST') {
+      const { order, session_key } = req.body || {};
       if (!order || !order.id) return res.status(400).json({ success: false, error: 'Invalid order' });
 
       await redis.set('order:' + order.id, order);
       await redis.lpush('orders:all', order.id);
 
-      // 🔑 Link order to user by email
-      const em = (order.customer && order.customer.email || '').toLowerCase().trim();
+      // 🔑 Resolve email: accountEmail → session → cart email
+      let em = '';
+      // 1️⃣ Priority: accountEmail (login user's email)
+      if (order.customer && order.customer.accountEmail) {
+        em = order.customer.accountEmail.toLowerCase().trim();
+        console.log('   → Using accountEmail:', em);
+      }
+      // 2️⃣ Fallback: session key
+      if (!em && session_key) {
+        try {
+          const sess = await redis.get('session:' + session_key);
+          if (sess) {
+            const s = typeof sess === 'string' ? JSON.parse(sess) : sess;
+            em = (s.email || '').toLowerCase().trim();
+            console.log('   → Using session email:', em);
+          }
+        } catch(e){ console.error('Session lookup error:', e); }
+      }
+      // 3️⃣ Last fallback: cart email
+      if (!em && order.customer && order.customer.email) {
+        em = order.customer.email.toLowerCase().trim();
+        console.log('   → Using cart email:', em);
+      }
+
       if (em) {
         await redis.sadd('user:' + em + ':orders', order.id);
-        console.log('Linked order', order.id, 'to user', em);
+        console.log('✅ Linked order', order.id, 'to user', em);
       } else {
-        console.warn('Order', order.id, 'has no email — not linked to any user');
+        console.warn('❌ Order', order.id, 'has NO email — cannot link');
       }
-      return res.status(200).json({ success: true, id: order.id });
+
+      return res.status(200).json({ success: true, id: order.id, email: em });
     }
 
     /* ═══ LIST ALL ORDERS (Admin) ═══ */
