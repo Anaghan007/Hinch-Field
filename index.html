@@ -1249,11 +1249,52 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       }
     }
 
-    .card.delivering-anim .track-step:last-child .track-icon {
-      animation: deliverPulse 1.2s ease-out 2;
-      background: var(--text) !important;
-      border-color: var(--text) !important;
-      color: var(--bg) !important;
+    /* ═══ PROGRESSIVE TIMELINE ANIMATION ═══ */
+    @keyframes popCircle {
+      0% { transform: scale(0.3); opacity: 0.4; background: var(--card); border-color: var(--line); color: var(--mut); }
+      50% { transform: scale(1.2); background: var(--text); border-color: var(--text); color: var(--bg); opacity: 1; }
+      100% { transform: scale(1); background: var(--text); border-color: var(--text); color: var(--bg); opacity: 1; }
+    }
+    @keyframes lineGrow {
+      from { background: var(--line); }
+      to { background: var(--text); }
+    }
+    .track-icon.anim-circle {
+      animation: popCircle .5s cubic-bezier(.4, 0, .2, 1) both;
+    }
+    .track-step.anim-line::after {
+      animation: lineGrow .35s ease both;
+      animation-delay: var(--line-delay, 0ms);
+    }
+    .track-step .track-icon {
+      transition: none;
+    }
+
+    /* ═══ PROGRESSIVE TIMELINE ANIMATION ═══ */
+    .track-step .track-icon {
+      transition: background-color .4s ease, border-color .4s ease, color .4s ease, transform .4s cubic-bezier(.4, 0, .2, 1);
+    }
+    .track-step.animate-in .track-icon {
+      animation: popCircle .5s cubic-bezier(.4, 0, .2, 1) both;
+    }
+    @keyframes popCircle {
+      0% { transform: scale(1); background: var(--card); border-color: var(--line); color: var(--mut); }
+      50% { transform: scale(1.15); background: var(--text); border-color: var(--text); color: var(--bg); }
+      100% { transform: scale(1); background: var(--text); border-color: var(--text); color: var(--bg); }
+    }
+    /* Connecting line animation */
+    .track-step {
+      position: relative;
+    }
+    .track-step::after {
+      transition: background-color .4s ease;
+    }
+    .track-step.animate-in:not(:last-child)::after {
+      animation: lineGrow .5s ease both;
+    }
+    @keyframes lineGrow {
+      from { background: var(--line); }
+      to { background: var(--text); }
     }
 
     .delivered-anim {
@@ -2581,16 +2622,57 @@ function statusTimelineCompact(order){
   const iconName = isCancelled ? 'cross' : 'check';
   return '<div class="flex items-stretch border hairline" style="background:var(--bg2);"><div style="width:64px;display:flex;align-items:center;justify-content:center;background:' + color + ';color:#fff;flex-shrink:0;">' + ic(iconName, 'w-6 h-6') + '</div><div class="flex-1 py-4 px-5"><p class="text-[10px] tracking-wide2 uppercase mb-1" style="color:var(--mut);">Order</p><p class="disp text-base font-medium" style="color:' + color + ';">' + st.text + '</p></div></div>';
 }
-function statusTimeline(order){
+function statusTimeline(order, animate){
   const ci = currentStageIdx(order);
   if (ci === -1) { return '<p class="text-xs font-medium flex items-center gap-2" style="color:#DC2626;">' + ic('cross','w-4 h-4') + 'Order Cancelled</p>'; }
+  
+  // 🔑 Track last animated stage per order
+  window.__timelineStage = window.__timelineStage || {};
+  const lastStage = window.__timelineStage[order.id];
+  const shouldAnimate = animate && (lastStage === undefined || ci > lastStage);
+  const baseStage = (lastStage === undefined) ? -1 : lastStage;
+  
   let html = '<div class="track-wrap"><div class="track-timeline">';
   html += STAGES.map((s, i) => {
-    const done = i <= ci; const active = i === ci; const cls = done ? 'done' : (active ? 'active' : '');
-    return '<div class="track-step ' + cls + '"><div class="track-icon">' + (done ? ic('check','w-4 h-4') : ic(s.icon,'w-4 h-4')) + '</div><div class="pt-1"><p class="text-[11px] font-medium" style="color:' + (done ? 'var(--text)' : 'var(--mut)') + ';">' + s.t + '</p>' + (active ? '<p class="text-[10px] mt-0.5 tracking-wide2 uppercase" style="color:var(--text);">Current</p>' : '') + '</div></div>';
+    const done = i <= ci;
+    const active = i === ci;
+    const cls = done ? 'done' : (active ? 'active' : '');
+    
+    // 🎬 Determine if THIS circle needs animation
+    let animCls = '';
+    let animDelay = 0;
+    let lineAnimCls = '';
+    let lineAnimDelay = 0;
+    
+    if (shouldAnimate && done && i > baseStage){
+      // New circle — animate
+      const newIdx = i - baseStage - 1;
+      animDelay = newIdx * 250;
+      animCls = ' anim-circle';
+      // Line to next step also new
+      if (i < ci){
+        lineAnimCls = ' anim-line';
+        lineAnimDelay = animDelay + 125;
+      }
+    }
+    
+    return '<div class="track-step ' + cls + lineAnimCls + '" style="--line-delay:' + lineAnimDelay + 'ms;">' +
+      '<div class="track-icon ' + animCls + '" style="animation-delay:' + animDelay + 'ms;">' + 
+        (done ? ic('check','w-4 h-4') : ic(s.icon,'w-4 h-4')) + 
+      '</div>' +
+      '<div class="pt-1">' +
+        '<p class="text-[11px] font-medium" style="color:' + (done ? 'var(--text)' : 'var(--mut)') + ';">' + s.t + '</p>' +
+        (active ? '<p class="text-[10px] mt-0.5 tracking-wide2 uppercase" style="color:var(--text);">Current</p>' : '') +
+      '</div></div>';
   }).join('');
   html += '</div></div>';
   html += '<p class="text-[11px] mt-4 text-center" style="color:var(--mut);">Expected Delivery: 9:00 AM – 7:00 PM</p>';
+  
+  // 🔑 Update tracker AFTER render
+  if (shouldAnimate || lastStage === undefined){
+    window.__timelineStage[order.id] = ci;
+  }
+  
   return html;
 }
 function buildOrderCard(o, opts){
@@ -2602,7 +2684,8 @@ function buildOrderCard(o, opts){
   const canCancel = showCancel && !isOwner && (Date.now() - o.timestamp < 24*60*60*1000) && st.text !== 'Cancelled' && st.text !== 'Delivered';
   const date = new Date(o.timestamp).toLocaleString('en-IN');
   const payBadge = o.payment && o.payment.method === 'online' ? '<span class="chip" style="background:#0A0A0A; color:#fff;">PAID ONLINE</span>' : '<span class="chip border hairline" style="color:var(--text);">COD</span>';
-  const timeline = compact ? statusTimelineCompact(o) : statusTimeline(o);
+  const shouldAnimate = !!(window.__delivering && window.__delivering[o.id]);
+  const timeline = compact ? statusTimelineCompact(o) : statusTimeline(o, shouldAnimate);
   return '<div class="card p-4 md:p-5 space-y-4" data-orderid="' + o.id + '">' +
     '<div class="flex justify-between items-start gap-3 flex-wrap"><div><b class="disp text-sm">' + o.id + '</b><p class="text-[10px] mt-1" style="color:var(--mut);">' + date + '</p></div>' +
     '<div class="flex gap-2 flex-wrap items-center">' + payBadge + (compact ? '' : '<span class="chip border hairline" style="color:' + st.color + ';">' + ic(st.icon,'w-3 h-3') + ' ' + st.text + '</span>') + '</div></div>' +
@@ -2927,7 +3010,8 @@ async function verifyOtp(email){
     });
     const d = await r.json();
     if (!d.success) throw new Error(d.error || 'Invalid OTP');
-    // 🔑 Force clear ALL old user data BEFORE saving new session
+
+    // 🔑 Clear ALL old user data
     store.del('session_key');
     store.del('user_email');
     store.del('user');
@@ -2936,43 +3020,44 @@ async function verifyOtp(email){
     store.del('membership_full');
     appliedMembership = null;
 
-    // Now save new session
+    // Save new session
     store.set('session_key', d.session_key);
     store.set('user_email', email);
-    console.log('🔐 Logged in as:', email, '| session:', d.session_key);
     if (d.user && d.user.name) store.set('user', { name: d.user.name, phone: d.user.phone || '', email });
     if (d.user && d.user.phone) store.set('last_phone', d.user.phone);
-    // 🔑 FRESH STATE — clear previous user's data before sync
     store.set('orders', []);
-    store.set('membership_full', null);
-    appliedMembership = null;
+    store.set('membership_full', d.membership || null);
+
+    // 🔑 Save pending action (checkout / membership) so we can resume after reload
+    if (window.__pendingAction){
+      try { localStorage.setItem('hf_pending_action', window.__pendingAction); } catch(_){}
+    }
+
     closeModal('otpModal', true);
     toast('Logged in successfully', 'check');
-    updateAuthUI();
-    await syncOrders(true);
 
-    // 🔄 Resume pending action
-    const pending = window.__pendingAction;
-    window.__pendingAction = null;
-    if (pending === 'checkout'){
-      setTimeout(() => {
-        const co = $('#coName'); if (co && !co.value) co.value = (store.get('user', null)?.name || '');
-        const cp = $('#coPhone'); if (cp && !cp.value) cp.value = (store.get('last_phone', '') || '');
-        const ce = $('#coEmail'); if (ce && !ce.value) ce.value = getUserEmail() || '';
-        renderCart();
-        openModal('cartDrawer');
-        toast('Continue your order', 'check');
-      }, 400);
-    }
+    // 🔑 MAGIC — reload page. Init syncs fresh data from server.
+    setTimeout(() => { location.reload(); }, 350);
+    return;
+
   } catch(e){
     err(e.message || 'Invalid OTP');
-  } finally {
     if (btn){ btn.disabled = false; btn.textContent = 'Verify & Login'; }
   }
 }
 
 async function doLogout(){
   const sessionKey = store.get('session_key', null);
+  const email = store.get('user_email', null);
+  const mem = store.get('membership_full', null);
+  // 🔑 Backup membership keyed by email — for 0ms restore on next login
+  if (email && mem && mem.code){
+    try {
+      const all = store.get('mem_backups', {}) || {};
+      all[email] = mem;
+      store.set('mem_backups', all);
+    } catch(_){}
+  }
   if (sessionKey){
     try {
       await fetch(`${API_BASE}/api/orders?action=logout`, {
@@ -3035,70 +3120,128 @@ async function syncOrders(silent){
     } else if (sessionKey && email) {
       url = `${API_BASE}/api/orders?action=user-data&session_key=${encodeURIComponent(sessionKey)}`;
     } else {
-      return; // Not logged in → no fetch
+      return;
     }
 
-    // 🔑 Cache busting — 304 response prevent
-    const cacheBuster = '&_t=' + Date.now();
-    const finalUrl = url + (url.includes('?') ? cacheBuster : '?' + cacheBuster.slice(1));
-    const r = await fetch(finalUrl, { cache: 'no-store' });
+    const r = await fetch(url);
     const d = await r.json();
     if (!d.success) return;
 
-    if (isAdmin){
-      const serverOrders = d.orders || [];
-      if (!serverOrders.length) return;
-      const local = store.get('orders', []);
+    const serverOrders = d.orders || [];
+    const local = store.get('orders', []);
+
+    // 🔑 First sync after login → direct overwrite (no transition detect)
+    if (syncOrders._firstSync || local.length === 0){
+      store.set('orders', serverOrders);
+      syncOrders._firstSync = false;
+    } else {
+      // 🔑 Merge with transition detection
       const localMap = new Map(local.map(o => [o.id, o]));
       let changed = false;
+
       serverOrders.forEach(serverO => {
         const existing = localMap.get(serverO.id);
-        if (!existing){ local.push(serverO); changed = true; }
-        else if (!existing._localOnly && existing.status !== serverO.status){
+        if (!existing){
+          // New order from another device
+          local.push(serverO);
+          changed = true;
+        } else if (!existing._localOnly && existing.status !== serverO.status){
+          const wasNotDelivered = existing.status !== 'Delivered';
+          const oldStage = currentStageIdx(existing);
+          const newStage = currentStageIdx(serverO);
+          
+          // Update fields
           existing.status = serverO.status;
           existing.updatedAt = serverO.updatedAt || Date.now();
+          if (serverO.status === 'Delivered') existing.deliveredAt = serverO.deliveredAt || Date.now();
+          
+          // 🎬 Only animate if stage ADVANCED (not backward)
+          if (newStage > oldStage){
+            window.__delivering = window.__delivering || {};
+            window.__delivering[serverO.id] = true;
+            
+            // Full Delivered transition (with popup)
+            if (serverO.status === 'Delivered' && wasNotDelivered){
+              setTimeout(() => handleDeliveredTransition(serverO.id, isAdmin), 100);
+            } else {
+              // Mid-stage change — just re-render with progressive animation
+              setTimeout(() => {
+                const hm = $('#historyModal');
+                if (hm && !hm.classList.contains('hidden')) renderHistory();
+                const ph = $('#pastHistoryModal');
+                if (ph && !ph.classList.contains('hidden')) renderPastHistory();
+                setTimeout(() => {
+                  if (window.__delivering) delete window.__delivering[serverO.id];
+                }, 3000);
+              }, 100);
+            }
+          }
           changed = true;
         }
       });
-      if (changed){
-        store.set('orders', local);
-        const hm = $('#historyModal'); if (hm && !hm.classList.contains('hidden')) renderHistory();
-        const ph = $('#pastHistoryModal'); if (ph && !ph.classList.contains('hidden')) renderPastHistory();
-      }
-    } else {
-      // Customer with session
-      const serverOrders = d.orders || [];
-      const serverMembership = d.membership || null;
 
-      // 🔑 Only overwrite if server has data — otherwise keep local
-      if (serverOrders.length > 0){
-        store.set('orders', serverOrders);
-      } else {
-        // Server empty — check local has pending orders
-        const local = store.get('orders', []);
-        const pending = local.filter(o => o.customer && o.customer.email === email);
-        if (pending.length > 0){
-          console.warn('Server returned 0 but local has', pending.length, 'orders — keeping local');
-        } else {
-          store.set('orders', []);
-        }
-      }
-
-      // Membership: only overwrite if server has data
-      if (serverMembership){
-        store.set('membership_full', serverMembership);
-      }
-      // else: keep local (nothing to overwrite)
-
-      if (d.user && d.user.phone) store.set('last_phone', d.user.phone);
-
-      const hm = $('#historyModal'); if (hm && !hm.classList.contains('hidden')) renderHistory();
-      const ph = $('#pastHistoryModal'); if (ph && !ph.classList.contains('hidden')) renderPastHistory();
-      renderCart();
-
-      console.log('✅ Synced — server orders:', serverOrders.length, '| local orders:', store.get('orders', []).length, '| membership:', !!store.get('membership_full', null));
+      if (changed) store.set('orders', local);
     }
-  } catch(e){ /* silent */ }
+
+    // 🔑 Update membership from server (overwrite — never merge)
+    if (!isAdmin && d.membership !== undefined) {
+      store.set('membership_full', d.membership || null);
+      renderCart();
+    }
+    if (d.user && d.user.phone) store.set('last_phone', d.user.phone);
+
+    // Refresh UI (skip if animation is running)
+    if (!window.__delivering){
+      const hm = $('#historyModal');
+      if (hm && !hm.classList.contains('hidden')) renderHistory();
+      const ph = $('#pastHistoryModal');
+      if (ph && !ph.classList.contains('hidden')) renderPastHistory();
+    }
+  } catch(e){ console.warn('syncOrders:', e); }
+}
+
+/* ═══ DELIVERED TRANSITION — Animation + Popup ═══ */
+function handleDeliveredTransition(orderId, isAdmin){
+  window.__delivering = window.__delivering || {};
+  window.__delivering[orderId] = true;
+
+  // 🎬 First render — animation will play automatically
+  safe(renderHistory, 'delivered.render');
+
+  // 🔑 7 stages × 280ms = ~2000ms for full timeline animation
+  const fullAnimMs = 1800;
+
+  // 🔑 Admin device — only animation, no popup
+  if (isAdmin){
+    setTimeout(() => {
+      if (window.__delivering) delete window.__delivering[orderId];
+      safe(renderHistory, 'admin.clear');
+      safe(renderPastHistory, 'admin.clear.past');
+    }, fullAnimMs + 500);
+    return;
+  }
+
+  // 🔑 Customer — show popup after timeline animation
+  if (document.visibilityState === 'visible'){
+    setTimeout(() => {
+      if (!window.__delivering || !window.__delivering[orderId]) return;
+
+      // Show popup
+      const idEl = $('#deliveredOrderId');
+      if (idEl) idEl.textContent = orderId;
+      openModal('orderDeliveredModal');
+
+      // Auto-redirect after popup animation
+      setTimeout(() => {
+        if (window.__delivering) delete window.__delivering[orderId];
+        closeModal('orderDeliveredModal', true);
+        safe(renderHistory, 'delivered.clear');
+        safe(renderPastHistory, 'delivered.clear.past');
+        openModal('pastHistoryModal');
+        try { history.replaceState({ modal: 'pastHistoryModal' }, '', '#history'); } catch(e){}
+      }, 1800);
+    }, fullAnimMs);   // ← 2 sec after progressive animation completes
+  }
 }
 
 /* ═══ HISTORY ═══ */
@@ -3108,6 +3251,8 @@ function openHistory(){
     toast('Login to view orders', 'warn');
     return;
   }
+  // 🔑 Reset tracker — fresh open shows current state without animation
+  window.__timelineStage = {};
   renderHistory();
   openModal('historyModal');
   try {
@@ -3139,6 +3284,8 @@ function openPastHistory(){
     toast('Login to view history', 'warn');
     return;
   }
+  // 🔑 Reset tracker
+  window.__timelineStage = {};
   renderPastHistory();
   openModal('pastHistoryModal');
   try {
@@ -3312,8 +3459,7 @@ function buildMemberExpiredHTML(saved){
   return `<div class="text-center mb-6"><svg class="w-14 h-14 mx-auto mb-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><p class="micro mb-2">HINCHFIELD</p><h3 class="disp editorial-h font-luxe text-2xl mb-1" style="color:#DC2626;">Membership Expired</h3><p class="text-xs" style="color:var(--mut);">Renew to continue saving 50% OFF</p></div><div class="border p-5 mb-5 text-center" style="background:#FEF2F2;border-color:#FECACA;"><p class="micro mb-3" style="color:#DC2626;">EXPIRED ON</p><p class="disp text-lg" style="font-weight:500;color:var(--text);">${new Date(saved.expiresAt).toLocaleDateString('en-IN')}</p></div><div class="border hairline p-4 space-y-2.5 mb-5" style="background:var(--bg2);"><p class="text-xs">✅ <b>Flat 50% OFF</b> on ALL products</p><p class="text-xs">✅ <b>FREE delivery</b> on every order</p><p class="text-xs">✅ Fresh 4-digit code instantly</p><p class="text-xs">✅ Valid for 365 days</p></div><button data-member-action="renew" class="pill btn-gold w-full py-4">Renew — ₹599</button>`;
 }
 function buildMemberBuyHTML(prefill){
-  prefill = prefill || {};
-  return `<div class="text-center mb-6"><p class="micro mb-2">HINCHFIELD</p><h3 class="disp editorial-h font-luxe text-2xl mb-2">Yearly Membership</h3><div class="flex items-baseline justify-center gap-3 my-4"><b class="disp text-3xl" style="font-weight:500;">${fmt(599)}</b><s class="text-sm" style="color:var(--mut);">${fmt(1199)}</s><span class="chip" style="background:var(--text); color:var(--bg);">50%</span></div><p class="text-xs" style="color:var(--mut);">1 year validity · Instant digital delivery</p></div><div class="border hairline p-4 space-y-2.5 mb-5" style="background:var(--bg2);"><p class="text-xs">✅ <b>Flat 50% OFF</b> on ALL products</p><p class="text-xs">✅ <b>FREE delivery</b> on every order</p><p class="text-xs">✅ Unique 4-digit code instantly after payment</p><p class="text-xs">✅ Valid for 365 days</p></div><input id="memBuyName" maxlength="60" class="field mb-3" placeholder="Full Name *" value="${esc(prefill.name || '')}"><input id="memBuyPhone" inputmode="numeric" maxlength="15" class="field mb-3" placeholder="Number *" value="${esc(prefill.phone || '')}"><p id="memBuyErr" class="text-[11px] hidden mb-3" style="color:#DC2626;"></p><button data-member-action="buy" class="pill btn-gold w-full py-4">Get Membership — ${fmt(599)}</button><p class="text-[10px] text-center mt-3" style="color:var(--mut);">Secure payment · Razorpay</p>`;
+  return `<div class="text-center mb-6"><p class="micro mb-2">HINCHFIELD</p><h3 class="disp editorial-h font-luxe text-2xl mb-2">Yearly Membership</h3><div class="flex items-baseline justify-center gap-3 my-4"><b class="disp text-3xl" style="font-weight:500;">${fmt(599)}</b><s class="text-sm" style="color:var(--mut);">${fmt(1199)}</s><span class="chip" style="background:var(--text); color:var(--bg);">50%</span></div><p class="text-xs" style="color:var(--mut);">1 year validity · Instant digital delivery</p></div><div class="border hairline p-4 space-y-2.5 mb-5" style="background:var(--bg2);"><p class="text-xs">✅ <b>Flat 50% OFF</b> on ALL products</p><p class="text-xs">✅ <b>FREE delivery</b> on every order</p><p class="text-xs">✅ Unique 4-digit code instantly after payment</p><p class="text-xs">✅ Valid for 365 days</p></div><p id="memBuyErr" class="text-[11px] hidden mb-3" style="color:#DC2626;"></p><button data-member-action="buy" class="pill btn-gold w-full py-4">Get Membership — ${fmt(599)}</button><p class="text-[10px] text-center mt-3" style="color:var(--mut);">Secure payment · Razorpay</p>`;
 }
 function renderMemberModal(){
   const saved = store.get('membership_full', null);
@@ -3377,11 +3523,10 @@ document.addEventListener('click', async (e) => {
       return;
     }
     const err = m => { const el = $('#memBuyErr'); if (el) { el.textContent=m; el.classList.remove('hidden'); } return false; };
-    const nameEl = $('#memBuyName'); const phoneEl = $('#memBuyPhone');
-    if (!nameEl || !phoneEl) return;
-    const name = nameEl.value.trim(); const phone = phoneEl.value.trim();
-    if (!/^[A-Za-z .]{3,60}$/.test(name)) return err('Enter valid name');
-    if (!/^\d{10,15}$/.test(phone.replace(/[^0-9]/g,''))) return err('Enter valid WhatsApp number');
+    // 🔑 Name & phone from logged-in session (inputs removed)
+    const sessionUser = store.get('user', null) || {};
+    const name = (sessionUser.name || '').trim() || 'Member';
+    const phone = (sessionUser.phone || store.get('last_phone', '') || '').replace(/[^0-9]/g,'') || '0000000000';
     if (typeof Razorpay === 'undefined') return err('Payment SDK missing');
     t.disabled = true; const orig = t.textContent; t.textContent = 'Opening Razorpay…';
     try {
@@ -3646,10 +3791,31 @@ function wire(){
     $('#adminStatusSel').value = o.status || 'Order Placed';
     $('#adminUpdateBtn').onclick = async () => {
       const v = $('#adminStatusSel').value || 'Order Placed';
-      const orders2 = store.get('orders', []); const idx = orders2.findIndex(x => x.id === o.id);
-      if (idx !== -1){ orders2[idx].status = v; orders2[idx].updatedAt = Date.now(); if (v === 'Delivered') { orders2[idx].deliveredAt = Date.now(); } else { orders2[idx].deliveredAt = null; } store.set('orders', orders2); }
+      const orders2 = store.get('orders', []);
+      const idx = orders2.findIndex(x => x.id === o.id);
+      const wasNotDelivered = idx !== -1 && orders2[idx].status !== 'Delivered';
+      if (idx !== -1){
+        orders2[idx].status = v;
+        orders2[idx].updatedAt = Date.now();
+        if (v === 'Delivered') { orders2[idx].deliveredAt = Date.now(); }
+        else { orders2[idx].deliveredAt = null; }
+        store.set('orders', orders2);
+      }
       try { await fetch(`${API_BASE}/api/orders?action=update`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: o.id, status: v, pwd: 'HF2026' }) }); } catch(e){}
-      toast('Status Updated','check'); $('#adminSearchId').dispatchEvent(new Event('input'));
+      toast('Status Updated','check');
+      // 🎬 Trigger animation for new stage
+      if (idx !== -1){
+        window.__delivering = window.__delivering || {};
+        window.__delivering[o.id] = true;
+        // Re-render with animation
+        const hm = $('#historyModal');
+        if (hm && !hm.classList.contains('hidden')) renderHistory();
+        // Clear flag after animation
+        setTimeout(() => {
+          if (window.__delivering) delete window.__delivering[o.id];
+        }, 3000);
+      }
+      $('#adminSearchId').dispatchEvent(new Event('input'));
     };
   }, 300));
   $$('details.faq').forEach(faq => { faq.addEventListener('toggle', () => { if (faq.open){ $$('details.faq').forEach(other => { if (other !== faq) other.open = false; }); } }); });
@@ -3743,8 +3909,26 @@ function showInvoice(order){
   handleRoute();
   updateMembershipPrices();
   if (!window.location.hash) setTimeout(() => { try { window.scrollTo(0, 0); } catch(e){} }, 50);
-  verifyAdminStatus().then(() => {
-    if (isLoggedIn() || localStorage.getItem('hf_is_admin') === 'true') syncOrders();
+    verifyAdminStatus().then(async () => {
+    if (isLoggedIn() || localStorage.getItem('hf_is_admin') === 'true') {
+      await syncOrders(true);   // 🔑 wait for fresh data BEFORE anything else
+    }
+    // 🔑 Resume pending action after reload
+    let pending = null;
+    try { pending = localStorage.getItem('hf_pending_action'); localStorage.removeItem('hf_pending_action'); } catch(_){}
+    if (pending === 'checkout'){
+      setTimeout(() => {
+        const u = store.get('user', null) || {};
+        const co = $('#coName'); if (co && !co.value) co.value = u.name || '';
+        const cp = $('#coPhone'); if (cp && !cp.value) cp.value = (store.get('last_phone', '') || u.phone || '');
+        const ce = $('#coEmail'); if (ce && !ce.value) ce.value = getUserEmail() || '';
+        renderCart();
+        openModal('cartDrawer');
+        toast('Continue your order', 'check');
+      }, 400);
+    } else if (pending === 'membership'){
+      setTimeout(() => { openMemberModal(); }, 400);
+    }
   });
 })();
   </script>
