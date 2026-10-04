@@ -3010,10 +3010,8 @@ async function verifyOtp(email){
     });
     const d = await r.json();
     if (!d.success) throw new Error(d.error || 'Invalid OTP');
-    // 🔑 Restore membership backup BEFORE clearing (for 0ms display)
-    const backups = store.get('mem_backups', {}) || {};
 
-    // Force clear ALL old user data BEFORE saving new session
+    // 🔑 Clear ALL old user data
     store.del('session_key');
     store.del('user_email');
     store.del('user');
@@ -3022,40 +3020,28 @@ async function verifyOtp(email){
     store.del('membership_full');
     appliedMembership = null;
 
-    // Now save new session
+    // Save new session
     store.set('session_key', d.session_key);
     store.set('user_email', email);
-    // 🔑 INSTANT restore from backup OR server response — 0ms display
-    store.set('membership_full', backups[email] || d.membership || null);
-    console.log('🔐 Logged in as:', email, '| session:', d.session_key);
     if (d.user && d.user.name) store.set('user', { name: d.user.name, phone: d.user.phone || '', email });
     if (d.user && d.user.phone) store.set('last_phone', d.user.phone);
-    // 🔑 FRESH STATE — clear previous user's data before sync
     store.set('orders', []);
-    store.set('membership_full', null);
-    appliedMembership = null;
-    syncOrders._firstSync = true;   // ← add this
+    store.set('membership_full', d.membership || null);
+
+    // 🔑 Save pending action (checkout / membership) so we can resume after reload
+    if (window.__pendingAction){
+      try { localStorage.setItem('hf_pending_action', window.__pendingAction); } catch(_){}
+    }
+
     closeModal('otpModal', true);
     toast('Logged in successfully', 'check');
-    updateAuthUI();
-    await syncOrders(true);
 
-    // 🔄 Resume pending action
-    const pending = window.__pendingAction;
-    window.__pendingAction = null;
-    if (pending === 'checkout'){
-      setTimeout(() => {
-        const co = $('#coName'); if (co && !co.value) co.value = (store.get('user', null)?.name || '');
-        const cp = $('#coPhone'); if (cp && !cp.value) cp.value = (store.get('last_phone', '') || '');
-        const ce = $('#coEmail'); if (ce && !ce.value) ce.value = getUserEmail() || '';
-        renderCart();
-        openModal('cartDrawer');
-        toast('Continue your order', 'check');
-      }, 400);
-    }
+    // 🔑 MAGIC — reload page. Init syncs fresh data from server.
+    setTimeout(() => { location.reload(); }, 350);
+    return;
+
   } catch(e){
     err(e.message || 'Invalid OTP');
-  } finally {
     if (btn){ btn.disabled = false; btn.textContent = 'Verify & Login'; }
   }
 }
@@ -3923,8 +3909,26 @@ function showInvoice(order){
   handleRoute();
   updateMembershipPrices();
   if (!window.location.hash) setTimeout(() => { try { window.scrollTo(0, 0); } catch(e){} }, 50);
-  verifyAdminStatus().then(() => {
-    if (isLoggedIn() || localStorage.getItem('hf_is_admin') === 'true') syncOrders();
+    verifyAdminStatus().then(async () => {
+    if (isLoggedIn() || localStorage.getItem('hf_is_admin') === 'true') {
+      await syncOrders(true);   // 🔑 wait for fresh data BEFORE anything else
+    }
+    // 🔑 Resume pending action after reload
+    let pending = null;
+    try { pending = localStorage.getItem('hf_pending_action'); localStorage.removeItem('hf_pending_action'); } catch(_){}
+    if (pending === 'checkout'){
+      setTimeout(() => {
+        const u = store.get('user', null) || {};
+        const co = $('#coName'); if (co && !co.value) co.value = u.name || '';
+        const cp = $('#coPhone'); if (cp && !cp.value) cp.value = (store.get('last_phone', '') || u.phone || '');
+        const ce = $('#coEmail'); if (ce && !ce.value) ce.value = getUserEmail() || '';
+        renderCart();
+        openModal('cartDrawer');
+        toast('Continue your order', 'check');
+      }, 400);
+    } else if (pending === 'membership'){
+      setTimeout(() => { openMemberModal(); }, 400);
+    }
   });
 })();
   </script>
