@@ -1251,17 +1251,45 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
 
     /* ═══ PROGRESSIVE TIMELINE ANIMATION ═══ */
     @keyframes popCircle {
-      0% { transform: scale(0.3); opacity: 0.4; background: var(--card); border-color: var(--line); color: var(--mut); }
-      50% { transform: scale(1.2); background: var(--text); border-color: var(--text); color: var(--bg); opacity: 1; }
-      100% { transform: scale(1); background: var(--text); border-color: var(--text); color: var(--bg); opacity: 1; }
+      0% {
+        transform: scale(0.3);
+        opacity: 0.4;
+        background: var(--card);
+        border-color: var(--line);
+        color: var(--mut);
+      }
+
+      50% {
+        transform: scale(1.2);
+        background: var(--text);
+        border-color: var(--text);
+        color: var(--bg);
+        opacity: 1;
+      }
+
+      100% {
+        transform: scale(1);
+        background: var(--text);
+        border-color: var(--text);
+        color: var(--bg);
+        opacity: 1;
+      }
     }
+
     @keyframes lineGrow {
-      from { background: var(--line); }
-      to { background: var(--text); }
+      from {
+        background: var(--line);
+      }
+
+      to {
+        background: var(--text);
+      }
     }
+
     .track-icon.anim-circle {
       animation: popCircle .5s cubic-bezier(.4, 0, .2, 1) both;
     }
+
     .track-step .track-icon {
       transition: none;
     }
@@ -1270,27 +1298,55 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
     .track-step .track-icon {
       transition: background-color .4s ease, border-color .4s ease, color .4s ease, transform .4s cubic-bezier(.4, 0, .2, 1);
     }
+
     .track-step.animate-in .track-icon {
       animation: popCircle .5s cubic-bezier(.4, 0, .2, 1) both;
     }
+
     @keyframes popCircle {
-      0% { transform: scale(1); background: var(--card); border-color: var(--line); color: var(--mut); }
-      50% { transform: scale(1.15); background: var(--text); border-color: var(--text); color: var(--bg); }
-      100% { transform: scale(1); background: var(--text); border-color: var(--text); color: var(--bg); }
+      0% {
+        transform: scale(1);
+        background: var(--card);
+        border-color: var(--line);
+        color: var(--mut);
+      }
+
+      50% {
+        transform: scale(1.15);
+        background: var(--text);
+        border-color: var(--text);
+        color: var(--bg);
+      }
+
+      100% {
+        transform: scale(1);
+        background: var(--text);
+        border-color: var(--text);
+        color: var(--bg);
+      }
     }
+
     /* Connecting line animation */
     .track-step {
       position: relative;
     }
+
     .track-step::after {
       transition: background-color .4s ease;
     }
+
     .track-step.animate-in:not(:last-child)::after {
       animation: lineGrow .5s ease both;
     }
+
     @keyframes lineGrow {
-      from { background: var(--line); }
-      to { background: var(--text); }
+      from {
+        background: var(--line);
+      }
+
+      to {
+        background: var(--text);
+      }
     }
 
     .delivered-anim {
@@ -1351,9 +1407,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
 
     .login-badge {
       position: absolute;
-      top: -2px
-      right: -2px
-      width: 8px;
+      top: -2px right: -2px width: 8px;
       height: 8px;
       border-radius: 50%;
       background: #16a34a;
@@ -1375,29 +1429,29 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
         </a>
       </div>
       <div class="flex items-center gap-1 md:gap-3 justify-end min-w-0">
-      <div id="authArea" class="hidden md:flex items-center">
-      <button id="loginBtn" class="flex flex-col items-center justify-center px-2 md:px-3" style="color:var(--text);display:flex;min-width:72px;" aria-label="Login">
+        <div id="authArea" class="hidden md:flex items-center">
+          <button id="loginBtn" class="flex flex-col items-center justify-center px-2 md:px-3" style="color:var(--text);display:flex;min-width:72px;" aria-label="Login">
         <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a8 8 0 0 1 16 0v1"/></svg>
         <span class="micro mt-1">Login</span>
       </button>
-      <div id="userMenu" class="user-menu" style="display:none;">
-        <button id="userMenuBtn" class="flex flex-col items-center justify-center px-2 md:px-3 relative" style="color:var(--text);min-width:72px;" aria-label="Account">
+          <div id="userMenu" class="user-menu" style="display:none;">
+            <button id="userMenuBtn" class="flex flex-col items-center justify-center px-2 md:px-3 relative" style="color:var(--text);min-width:72px;" aria-label="Account">
           <div class="relative">
             <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a8 8 0 0 1 16 0v1"/></svg>
           </div>
           <span class="micro mt-1">Account</span>
         </button>
-        <div class="user-menu-list">
-          <p id="userEmailShow" class="px-4 py-3 text-[10px] tracking-wide2 uppercase"
-            style="color:var(--mut); border-bottom: 1px solid var(--line); word-break: break-all;"></p>
-          <button data-openhistory>My Orders</button>
-          <button data-openpast>Order History</button>
-          <button data-membership>⭐ Membership</button>
-          <div class="divider"></div>
-          <button id="logoutBtn" style="color:#DC2626;">Logout</button>
+            <div class="user-menu-list">
+              <p id="userEmailShow" class="px-4 py-3 text-[10px] tracking-wide2 uppercase"
+                style="color:var(--mut); border-bottom: 1px solid var(--line); word-break: break-all;"></p>
+              <button data-openhistory>My Orders</button>
+              <button data-openpast>Order History</button>
+              <button data-membership>⭐ Membership</button>
+              <div class="divider"></div>
+              <button id="logoutBtn" style="color:#DC2626;">Logout</button>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
         <button id="wishOpen" class="relative flex flex-col items-center justify-center px-2 md:px-3" style="color:var(--text);" aria-label="Wishlist">
           <div class="relative">
             <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M12 21s-7.5-4.7-10-9.3C.5 8 2.6 4.5 6.2 4.5c2.2 0 3.7 1.2 4.6 2.6.9-1.4 2.4-2.6 4.6-2.6 3.6 0 5.7 3.5 4.2 7.2C19.5 16.3 12 21 12 21z"/></svg>
@@ -1651,7 +1705,8 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
             </div>
           </div>
           <div class="p-4 md:p-5 space-y-3 w-full">
-            <div id="cartLoginPrompt" class="border hairline p-3 mb-2 flex items-center justify-between gap-2" style="background:#FEF3C7;border-color:#FCD34D;">
+            <div id="cartLoginPrompt" class="border hairline p-3 mb-2 flex items-center justify-between gap-2"
+              style="background:#FEF3C7;border-color:#FCD34D;">
               <p class="text-[11px]" style="color:#92400E;">⚠️ Login required to place order</p>
               <button id="cartLoginBtn" class="pill btn-ink px-3 py-1.5 text-[10px]">Login</button>
             </div>
@@ -2124,7 +2179,28 @@ function ic(n,c='w-4 h-4'){ return `<span class="inline-flex items-center justif
 function fmt(inr){ const n = Number(inr); if (!isFinite(n)) return '₹0'; return '₹' + n.toLocaleString('en-IN'); }
 function memPrice(p){ if (!p) return 0; if (p.memberPrice != null) return p.memberPrice; return Math.floor(p.price * 0.5); }
 function saveAmt(p){ if (!p) return 0; return p.price - memPrice(p); }
-function isMembershipValid(m){ if (!m || !m.code) return false; const exp = new Date(m.expiresAt).getTime(); return !isNaN(exp) && exp > Date.now(); }
+function isMembershipValid(m){
+    if (!m || !m.code) return false;
+    if (m.status && String(m.status).toLowerCase() === 'cancelled') return false;
+    if (m.cancelled === true) return false;
+    const exp = new Date(m.expiresAt).getTime();
+    return !isNaN(exp) && exp > Date.now();
+}
+
+function clearAppliedMembershipUI(){
+    appliedMembership = null;
+
+    const mc = $('#memberCode');
+    if (mc) mc.value = '';
+
+    const na = $('#memberNotApplied');
+    const ap = $('#memberApplied');
+
+    if (na) na.classList.remove('hidden');
+    if (ap) ap.classList.add('hidden');
+
+    renderCart();
+}
 function updateMembershipPrices(){ const mb = $('#memBuyBtn'); if (mb && !mb.disabled) mb.textContent = 'Get Membership'; }
 
 const CATMETA = {
@@ -3179,8 +3255,25 @@ async function syncOrders(silent){
 
     // 🔑 Membership — always from userData (works on admin device too)
     if (userData.membership !== undefined) {
-      store.set('membership_full', userData.membership || null);
-      renderCart();
+        let mem = userData.membership || null;
+
+        if (mem && mem.status && String(mem.status).toLowerCase() === 'cancelled') mem = null;
+        if (mem && mem.cancelled === true) mem = null;
+
+        const oldMem = store.get('membership_full', null);
+        const changed = JSON.stringify(mem) !== JSON.stringify(oldMem);
+
+        store.set('membership_full', mem);
+
+        if (!mem && appliedMembership){
+            clearAppliedMembershipUI();
+        }
+
+        if (mem && appliedMembership && appliedMembership.code !== mem.code){
+            clearAppliedMembershipUI();
+        }
+
+        if (changed) renderCart();
     }
     if (userData.user && userData.user.phone) store.set('last_phone', userData.user.phone);
 
@@ -3470,38 +3563,63 @@ function renderMemberModal(){
   else if (isExpired){ body.innerHTML = buildMemberExpiredHTML(saved); }
   else { body.innerHTML = buildMemberBuyHTML(); }
 }
-function openMemberModal(skipRoute){
-  // 🔐 Login check for non-admin
-  if (!isLoggedIn() && localStorage.getItem('hf_is_admin') !== 'true'){
-    openLoginModal();
-    toast('Please login to access membership', 'warn');
-    return;
-  }
+async function openMemberModal(skipRoute){
+    // 🔐 Login check for non-admin
+    if (!isLoggedIn() && localStorage.getItem('hf_is_admin') !== 'true'){
+        openLoginModal();
+        toast('Please login to access membership', 'warn');
+        return;
+    }
 
-  // ⚡ INSTANT: Render + open with current cached data
-  renderMemberModal();
-  openModal('memberModal');
-  if (!skipRoute) { try { if (window.location.hash === '#menu') { history.replaceState({ modal:'memberModal' }, '', '#membership'); } else { history.pushState({ modal:'memberModal' }, '', '#membership'); } } catch(e){} }
+    const sessionKey = store.get('session_key', null);
+    const email = store.get('user_email', null);
 
-  // 🔄 Background: fetch fresh from server and re-render if changed
-  const sessionKey = store.get('session_key', null);
-  const email = store.get('user_email', null);
-  if (sessionKey && email){
-    fetch(`${API_BASE}/api/orders?action=user-data&session_key=${encodeURIComponent(sessionKey)}`)
-      .then(r => r.json())
-      .then(d => {
-        if (d.success){
-          const newMem = d.membership || null;
-          const oldMem = store.get('membership_full', null);
-          const changed = JSON.stringify(newMem) !== JSON.stringify(oldMem);
-          if (changed){
-            store.set('membership_full', newMem);
-            renderMemberModal();
-          }
-        }
-      })
-      .catch(e => {});
-  }
+    // Silent server check — no loading UI
+    if (sessionKey && email){
+        try{
+            const ctl = new AbortController();
+            const to = setTimeout(() => ctl.abort(), 1500);
+
+            const r = await fetch(`${API_BASE}/api/orders?action=user-data&session_key=${encodeURIComponent(sessionKey)}`, {
+                signal: ctl.signal,
+                cache: 'no-store'
+            });
+
+            clearTimeout(to);
+            const d = await r.json();
+
+            if (d.success){
+                let newMem = d.membership || null;
+
+                if (newMem && newMem.status && String(newMem.status).toLowerCase() === 'cancelled') newMem = null;
+                if (newMem && newMem.cancelled === true) newMem = null;
+
+                store.set('membership_full', newMem);
+
+                if (!newMem && appliedMembership){
+                    clearAppliedMembershipUI();
+                }
+
+                if (newMem && appliedMembership && appliedMembership.code !== newMem.code){
+                    clearAppliedMembershipUI();
+                }
+            }
+        }catch(e){}
+    }
+
+    // Direct render after silent check
+    renderMemberModal();
+    openModal('memberModal');
+
+    if (!skipRoute) {
+        try {
+            if (window.location.hash === '#menu') {
+                history.replaceState({ modal:'memberModal' }, '', '#membership');
+            } else {
+                history.pushState({ modal:'memberModal' }, '', '#membership');
+            }
+        } catch(e){}
+    }
 }
 document.addEventListener('click', async (e) => {
   const t = e.target.closest('[data-member-action]');
@@ -3706,29 +3824,77 @@ function wire(){
   }
   setTimeout(updateMemberUI, 100);
 
-  async function applyMemberFn(){
+async function applyMemberFn(){
     const btn = $('#memberApply');
     if (btn && btn.disabled) return;
-    if (cart.length === 0){ const mc = $('#memberCode'); if (mc) mc.value = ''; return toast('First You Have To Add Your Product','warn'); }
+
+    if (cart.length === 0){
+        const mc = $('#memberCode');
+        if (mc) mc.value = '';
+        return toast('First You Have To Add Your Product','warn');
+    }
+
     const code = ($('#memberCode')?.value || '').trim();
     if(!/^\d{4}$/.test(code)) return toast('Enter Your 4-digit code','warn');
-    const saved = store.get('membership_full', null);
-    if (isMembershipValid(saved) && saved.code === code){ appliedMembership = { code, name: saved.name, expiresAt: saved.expiresAt }; updateMemberUI(); renderCart(); toast('Member applied — 50% off!','check'); return; }
-    if (saved && saved.code === code && !isMembershipValid(saved)){ return toast('Membership expired — please renew','warn'); }
+
     const deviceId = await getDeviceId();
+
     if (btn){
-      btn.disabled = true; const orig = btn.textContent; btn.textContent = '…';
-      try {
-        const ctl = new AbortController(); const to = setTimeout(() => ctl.abort(), 6000);
-        const r = await fetch(`${API_BASE}/api/membership-verify`,{ method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ code, deviceId }), signal: ctl.signal });
-        clearTimeout(to);
-        const d = await r.json();
-        if(d.success){ appliedMembership = { code, name: d.name, expiresAt: d.expiresAt }; store.set('membership_full', { code, name: d.name, expiresAt: d.expiresAt }); updateMemberUI(); renderCart(); toast('Member applied — 50% off!','check'); }
-        else { toast(d.error || 'Invalid code','cross'); const mc = $('#memberCode'); if (mc) mc.value = ''; }
-      } catch(e){ toast('Invalid code','cross'); const mc = $('#memberCode'); if (mc) mc.value = ''; }
-      finally { btn.disabled = false; btn.textContent = orig; }
+        btn.disabled = true;
+        const orig = btn.textContent;
+        btn.textContent = '…';
+
+        try {
+            const ctl = new AbortController();
+            const to = setTimeout(() => ctl.abort(), 7000);
+
+            const r = await fetch(`${API_BASE}/api/membership-verify`,{
+                method:'POST',
+                headers:{'Content-Type':'application/json'},
+                body: JSON.stringify({ code, deviceId }),
+                signal: ctl.signal
+            });
+
+            clearTimeout(to);
+            const d = await r.json();
+
+            if(d.success){
+                appliedMembership = {
+                    code,
+                    name: d.name || '',
+                    expiresAt: d.expiresAt
+                };
+
+                store.set('membership_full', {
+                    code,
+                    name: d.name || '',
+                    expiresAt: d.expiresAt,
+                    status: 'active'
+                });
+
+                const na = $('#memberNotApplied');
+                const ap = $('#memberApplied');
+                const txt = $('#memCodeTxt');
+
+                if (na) na.classList.add('hidden');
+                if (ap) ap.classList.remove('hidden');
+                if (txt) txt.textContent = code;
+
+                renderCart();
+                toast('Member applied — 50% off!','check');
+            } else {
+                store.set('membership_full', null);
+                clearAppliedMembershipUI();
+                toast(d.error || 'Invalid or cancelled code','cross');
+            }
+        } catch(e){
+            toast('Server verification failed','cross');
+        } finally {
+            btn.disabled = false;
+            btn.textContent = orig;
+        }
     }
-  }
+}
   if($('#memberApply'))$('#memberApply').onclick=applyMemberFn;
   if($('#memberRemove'))$('#memberRemove').onclick=()=>{ appliedMembership=null; const mc = $('#memberCode'); if (mc) mc.value = ''; updateMemberUI(); renderCart(); toast('Membership removed','check'); };
   $('#delVerify').onclick = () => {
@@ -3751,19 +3917,72 @@ function wire(){
     } else { toast('Wrong Passcode','cross'); }
   };
   $('#adminCancelBtn').onclick = async () => {
-    const input = $('#adminCancelInput').value.trim(); const result = $('#adminCancelResult');
-    if (!input) { result.innerHTML = '<p class="text-[10px]" style="color:#DC2626;">Enter phone or code</p>'; return; }
-    const isCode = /^\d{4}$/.test(input); const payload = isCode ? { code: input } : { phone: input };
-    $('#adminCancelBtn').disabled = true; $('#adminCancelBtn').textContent = '…';
+    const input = $('#adminCancelInput').value.trim();
+    const result = $('#adminCancelResult');
+
+    if (!input) {
+        result.innerHTML = '<p class="text-[10px]" style="color:#DC2626;">Enter phone or code</p>';
+        return;
+    }
+
+    const isCode = /^\d{4}$/.test(input);
+    const payload = isCode ? { code: input } : { phone: input };
+
+    $('#adminCancelBtn').disabled = true;
+    $('#adminCancelBtn').textContent = '…';
+
     try {
-      const r = await fetch(`${API_BASE}/api/membership-cancel`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-      const d = await r.json();
-      if (d.success) { result.innerHTML = '<p class="text-[10px]" style="color:#0A0A0A;">✅ Membership cancelled (Code: ' + d.code + ')</p>'; $('#adminCancelInput').value = '';
-        const saved = store.get('membership_full', null); if (saved && saved.code === d.code) { store.set('membership_full', null); appliedMembership = null; renderCart(); toast('Membership cancelled', 'cross'); }
-      } else { result.innerHTML = '<p class="text-[10px]" style="color:#DC2626;">❌ ' + (d.error || 'Not found') + '</p>'; }
-    } catch (e) { result.innerHTML = '<p class="text-[10px]" style="color:#DC2626;">Error: ' + e.message + '</p>'; }
-    finally { $('#adminCancelBtn').disabled = false; $('#adminCancelBtn').textContent = 'Cancel'; }
-  };
+        const r = await fetch(`${API_BASE}/api/membership-cancel`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        const d = await r.json();
+
+        if (d.success) {
+            result.innerHTML = '<p class="text-[10px]" style="color:#0A0A0A;">✅ Membership cancelled (Code: ' + (d.code || input) + ')</p>';
+            $('#adminCancelInput').value = '';
+
+            const saved = store.get('membership_full', null);
+            const email = getUserEmail();
+            let backups = store.get('mem_backups', {}) || {};
+
+            const matched = saved && (
+                (d.code && saved.code === d.code) ||
+                (isCode && saved.code === input) ||
+                (!isCode && saved.phone && saved.phone === input) ||
+                (d.phone && saved.phone === d.phone)
+            );
+
+            if (matched) {
+                store.set('membership_full', null);
+                clearAppliedMembershipUI();
+
+                if (email && backups[email] && (
+                    (d.code && backups[email].code === d.code) ||
+                    (isCode && backups[email].code === input)
+                )) {
+                    delete backups[email];
+                    store.set('mem_backups', backups);
+                }
+
+                toast('Membership cancelled', 'cross');
+            }
+
+            // Silent refresh after cancel
+            setTimeout(() => syncOrders(true), 500);
+
+        } else {
+            result.innerHTML = '<p class="text-[10px]" style="color:#DC2626;">❌ ' + (d.error || 'Not found') + '</p>';
+        }
+    } catch (e) {
+        result.innerHTML = '<p class="text-[10px]" style="color:#DC2626;">Error: ' + e.message + '</p>';
+    } finally {
+        $('#adminCancelBtn').disabled = false;
+        $('#adminCancelBtn').textContent = 'Cancel';
+    }
+};
   $('#adminSearchId').addEventListener('input', debounce(async () => {
     const q = $('#adminSearchId').value.trim().toUpperCase(); const res = $('#adminResult');
     if (q.length < 3){ res.innerHTML = ''; return; }
