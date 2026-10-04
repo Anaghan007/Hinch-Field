@@ -3269,16 +3269,23 @@ async function openMemberModal(skipRoute){
     toast('Please login to access membership', 'warn');
     return;
   }
+
+  // 🔑 ALWAYS fetch fresh from server first (email based)
+  const sessionKey = store.get('session_key', null);
+  const email = store.get('user_email', null);
+  if (sessionKey && email){
+    try {
+      const r = await fetch(`${API_BASE}/api/orders?action=user-data&session_key=${encodeURIComponent(sessionKey)}`);
+      const d = await r.json();
+      if (d.success){
+        store.set('membership_full', d.membership || null);
+      }
+    } catch(e){}
+  }
+
   renderMemberModal();
   openModal('memberModal');
   if (!skipRoute) { try { if (window.location.hash === '#menu') { history.replaceState({ modal:'memberModal' }, '', '#membership'); } else { history.pushState({ modal:'memberModal' }, '', '#membership'); } } catch(e){} }
-  try {
-    const deviceId = await getDeviceId();
-    const r = await fetch(`${API_BASE}/api/membership-check-device`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ deviceId }) });
-    const d = await r.json();
-    const saved = store.get('membership_full', null);
-    if (d.success && d.membership){ if (!saved || saved.code !== d.membership.code){ store.set('membership_full', d.membership); renderMemberModal(); } }
-  } catch(e){}
 }
 document.addEventListener('click', async (e) => {
   const t = e.target.closest('[data-member-action]');
@@ -3326,7 +3333,7 @@ document.addEventListener('click', async (e) => {
               getDeviceId()
             ]);
             const vd = await vRes.json(); if (!vd.success) throw new Error('Verify failed');
-            const c = await fetch(`${API_BASE}/api/membership-create`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ name, phone, email: getUserEmail(), deviceId }) });
+            const c = await fetch(`${API_BASE}/api/membership-create`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ name, phone, email: getUserEmail(), deviceId, session_key: store.get('session_key', null) }) });
             const cd = await c.json(); if (!cd.success) throw new Error('Code generation failed');
             const clean = phone.replace(/[^0-9]/g, '');
             const full = { code: cd.code, name, phone: clean, expiresAt: cd.expiresAt };
