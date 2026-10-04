@@ -2666,7 +2666,8 @@ function placeOrder(){
   saveOrderToServer(order);
   cart = []; store.set('cart', []);
   renderCart();
-  syncOrders();
+  // ⏱️ Delay sync — server needs time to save order + link
+  setTimeout(() => syncOrders(), 2000);
   closeModal('cartDrawer', true);
   try { history.replaceState(null, '', location.pathname + location.search); } catch(e){}
   toast('Order placed — ' + oid, 'check');
@@ -2761,7 +2762,8 @@ async function handleOnlinePayment(){
             const order = savePaidOrder(customer, t, response);
             notifyNewOrder(order); saveOrderToServer(order);
             cart = []; store.set('cart', []);
-            renderCart(); syncOrders();
+            renderCart();
+            setTimeout(() => syncOrders(), 2000);
             closeModal('cartDrawer', true);
             try { history.replaceState(null, '', location.pathname + location.search); } catch(e){}
             toast('Payment successful — ' + order.id, 'check');
@@ -3019,19 +3021,37 @@ async function syncOrders(silent){
         const ph = $('#pastHistoryModal'); if (ph && !ph.classList.contains('hidden')) renderPastHistory();
       }
     } else {
-      // 🔑 Customer with session — server is source of truth, always overwrite
+      // Customer with session
       const serverOrders = d.orders || [];
       const serverMembership = d.membership || null;
 
-      store.set('orders', serverOrders);
-      store.set('membership_full', serverMembership);
+      // 🔑 Only overwrite if server has data — otherwise keep local
+      if (serverOrders.length > 0){
+        store.set('orders', serverOrders);
+      } else {
+        // Server empty — check local has pending orders
+        const local = store.get('orders', []);
+        const pending = local.filter(o => o.customer && o.customer.email === email);
+        if (pending.length > 0){
+          console.warn('Server returned 0 but local has', pending.length, 'orders — keeping local');
+        } else {
+          store.set('orders', []);
+        }
+      }
+
+      // Membership: only overwrite if server has data
+      if (serverMembership){
+        store.set('membership_full', serverMembership);
+      }
+      // else: keep local (nothing to overwrite)
+
       if (d.user && d.user.phone) store.set('last_phone', d.user.phone);
 
       const hm = $('#historyModal'); if (hm && !hm.classList.contains('hidden')) renderHistory();
       const ph = $('#pastHistoryModal'); if (ph && !ph.classList.contains('hidden')) renderPastHistory();
       renderCart();
 
-      console.log('✅ Synced from server — orders:', serverOrders.length, 'membership:', !!serverMembership);
+      console.log('✅ Synced — server orders:', serverOrders.length, '| local orders:', store.get('orders', []).length, '| membership:', !!store.get('membership_full', null));
     }
   } catch(e){ /* silent */ }
 }
