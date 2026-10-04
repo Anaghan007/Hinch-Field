@@ -1256,6 +1256,33 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       color: var(--bg) !important;
     }
 
+    /* ═══ PROGRESSIVE TIMELINE ANIMATION ═══ */
+    .track-step .track-icon {
+      transition: background-color .4s ease, border-color .4s ease, color .4s ease, transform .4s cubic-bezier(.4, 0, .2, 1);
+    }
+    .track-step.animate-in .track-icon {
+      animation: popCircle .5s cubic-bezier(.4, 0, .2, 1) both;
+    }
+    @keyframes popCircle {
+      0% { transform: scale(1); background: var(--card); border-color: var(--line); color: var(--mut); }
+      50% { transform: scale(1.15); background: var(--text); border-color: var(--text); color: var(--bg); }
+      100% { transform: scale(1); background: var(--text); border-color: var(--text); color: var(--bg); }
+    }
+    /* Connecting line animation */
+    .track-step {
+      position: relative;
+    }
+    .track-step::after {
+      transition: background-color .4s ease;
+    }
+    .track-step.animate-in:not(:last-child)::after {
+      animation: lineGrow .5s ease both;
+    }
+    @keyframes lineGrow {
+      from { background: var(--line); }
+      to { background: var(--text); }
+    }
+
     .delivered-anim {
       animation: bounceIn .5s cubic-bezier(.2, .7, .2, 1) both;
     }
@@ -2581,13 +2608,29 @@ function statusTimelineCompact(order){
   const iconName = isCancelled ? 'cross' : 'check';
   return '<div class="flex items-stretch border hairline" style="background:var(--bg2);"><div style="width:64px;display:flex;align-items:center;justify-content:center;background:' + color + ';color:#fff;flex-shrink:0;">' + ic(iconName, 'w-6 h-6') + '</div><div class="flex-1 py-4 px-5"><p class="text-[10px] tracking-wide2 uppercase mb-1" style="color:var(--mut);">Order</p><p class="disp text-base font-medium" style="color:' + color + ';">' + st.text + '</p></div></div>';
 }
-function statusTimeline(order){
+function statusTimeline(order, animate){
   const ci = currentStageIdx(order);
   if (ci === -1) { return '<p class="text-xs font-medium flex items-center gap-2" style="color:#DC2626;">' + ic('cross','w-4 h-4') + 'Order Cancelled</p>'; }
+  
+  // 🎬 Check if we should animate (only when status changed)
+  const animateKey = 'anim_' + order.id;
+  const lastAnimated = window[animateKey] || -1;
+  const shouldAnimate = animate && lastAnimated < ci;
+  if (shouldAnimate) window[animateKey] = ci;
+  
   let html = '<div class="track-wrap"><div class="track-timeline">';
   html += STAGES.map((s, i) => {
-    const done = i <= ci; const active = i === ci; const cls = done ? 'done' : (active ? 'active' : '');
-    return '<div class="track-step ' + cls + '"><div class="track-icon">' + (done ? ic('check','w-4 h-4') : ic(s.icon,'w-4 h-4')) + '</div><div class="pt-1"><p class="text-[11px] font-medium" style="color:' + (done ? 'var(--text)' : 'var(--mut)') + ';">' + s.t + '</p>' + (active ? '<p class="text-[10px] mt-0.5 tracking-wide2 uppercase" style="color:var(--text);">Current</p>' : '') + '</div></div>';
+    const done = i <= ci; const active = i === ci;
+    const cls = done ? 'done' : (active ? 'active' : '');
+    // 🎬 Add animate class with delay based on index
+    const delay = shouldAnimate ? (i * 280) : 0;
+    const animCls = (shouldAnimate && done) ? ' animate-in' : '';
+    const animStyle = (shouldAnimate && done) ? ' style="animation-delay:' + delay + 'ms;"' : '';
+    return '<div class="track-step ' + cls + animCls + '"' + animStyle + '>' +
+      '<div class="track-icon"' + animStyle + '>' + (done ? ic('check','w-4 h-4') : ic(s.icon,'w-4 h-4')) + '</div>' +
+      '<div class="pt-1"><p class="text-[11px] font-medium" style="color:' + (done ? 'var(--text)' : 'var(--mut)') + ';">' + s.t + '</p>' +
+      (active ? '<p class="text-[10px] mt-0.5 tracking-wide2 uppercase" style="color:var(--text);">Current</p>' : '') +
+      '</div></div>';
   }).join('');
   html += '</div></div>';
   html += '<p class="text-[11px] mt-4 text-center" style="color:var(--mut);">Expected Delivery: 9:00 AM – 7:00 PM</p>';
@@ -2602,7 +2645,8 @@ function buildOrderCard(o, opts){
   const canCancel = showCancel && !isOwner && (Date.now() - o.timestamp < 24*60*60*1000) && st.text !== 'Cancelled' && st.text !== 'Delivered';
   const date = new Date(o.timestamp).toLocaleString('en-IN');
   const payBadge = o.payment && o.payment.method === 'online' ? '<span class="chip" style="background:#0A0A0A; color:#fff;">PAID ONLINE</span>' : '<span class="chip border hairline" style="color:var(--text);">COD</span>';
-  const timeline = compact ? statusTimelineCompact(o) : statusTimeline(o);
+  const shouldAnimate = !!(window.__delivering && window.__delivering[o.id]);
+  const timeline = compact ? statusTimelineCompact(o) : statusTimeline(o, shouldAnimate);
   return '<div class="card p-4 md:p-5 space-y-4" data-orderid="' + o.id + '">' +
     '<div class="flex justify-between items-start gap-3 flex-wrap"><div><b class="disp text-sm">' + o.id + '</b><p class="text-[10px] mt-1" style="color:var(--mut);">' + date + '</p></div>' +
     '<div class="flex gap-2 flex-wrap items-center">' + payBadge + (compact ? '' : '<span class="chip border hairline" style="color:' + st.color + ';">' + ic(st.icon,'w-3 h-3') + ' ' + st.text + '</span>') + '</div></div>' +
@@ -3063,15 +3107,32 @@ async function syncOrders(silent){
           changed = true;
         } else if (!existing._localOnly && existing.status !== serverO.status){
           const wasNotDelivered = existing.status !== 'Delivered';
+          const oldStage = currentStageIdx(existing);
+          const newStage = currentStageIdx(serverO);
           
           // Update fields
           existing.status = serverO.status;
           existing.updatedAt = serverO.updatedAt || Date.now();
           if (serverO.status === 'Delivered') existing.deliveredAt = serverO.deliveredAt || Date.now();
           
-          // 🎉 Delivered transition — trigger animation
-          if (serverO.status === 'Delivered' && wasNotDelivered){
-            handleDeliveredTransition(serverO.id, isAdmin);
+          // 🎬 Trigger progressive animation for ANY stage change
+          if (newStage > oldStage){
+            window.__delivering = window.__delivering || {};
+            window.__delivering[serverO.id] = true;
+            
+            // Full Delivered transition
+            if (serverO.status === 'Delivered' && wasNotDelivered){
+              setTimeout(() => handleDeliveredTransition(serverO.id, isAdmin), 100);
+            } else {
+              // Mid-stage change — just re-render with animation
+              setTimeout(() => {
+                const hm = $('#historyModal');
+                if (hm && !hm.classList.contains('hidden')) renderHistory();
+                setTimeout(() => {
+                  if (window.__delivering) delete window.__delivering[serverO.id];
+                }, 2200);
+              }, 100);
+            }
           }
           changed = true;
         }
@@ -3102,14 +3163,11 @@ function handleDeliveredTransition(orderId, isAdmin){
   window.__delivering = window.__delivering || {};
   window.__delivering[orderId] = true;
 
-  // 1️⃣ Re-render to show the delivered card in My Orders
+  // 🎬 First render — animation will play automatically
   safe(renderHistory, 'delivered.render');
 
-  // 2️⃣ Add pulse animation to timeline's last circle
-  setTimeout(() => {
-    const el = document.querySelector('.card[data-orderid="' + orderId + '"]');
-    if (el) el.classList.add('delivering-anim');
-  }, 100);
+  // 🔑 7 stages × 280ms = ~2000ms for full timeline animation
+  const fullAnimMs = 2000;
 
   // 🔑 Admin device — only animation, no popup
   if (isAdmin){
@@ -3117,13 +3175,12 @@ function handleDeliveredTransition(orderId, isAdmin){
       if (window.__delivering) delete window.__delivering[orderId];
       safe(renderHistory, 'admin.clear');
       safe(renderPastHistory, 'admin.clear.past');
-    }, 3000);
+    }, fullAnimMs + 500);
     return;
   }
 
-  // 🔑 Customer — show popup + auto-redirect
+  // 🔑 Customer — show popup after timeline animation
   if (document.visibilityState === 'visible'){
-    // Wait for timeline animation to complete (2 sec)
     setTimeout(() => {
       if (!window.__delivering || !window.__delivering[orderId]) return;
 
@@ -3132,7 +3189,7 @@ function handleDeliveredTransition(orderId, isAdmin){
       if (idEl) idEl.textContent = orderId;
       openModal('orderDeliveredModal');
 
-      // Auto-redirect after popup animation (1.8s)
+      // Auto-redirect after popup animation
       setTimeout(() => {
         if (window.__delivering) delete window.__delivering[orderId];
         closeModal('orderDeliveredModal', true);
@@ -3141,7 +3198,7 @@ function handleDeliveredTransition(orderId, isAdmin){
         openModal('pastHistoryModal');
         try { history.replaceState({ modal: 'pastHistoryModal' }, '', '#history'); } catch(e){}
       }, 1800);
-    }, 2000);   // ← 2 sec timeline animation first
+    }, fullAnimMs);   // ← 2 sec after progressive animation completes
   }
 }
 
@@ -3702,9 +3759,17 @@ function wire(){
       }
       try { await fetch(`${API_BASE}/api/orders?action=update`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: o.id, status: v, pwd: 'HF2026' }) }); } catch(e){}
       toast('Status Updated','check');
-      // 🎉 Trigger animation if just set to Delivered
-      if (v === 'Delivered' && wasNotDelivered){
-        handleDeliveredTransition(o.id, true);
+      // 🎉 Trigger animation for ANY status change (progressive fill)
+      if (idx !== -1 && wasNotDelivered){
+        window.__delivering = window.__delivering || {};
+        window.__delivering[o.id] = true;
+        // Re-render with animation
+        const hm = $('#historyModal');
+        if (hm && !hm.classList.contains('hidden')) renderHistory();
+        // Clear flag after animation
+        setTimeout(() => {
+          if (window.__delivering) delete window.__delivering[o.id];
+        }, 2200);
       }
       $('#adminSearchId').dispatchEvent(new Event('input'));
     };
