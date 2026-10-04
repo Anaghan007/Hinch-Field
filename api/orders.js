@@ -22,15 +22,20 @@ export default async function handler(req, res) {
     });
 
     /* ═══ SAVE ORDER ═══ */
-    if (action === 'save' && req.method === 'POST') {
+      if (action === 'save' && req.method === 'POST') {
       const { order } = req.body || {};
       if (!order || !order.id) return res.status(400).json({ success: false, error: 'Invalid order' });
+
       await redis.set('order:' + order.id, order);
       await redis.lpush('orders:all', order.id);
-      // If order has email, link to user
+
+      // 🔑 Link order to user by email
       const em = (order.customer && order.customer.email || '').toLowerCase().trim();
       if (em) {
         await redis.sadd('user:' + em + ':orders', order.id);
+        console.log('Linked order', order.id, 'to user', em);
+      } else {
+        console.warn('Order', order.id, 'has no email — not linked to any user');
       }
       return res.status(200).json({ success: true, id: order.id });
     }
