@@ -1249,16 +1249,54 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       }
     }
 
-    /* ═══ LAST CIRCLE BLINK (once) ═══ */
-    @keyframes blinkOnce {
-      0%   { background: var(--text); border-color: var(--text); color: var(--bg); transform: scale(1); }
-      45%  { background: var(--card); border-color: var(--line); color: var(--mut); transform: scale(1.2); }
-      100% { background: var(--text); border-color: var(--text); color: var(--bg); transform: scale(1); }
+    /* ═══ PROGRESSIVE TIMELINE ANIMATION ═══ */
+    @keyframes popCircle {
+      0% { transform: scale(0.3); opacity: 0.4; background: var(--card); border-color: var(--line); color: var(--mut); }
+      50% { transform: scale(1.2); background: var(--text); border-color: var(--text); color: var(--bg); opacity: 1; }
+      100% { transform: scale(1); background: var(--text); border-color: var(--text); color: var(--bg); opacity: 1; }
     }
-    .track-icon.blink-once {
-      animation: blinkOnce .7s cubic-bezier(.4, 0, .2, 1) 1 both;
+    @keyframes lineGrow {
+      from { background: var(--line); }
+      to { background: var(--text); }
     }
-    
+    .track-icon.anim-circle {
+      animation: popCircle .5s cubic-bezier(.4, 0, .2, 1) both;
+    }
+    .track-step.anim-line::after {
+      animation: lineGrow .35s ease both;
+      animation-delay: var(--line-delay, 0ms);
+    }
+    .track-step .track-icon {
+      transition: none;
+    }
+
+    /* ═══ PROGRESSIVE TIMELINE ANIMATION ═══ */
+    .track-step .track-icon {
+      transition: background-color .4s ease, border-color .4s ease, color .4s ease, transform .4s cubic-bezier(.4, 0, .2, 1);
+    }
+    .track-step.animate-in .track-icon {
+      animation: popCircle .5s cubic-bezier(.4, 0, .2, 1) both;
+    }
+    @keyframes popCircle {
+      0% { transform: scale(1); background: var(--card); border-color: var(--line); color: var(--mut); }
+      50% { transform: scale(1.15); background: var(--text); border-color: var(--text); color: var(--bg); }
+      100% { transform: scale(1); background: var(--text); border-color: var(--text); color: var(--bg); }
+    }
+    /* Connecting line animation */
+    .track-step {
+      position: relative;
+    }
+    .track-step::after {
+      transition: background-color .4s ease;
+    }
+    .track-step.animate-in:not(:last-child)::after {
+      animation: lineGrow .5s ease both;
+    }
+    @keyframes lineGrow {
+      from { background: var(--line); }
+      to { background: var(--text); }
+    }
+
     .delivered-anim {
       animation: bounceIn .5s cubic-bezier(.2, .7, .2, 1) both;
     }
@@ -2587,23 +2625,40 @@ function statusTimelineCompact(order){
 function statusTimeline(order, animate){
   const ci = currentStageIdx(order);
   if (ci === -1) { return '<p class="text-xs font-medium flex items-center gap-2" style="color:#DC2626;">' + ic('cross','w-4 h-4') + 'Order Cancelled</p>'; }
-
-  // 🔑 Only blink when stage ADVANCED (not on every render)
-  window.__blinkStage = window.__blinkStage || {};
-  const lastBlinked = window.__blinkStage[order.id];
-  const shouldBlink = (lastBlinked === undefined || ci > lastBlinked);
-  if (shouldBlink) window.__blinkStage[order.id] = ci;
-
+  
+  // 🔑 Track last animated stage per order
+  window.__timelineStage = window.__timelineStage || {};
+  const lastStage = window.__timelineStage[order.id];
+  const shouldAnimate = animate && (lastStage === undefined || ci > lastStage);
+  const baseStage = (lastStage === undefined) ? -1 : lastStage;
+  
   let html = '<div class="track-wrap"><div class="track-timeline">';
   html += STAGES.map((s, i) => {
     const done = i <= ci;
     const active = i === ci;
     const cls = done ? 'done' : (active ? 'active' : '');
-    const blinkCls = (shouldBlink && i === ci && done) ? ' blink-once' : '';
-
-    return '<div class="track-step ' + cls + '">' +
-      '<div class="track-icon' + blinkCls + '">' +
-        (done ? ic('check','w-4 h-4') : ic(s.icon,'w-4 h-4')) +
+    
+    // 🎬 Determine if THIS circle needs animation
+    let animCls = '';
+    let animDelay = 0;
+    let lineAnimCls = '';
+    let lineAnimDelay = 0;
+    
+    if (shouldAnimate && done && i > baseStage){
+      // New circle — animate
+      const newIdx = i - baseStage - 1;
+      animDelay = newIdx * 250;
+      animCls = ' anim-circle';
+      // Line to next step also new
+      if (i < ci){
+        lineAnimCls = ' anim-line';
+        lineAnimDelay = animDelay + 125;
+      }
+    }
+    
+    return '<div class="track-step ' + cls + lineAnimCls + '" style="--line-delay:' + lineAnimDelay + 'ms;">' +
+      '<div class="track-icon ' + animCls + '" style="animation-delay:' + animDelay + 'ms;">' + 
+        (done ? ic('check','w-4 h-4') : ic(s.icon,'w-4 h-4')) + 
       '</div>' +
       '<div class="pt-1">' +
         '<p class="text-[11px] font-medium" style="color:' + (done ? 'var(--text)' : 'var(--mut)') + ';">' + s.t + '</p>' +
@@ -2612,6 +2667,12 @@ function statusTimeline(order, animate){
   }).join('');
   html += '</div></div>';
   html += '<p class="text-[11px] mt-4 text-center" style="color:var(--mut);">Expected Delivery: 9:00 AM – 7:00 PM</p>';
+  
+  // 🔑 Update tracker AFTER render
+  if (shouldAnimate || lastStage === undefined){
+    window.__timelineStage[order.id] = ci;
+  }
+  
   return html;
 }
 function buildOrderCard(o, opts){
@@ -3101,14 +3162,22 @@ async function syncOrders(silent){
           existing.updatedAt = serverO.updatedAt || Date.now();
           if (serverO.status === 'Delivered') existing.deliveredAt = serverO.deliveredAt || Date.now();
 
-            if (newStage > oldStage){
+          if (newStage > oldStage){
+            window.__delivering = window.__delivering || {};
+            window.__delivering[serverO.id] = true;
+
             if (serverO.status === 'Delivered' && wasNotDelivered){
-              handleDeliveredTransition(serverO.id, isAdmin);
+              setTimeout(() => handleDeliveredTransition(serverO.id, isAdmin), 100);
             } else {
-              const hm = $('#historyModal');
-              if (hm && !hm.classList.contains('hidden')) renderHistory();
-              const ph = $('#pastHistoryModal');
-              if (ph && !ph.classList.contains('hidden')) renderPastHistory();
+              setTimeout(() => {
+                const hm = $('#historyModal');
+                if (hm && !hm.classList.contains('hidden')) renderHistory();
+                const ph = $('#pastHistoryModal');
+                if (ph && !ph.classList.contains('hidden')) renderPastHistory();
+                setTimeout(() => {
+                  if (window.__delivering) delete window.__delivering[serverO.id];
+                }, 3000);
+              }, 100);
             }
           }
           changed = true;
@@ -3134,28 +3203,47 @@ async function syncOrders(silent){
   } catch(e){ console.warn('syncOrders:', e); }
 }
 
+/* ═══ DELIVERED TRANSITION — Animation + Popup ═══ */
 function handleDeliveredTransition(orderId, isAdmin){
-  // 🔑 Admin — no popup, just refresh
+  window.__delivering = window.__delivering || {};
+  window.__delivering[orderId] = true;
+
+  // 🎬 First render — animation will play automatically
+  safe(renderHistory, 'delivered.render');
+
+  // 🔑 7 stages × 280ms = ~2000ms for full timeline animation
+  const fullAnimMs = 1800;
+
+  // 🔑 Admin device — only animation, no popup
   if (isAdmin){
-    safe(renderHistory, 'admin.render');
-    safe(renderPastHistory, 'admin.render.past');
+    setTimeout(() => {
+      if (window.__delivering) delete window.__delivering[orderId];
+      safe(renderHistory, 'admin.clear');
+      safe(renderPastHistory, 'admin.clear.past');
+    }, fullAnimMs + 500);
     return;
   }
 
-  // 🔑 Customer — popup with its natural animation, then close
+  // 🔑 Customer — show popup after timeline animation
   if (document.visibilityState === 'visible'){
-    const idEl = $('#deliveredOrderId');
-    if (idEl) idEl.textContent = orderId;
-    openModal('orderDeliveredModal');
-
-    // Popup animation (.45s) + hold ~1.8s → total ~2.2s, then close
     setTimeout(() => {
-      closeModal('orderDeliveredModal', true);
-      safe(renderHistory, 'delivered.clear');
-      safe(renderPastHistory, 'delivered.clear.past');
-      openModal('pastHistoryModal');
-      try { history.replaceState({ modal: 'pastHistoryModal' }, '', '#history'); } catch(e){}
-    }, 2200);
+      if (!window.__delivering || !window.__delivering[orderId]) return;
+
+      // Show popup
+      const idEl = $('#deliveredOrderId');
+      if (idEl) idEl.textContent = orderId;
+      openModal('orderDeliveredModal');
+
+      // Auto-redirect after popup animation
+      setTimeout(() => {
+        if (window.__delivering) delete window.__delivering[orderId];
+        closeModal('orderDeliveredModal', true);
+        safe(renderHistory, 'delivered.clear');
+        safe(renderPastHistory, 'delivered.clear.past');
+        openModal('pastHistoryModal');
+        try { history.replaceState({ modal: 'pastHistoryModal' }, '', '#history'); } catch(e){}
+      }, 1800);
+    }, fullAnimMs);   // ← 2 sec after progressive animation completes
   }
 }
 
@@ -3718,10 +3806,17 @@ function wire(){
       }
       try { await fetch(`${API_BASE}/api/orders?action=update`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: o.id, status: v, pwd: 'HF2026' }) }); } catch(e){}
       toast('Status Updated','check');
-      // 🔑 Instant re-render (no animation)
+      // 🎬 Trigger animation for new stage
       if (idx !== -1){
+        window.__delivering = window.__delivering || {};
+        window.__delivering[o.id] = true;
+        // Re-render with animation
         const hm = $('#historyModal');
         if (hm && !hm.classList.contains('hidden')) renderHistory();
+        // Clear flag after animation
+        setTimeout(() => {
+          if (window.__delivering) delete window.__delivering[o.id];
+        }, 3000);
       }
       $('#adminSearchId').dispatchEvent(new Event('input'));
     };
