@@ -2662,6 +2662,13 @@ function placeOrder(){
   if (isLoggedIn()) {
     store.set('user', { name, phone, email });
   }
+  console.log('═══════════════ ORDER PLACED ═══════════════');
+  console.log('Order ID:', order.id);
+  console.log('Order email:', order.customer.email);
+  console.log('Session email:', getUserEmail());
+  console.log('Match:', order.customer.email === getUserEmail() ? '✅' : '❌ MISMATCH');
+  console.log('════════════════════════════════════════════');
+  
   notifyNewOrder(order);
   saveOrderToServer(order);
   cart = []; store.set('cart', []);
@@ -2900,9 +2907,19 @@ async function verifyOtp(email){
     });
     const d = await r.json();
     if (!d.success) throw new Error(d.error || 'Invalid OTP');
-    // Save session
+    // 🔑 Force clear ALL old user data BEFORE saving new session
+    store.del('session_key');
+    store.del('user_email');
+    store.del('user');
+    store.del('last_phone');
+    store.del('orders');
+    store.del('membership_full');
+    appliedMembership = null;
+
+    // Now save new session
     store.set('session_key', d.session_key);
     store.set('user_email', email);
+    console.log('🔐 Logged in as:', email, '| session:', d.session_key);
     if (d.user && d.user.name) store.set('user', { name: d.user.name, phone: d.user.phone || '', email });
     if (d.user && d.user.phone) store.set('last_phone', d.user.phone);
     // 🔑 FRESH STATE — clear previous user's data before sync
@@ -2961,6 +2978,9 @@ async function doLogout(){
   renderHistory();
   renderPastHistory();
   toast('Logged out', 'check');
+  
+  // 🔑 Force reload to clear any cached server response
+  setTimeout(() => { location.reload(); }, 500);
 }
 
 function updateAuthUI(){
@@ -2996,7 +3016,10 @@ async function syncOrders(silent){
       return; // Not logged in → no fetch
     }
 
-    const r = await fetch(url);
+    // 🔑 Cache busting — 304 response prevent
+    const cacheBuster = '&_t=' + Date.now();
+    const finalUrl = url + (url.includes('?') ? cacheBuster : '?' + cacheBuster.slice(1));
+    const r = await fetch(finalUrl, { cache: 'no-store' });
     const d = await r.json();
     if (!d.success) return;
 
@@ -3614,12 +3637,14 @@ function wire(){
       if (!isLoggedIn() && localStorage.getItem('hf_is_admin') !== 'true') { scheduleSync(); return; }
       const hm = $('#historyModal'); const hpm = $('#pastHistoryModal');
       const isOpen = (hm && !hm.classList.contains('hidden')) || (hpm && !hpm.classList.contains('hidden'));
-      const gap = isOpen ? 3000 : 15000;
-      if (Date.now() - (syncOrders._last || 0) >= gap - 200) syncOrders();
+      // 🔑 Only sync when modal open OR 30s background
+      const gap = isOpen ? 5000 : 30000;
+      if (Date.now() - (syncOrders._last || 0) >= gap - 500) syncOrders();
       scheduleSync();
-    }, 3000);
+    }, gap => 5000);
   }
-  scheduleSync();
+  // ⏱️ Delay first sync — avoid spam
+  setTimeout(() => scheduleSync(), 3000);
 }
 
 /* ═══ INVOICE ═══ */
