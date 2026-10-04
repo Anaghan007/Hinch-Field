@@ -1812,7 +1812,6 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
         <b id="deliveredOrderId" style="color:var(--text);letter-spacing:.08em;"></b> has been delivered successfully
       </p>
       <p class="text-xs mb-6" style="color:var(--mut);">Thank you for shopping with us ❤️</p>
-      <button id="deliveredOk" class="pill btn-gold w-full py-3.5">View in History</button>
     </div>
   </div>
 
@@ -2895,18 +2894,22 @@ async function syncMyOrders(){
               if (el) el.classList.add('delivering-anim');
             }, 60);
             if (!isOwner && document.visibilityState === 'visible') {
-              setTimeout(() => {
-                if (!window.__delivering || !window.__delivering[serverO.id]) return;
-                const idEl = $('#deliveredOrderId');
-                if (idEl) idEl.textContent = serverO.id;
-                openModal('orderDeliveredModal');
-              }, 1400);
-            }
             setTimeout(() => {
-              if (window.__delivering) delete window.__delivering[serverO.id];
-              safe(renderHistory, 'delivered.clear');
-              safe(renderPastHistory, 'delivered.clear.past');
-            }, 6000);
+              if (!window.__delivering || !window.__delivering[serverO.id]) return;
+              const idEl = $('#deliveredOrderId');
+              if (idEl) idEl.textContent = serverO.id;
+              openModal('orderDeliveredModal');
+              // ⚡ Auto-redirect after animation (3.2s)
+              setTimeout(() => {
+                if (window.__delivering) delete window.__delivering[serverO.id];
+                closeModal('orderDeliveredModal', true);
+                safe(renderHistory, 'delivered.clear');
+                safe(renderPastHistory, 'delivered.clear.past');
+                openModal('pastHistoryModal');
+                try { history.replaceState({ modal: 'pastHistoryModal' }, '', '#history'); } catch(e){}
+              }, 3200);
+            }, 1200);
+          }
           }
         }
         changed = true;
