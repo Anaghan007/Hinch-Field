@@ -76,7 +76,7 @@ export default async function handler(req, res) {
           try {
             const o = typeof raw === 'string' ? JSON.parse(raw) : raw;
             const oPhone = (o.customer && o.customer.phone || '').replace(/[^0-9]/g, '');
-            if (oPhone && oPhone.endsWith(phone.slice(-10))) orders.push(o);
+            if (oPhone && oPhone.endsWith(phone.slice(-10)) && !o.byAdmin) orders.push(o);
           } catch (e) {}
         }
       }
