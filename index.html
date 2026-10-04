@@ -1314,8 +1314,8 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
 
     .login-badge {
       position: absolute;
-      -top-1;
-      -right-1;
+      top: -2px
+      right: -2px
       width: 8px;
       height: 8px;
       border-radius: 50%;
@@ -1346,7 +1346,6 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
           <button id="userMenuBtn" class="flex flex-col items-center justify-center px-2 md:px-3 relative" style="color:var(--text);" aria-label="Account">
             <div class="relative">
               <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a8 8 0 0 1 16 0v1"/></svg>
-              <span class="login-badge"></span>
             </div>
             <span class="micro mt-1">Account</span>
           </button>
@@ -1613,6 +1612,10 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
             </div>
           </div>
           <div class="p-4 md:p-5 space-y-3 w-full">
+            <div id="cartLoginPrompt" class="border hairline p-3 mb-2 flex items-center justify-between gap-2" style="background:#FEF3C7;border-color:#FCD34D;">
+              <p class="text-[11px]" style="color:#92400E;">⚠️ Login required to place order</p>
+              <button id="cartLoginBtn" class="pill btn-ink px-3 py-1.5 text-[10px]">Login</button>
+            </div>
             <p class="micro" style="color:var(--text);">Delivery Details</p>
             <input id="coName" maxlength="60" class="field" placeholder="Full name *">
             <input id="coPhone" inputmode="numeric" maxlength="15" class="field" placeholder="Mobile / WhatsApp number *">
@@ -2389,6 +2392,15 @@ function clearCheckoutFields(){
 function renderCart(){
   const n = cart.reduce((a,l) => a + (Number(l.qty)||0), 0);
   if (cart.length === 0) clearCheckoutFields();
+  // 🔐 Login prompt show/hide
+  const prompt = $('#cartLoginPrompt');
+  if (prompt){
+    if (!isLoggedIn() && localStorage.getItem('hf_is_admin') !== 'true' && cart.length > 0){
+      prompt.style.display = 'flex';
+    } else {
+      prompt.style.display = 'none';
+    }
+  }
   if (cart.length === 0 && appliedMembership){
     appliedMembership = null;
     const mc = $('#memberCode'); if (mc) mc.value = '';
@@ -2608,6 +2620,14 @@ function placeOrder(){
   const err = m => { const e = $('#coErr'); e.textContent = m; e.classList.remove('hidden'); };
   $('#coErr').classList.add('hidden');
   if (!cart.length) return err('Cart is empty — add products first.');
+  // 🔐 Login check first
+  if (!isLoggedIn() && localStorage.getItem('hf_is_admin') !== 'true'){
+    window.__pendingAction = 'checkout';
+    const loginEmail = $('#coEmail') ? $('#coEmail').value.trim() : '';
+    openLoginModal(loginEmail);
+    toast('Please login to place order', 'warn');
+    return;
+  }
   if ($('#coHoney').value) return;
   const name = $('#coName').value.trim();
   const phone = $('#coPhone').value.trim();
@@ -2705,6 +2725,14 @@ function savePaidOrder(customer, t, razorpayResponse){
 async function handleOnlinePayment(){
   const btn = $('#payOnline');
   if (!btn || btn.disabled) return;
+  // 🔐 Login check first
+  if (!isLoggedIn() && localStorage.getItem('hf_is_admin') !== 'true'){
+    window.__pendingAction = 'checkout';
+    const loginEmail = $('#coEmail') ? $('#coEmail').value.trim() : '';
+    openLoginModal(loginEmail);
+    toast('Please login to continue payment', 'warn');
+    return;
+  }
   if (!validateCheckoutForm()) return;
   if (typeof Razorpay === 'undefined'){ toast('Payment SDK not loaded. Refresh and try again.', 'cross'); return; }
   const t = totals();
@@ -2779,10 +2807,10 @@ async function verifyAdminStatus(){
 }
 
 /* ═══ AUTH SYSTEM ═══ */
-function openLoginModal(){
+function openLoginModal(prefillEmail){
   const body = $('#loginModalBody');
   if (!body) return;
-  const currentEmail = store.get('last_phone', '') || '';
+  const currentEmail = prefillEmail || store.get('user_email', null) || '';
   body.innerHTML = `
     <div class="text-center mb-6">
       <svg class="w-12 h-12 mx-auto mb-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a8 8 0 0 1 16 0v1"/></svg>
@@ -2879,6 +2907,22 @@ async function verifyOtp(email){
     toast('Logged in successfully', 'check');
     updateAuthUI();
     await syncOrders(true);
+
+    // 🔄 Resume pending action
+    const pending = window.__pendingAction;
+    window.__pendingAction = null;
+    if (pending === 'checkout'){
+      setTimeout(() => {
+        const co = $('#coName'); if (co && !co.value) co.value = (store.get('user', null)?.name || '');
+        const cp = $('#coPhone'); if (cp && !cp.value) cp.value = (store.get('last_phone', '') || '');
+        const ce = $('#coEmail'); if (ce && !ce.value) ce.value = getUserEmail() || '';
+        renderCart();
+        openModal('cartDrawer');
+        toast('Continue your order', 'check');
+      }, 400);
+    } else if (pending === 'membership'){
+      setTimeout(() => { openMemberModal(); }, 400);
+    }
   } catch(e){
     err(e.message || 'Invalid OTP');
   } finally {
@@ -2916,12 +2960,12 @@ function updateAuthUI(){
   const loginBtn = $('#loginBtn');
   const userMenu = $('#userMenu');
   if (loggedIn){
-    if (loginBtn) loginBtn.classList.add('hidden');
-    if (userMenu) userMenu.classList.remove('hidden');
+    if (loginBtn) loginBtn.style.display = 'none';
+    if (userMenu) userMenu.style.display = 'block';
     const em = $('#userEmailShow'); if (em) em.textContent = email || '';
   } else {
-    if (loginBtn) loginBtn.classList.remove('hidden');
-    if (userMenu) userMenu.classList.add('hidden');
+    if (loginBtn) loginBtn.style.display = 'flex';
+    if (userMenu) userMenu.style.display = 'none';
   }
   renderMobileNav();
 }
@@ -3203,6 +3247,13 @@ function renderMemberModal(){
   else { body.innerHTML = buildMemberBuyHTML(); }
 }
 async function openMemberModal(skipRoute){
+  // 🔐 Login check for non-admin
+  if (!isLoggedIn() && localStorage.getItem('hf_is_admin') !== 'true'){
+    window.__pendingAction = 'membership';
+    openLoginModal();
+    toast('Please login to access membership', 'warn');
+    return;
+  }
   renderMemberModal();
   openModal('memberModal');
   if (!skipRoute) { try { if (window.location.hash === '#menu') { history.replaceState({ modal:'memberModal' }, '', '#membership'); } else { history.pushState({ modal:'memberModal' }, '', '#membership'); } } catch(e){} }
@@ -3225,6 +3276,14 @@ document.addEventListener('click', async (e) => {
   if (action === 'renew'){ const body = $('#memberModalBody'); if (body) body.innerHTML = buildMemberBuyHTML({ name: saved?.name || '', phone: saved?.phone || '' }); return; }
   if (action === 'buy'){
     if (t.disabled) return;
+    // 🔐 Login check first
+    if (!isLoggedIn() && localStorage.getItem('hf_is_admin') !== 'true'){
+      window.__pendingAction = 'membership';
+      closeModal('memberModal', true);
+      openLoginModal();
+      toast('Please login to purchase membership', 'warn');
+      return;
+    }
     const err = m => { const el = $('#memBuyErr'); if (el) { el.textContent=m; el.classList.remove('hidden'); } return false; };
     const nameEl = $('#memBuyName'); const phoneEl = $('#memBuyPhone');
     if (!nameEl || !phoneEl) return;
@@ -3374,6 +3433,7 @@ function wire(){
   const um = $('#userMenuBtn'); if (um) um.onclick = (e) => { e.stopPropagation(); $('#userMenu').classList.toggle('open'); };
   document.addEventListener('click', e => { const m = $('#userMenu'); if (m && !m.contains(e.target)) m.classList.remove('open'); });
   const lb = $('#logoutBtn'); if (lb) lb.onclick = () => { $('#userMenu').classList.remove('open'); closeAll(true); doLogout(); };
+  const clb = $('#cartLoginBtn');   if (clb) clb.onclick = () => { window.__pendingAction = 'checkout'; openLoginModal($('#coEmail')?.value || ''); };
 
   $('#cartOpen').onclick = () => { closeAll(true); renderCart(); try{ history.pushState({ modal:'cartDrawer' }, '', '#cart'); }catch(e){} handleRoute(); };
   $('#wishOpen').onclick = () => { closeAll(true); renderWish(); try{ history.pushState({ modal:'wishDrawer' }, '', '#wishlist'); }catch(e){} handleRoute(); };
