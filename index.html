@@ -3102,8 +3102,7 @@ async function verifyOtp(email){
     closeModal('otpModal', true);
     toast('Logged in successfully', 'check');
 
-    // 🔑 Clear hash + reload (prevents #menu re-opening)
-    try { history.replaceState(null, '', location.pathname + location.search); } catch(_){}
+    // 🔑 MAGIC — reload page. Init syncs fresh data from server.
     setTimeout(() => { location.reload(); }, 350);
     return;
 
@@ -3151,9 +3150,9 @@ async function doLogout(){
   renderPastHistory();
   toast('Logged out', 'check');
   
-  // 🔑 Clear hash + reload (prevents #menu re-opening)
-  try { history.replaceState(null, '', location.pathname + location.search); } catch(_){}
+  // 🔑 Force reload to clear any cached server response
   setTimeout(() => { location.reload(); }, 500);
+}
 
 function updateAuthUI(){
   const loggedIn = isLoggedIn();
