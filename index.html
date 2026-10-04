@@ -2650,9 +2650,16 @@ function placeOrder(){
   const oid = 'HF' + String(Date.now()).slice(-6);
   const otp = String(Math.floor(1000 + Math.random() * 9000));
   const isAdminDevice = localStorage.getItem('hf_is_admin') === 'true';
+  // 🔐 Account email (owner) — from session
+  const accountEmail = getUserEmail() || email;
+  // 📧 Receipt email (invoice delivery) — from form
+  const receiptEmail = email;
+  
   const order = {
     id: oid, otp, timestamp: Date.now(), status: 'Order Placed', updatedAt: Date.now(),
-    customer: { name, phone, email, addr, city, state, pin },
+    customer: { name, phone, email: receiptEmail, addr, city, state, pin },
+    accountEmail: accountEmail,           // 🔑 Owner — never changes
+    receiptEmail: receiptEmail,           // 📧 For invoice
     items: JSON.parse(JSON.stringify(cart)), totals: t, deliveredAt: null, payment: { method: 'cod' },
     byAdmin: isAdminDevice
   };
@@ -2719,9 +2726,13 @@ function savePaidOrder(customer, t, razorpayResponse){
   const oid = 'HF' + String(Date.now()).slice(-6);
   const otp = String(Math.floor(1000 + Math.random() * 9000));
   const isAdminDevice = localStorage.getItem('hf_is_admin') === 'true';
+  const accountEmail = getUserEmail() || customer.email;
   const order = {
     id: oid, otp, timestamp: Date.now(), status: 'Order Confirmed', updatedAt: Date.now(),
-    customer: { ...customer }, items: JSON.parse(JSON.stringify(cart)), totals: t, deliveredAt: null,
+    customer: { ...customer }, 
+    accountEmail: accountEmail,        // 🔑 Owner
+    receiptEmail: customer.email,      // 📧 Receipt
+    items: JSON.parse(JSON.stringify(cart)), totals: t, deliveredAt: null,
     payment: { method: 'online', razorpay_order_id: razorpayResponse.razorpay_order_id, razorpay_payment_id: razorpayResponse.razorpay_payment_id, verified: true },
     byAdmin: isAdminDevice
   };
@@ -3048,15 +3059,23 @@ async function syncOrders(silent){
       const serverOrders = d.orders || [];
       const serverMembership = d.membership || null;
 
-      // 🔑 Only overwrite if server has data — otherwise keep local
-      if (serverOrders.length > 0){
-        store.set('orders', serverOrders);
+      // 🔐 Filter — only orders where accountEmail = login email
+      const myEmail = (getUserEmail() || '').toLowerCase();
+      const myOrders = myEmail 
+        ? serverOrders.filter(o => (o.accountEmail || '').toLowerCase() === myEmail)
+        : [];
+      
+      if (myOrders.length > 0){
+        store.set('orders', myOrders);
       } else {
-        // Server empty — check local has pending orders
+        // Server empty for me — check local pending orders
         const local = store.get('orders', []);
-        const pending = local.filter(o => o.customer && o.customer.email === email);
+        const pending = myEmail 
+          ? local.filter(o => (o.accountEmail || '').toLowerCase() === myEmail)
+          : [];
         if (pending.length > 0){
           console.warn('Server returned 0 but local has', pending.length, 'orders — keeping local');
+          store.set('orders', pending);
         } else {
           store.set('orders', []);
         }
@@ -3074,7 +3093,8 @@ async function syncOrders(silent){
       const ph = $('#pastHistoryModal'); if (ph && !ph.classList.contains('hidden')) renderPastHistory();
       renderCart();
 
-      console.log('✅ Synced — server orders:', serverOrders.length, '| local orders:', store.get('orders', []).length, '| membership:', !!store.get('membership_full', null));
+      const finalOrders = store.get('orders', []);
+      console.log('✅ Sync — myEmail:', getUserEmail() || '(guest)', '| server:', serverOrders.length, '| mine:', finalOrders.length, '| membership:', !!store.get('membership_full', null));
     }
   } catch(e){ /* silent */ }
 }
@@ -3097,7 +3117,13 @@ function openHistory(){
 }
 function renderHistory(){
   const isOwnerDev = localStorage.getItem('hf_is_admin') === 'true';
+  const myEmail = (getUserEmail() || '').toLowerCase();
   let orders = store.get('orders', []).sort((a,b) => b.timestamp - a.timestamp);
+  
+  // 🔐 Safety filter — only my orders (admin skip)
+  if (!isOwnerDev && myEmail){
+    orders = orders.filter(o => (o.accountEmail || '').toLowerCase() === myEmail);
+  }
   orders = orders.filter(o => {
     if (isOwnerDev && o.byAdmin) return false;
     const st = getOrderStatus(o).text;
@@ -3128,7 +3154,12 @@ function openPastHistory(){
 }
 function renderPastHistory(){
   const isOwnerDev = localStorage.getItem('hf_is_admin') === 'true';
+  const myEmail = (getUserEmail() || '').toLowerCase();
   let orders = store.get('orders', []).sort((a,b) => b.timestamp - a.timestamp);
+  
+  if (!isOwnerDev && myEmail){
+    orders = orders.filter(o => (o.accountEmail || '').toLowerCase() === myEmail);
+  }
   orders = orders.filter(o => {
     if (isOwnerDev && o.byAdmin) return false;
     const st = getOrderStatus(o).text;
