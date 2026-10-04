@@ -2924,8 +2924,6 @@ async function verifyOtp(email){
         openModal('cartDrawer');
         toast('Continue your order', 'check');
       }, 400);
-    } else if (pending === 'membership'){
-      setTimeout(() => { openMemberModal(); }, 400);
     }
   } catch(e){
     err(e.message || 'Invalid OTP');
@@ -3261,31 +3259,38 @@ function renderMemberModal(){
   else if (isExpired){ body.innerHTML = buildMemberExpiredHTML(saved); }
   else { body.innerHTML = buildMemberBuyHTML(); }
 }
-async function openMemberModal(skipRoute){
+function openMemberModal(skipRoute){
   // 🔐 Login check for non-admin
   if (!isLoggedIn() && localStorage.getItem('hf_is_admin') !== 'true'){
-    window.__pendingAction = 'membership';
     openLoginModal();
     toast('Please login to access membership', 'warn');
     return;
   }
 
-  // 🔑 ALWAYS fetch fresh from server first (email based)
-  const sessionKey = store.get('session_key', null);
-  const email = store.get('user_email', null);
-  if (sessionKey && email){
-    try {
-      const r = await fetch(`${API_BASE}/api/orders?action=user-data&session_key=${encodeURIComponent(sessionKey)}`);
-      const d = await r.json();
-      if (d.success){
-        store.set('membership_full', d.membership || null);
-      }
-    } catch(e){}
-  }
-
+  // ⚡ INSTANT: Render + open with current cached data
   renderMemberModal();
   openModal('memberModal');
   if (!skipRoute) { try { if (window.location.hash === '#menu') { history.replaceState({ modal:'memberModal' }, '', '#membership'); } else { history.pushState({ modal:'memberModal' }, '', '#membership'); } } catch(e){} }
+
+  // 🔄 Background: fetch fresh from server and re-render if changed
+  const sessionKey = store.get('session_key', null);
+  const email = store.get('user_email', null);
+  if (sessionKey && email){
+    fetch(`${API_BASE}/api/orders?action=user-data&session_key=${encodeURIComponent(sessionKey)}`)
+      .then(r => r.json())
+      .then(d => {
+        if (d.success){
+          const newMem = d.membership || null;
+          const oldMem = store.get('membership_full', null);
+          const changed = JSON.stringify(newMem) !== JSON.stringify(oldMem);
+          if (changed){
+            store.set('membership_full', newMem);
+            renderMemberModal();
+          }
+        }
+      })
+      .catch(e => {});
+  }
 }
 document.addEventListener('click', async (e) => {
   const t = e.target.closest('[data-member-action]');
