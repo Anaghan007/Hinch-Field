@@ -2907,8 +2907,8 @@ async function syncMyOrders(){
                 safe(renderPastHistory, 'delivered.clear.past');
                 openModal('pastHistoryModal');
                 try { history.replaceState({ modal: 'pastHistoryModal' }, '', '#history'); } catch(e){}
-              }, 3200);
-            }, 1200);
+              }, 1800);
+            }, 1000);
           }
           }
         }
