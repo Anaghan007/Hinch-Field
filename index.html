@@ -3750,7 +3750,7 @@ function wire(){
       setTimeout(() => { syncOrders(); }, 500);
     } else { toast('Wrong Passcode','cross'); }
   };
-    $('#adminCancelBtn').onclick = async () => {
+  $('#adminCancelBtn').onclick = async () => {
     const input = $('#adminCancelInput').value.trim(); const result = $('#adminCancelResult');
     if (!input) { result.innerHTML = '<p class="text-[10px]" style="color:#DC2626;">Enter phone or code</p>'; return; }
     const isCode = /^\d{4}$/.test(input); const payload = isCode ? { code: input } : { phone: input };
@@ -3758,45 +3758,10 @@ function wire(){
     try {
       const r = await fetch(`${API_BASE}/api/membership-cancel`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
       const d = await r.json();
-      if (d.success) {
-        result.innerHTML = '<p class="text-[10px]" style="color:#0A0A0A;">✅ Membership cancelled (Code: ' + d.code + ')</p>';
-        $('#adminCancelInput').value = '';
-
-        // 🔑 STEP 1: Clear local membership cache immediately
-        const saved = store.get('membership_full', null);
-        if (saved && saved.code === d.code) {
-          store.set('membership_full', null);
-          appliedMembership = null;
-        }
-
-        // 🔑 STEP 2: Remove from backups too
-        try {
-          const all = store.get('mem_backups', {}) || {};
-          Object.keys(all).forEach(k => { if (all[k] && all[k].code === d.code) delete all[k]; });
-          store.set('mem_backups', all);
-        } catch(e){}
-
-        // 🔑 STEP 3: Refresh from server (source of truth)
-        const sessionKey = store.get('session_key', null);
-        if (sessionKey) {
-          try {
-            const r2 = await fetch(`${API_BASE}/api/orders?action=user-data&session_key=${encodeURIComponent(sessionKey)}&_t=${Date.now()}`, { cache: 'no-store' });
-            const d2 = await r2.json();
-            if (d2.success) {
-              store.set('membership_full', d2.membership || null);
-              appliedMembership = null;
-            }
-          } catch(e) {}
-        }
-
-        renderCart();
-        toast('Membership cancelled', 'cross');
-      } else {
-        result.innerHTML = '<p class="text-[10px]" style="color:#DC2626;">❌ ' + (d.error || 'Not found') + '</p>';
-      }
-    } catch (e) {
-      result.innerHTML = '<p class="text-[10px]" style="color:#DC2626;">Error: ' + e.message + '</p>';
-    }
+      if (d.success) { result.innerHTML = '<p class="text-[10px]" style="color:#0A0A0A;">✅ Membership cancelled (Code: ' + d.code + ')</p>'; $('#adminCancelInput').value = '';
+        const saved = store.get('membership_full', null); if (saved && saved.code === d.code) { store.set('membership_full', null); appliedMembership = null; renderCart(); toast('Membership cancelled', 'cross'); }
+      } else { result.innerHTML = '<p class="text-[10px]" style="color:#DC2626;">❌ ' + (d.error || 'Not found') + '</p>'; }
+    } catch (e) { result.innerHTML = '<p class="text-[10px]" style="color:#DC2626;">Error: ' + e.message + '</p>'; }
     finally { $('#adminCancelBtn').disabled = false; $('#adminCancelBtn').textContent = 'Cancel'; }
   };
   $('#adminSearchId').addEventListener('input', debounce(async () => {
