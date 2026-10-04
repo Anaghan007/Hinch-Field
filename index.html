@@ -3152,7 +3152,10 @@ async function doLogout(){
   renderHistory();
   renderPastHistory();
   toast('Logged out', 'check');
-  
+
+  // 🔑 Clear hash so mobile menu doesn't auto-open after reload
+  try { history.replaceState(null, '', location.pathname + location.search); } catch(_){}
+
   // 🔑 Force reload to clear any cached server response
   setTimeout(() => { location.reload(); }, 500);
 }
