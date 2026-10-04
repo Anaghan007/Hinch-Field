@@ -138,6 +138,16 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       hyphens: auto;
     }
 
+    /* 🔧 Prevent text overflow in cards, grids, chips */
+    .card *, .cat-card *, .track-step *, .user-menu-list *, .modalcard * {
+      min-width: 0;
+      max-width: 100%;
+    }
+
+    .disp, .editorial-h {
+      overflow-wrap: anywhere;
+    }
+
     .grid>*,
     .flex>* {
       min-width: 0;
@@ -204,9 +214,13 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
 
     @media (max-width: 359px) {
       :root {
-        --pad: 12px;
-        --fs-hero: clamp(1.2rem, 5vw, 1.8rem);
-        --fs-h2: clamp(0.95rem, 3vw, 1.25rem);
+        --pad: 10px;
+        --fs-hero: clamp(1.1rem, 5vw, 1.6rem);
+        --fs-h2: clamp(0.9rem, 3vw, 1.15rem);
+      }
+
+      .wrap {
+        padding-inline: 10px;
       }
 
       .cat-card-content {
@@ -215,6 +229,22 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
 
       .card .p-3 {
         padding: 8px;
+      }
+
+      .pill {
+        padding: 12px 20px;
+        font-size: 10px;
+      }
+
+      .micro {
+        font-size: 0.55rem;
+        letter-spacing: 0.15em;
+      }
+    }
+
+    @media (min-width: 360px) and (max-width: 400px) {
+      :root {
+        --pad: 12px;
       }
     }
 
@@ -1405,9 +1435,12 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       margin: 0;
     }
 
+    /* 🔧 FIXED: login-badge syntax error fixed */
     .login-badge {
       position: absolute;
-      top: -2px right: -2px width: 8px;
+      top: -2px;
+      right: -2px;
+      width: 8px;
       height: 8px;
       border-radius: 50%;
       background: #16a34a;
@@ -2365,6 +2398,22 @@ function renderMobileNav(){
   $('#footCats').innerHTML = CATKEYS.map(c => '<li><button class="hover:opacity-60 transition" data-catpage="' + c + '">' + esc(CATMETA[c].name) + '</button></li>').join('');
   const mLogin = $('#mobileLoginBtn'); if (mLogin) mLogin.onclick = () => { closeAll(true); openLoginModal(); };
   const mLogout = $('#mobileLogoutBtn'); if (mLogout) mLogout.onclick = () => { closeAll(true); doLogout(); };
+
+  // 🔧 MOBILE TOUCH FIX — ensure menu items respond on all phones
+  setTimeout(() => {
+    const nav = $('#mobileNav');
+    if (!nav) return;
+    nav.querySelectorAll('a').forEach(a => {
+      a.style.touchAction = 'manipulation';
+      a.style.pointerEvents = 'auto';
+      a.style.cursor = 'pointer';
+      a.style.webkitTapHighlightColor = 'transparent';
+    });
+    const mL = $('#mobileLoginBtn');
+    if (mL) mL.onclick = (e) => { e.preventDefault(); e.stopPropagation(); closeAll(true); openLoginModal(); };
+    const mO = $('#mobileLogoutBtn');
+    if (mO) mO.onclick = (e) => { e.preventDefault(); e.stopPropagation(); closeAll(true); doLogout(); };
+  }, 0);
 }
 
 function renderShopCats() {
@@ -2507,7 +2556,6 @@ function clearCheckoutFields(){
 function renderCart(){
   const n = cart.reduce((a,l) => a + (Number(l.qty)||0), 0);
   if (cart.length === 0) clearCheckoutFields();
-  // 🔐 Login prompt show/hide
   const prompt = $('#cartLoginPrompt');
   if (prompt){
     if (!isLoggedIn() && localStorage.getItem('hf_is_admin') !== 'true' && cart.length > 0){
@@ -2698,15 +2746,13 @@ function statusTimeline(order, animate){
   const ci = currentStageIdx(order);
   if (ci === -1) { return '<p class="text-xs font-medium flex items-center gap-2" style="color:#DC2626;">' + ic('cross','w-4 h-4') + 'Order Cancelled</p>'; }
 
-  // 🔑 Track last animated stage per order
   window.__timelineStage = window.__timelineStage || {};
   const lastStage = window.__timelineStage[order.id];
   const shouldAnimate = animate && (lastStage === undefined || ci > lastStage);
   const baseStage = (lastStage === undefined) ? -1 : lastStage;
 
-  // ⚡ Timing constants — used by handleDeliveredTransition to sync popup
-  const CIRCLE_DELAY = 180;   // ms between circles
-  const CIRCLE_ANIM  = 500;   // must match popCircle CSS duration
+  const CIRCLE_DELAY = 180;
+  const CIRCLE_ANIM  = 500;
 
   let html = '<div class="track-wrap"><div class="track-timeline">';
   html += STAGES.map((s, i) => {
@@ -2714,7 +2760,6 @@ function statusTimeline(order, animate){
     const active = i === ci;
     const cls = done ? 'done' : (active ? 'active' : '');
 
-    // 🎬 Only circle animation — NO line animation
     let animCls = '';
     let animDelay = 0;
     if (shouldAnimate && done && i > baseStage){
@@ -2771,7 +2816,6 @@ function placeOrder(){
   const err = m => { const e = $('#coErr'); e.textContent = m; e.classList.remove('hidden'); };
   $('#coErr').classList.add('hidden');
   if (!cart.length) return err('Cart is empty — add products first.');
-  // 🔐 Login check first
   if (!isLoggedIn() && localStorage.getItem('hf_is_admin') !== 'true'){
     window.__pendingAction = 'checkout';
     const loginEmail = $('#coEmail') ? $('#coEmail').value.trim() : '';
@@ -2801,19 +2845,15 @@ function placeOrder(){
   const oid = 'HF' + String(Date.now()).slice(-6);
   const otp = String(Math.floor(1000 + Math.random() * 9000));
   const isAdminDevice = localStorage.getItem('hf_is_admin') === 'true';
-  // 🔑 Account email = session email (order save)
   const accountEmail = getUserEmail();
-  // 🔑 Invoice email = cart field (invoice send)
   const invoiceEmail = email;
-  
-  console.log('📧 Order — account:', accountEmail, '| invoice:', invoiceEmail);
   
   const order = {
     id: oid, otp, timestamp: Date.now(), status: 'Order Placed', updatedAt: Date.now(),
     customer: { 
       name, phone, 
-      email: invoiceEmail,        // ← Invoice email (from cart)
-      accountEmail: accountEmail, // ← Order save email (from session)
+      email: invoiceEmail,
+      accountEmail: accountEmail,
       addr, city, state, pin 
     },
     items: JSON.parse(JSON.stringify(cart)), totals: t, deliveredAt: null, payment: { method: 'cod' },
@@ -2821,22 +2861,13 @@ function placeOrder(){
   };
   const orders = store.get('orders', []);
   orders.push(order); store.set('orders', orders);
-  // Save customer info
   if (isLoggedIn()) {
     store.set('user', { name, phone, email });
   }
-  console.log('═══════════════ ORDER PLACED ═══════════════');
-  console.log('Order ID:', order.id);
-  console.log('Order email:', order.customer.email);
-  console.log('Session email:', getUserEmail());
-  console.log('Match:', order.customer.email === getUserEmail() ? '✅' : '❌ MISMATCH');
-  console.log('════════════════════════════════════════════');
-  
   notifyNewOrder(order);
   saveOrderToServer(order);
   cart = []; store.set('cart', []);
   renderCart();
-  // ⏱️ Delay sync — server needs time to save order + link
   setTimeout(() => syncOrders(), 2000);
   closeModal('cartDrawer', true);
   try { history.replaceState(null, '', location.pathname + location.search); } catch(e){}
@@ -2882,13 +2913,12 @@ function savePaidOrder(customer, t, razorpayResponse){
   const oid = 'HF' + String(Date.now()).slice(-6);
   const otp = String(Math.floor(1000 + Math.random() * 9000));
   const isAdminDevice = localStorage.getItem('hf_is_admin') === 'true';
-  // 🔑 Account email = session email
   const accountEmail = getUserEmail();
   const order = {
     id: oid, otp, timestamp: Date.now(), status: 'Order Confirmed', updatedAt: Date.now(),
     customer: { 
-      ...customer,                    // Invoice email (from cart)
-      accountEmail: accountEmail      // Order save email (from session)
+      ...customer,
+      accountEmail: accountEmail
     }, 
     items: JSON.parse(JSON.stringify(cart)), totals: t, deliveredAt: null,
     payment: { method: 'online', razorpay_order_id: razorpayResponse.razorpay_order_id, razorpay_payment_id: razorpayResponse.razorpay_payment_id, verified: true },
@@ -2902,7 +2932,6 @@ function savePaidOrder(customer, t, razorpayResponse){
 async function handleOnlinePayment(){
   const btn = $('#payOnline');
   if (!btn || btn.disabled) return;
-  // 🔐 Login check first
   if (!isLoggedIn() && localStorage.getItem('hf_is_admin') !== 'true'){
     window.__pendingAction = 'checkout';
     const loginEmail = $('#coEmail') ? $('#coEmail').value.trim() : '';
@@ -3077,7 +3106,6 @@ async function verifyOtp(email){
     const d = await r.json();
     if (!d.success) throw new Error(d.error || 'Invalid OTP');
 
-    // 🔑 Clear ALL old user data
     store.del('session_key');
     store.del('user_email');
     store.del('user');
@@ -3086,7 +3114,6 @@ async function verifyOtp(email){
     store.del('membership_full');
     appliedMembership = null;
 
-    // Save new session
     store.set('session_key', d.session_key);
     store.set('user_email', email);
     if (d.user && d.user.name) store.set('user', { name: d.user.name, phone: d.user.phone || '', email });
@@ -3094,7 +3121,6 @@ async function verifyOtp(email){
     store.set('orders', []);
     store.set('membership_full', d.membership || null);
 
-    // 🔑 Save pending action (checkout / membership) so we can resume after reload
     if (window.__pendingAction){
       try { localStorage.setItem('hf_pending_action', window.__pendingAction); } catch(_){}
     }
@@ -3102,10 +3128,8 @@ async function verifyOtp(email){
     closeModal('otpModal', true);
     toast('Logged in successfully', 'check');
 
-    // 🔑 Clear hash so mobile menu doesn't auto-open after reload
     try { history.replaceState(null, '', location.pathname + location.search); } catch(_){}
 
-    // 🔑 MAGIC — reload page. Init syncs fresh data from server.
     setTimeout(() => { location.reload(); }, 350);
     return;
 
@@ -3119,7 +3143,6 @@ async function doLogout(){
   const sessionKey = store.get('session_key', null);
   const email = store.get('user_email', null);
   const mem = store.get('membership_full', null);
-  // 🔑 Backup membership keyed by email — for 0ms restore on next login
   if (email && mem && mem.code){
     try {
       const all = store.get('mem_backups', {}) || {};
@@ -3135,7 +3158,6 @@ async function doLogout(){
       });
     } catch(e){}
   }
-  // 🔑 Clear ALL user-specific browser data
   store.del('session_key');
   store.del('user_email');
   store.del('orders');
@@ -3153,10 +3175,8 @@ async function doLogout(){
   renderPastHistory();
   toast('Logged out', 'check');
 
-  // 🔑 Clear hash so mobile menu doesn't auto-open after reload
   try { history.replaceState(null, '', location.pathname + location.search); } catch(_){}
 
-  // 🔑 Force reload to clear any cached server response
   setTimeout(() => { location.reload(); }, 500);
 }
 
@@ -3166,7 +3186,7 @@ function updateAuthUI(){
   const loginBtn = $('#loginBtn');
   const userMenu = $('#userMenu');
   const authArea = $('#authArea');
-  if (authArea) authArea.style.display = ''; // wrapper handle mobile hide
+  if (authArea) authArea.style.display = '';
   if (loggedIn){
     if (loginBtn) loginBtn.style.display = 'none';
     if (userMenu) userMenu.style.display = 'block';
@@ -3186,7 +3206,6 @@ async function syncOrders(silent){
     const sessionKey = store.get('session_key', null);
     const email = store.get('user_email', null);
 
-    // 🔑 Build both URLs
     const userUrl = (sessionKey && email)
       ? `${API_BASE}/api/orders?action=user-data&session_key=${encodeURIComponent(sessionKey)}`
       : null;
@@ -3200,7 +3219,6 @@ async function syncOrders(silent){
     const d = await r.json();
     if (!d.success) return;
 
-    // 🔑 ADMIN + logged in → also fetch user-data so membership updates
     let userData = d;
     if (isAdmin && userUrl){
       try {
@@ -3259,8 +3277,7 @@ async function syncOrders(silent){
       if (changed) store.set('orders', local);
     }
 
-    // 🔑 Membership — always from userData (works on admin device too)
-        if (userData.membership !== undefined) {
+    if (userData.membership !== undefined) {
         let mem = userData.membership || null;
 
         if (mem && mem.status && String(mem.status).toLowerCase() === 'cancelled') mem = null;
@@ -3268,12 +3285,10 @@ async function syncOrders(silent){
 
         const oldMem = store.get('membership_full', null);
 
-        // 🛡️ GRACE PERIOD: fresh purchase (< 60s) — don't let server null wipe it
         const freshBuy = !mem && oldMem && oldMem.code && oldMem.activatedAt
             && (Date.now() - oldMem.activatedAt < 60000);
 
         if (!freshBuy) {
-            // Carry forward activatedAt for same code
             if (mem && oldMem && oldMem.code === mem.code && oldMem.activatedAt) {
                 mem.activatedAt = oldMem.activatedAt;
             }
@@ -3307,21 +3322,16 @@ function handleDeliveredTransition(orderId, isAdmin){
   window.__delivering = window.__delivering || {};
   window.__delivering[orderId] = true;
 
-  // 🎬 First render — progressive circle animation plays automatically
   safe(renderHistory, 'delivered.render');
 
-  // ⚡ SYNC: time for the LAST circle to finish filling
-  // Worst case = 6 new circles → 5×180ms delay + 500ms anim ≈ 1400ms
-  // Typical case (Out For Delivery → Delivered) = 1 new circle → 500ms
   const orders = store.get('orders', []);
   const o = orders.find(x => x.id === orderId);
   const lastStage = (window.__timelineStage && window.__timelineStage[orderId] !== undefined)
     ? window.__timelineStage[orderId]
     : 0;
   const newCircles = Math.max(1, currentStageIdx(o || {}) - lastStage);
-  const fillMs = (newCircles - 1) * 180 + 500;   // 180ms delay + 500ms anim
+  const fillMs = (newCircles - 1) * 180 + 500;
 
-  // 🔑 Admin device — only animation, no popup
   if (isAdmin){
     setTimeout(() => {
       if (window.__delivering) delete window.__delivering[orderId];
@@ -3331,7 +3341,6 @@ function handleDeliveredTransition(orderId, isAdmin){
     return;
   }
 
-  // 🔑 Customer — popup comes RIGHT AFTER last circle fills
   if (document.visibilityState === 'visible'){
     setTimeout(() => {
       if (!window.__delivering || !window.__delivering[orderId]) return;
@@ -3340,7 +3349,6 @@ function handleDeliveredTransition(orderId, isAdmin){
       if (idEl) idEl.textContent = orderId;
       openModal('orderDeliveredModal');
 
-      // Popup visible for 1500ms, then auto-redirect to history
       setTimeout(() => {
         if (window.__delivering) delete window.__delivering[orderId];
         closeModal('orderDeliveredModal', true);
@@ -3349,7 +3357,7 @@ function handleDeliveredTransition(orderId, isAdmin){
         openModal('pastHistoryModal');
         try { history.replaceState({ modal: 'pastHistoryModal' }, '', '#history'); } catch(e){}
       }, 1500);
-    }, fillMs);   // ← popup appears exactly when last circle finishes
+    }, fillMs);
   }
 }
 
@@ -3360,7 +3368,6 @@ function openHistory(){
     toast('Login to view orders', 'warn');
     return;
   }
-  // 🔑 Reset tracker — fresh open shows current state without animation
   window.__timelineStage = {};
   renderHistory();
   openModal('historyModal');
@@ -3393,7 +3400,6 @@ function openPastHistory(){
     toast('Login to view history', 'warn');
     return;
   }
-  // 🔑 Reset tracker
   window.__timelineStage = {};
   renderPastHistory();
   openModal('pastHistoryModal');
@@ -3580,14 +3586,12 @@ function renderMemberModal(){
   else { body.innerHTML = buildMemberBuyHTML(); }
 }
 function openMemberModal(skipRoute){
-    // 🔐 Login check for non-admin
     if (!isLoggedIn() && localStorage.getItem('hf_is_admin') !== 'true'){
         openLoginModal();
         toast('Please login to access membership', 'warn');
         return;
     }
 
-    // ⚡ INSTANT OPEN — no waiting, no checking screen
     renderMemberModal();
     openModal('memberModal');
 
@@ -3601,7 +3605,6 @@ function openMemberModal(skipRoute){
         } catch(e){}
     }
 
-    // 🔄 Background refresh only — popup already open
     const sessionKey = store.get('session_key', null);
     const email = store.get('user_email', null);
 
@@ -3620,18 +3623,14 @@ function openMemberModal(skipRoute){
 
             const oldMem = store.get('membership_full', null);
 
-            // 🛡️ Protection 1: fresh purchase (<60s) — never wipe
             if (!newMem && oldMem && oldMem.code && oldMem.activatedAt && (Date.now() - oldMem.activatedAt < 60000)) {
                 return;
             }
 
-            // 🛡️ Protection 2: server returned null, but local has valid code → don't wipe
-            // (server may not have synced yet, or email mismatch on backend)
             if (!newMem && oldMem && oldMem.code && isMembershipValid(oldMem)) {
                 return;
             }
 
-            // Keep activatedAt for same code
             if (newMem && oldMem && oldMem.code === newMem.code && oldMem.activatedAt){
                 newMem.activatedAt = oldMem.activatedAt;
             }
@@ -3647,16 +3646,12 @@ function openMemberModal(skipRoute){
                     clearAppliedMembershipUI();
                 } else {
                     appliedMembership = null;
-
                     const mc = $('#memberCode');
                     if (mc) mc.value = '';
-
                     const na = $('#memberNotApplied');
                     const ap = $('#memberApplied');
-
                     if (na) na.classList.remove('hidden');
                     if (ap) ap.classList.add('hidden');
-
                     renderCart();
                 }
             }
@@ -3677,7 +3672,6 @@ document.addEventListener('click', async (e) => {
   if (action === 'renew'){ const body = $('#memberModalBody'); if (body) body.innerHTML = buildMemberBuyHTML({ name: saved?.name || '', phone: saved?.phone || '' }); return; }
   if (action === 'buy'){
     if (t.disabled) return;
-    // 🔐 Login check first
     if (!isLoggedIn() && localStorage.getItem('hf_is_admin') !== 'true'){
       window.__pendingAction = 'membership';
       closeModal('memberModal', true);
@@ -3686,7 +3680,6 @@ document.addEventListener('click', async (e) => {
       return;
     }
     const err = m => { const el = $('#memBuyErr'); if (el) { el.textContent=m; el.classList.remove('hidden'); } return false; };
-    // 🔑 Name & phone from logged-in session (inputs removed)
     const sessionUser = store.get('user', null) || {};
     const name = (sessionUser.name || '').trim() || 'Member';
     const phone = (sessionUser.phone || store.get('last_phone', '') || '').replace(/[^0-9]/g,'') || '0000000000';
@@ -3882,7 +3875,6 @@ async function applyMemberFn(){
     const code = ($('#memberCode')?.value || '').trim();
     if(!/^\d{4}$/.test(code)) return toast('Enter Your 4-digit code','warn');
 
-    // 🛡️ LOCAL FIRST — instant apply if code matches cache
     const localMem = store.get('membership_full', null);
     if (localMem && localMem.code === code && isMembershipValid(localMem)) {
         appliedMembership = { code, name: localMem.name || '', expiresAt: localMem.expiresAt };
@@ -3945,8 +3937,6 @@ async function applyMemberFn(){
                 renderCart();
                 toast('Member applied — 50% off!','check');
             } else {
-                // 🛡️ Only clear cache if the entered code MATCHES saved code.
-                // Random wrong code → just show invalid, DO NOT touch cache.
                 const savedMem = store.get('membership_full', null);
                 if (savedMem && savedMem.code === code){
                     store.set('membership_full', null);
@@ -3955,7 +3945,6 @@ async function applyMemberFn(){
                 toast(d.error || 'Invalid code','cross');
             }
         } catch(e){
-            // 🛡️ Network error → don't wipe cache, just notify
             toast('Server verification failed','cross');
         } finally {
             btn.disabled = false;
@@ -3977,7 +3966,6 @@ async function applyMemberFn(){
   $('#adminLoginBtn').onclick = async () => {
     if ($('#adminPass').value === 'HF2026'){
       adminAuth = true; localStorage.setItem('hf_is_admin', 'true');
-      // ⚠️ store.set('orders', []) REMOVED — admin needs to keep local orders
       $('#adminLoginBox').classList.add('hidden'); $('#adminDashBox').classList.remove('hidden');
       toast('Admin Unlocked','lock');
       try { const deviceId = await getDeviceId(); await fetch(`${API_BASE}/api/orders?action=set-admin`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ deviceId, pwd: 'HF2026' }) }); } catch(e){}
@@ -4026,8 +4014,6 @@ async function applyMemberFn(){
             }
         } else {
             result.innerHTML = '<p class="text-[10px]" style="color:#DC2626;">❌ ' + (d.error || 'Not found') + '</p>';
-
-            // Server par not found hoy, pan local cache ma juno code hoy to clear karo
             if (matchLocal){
                 store.set('membership_full', null);
                 clearAppliedMembershipUI();
@@ -4045,7 +4031,6 @@ async function applyMemberFn(){
     if (q.length < 3){ res.innerHTML = ''; return; }
     let orders = store.get('orders', []);
     let o = orders.find(x => x.id.indexOf(q) > -1);
-    // 🔄 Server fallback if not found locally
     if (!o){
       res.innerHTML = '<p class="text-xs text-center" style="color:var(--mut);">Searching server…</p>';
       try {
@@ -4079,14 +4064,11 @@ async function applyMemberFn(){
       }
       try { await fetch(`${API_BASE}/api/orders?action=update`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: o.id, status: v, pwd: 'HF2026' }) }); } catch(e){}
       toast('Status Updated','check');
-      // 🎬 Trigger animation for new stage
       if (idx !== -1){
         window.__delivering = window.__delivering || {};
         window.__delivering[o.id] = true;
-        // Re-render with animation
         const hm = $('#historyModal');
         if (hm && !hm.classList.contains('hidden')) renderHistory();
-        // Clear flag after animation
         setTimeout(() => {
           if (window.__delivering) delete window.__delivering[o.id];
         }, 3000);
@@ -4119,13 +4101,11 @@ async function applyMemberFn(){
       if (!isLoggedIn() && localStorage.getItem('hf_is_admin') !== 'true') { scheduleSync(); return; }
       const hm = $('#historyModal'); const hpm = $('#pastHistoryModal');
       const isOpen = (hm && !hm.classList.contains('hidden')) || (hpm && !hpm.classList.contains('hidden'));
-      // 🔑 Only sync when modal open OR 30s background
       const gap = isOpen ? 5000 : 30000;
       if (Date.now() - (syncOrders._last || 0) >= gap - 500) syncOrders();
       scheduleSync();
     }, gap => 5000);
   }
-  // ⏱️ Delay first sync — avoid spam
   setTimeout(() => scheduleSync(), 3000);
 }
 
@@ -4187,9 +4167,8 @@ function showInvoice(order){
   if (!window.location.hash) setTimeout(() => { try { window.scrollTo(0, 0); } catch(e){} }, 50);
     verifyAdminStatus().then(async () => {
     if (isLoggedIn() || localStorage.getItem('hf_is_admin') === 'true') {
-      await syncOrders(true);   // 🔑 wait for fresh data BEFORE anything else
+      await syncOrders(true);
     }
-    // 🔑 Resume pending action after reload
     let pending = null;
     try { pending = localStorage.getItem('hf_pending_action'); localStorage.removeItem('hf_pending_action'); } catch(_){}
     if (pending === 'checkout'){
