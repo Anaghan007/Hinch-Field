@@ -3563,7 +3563,7 @@ function renderMemberModal(){
   else if (isExpired){ body.innerHTML = buildMemberExpiredHTML(saved); }
   else { body.innerHTML = buildMemberBuyHTML(); }
 }
-async function openMemberModal(skipRoute){
+function openMemberModal(skipRoute){
     // 🔐 Login check for non-admin
     if (!isLoggedIn() && localStorage.getItem('hf_is_admin') !== 'true'){
         openLoginModal();
@@ -3571,101 +3571,7 @@ async function openMemberModal(skipRoute){
         return;
     }
 
-    let saved = store.get('membership_full', null);
-
-    // 🔍 Silent server verify before showing modal — no loading UI
-    if (saved && saved.code && isMembershipValid(saved)) {
-        const oldCode = saved.code;
-        const sessionKey = store.get('session_key', null);
-        const email = store.get('user_email', null);
-        let verified = null;
-
-        // First try user-data if logged in
-        if (sessionKey && email){
-            try {
-                const ctl = new AbortController();
-                const to = setTimeout(() => ctl.abort(), 1200);
-
-                const r = await fetch(`${API_BASE}/api/orders?action=user-data&session_key=${encodeURIComponent(sessionKey)}`, {
-                    signal: ctl.signal,
-                    cache: 'no-store'
-                });
-
-                clearTimeout(to);
-                const d = await r.json();
-
-                if (d.success){
-                    const mem = d.membership || null;
-
-                    if (mem && mem.code === oldCode && isMembershipValid(mem)){
-                        verified = true;
-                        saved = Object.assign({}, saved, mem, { status: mem.status || 'active' });
-                        store.set('membership_full', saved);
-                    } else {
-                        verified = false;
-                    }
-                }
-            } catch(e){}
-        }
-
-        // Fallback: direct membership verify
-        if (verified === null){
-            try {
-                const deviceId = await getDeviceId();
-                const ctl = new AbortController();
-                const to = setTimeout(() => ctl.abort(), 1200);
-
-                const r = await fetch(`${API_BASE}/api/membership-verify`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ code: oldCode, deviceId }),
-                    signal: ctl.signal,
-                    cache: 'no-store'
-                });
-
-                clearTimeout(to);
-                const d = await r.json();
-
-                if (d.success){
-                    verified = true;
-                    saved = Object.assign({}, saved, {
-                        name: d.name || saved.name,
-                        expiresAt: d.expiresAt || saved.expiresAt,
-                        status: 'active'
-                    });
-                    store.set('membership_full', saved);
-                } else {
-                    verified = false;
-                }
-            } catch(e){}
-        }
-
-        // ❌ Server says not found / cancelled / invalid
-        if (verified === false){
-            store.set('membership_full', null);
-
-            if (appliedMembership && appliedMembership.code === oldCode){
-                clearAppliedMembershipUI();
-            }
-
-            saved = null;
-        }
-    }
-
-    // If local saved membership is explicitly cancelled/expired by status
-    if (saved && saved.code && !isMembershipValid(saved)){
-        if ((saved.status && String(saved.status).toLowerCase() === 'cancelled') || saved.cancelled === true){
-            store.set('membership_full', null);
-
-            if (appliedMembership && appliedMembership.code === saved.code){
-                clearAppliedMembershipUI();
-            }
-
-            saved = null;
-        }
-    }
-
-    // Direct final render
+    // ⚡ INSTANT OPEN — no waiting, no checking screen
     renderMemberModal();
     openModal('memberModal');
 
@@ -3677,6 +3583,64 @@ async function openMemberModal(skipRoute){
                 history.pushState({ modal:'memberModal' }, '', '#membership');
             }
         } catch(e){}
+    }
+
+    // 🔄 Background refresh only — popup already open
+    const sessionKey = store.get('session_key', null);
+    const email = store.get('user_email', null);
+
+    if (sessionKey && email){
+        fetch(`${API_BASE}/api/orders?action=user-data&session_key=${encodeURIComponent(sessionKey)}`, {
+            cache: 'no-store'
+        })
+        .then(r => r.json())
+        .then(d => {
+            if (!d.success) return;
+
+            let newMem = d.membership || null;
+
+            if (newMem && newMem.status && String(newMem.status).toLowerCase() === 'cancelled') newMem = null;
+            if (newMem && newMem.cancelled === true) newMem = null;
+
+            const oldMem = store.get('membership_full', null);
+
+            // ⚡ New membership just bought? Don't let slow server sync remove it instantly
+            if (!newMem && oldMem && oldMem.code && oldMem.activatedAt && (Date.now() - oldMem.activatedAt < 60000)) {
+                return;
+            }
+
+            // Keep activatedAt for same code
+            if (newMem && oldMem && oldMem.code === newMem.code && oldMem.activatedAt){
+                newMem.activatedAt = oldMem.activatedAt;
+            }
+
+            const changed = JSON.stringify(newMem) !== JSON.stringify(oldMem);
+            if (!changed) return;
+
+            store.set('membership_full', newMem);
+
+            if (!newMem && appliedMembership){
+                if (typeof clearAppliedMembershipUI === 'function'){
+                    clearAppliedMembershipUI();
+                } else {
+                    appliedMembership = null;
+
+                    const mc = $('#memberCode');
+                    if (mc) mc.value = '';
+
+                    const na = $('#memberNotApplied');
+                    const ap = $('#memberApplied');
+
+                    if (na) na.classList.remove('hidden');
+                    if (ap) ap.classList.add('hidden');
+
+                    renderCart();
+                }
+            }
+
+            renderMemberModal();
+        })
+        .catch(() => {});
     }
 }
 document.addEventListener('click', async (e) => {
