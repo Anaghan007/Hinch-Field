@@ -2861,10 +2861,10 @@ function openOtpModal(email){
       <svg class="w-12 h-12 mx-auto mb-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
       <p class="micro mb-2">HINCHFIELD</p>
       <h3 class="disp editorial-h font-luxe text-2xl mb-1">Verify OTP</h3>
-      <p class="text-xs" style="color:var(--mut);">We sent a 6-digit code to</p>
+      <p class="text-xs" style="color:var(--mut);">We sent a 4-digit code to</p>
       <p class="text-xs font-medium mt-1" style="color:var(--text);word-break:break-all;">${esc(email)}</p>
     </div>
-    <input id="otpInput" type="text" inputmode="numeric" maxlength="6" pattern="[0-9]*" class="field mb-3 text-center" placeholder="• • • • • •" style="font-size:1.5rem;letter-spacing:.6em;text-align:center;">
+    <input id="otpInput" type="text" inputmode="numeric" maxlength="4" pattern="[0-9]*" class="field mb-3 text-center" placeholder="• • • •" style="font-size:1.5rem;letter-spacing:.6em;text-align:center;">
     <p id="otpErr" class="text-[11px] hidden mb-3" style="color:#DC2626;"></p>
     <button id="otpVerify" class="pill btn-gold w-full py-4">Verify & Login</button>
     <button id="otpResend" class="pill btn-line w-full py-3 mt-2 text-[10px]">Resend OTP</button>
@@ -2888,7 +2888,7 @@ async function verifyOtp(email){
   const otp = ($('#otpInput').value || '').trim();
   const err = m => { const e = $('#otpErr'); e.textContent = m; e.classList.remove('hidden'); return false; };
   $('#otpErr').classList.add('hidden');
-  if (!/^\d{6}$/.test(otp)) return err('Enter 6-digit OTP');
+  if (!/^\d{4}$/.test(otp)) return err('Enter 4-digit OTP');
   if (btn){ btn.disabled = true; btn.textContent = 'Verifying…'; }
   try {
     const deviceId = await getDeviceId();
