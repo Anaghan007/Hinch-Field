@@ -3104,25 +3104,23 @@ async function syncOrders(silent){
     const sessionKey = store.get('session_key', null);
     const email = store.get('user_email', null);
 
-    // 🔑 Build both URLs
     const userUrl = (sessionKey && email)
-      ? `${API_BASE}/api/orders?action=user-data&session_key=${encodeURIComponent(sessionKey)}`
+      ? `${API_BASE}/api/orders?action=user-data&session_key=${encodeURIComponent(sessionKey)}&_t=${Date.now()}`
       : null;
 
     let mainUrl;
-    if (isAdmin) mainUrl = `${API_BASE}/api/orders?action=list&pwd=HF2026`;
+    if (isAdmin) mainUrl = `${API_BASE}/api/orders?action=list&pwd=HF2026&_t=${Date.now()}`;
     else if (userUrl) mainUrl = userUrl;
     else return;
 
-    const r = await fetch(mainUrl);
+    const r = await fetch(mainUrl, { cache:'no-store' });
     const d = await r.json();
     if (!d.success) return;
 
-    // 🔑 ADMIN + logged in → also fetch user-data so membership updates
     let userData = d;
     if (isAdmin && userUrl){
       try {
-        const uRes = await fetch(userUrl);
+        const uRes = await fetch(userUrl, { cache:'no-store' });
         const uData = await uRes.json();
         if (uData.success) userData = uData;
       } catch(e){}
@@ -3137,47 +3135,36 @@ async function syncOrders(silent){
     } else {
       const localMap = new Map(local.map(o => [o.id, o]));
       let changed = false;
-
       serverOrders.forEach(serverO => {
         const existing = localMap.get(serverO.id);
-        if (!existing){
-          local.push(serverO);
-          changed = true;
-        } else if (!existing._localOnly && existing.status !== serverO.status){
+        if (!existing){ local.push(serverO); changed = true; }
+        else if (!existing._localOnly && existing.status !== serverO.status){
           const wasNotDelivered = existing.status !== 'Delivered';
           const oldStage = currentStageIdx(existing);
           const newStage = currentStageIdx(serverO);
-
           existing.status = serverO.status;
           existing.updatedAt = serverO.updatedAt || Date.now();
           if (serverO.status === 'Delivered') existing.deliveredAt = serverO.deliveredAt || Date.now();
-
           if (newStage > oldStage){
             window.__delivering = window.__delivering || {};
             window.__delivering[serverO.id] = true;
-
             if (serverO.status === 'Delivered' && wasNotDelivered){
               setTimeout(() => handleDeliveredTransition(serverO.id, isAdmin), 100);
             } else {
               setTimeout(() => {
-                const hm = $('#historyModal');
-                if (hm && !hm.classList.contains('hidden')) renderHistory();
-                const ph = $('#pastHistoryModal');
-                if (ph && !ph.classList.contains('hidden')) renderPastHistory();
-                setTimeout(() => {
-                  if (window.__delivering) delete window.__delivering[serverO.id];
-                }, 3000);
+                const hm = $('#historyModal'); if (hm && !hm.classList.contains('hidden')) renderHistory();
+                const ph = $('#pastHistoryModal'); if (ph && !ph.classList.contains('hidden')) renderPastHistory();
+                setTimeout(() => { if (window.__delivering) delete window.__delivering[serverO.id]; }, 3000);
               }, 100);
             }
           }
           changed = true;
         }
       });
-
       if (changed) store.set('orders', local);
     }
 
-    // 🔑 Membership — always from userData (works on admin device too)
+    // 🔑 Membership — always update
     if (userData.membership !== undefined) {
       store.set('membership_full', userData.membership || null);
       renderCart();
@@ -3185,10 +3172,8 @@ async function syncOrders(silent){
     if (userData.user && userData.user.phone) store.set('last_phone', userData.user.phone);
 
     if (!window.__delivering){
-      const hm = $('#historyModal');
-      if (hm && !hm.classList.contains('hidden')) renderHistory();
-      const ph = $('#pastHistoryModal');
-      if (ph && !ph.classList.contains('hidden')) renderPastHistory();
+      const hm = $('#historyModal'); if (hm && !hm.classList.contains('hidden')) renderHistory();
+      const ph = $('#pastHistoryModal'); if (ph && !ph.classList.contains('hidden')) renderPastHistory();
     }
   } catch(e){ console.warn('syncOrders:', e); }
 }
@@ -3471,36 +3456,50 @@ function renderMemberModal(){
   else { body.innerHTML = buildMemberBuyHTML(); }
 }
 function openMemberModal(skipRoute){
-  // 🔐 Login check for non-admin
   if (!isLoggedIn() && localStorage.getItem('hf_is_admin') !== 'true'){
     openLoginModal();
     toast('Please login to access membership', 'warn');
     return;
   }
 
-  // ⚡ INSTANT: Render + open with current cached data
-  renderMemberModal();
-  openModal('memberModal');
-  if (!skipRoute) { try { if (window.location.hash === '#menu') { history.replaceState({ modal:'memberModal' }, '', '#membership'); } else { history.pushState({ modal:'memberModal' }, '', '#membership'); } } catch(e){} }
-
-  // 🔄 Background: fetch fresh from server and re-render if changed
   const sessionKey = store.get('session_key', null);
   const email = store.get('user_email', null);
+
+  // 🔑 ALWAYS fetch fresh — never trust cache (fixes cancel issue)
   if (sessionKey && email){
-    fetch(`${API_BASE}/api/orders?action=user-data&session_key=${encodeURIComponent(sessionKey)}`)
+    const body = $('#memberModalBody');
+    if (body) body.innerHTML =
+      '<div class="text-center py-12">' +
+        '<div style="width:56px;height:56px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--text);margin:0 auto 20px;animation:spin 0.8s linear infinite;"></div>' +
+        '<p class="micro mb-2">HINCHFIELD</p>' +
+        '<p class="disp editorial-h font-luxe text-xl">Loading Membership…</p>' +
+      '</div>';
+    openModal('memberModal');
+    if (!skipRoute){
+      try {
+        if (window.location.hash === '#menu') history.replaceState({ modal:'memberModal' }, '', '#membership');
+        else history.pushState({ modal:'memberModal' }, '', '#membership');
+      } catch(e){}
+    }
+    fetch(`${API_BASE}/api/orders?action=user-data&session_key=${encodeURIComponent(sessionKey)}&_t=${Date.now()}`, { cache:'no-store' })
       .then(r => r.json())
       .then(d => {
-        if (d.success){
-          const newMem = d.membership || null;
-          const oldMem = store.get('membership_full', null);
-          const changed = JSON.stringify(newMem) !== JSON.stringify(oldMem);
-          if (changed){
-            store.set('membership_full', newMem);
-            renderMemberModal();
-          }
-        }
+        console.log('🔍 user-data response:', d);
+        if (d.success) store.set('membership_full', d.membership || null);
       })
-      .catch(e => {});
+      .catch(e => console.error('Membership fetch failed:', e))
+      .finally(() => { renderMemberModal(); });
+    return;
+  }
+
+  // No session — just render from cache
+  renderMemberModal();
+  openModal('memberModal');
+  if (!skipRoute){
+    try {
+      if (window.location.hash === '#menu') history.replaceState({ modal:'memberModal' }, '', '#membership');
+      else history.pushState({ modal:'memberModal' }, '', '#membership');
+    } catch(e){}
   }
 }
 document.addEventListener('click', async (e) => {
@@ -3758,8 +3757,18 @@ function wire(){
     try {
       const r = await fetch(`${API_BASE}/api/membership-cancel`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
       const d = await r.json();
-      if (d.success) { result.innerHTML = '<p class="text-[10px]" style="color:#0A0A0A;">✅ Membership cancelled (Code: ' + d.code + ')</p>'; $('#adminCancelInput').value = '';
-        const saved = store.get('membership_full', null); if (saved && saved.code === d.code) { store.set('membership_full', null); appliedMembership = null; renderCart(); toast('Membership cancelled', 'cross'); }
+     if (d.success) {
+      result.innerHTML = '<p class="text-[10px]" style="color:#0A0A0A;">✅ Membership cancelled (Code: ' + d.code + ')</p>';
+      $('#adminCancelInput').value = '';
+      const saved = store.get('membership_full', null);
+      if (saved && saved.code === d.code) {
+        store.set('membership_full', null);
+        appliedMembership = null;
+        renderCart();
+        toast('Membership cancelled', 'cross');
+      }
+      setTimeout(() => syncOrders(true), 400);   // ← આ ઉમેરો
+    }
       } else { result.innerHTML = '<p class="text-[10px]" style="color:#DC2626;">❌ ' + (d.error || 'Not found') + '</p>'; }
     } catch (e) { result.innerHTML = '<p class="text-[10px]" style="color:#DC2626;">Error: ' + e.message + '</p>'; }
     finally { $('#adminCancelBtn').disabled = false; $('#adminCancelBtn').textContent = 'Cancel'; }
