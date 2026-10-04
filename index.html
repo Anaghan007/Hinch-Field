@@ -3114,57 +3114,61 @@ async function syncOrders(silent){
     const sessionKey = store.get('session_key', null);
     const email = store.get('user_email', null);
 
-    let url;
-    if (isAdmin) {
-      url = `${API_BASE}/api/orders?action=list&pwd=HF2026`;
-    } else if (sessionKey && email) {
-      url = `${API_BASE}/api/orders?action=user-data&session_key=${encodeURIComponent(sessionKey)}`;
-    } else {
-      return;
-    }
+    // 🔑 Build both URLs
+    const userUrl = (sessionKey && email)
+      ? `${API_BASE}/api/orders?action=user-data&session_key=${encodeURIComponent(sessionKey)}`
+      : null;
 
-    const r = await fetch(url);
+    let mainUrl;
+    if (isAdmin) mainUrl = `${API_BASE}/api/orders?action=list&pwd=HF2026`;
+    else if (userUrl) mainUrl = userUrl;
+    else return;
+
+    const r = await fetch(mainUrl);
     const d = await r.json();
     if (!d.success) return;
+
+    // 🔑 ADMIN + logged in → also fetch user-data so membership updates
+    let userData = d;
+    if (isAdmin && userUrl){
+      try {
+        const uRes = await fetch(userUrl);
+        const uData = await uRes.json();
+        if (uData.success) userData = uData;
+      } catch(e){}
+    }
 
     const serverOrders = d.orders || [];
     const local = store.get('orders', []);
 
-    // 🔑 First sync after login → direct overwrite (no transition detect)
     if (syncOrders._firstSync || local.length === 0){
       store.set('orders', serverOrders);
       syncOrders._firstSync = false;
     } else {
-      // 🔑 Merge with transition detection
       const localMap = new Map(local.map(o => [o.id, o]));
       let changed = false;
 
       serverOrders.forEach(serverO => {
         const existing = localMap.get(serverO.id);
         if (!existing){
-          // New order from another device
           local.push(serverO);
           changed = true;
         } else if (!existing._localOnly && existing.status !== serverO.status){
           const wasNotDelivered = existing.status !== 'Delivered';
           const oldStage = currentStageIdx(existing);
           const newStage = currentStageIdx(serverO);
-          
-          // Update fields
+
           existing.status = serverO.status;
           existing.updatedAt = serverO.updatedAt || Date.now();
           if (serverO.status === 'Delivered') existing.deliveredAt = serverO.deliveredAt || Date.now();
-          
-          // 🎬 Only animate if stage ADVANCED (not backward)
+
           if (newStage > oldStage){
             window.__delivering = window.__delivering || {};
             window.__delivering[serverO.id] = true;
-            
-            // Full Delivered transition (with popup)
+
             if (serverO.status === 'Delivered' && wasNotDelivered){
               setTimeout(() => handleDeliveredTransition(serverO.id, isAdmin), 100);
             } else {
-              // Mid-stage change — just re-render with progressive animation
               setTimeout(() => {
                 const hm = $('#historyModal');
                 if (hm && !hm.classList.contains('hidden')) renderHistory();
@@ -3183,14 +3187,13 @@ async function syncOrders(silent){
       if (changed) store.set('orders', local);
     }
 
-    // 🔑 Update membership from server (overwrite — never merge)
-    if (!isAdmin && d.membership !== undefined) {
-      store.set('membership_full', d.membership || null);
+    // 🔑 Membership — always from userData (works on admin device too)
+    if (userData.membership !== undefined) {
+      store.set('membership_full', userData.membership || null);
       renderCart();
     }
-    if (d.user && d.user.phone) store.set('last_phone', d.user.phone);
+    if (userData.user && userData.user.phone) store.set('last_phone', userData.user.phone);
 
-    // Refresh UI (skip if animation is running)
     if (!window.__delivering){
       const hm = $('#historyModal');
       if (hm && !hm.classList.contains('hidden')) renderHistory();
