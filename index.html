@@ -3563,7 +3563,7 @@ function renderMemberModal(){
   else if (isExpired){ body.innerHTML = buildMemberExpiredHTML(saved); }
   else { body.innerHTML = buildMemberBuyHTML(); }
 }
-function openMemberModal(skipRoute){
+async function openMemberModal(skipRoute){
     // 🔐 Login check for non-admin
     if (!isLoggedIn() && localStorage.getItem('hf_is_admin') !== 'true'){
         openLoginModal();
@@ -3571,84 +3571,42 @@ function openMemberModal(skipRoute){
         return;
     }
 
-    // ⚡ INSTANT OPEN — no waiting, no loading, no blocking
-    renderMemberModal();
-    openModal('memberModal');
+    let saved = store.get('membership_full', null);
 
-    if (!skipRoute) {
-        try {
-            if (window.location.hash === '#menu') {
-                history.replaceState({ modal:'memberModal' }, '', '#membership');
-            } else {
-                history.pushState({ modal:'memberModal' }, '', '#membership');
-            }
-        } catch(e){}
-    }
+    // 🔍 Silent server verify before showing modal — no loading UI
+    if (saved && saved.code && isMembershipValid(saved)) {
+        const oldCode = saved.code;
+        const sessionKey = store.get('session_key', null);
+        const email = store.get('user_email', null);
+        let verified = null;
 
-    // 🔄 Silent background refresh — popup already open
-    const sessionKey = store.get('session_key', null);
-    const email = store.get('user_email', null);
+        // First try user-data if logged in
+        if (sessionKey && email){
+            try {
+                const ctl = new AbortController();
+                const to = setTimeout(() => ctl.abort(), 1200);
 
-    if (sessionKey && email){
-        fetch(`${API_BASE}/api/orders?action=user-data&session_key=${encodeURIComponent(sessionKey)}`, {
-            cache: 'no-store'
-        })
-        .then(r => r.json())
-        .then(d => {
-            if (!d.success) return;
-
-            let newMem = d.membership || null;
-
-            if (newMem && newMem.status && String(newMem.status).toLowerCase() === 'cancelled') newMem = null;
-            if (newMem && newMem.cancelled === true) newMem = null;
-
-            const oldMem = store.get('membership_full', null);
-            const changed = JSON.stringify(newMem) !== JSON.stringify(oldMem);
-
-            if (changed){
-                store.set('membership_full', newMem);
-                renderMemberModal();
-
-                if (!newMem && appliedMembership){
-                    clearAppliedMembershipUI();
-                }
-
-                if (newMem && appliedMembership && appliedMembership.code !== newMem.code){
-                    clearAppliedMembershipUI();
-                }
-            }
-        })
-        .catch(() => {});
-    } else {
-        // If admin mode / local cache exists, silently verify only to remove stale cancelled code
-        const saved = store.get('membership_full', null);
-
-        if (saved && saved.code && isMembershipValid(saved)){
-            getDeviceId()
-            .then(deviceId => {
-                return fetch(`${API_BASE}/api/membership-verify`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ code: saved.code, deviceId }),
+                const r = await fetch(`${API_BASE}/api/orders?action=user-data&session_key=${encodeURIComponent(sessionKey)}`, {
+                    signal: ctl.signal,
                     cache: 'no-store'
                 });
-            })
-            .then(r => r.json())
-            .then(d => {
-                if (!d.success){
-                    store.set('membership_full', null);
 
-                    if (appliedMembership && appliedMembership.code === saved.code){
-                        clearAppliedMembershipUI();
+                clearTimeout(to);
+                const d = await r.json();
+
+                if (d.success){
+                    const mem = d.membership || null;
+
+                    if (mem && mem.code === oldCode && isMembershipValid(mem)){
+                        verified = true;
+                        saved = Object.assign({}, saved, mem, { status: mem.status || 'active' });
+                        store.set('membership_full', saved);
+                    } else {
+                        verified = false;
                     }
-
-                    renderMemberModal();
                 }
-            })
-            .catch(() => {});
+            } catch(e){}
         }
-    }
-}
 
         // Fallback: direct membership verify
         if (verified === null){
@@ -3769,7 +3727,7 @@ document.addEventListener('click', async (e) => {
             const c = await fetch(`${API_BASE}/api/membership-create`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ name, phone, email: getUserEmail(), deviceId, session_key: store.get('session_key', null) }) });
             const cd = await c.json(); if (!cd.success) throw new Error('Code generation failed');
             const clean = phone.replace(/[^0-9]/g, '');
-            const full = { code: cd.code, name, phone: clean, expiresAt: cd.expiresAt, status: 'active' };
+            const full = { code: cd.code, name, phone: clean, expiresAt: cd.expiresAt };
             store.set('membership_full', full); store.set('last_phone', clean);
             renderCart();
             closeModal('memberModal', true);
@@ -4051,21 +4009,16 @@ async function applyMemberFn(){
             result.innerHTML = '<p class="text-[10px]" style="color:#0A0A0A;">✅ Membership cancelled (Code: ' + (d.code || input) + ')</p>';
             $('#adminCancelInput').value = '';
 
-            const matched = matchLocal || (saved && d.code && saved.code === d.code);
-
-            if (matched){
+            if (matchLocal){
                 store.set('membership_full', null);
                 clearAppliedMembershipUI();
                 toast('Membership cancelled', 'cross');
             }
-
-            setTimeout(() => syncOrders(true), 400);
-
         } else {
             result.innerHTML = '<p class="text-[10px]" style="color:#DC2626;">❌ ' + (d.error || 'Not found') + '</p>';
 
-            // Server par not found hoy, pan local cache ma same code/phone hoy to clear karo
-            if (matchLocal || (saved && d.code && saved.code === d.code)){
+            // Server par not found hoy, pan local cache ma juno code hoy to clear karo
+            if (matchLocal){
                 store.set('membership_full', null);
                 clearAppliedMembershipUI();
             }
