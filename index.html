@@ -3321,25 +3321,31 @@ document.addEventListener('click', async (e) => {
         image: 'images/logo.png', order_id: d.order_id,
         prefill: { name, contact: phone }, theme: { color: '#0A0A0A' },
         handler: async function(resp){
-          try {
-            const v = await fetch(`${API_BASE}/api/verify-payment`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ razorpay_order_id: resp.razorpay_order_id, razorpay_payment_id: resp.razorpay_payment_id, razorpay_signature: resp.razorpay_signature }) });
-            const vd = await v.json();
-            if (!vd.success) throw new Error('Verify failed');
-            const currentDeviceId = await getDeviceId();
-            const c = await fetch(`${API_BASE}/api/membership-create`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ name, phone, deviceId: currentDeviceId }) });
-            const cd = await c.json();
-            if (!cd.success) throw new Error('Code generation failed');
-            const clean = phone.replace(/[^0-9]/g, '');
-            const full = { code: cd.code, name, phone: clean, expiresAt: cd.expiresAt };
-            store.set('membership_full', full);
-            store.set('last_phone', clean);
-            toast('Membership activated!', 'check');
-            renderMemberModal();
-            if (typeof renderCart === 'function') renderCart();
-            store.set('welcome_shown_for', null);
-            setTimeout(() => { showWelcomePopupOnce(); }, 700);
-          } catch(e){ console.error(e); toast('Verification failed', 'cross'); }
-        },
+        // ⚡ STEP 1: IMMEDIATELY show welcome popup (0ms after Razorpay closes)
+        showWelcomeInstant();
+        try {
+          const v = await fetch(`${API_BASE}/api/verify-payment`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ razorpay_order_id: resp.razorpay_order_id, razorpay_payment_id: resp.razorpay_payment_id, razorpay_signature: resp.razorpay_signature }) });
+          const vd = await v.json();
+          if (!vd.success) throw new Error('Verify failed');
+          const currentDeviceId = await getDeviceId();
+          const c = await fetch(`${API_BASE}/api/membership-create`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ name, phone, deviceId: currentDeviceId }) });
+          const cd = await c.json();
+          if (!cd.success) throw new Error('Code generation failed');
+          const clean = phone.replace(/[^0-9]/g, '');
+          const full = { code: cd.code, name, phone: clean, expiresAt: cd.expiresAt };
+          store.set('membership_full', full);
+          store.set('last_phone', clean);
+          store.set('welcome_shown_for', cd.code);   // 🔒 Mark as shown
+          toast('Membership activated!', 'check');
+          renderMemberModal();
+          if (typeof renderCart === 'function') renderCart();
+        } catch(e){
+          // ❌ On error → close welcome popup
+          closeModal('welcomeMemberModal', true);
+          console.error(e);
+          toast('Verification failed', 'cross');
+        }
+      },
         modal: { ondismiss: () => toast('Payment cancelled', 'warn') }
       };
       const rzp = new Razorpay(options);
@@ -3351,7 +3357,19 @@ document.addEventListener('click', async (e) => {
   }
 });
 
-function openModal(id){ const el = $('#'+id); if (el) el.classList.remove('hidden'); document.body.style.overflow = 'hidden'; }
+function openModal(id){ 
+  const el = $('#'+id); 
+  if (!el) return;
+  // 🔄 Force animation restart for popups with animation classes
+  if (id === 'welcomeMemberModal' || id === 'orderDeliveredModal'){
+    const card = el.querySelector('.delivered-pop');
+    if (card){ card.style.animation = 'none'; void card.offsetWidth; card.style.animation = ''; }
+    const circle = el.querySelector('.delivered-anim');
+    if (circle){ circle.style.animation = 'none'; void circle.offsetWidth; circle.style.animation = ''; }
+  }
+  el.classList.remove('hidden'); 
+  document.body.style.overflow = 'hidden'; 
+}
 function closeModal(id, skipHistory){
 const el = $('#'+id); if (el) el.classList.add('hidden');
 document.body.style.overflow = '';
@@ -3552,6 +3570,26 @@ $('#delOrderId').value = ''; $('#delOtp').value = '';
 } else { toast('Invalid OTP','cross'); }
 };
 
+/* ⚡ Welcome popup — INSTANT show (0ms) + force animation restart */
+function showWelcomeInstant(){
+  const modal = $('#welcomeMemberModal');
+  if (!modal) return;
+  // 🔄 Force animation re-trigger
+  const card = modal.querySelector('.delivered-pop');
+  if (card){
+    card.style.animation = 'none';
+    void card.offsetWidth;      // force reflow
+    card.style.animation = '';
+  }
+  const checkCircle = modal.querySelector('.delivered-anim');
+  if (checkCircle){
+    checkCircle.style.animation = 'none';
+    void checkCircle.offsetWidth;
+    checkCircle.style.animation = '';
+  }
+  openModal('welcomeMemberModal');
+}
+  
 /* ══════════════════════════════════════════
    WELCOME MEMBERSHIP POPUP — Show ONCE per code
    ══════════════════════════════════════════ */
@@ -3577,10 +3615,28 @@ document.addEventListener('click', (e) => {
   const action = t.getAttribute('data-welcome-action');
   
   if (action === 'show-code'){
-    closeModal('welcomeMemberModal', true);
-    setTimeout(() => { openMemberModal(); }, 250);
-    return;
+  closeModal('welcomeMemberModal', true);
+  // 🎯 Smart wait: only if membership isn't ready yet
+  const saved = store.get('membership_full', null);
+  if (saved && saved.code){
+    setTimeout(() => { openMemberModal(); }, 200);
+  } else {
+    // Wait for background code generation
+    let tries = 0;
+    const check = setInterval(() => {
+      const s = store.get('membership_full', null);
+      if (s && s.code){
+        clearInterval(check);
+        openMemberModal();
+      }
+      if (++tries > 40){ 
+        clearInterval(check); 
+        toast('Slow network. Please try again.', 'warn'); 
+      }
+    }, 150);
   }
+  return;
+}
 });
 
 $('#adminLoginBtn').onclick = async () => {
