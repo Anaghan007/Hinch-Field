@@ -2829,8 +2829,8 @@ async function verifyAdminStatus(){
     if (!d.success) return;
     const serverAdminId = d.deviceId;
     const wasAdmin = localStorage.getItem('hf_is_admin') === 'true';
-    if (serverAdminId && serverAdminId === myDeviceId){ if (!wasAdmin){ localStorage.setItem('hf_is_admin', 'true'); store.set('orders', []); } return; }
-    if (serverAdminId && serverAdminId !== myDeviceId){ if (wasAdmin){ localStorage.removeItem('hf_is_admin'); store.set('orders', []); } return; }
+    if (serverAdminId && serverAdminId === myDeviceId){ localStorage.setItem('hf_is_admin', 'true'); return; }
+    if (serverAdminId && serverAdminId !== myDeviceId){ if (wasAdmin) localStorage.removeItem('hf_is_admin'); return; }
     if (!serverAdminId && wasAdmin){ await fetch(`${API_BASE}/api/orders?action=set-admin`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ deviceId: myDeviceId, pwd: 'HF2026' }) }); }
   } catch(e){}
 }
@@ -3597,7 +3597,8 @@ function wire(){
   };
   $('#adminLoginBtn').onclick = async () => {
     if ($('#adminPass').value === 'HF2026'){
-      adminAuth = true; localStorage.setItem('hf_is_admin', 'true'); store.set('orders', []);
+      adminAuth = true; localStorage.setItem('hf_is_admin', 'true');
+      // ⚠️ store.set('orders', []) REMOVED — admin needs to keep local orders
       $('#adminLoginBox').classList.add('hidden'); $('#adminDashBox').classList.remove('hidden');
       toast('Admin Unlocked','lock');
       try { const deviceId = await getDeviceId(); await fetch(`${API_BASE}/api/orders?action=set-admin`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ deviceId, pwd: 'HF2026' }) }); } catch(e){}
@@ -3618,11 +3619,28 @@ function wire(){
     } catch (e) { result.innerHTML = '<p class="text-[10px]" style="color:#DC2626;">Error: ' + e.message + '</p>'; }
     finally { $('#adminCancelBtn').disabled = false; $('#adminCancelBtn').textContent = 'Cancel'; }
   };
-  $('#adminSearchId').addEventListener('input', debounce(() => {
+  $('#adminSearchId').addEventListener('input', debounce(async () => {
     const q = $('#adminSearchId').value.trim().toUpperCase(); const res = $('#adminResult');
     if (q.length < 3){ res.innerHTML = ''; return; }
-    const orders = store.get('orders', []); const o = orders.find(x => x.id.indexOf(q) > -1);
-    if (!o){ res.innerHTML = '<p class="text-xs text-center" style="color:var(--mut);">No order found.</p>'; return; }
+    let orders = store.get('orders', []);
+    let o = orders.find(x => x.id.indexOf(q) > -1);
+    // 🔄 Server fallback if not found locally
+    if (!o){
+      res.innerHTML = '<p class="text-xs text-center" style="color:var(--mut);">Searching server…</p>';
+      try {
+        const r = await fetch(`${API_BASE}/api/orders?action=list&pwd=HF2026&_t=${Date.now()}`, { cache: 'no-store' });
+        const d = await r.json();
+        if (d.success && Array.isArray(d.orders) && d.orders.length){
+          const local = store.get('orders', []);
+          const localMap = new Map(local.map(x => [x.id, x]));
+          d.orders.forEach(so => { if (!localMap.has(so.id)) local.push(so); });
+          store.set('orders', local);
+          orders = local;
+          o = orders.find(x => x.id.indexOf(q) > -1);
+        }
+      } catch(e){ console.warn('Server search failed:', e); }
+    }
+    if (!o){ res.innerHTML = '<p class="text-xs text-center" style="color:var(--mut);">No order found. (Local: ' + store.get('orders', []).length + ' orders cached)</p>'; return; }
     const st = getOrderStatus(o);
     res.innerHTML = '<div class="border hairline p-4" style="background:var(--card);"><div class="flex justify-between items-center mb-2"><b class="text-sm">' + o.id + '</b><span class="chip border hairline" style="color:' + st.color + ';">' + st.text + '</span></div><p class="text-[10px] mb-3" style="color:var(--mut);">' + o.customer.name + ' • ' + o.customer.phone + '</p><div class="flex gap-2 flex-wrap"><select id="adminStatusSel" class="field text-[10px] py-1 flex-1"><option value="">Auto</option>' + ['Order Placed','Order Confirmed','In Process','Order Ready','Dispatched','Out For Delivery','Delivered','Cancelled'].map(v => '<option value="' + v + '">' + v + '</option>').join('') + '</select><button id="adminUpdateBtn" class="pill btn-ink px-4 text-[10px]">Update</button></div></div>';
     $('#adminStatusSel').value = o.status || 'Order Placed';
