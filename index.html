@@ -1970,7 +1970,9 @@ async function getDeviceId(){
   }
   return DEVICE_ID;
 }
-getDeviceId();
+// ⏱️ Defer FP loading — page interactive રહે
+if ('requestIdleCallback' in window) requestIdleCallback(() => getDeviceId(), { timeout: 3000 });
+else setTimeout(() => getDeviceId(), 2500);
 const COOKIE_KEYS = ['membership_full', 'last_phone', 'membership'];
 const store = {
 get(k,d){
@@ -3301,9 +3303,9 @@ document.addEventListener('click', async (e) => {
     if (!/^[A-Za-z .]{3,60}$/.test(name)) return err('Enter valid name');
     if (!/^\d{10,15}$/.test(phone.replace(/[^0-9]/g,''))) return err('Enter valid WhatsApp number');
     if (typeof Razorpay === 'undefined') return err('Payment SDK missing');
-    t.disabled = true;
+        t.disabled = true;
     const orig = t.textContent;
-    t.textContent = 'Creating Order…';
+    t.textContent = 'Opening Razorpay…';
     try {
       const r = await fetch(`${API_BASE}/api/membership-order`, { method:'POST' });
       const d = await r.json();
@@ -3313,26 +3315,65 @@ document.addEventListener('click', async (e) => {
         name: 'HinchField Membership', description: 'Yearly Membership — ₹599',
         image: 'images/logo.png', order_id: d.order_id,
         prefill: { name, contact: phone }, theme: { color: '#0A0A0A' },
-        handler: async function(resp){
+          handler: async function(resp){
+          // ⚡ Show loading overlay INSTANTLY — kills the "3s glitch"
+          const loadingHtml = `
+            <div class="text-center py-12">
+              <div style="width:56px;height:56px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--text);margin:0 auto 20px;animation:spin 0.8s linear infinite;"></div>
+              <p class="micro mb-2">HINCHFIELD</p>
+              <p class="disp editorial-h font-luxe text-xl mb-2">Activating Membership…</p>
+              <p class="text-xs" style="color:var(--mut);">Please wait a moment</p>
+            </div>
+            <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
+          `;
+          const bodyEl = $('#memberModalBody');
+          if (bodyEl) bodyEl.innerHTML = loadingHtml;
+          // Ensure modal is visible
+          openModal('memberModal');
+
           try {
-            const v = await fetch(`${API_BASE}/api/verify-payment`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ razorpay_order_id: resp.razorpay_order_id, razorpay_payment_id: resp.razorpay_payment_id, razorpay_signature: resp.razorpay_signature }) });
-            const vd = await v.json();
+            // 1️⃣ Parallel: Verify + Get Device ID (device ID is instant now)
+            const [vRes, deviceId] = await Promise.all([
+              fetch(`${API_BASE}/api/verify-payment`, {
+                method:'POST',
+                headers:{'Content-Type':'application/json'},
+                body: JSON.stringify({
+                  razorpay_order_id: resp.razorpay_order_id,
+                  razorpay_payment_id: resp.razorpay_payment_id,
+                  razorpay_signature: resp.razorpay_signature
+                })
+              }),
+              getDeviceId()
+            ]);
+            const vd = await vRes.json();
             if (!vd.success) throw new Error('Verify failed');
-            const currentDeviceId = await getDeviceId();
-            const c = await fetch(`${API_BASE}/api/membership-create`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ name, phone, deviceId: currentDeviceId }) });
+
+            // 2️⃣ Create membership
+            const c = await fetch(`${API_BASE}/api/membership-create`, {
+              method:'POST',
+              headers:{'Content-Type':'application/json'},
+              body: JSON.stringify({ name, phone, deviceId })
+            });
             const cd = await c.json();
             if (!cd.success) throw new Error('Code generation failed');
+
+            // 3️⃣ Save locally
             const clean = phone.replace(/[^0-9]/g, '');
             const full = { code: cd.code, name, phone: clean, expiresAt: cd.expiresAt };
             store.set('membership_full', full);
             store.set('last_phone', clean);
-            toast('Membership activated!', 'check');
-            renderMemberModal();
             if (typeof renderCart === 'function') renderCart();
-            // 🎉 Welcome popup → then code popup
+
+            // 4️⃣ INSTANT swap: close member modal → open welcome (no delay)
             closeModal('memberModal', true);
-            setTimeout(() => { openModal('memberWelcomeModal'); }, 300);
-          } catch(e){ console.error(e); toast('Verification failed', 'cross'); }
+            openModal('memberWelcomeModal');
+            toast('Membership activated!', 'check');
+          } catch(e){
+            console.error(e);
+            toast('Verification failed', 'cross');
+            // Restore buy view
+            renderMemberModal();
+          }
         },
         modal: { ondismiss: () => toast('Payment cancelled', 'warn') }
       };
@@ -3482,14 +3523,12 @@ $('#trackGo').onclick = track;
 $('#toTop').onclick = () => window.scrollTo({ top:0, behavior:'smooth' });
 
 if ($('#openMembership')) $('#openMembership').onclick = () => openMemberModal();
-// 🎉 Welcome OK → show code popup
+// 🎉 Welcome OK → show code popup (instant)
 if ($('#memWelcomeOk')) $('#memWelcomeOk').onclick = () => {
   closeModal('memberWelcomeModal', true);
-  setTimeout(() => {
-    renderMemberModal();
-    openModal('memberModal');
-    try { if (window.location.hash !== '#membership') history.replaceState({ modal:'memberModal' }, '', '#membership'); } catch(e){}
-  }, 250);
+  renderMemberModal();
+  openModal('memberModal');
+  try { if (window.location.hash !== '#membership') history.replaceState({ modal:'memberModal' }, '', '#membership'); } catch(e){}
 };
   
 function updateMemberUI(){
