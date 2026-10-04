@@ -2650,9 +2650,21 @@ function placeOrder(){
   const oid = 'HF' + String(Date.now()).slice(-6);
   const otp = String(Math.floor(1000 + Math.random() * 9000));
   const isAdminDevice = localStorage.getItem('hf_is_admin') === 'true';
+  // 🔑 Account email = session email (order save)
+  const accountEmail = getUserEmail();
+  // 🔑 Invoice email = cart field (invoice send)
+  const invoiceEmail = email;
+  
+  console.log('📧 Order — account:', accountEmail, '| invoice:', invoiceEmail);
+  
   const order = {
     id: oid, otp, timestamp: Date.now(), status: 'Order Placed', updatedAt: Date.now(),
-    customer: { name, phone, email, addr, city, state, pin },
+    customer: { 
+      name, phone, 
+      email: invoiceEmail,        // ← Invoice email (from cart)
+      accountEmail: accountEmail, // ← Order save email (from session)
+      addr, city, state, pin 
+    },
     items: JSON.parse(JSON.stringify(cart)), totals: t, deliveredAt: null, payment: { method: 'cod' },
     byAdmin: isAdminDevice
   };
@@ -2719,9 +2731,15 @@ function savePaidOrder(customer, t, razorpayResponse){
   const oid = 'HF' + String(Date.now()).slice(-6);
   const otp = String(Math.floor(1000 + Math.random() * 9000));
   const isAdminDevice = localStorage.getItem('hf_is_admin') === 'true';
+  // 🔑 Account email = session email
+  const accountEmail = getUserEmail();
   const order = {
     id: oid, otp, timestamp: Date.now(), status: 'Order Confirmed', updatedAt: Date.now(),
-    customer: { ...customer }, items: JSON.parse(JSON.stringify(cart)), totals: t, deliveredAt: null,
+    customer: { 
+      ...customer,                    // Invoice email (from cart)
+      accountEmail: accountEmail      // Order save email (from session)
+    }, 
+    items: JSON.parse(JSON.stringify(cart)), totals: t, deliveredAt: null,
     payment: { method: 'online', razorpay_order_id: razorpayResponse.razorpay_order_id, razorpay_payment_id: razorpayResponse.razorpay_payment_id, verified: true },
     byAdmin: isAdminDevice
   };
