@@ -3102,6 +3102,9 @@ async function verifyOtp(email){
     closeModal('otpModal', true);
     toast('Logged in successfully', 'check');
 
+    // 🔑 Clear hash so mobile menu doesn't auto-open after reload
+    try { history.replaceState(null, '', location.pathname + location.search); } catch(_){}
+
     // 🔑 MAGIC — reload page. Init syncs fresh data from server.
     setTimeout(() => { location.reload(); }, 350);
     return;
