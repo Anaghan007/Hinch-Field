@@ -171,7 +171,12 @@ export default async function handler(req, res) {
         user = { email: cleanEmail, createdAt: Date.now() };
         await redis.set('user:' + cleanEmail + ':profile', user);
       }
-      return res.status(200).json({ success: true, session_key: sessionKey, user });
+      // 🔑 Include membership so admin devices also get it on login
+      const memRaw0 = await redis.get('user:' + cleanEmail + ':membership');
+      let membership = memRaw0 ? (typeof memRaw0 === 'string' ? JSON.parse(memRaw0) : memRaw0) : null;
+      if (membership && Date.now() >= membership.expiresAt) membership = null;
+
+      return res.status(200).json({ success: true, session_key: sessionKey, user, membership });
     }
 
     /* ═══ USER DATA (orders + membership) ═══ */
