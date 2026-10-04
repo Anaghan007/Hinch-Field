@@ -1262,10 +1262,6 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
     .track-icon.anim-circle {
       animation: popCircle .5s cubic-bezier(.4, 0, .2, 1) both;
     }
-    .track-step.anim-line::after {
-      animation: lineGrow .35s ease both;
-      animation-delay: var(--line-delay, 0ms);
-    }
     .track-step .track-icon {
       transition: none;
     }
@@ -2625,40 +2621,35 @@ function statusTimelineCompact(order){
 function statusTimeline(order, animate){
   const ci = currentStageIdx(order);
   if (ci === -1) { return '<p class="text-xs font-medium flex items-center gap-2" style="color:#DC2626;">' + ic('cross','w-4 h-4') + 'Order Cancelled</p>'; }
-  
+
   // 🔑 Track last animated stage per order
   window.__timelineStage = window.__timelineStage || {};
   const lastStage = window.__timelineStage[order.id];
   const shouldAnimate = animate && (lastStage === undefined || ci > lastStage);
   const baseStage = (lastStage === undefined) ? -1 : lastStage;
-  
+
+  // ⚡ Timing constants — used by handleDeliveredTransition to sync popup
+  const CIRCLE_DELAY = 180;   // ms between circles
+  const CIRCLE_ANIM  = 500;   // must match popCircle CSS duration
+
   let html = '<div class="track-wrap"><div class="track-timeline">';
   html += STAGES.map((s, i) => {
     const done = i <= ci;
     const active = i === ci;
     const cls = done ? 'done' : (active ? 'active' : '');
-    
-    // 🎬 Determine if THIS circle needs animation
+
+    // 🎬 Only circle animation — NO line animation
     let animCls = '';
     let animDelay = 0;
-    let lineAnimCls = '';
-    let lineAnimDelay = 0;
-    
     if (shouldAnimate && done && i > baseStage){
-      // New circle — animate
       const newIdx = i - baseStage - 1;
-      animDelay = newIdx * 250;
+      animDelay = newIdx * CIRCLE_DELAY;
       animCls = ' anim-circle';
-      // Line to next step also new
-      if (i < ci){
-        lineAnimCls = ' anim-line';
-        lineAnimDelay = animDelay + 125;
-      }
     }
-    
-    return '<div class="track-step ' + cls + lineAnimCls + '" style="--line-delay:' + lineAnimDelay + 'ms;">' +
-      '<div class="track-icon ' + animCls + '" style="animation-delay:' + animDelay + 'ms;">' + 
-        (done ? ic('check','w-4 h-4') : ic(s.icon,'w-4 h-4')) + 
+
+    return '<div class="track-step ' + cls + '">' +
+      '<div class="track-icon ' + animCls + '" style="animation-delay:' + animDelay + 'ms;">' +
+        (done ? ic('check','w-4 h-4') : ic(s.icon,'w-4 h-4')) +
       '</div>' +
       '<div class="pt-1">' +
         '<p class="text-[11px] font-medium" style="color:' + (done ? 'var(--text)' : 'var(--mut)') + ';">' + s.t + '</p>' +
@@ -2667,12 +2658,11 @@ function statusTimeline(order, animate){
   }).join('');
   html += '</div></div>';
   html += '<p class="text-[11px] mt-4 text-center" style="color:var(--mut);">Expected Delivery: 9:00 AM – 7:00 PM</p>';
-  
-  // 🔑 Update tracker AFTER render
+
   if (shouldAnimate || lastStage === undefined){
     window.__timelineStage[order.id] = ci;
   }
-  
+
   return html;
 }
 function buildOrderCard(o, opts){
@@ -3208,11 +3198,19 @@ function handleDeliveredTransition(orderId, isAdmin){
   window.__delivering = window.__delivering || {};
   window.__delivering[orderId] = true;
 
-  // 🎬 First render — animation will play automatically
+  // 🎬 First render — progressive circle animation plays automatically
   safe(renderHistory, 'delivered.render');
 
-  // 🔑 7 stages × 280ms = ~2000ms for full timeline animation
-  const fullAnimMs = 1800;
+  // ⚡ SYNC: time for the LAST circle to finish filling
+  // Worst case = 6 new circles → 5×180ms delay + 500ms anim ≈ 1400ms
+  // Typical case (Out For Delivery → Delivered) = 1 new circle → 500ms
+  const orders = store.get('orders', []);
+  const o = orders.find(x => x.id === orderId);
+  const lastStage = (window.__timelineStage && window.__timelineStage[orderId] !== undefined)
+    ? window.__timelineStage[orderId]
+    : 0;
+  const newCircles = Math.max(1, currentStageIdx(o || {}) - lastStage);
+  const fillMs = (newCircles - 1) * 180 + 500;   // 180ms delay + 500ms anim
 
   // 🔑 Admin device — only animation, no popup
   if (isAdmin){
@@ -3220,21 +3218,20 @@ function handleDeliveredTransition(orderId, isAdmin){
       if (window.__delivering) delete window.__delivering[orderId];
       safe(renderHistory, 'admin.clear');
       safe(renderPastHistory, 'admin.clear.past');
-    }, fullAnimMs + 500);
+    }, fillMs + 200);
     return;
   }
 
-  // 🔑 Customer — show popup after timeline animation
+  // 🔑 Customer — popup comes RIGHT AFTER last circle fills
   if (document.visibilityState === 'visible'){
     setTimeout(() => {
       if (!window.__delivering || !window.__delivering[orderId]) return;
 
-      // Show popup
       const idEl = $('#deliveredOrderId');
       if (idEl) idEl.textContent = orderId;
       openModal('orderDeliveredModal');
 
-      // Auto-redirect after popup animation
+      // Popup visible for 1500ms, then auto-redirect to history
       setTimeout(() => {
         if (window.__delivering) delete window.__delivering[orderId];
         closeModal('orderDeliveredModal', true);
@@ -3242,8 +3239,8 @@ function handleDeliveredTransition(orderId, isAdmin){
         safe(renderPastHistory, 'delivered.clear.past');
         openModal('pastHistoryModal');
         try { history.replaceState({ modal: 'pastHistoryModal' }, '', '#history'); } catch(e){}
-      }, 1800);
-    }, fullAnimMs);   // ← 2 sec after progressive animation completes
+      }, 1500);
+    }, fillMs);   // ← popup appears exactly when last circle finishes
   }
 }
 
