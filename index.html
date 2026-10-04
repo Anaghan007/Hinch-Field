@@ -33,7 +33,6 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
 }
   </script>
   <style>
-    /* ═══ UNIVERSAL RESPONSIVE RESET ═══ */
     html {
       -webkit-text-size-adjust: 100%;
       -moz-text-size-adjust: 100%;
@@ -361,10 +360,6 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       text-transform: uppercase;
       font-weight: 500;
       color: var(--mut);
-    }
-
-    .micro-gold {
-      color: var(--text);
     }
 
     .disp {
@@ -1269,27 +1264,67 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       animation: fadeInPop .45s cubic-bezier(.2, .7, .2, 1) both;
     }
 
-    /* Skeleton pre-loading for smooth transitions */
-    .skeleton {
-      background: linear-gradient(90deg, var(--bg2) 0%, var(--line) 50%, var(--bg2) 100%);
-      background-size: 200% 100%;
-      animation: skeleton 1.5s ease-in-out infinite;
+    .user-menu {
+      position: relative;
     }
 
-    @keyframes skeleton {
-      0% {
-        background-position: 200% 0;
-      }
+    .user-menu-list {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 8px;
+      min-width: 200px;
+      background: var(--card);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      z-index: 55;
+      display: none;
+    }
 
-      100% {
-        background-position: -200% 0;
-      }
+    .user-menu.open .user-menu-list {
+      display: block;
+      animation: fadeUp .25s both;
+    }
+
+    .user-menu-list button,
+    .user-menu-list a {
+      width: 100%;
+      text-align: left;
+      padding: 12px 16px;
+      font-size: 12px;
+      letter-spacing: .06em;
+      transition: background .2s;
+      display: block;
+      color: var(--text);
+      background: transparent;
+      border: 0;
+      cursor: pointer;
+    }
+
+    .user-menu-list button:hover,
+    .user-menu-list a:hover {
+      background: var(--bg2);
+    }
+
+    .user-menu-list .divider {
+      height: 1px;
+      background: var(--line);
+      margin: 0;
+    }
+
+    .login-badge {
+      position: absolute;
+      -top-1;
+      -right-1;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #16a34a;
     }
   </style>
 </head>
 
 <body class="antialiased" id="home">
-  <!-- ═══ HEADER ═══ -->
   <header id="header" class="sticky top-0 z-50 glassbar border-b hairline transition-shadow w-full">
     <div class="wrap grid grid-cols-[auto_1fr_auto] items-center gap-6 py-3 md:py-4">
       <div class="flex items-center gap-2 min-w-0">
@@ -1302,7 +1337,29 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
           <span class="h-12 items-center font-luxe text-xl md:text-2xl font-medium tracking-luxe" style="display:none;color:var(--text);">HINCHFIELD</span>
         </a>
       </div>
-      <div class="flex items-center gap-1 md:gap-4 justify-end min-w-0">
+      <div class="flex items-center gap-1 md:gap-3 justify-end min-w-0">
+        <button id="loginBtn" class="hidden md:flex flex-col items-center justify-center px-2 md:px-3" style="color:var(--text);" aria-label="Login">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a8 8 0 0 1 16 0v1"/></svg>
+          <span class="micro mt-1">Login</span>
+        </button>
+        <div id="userMenu" class="user-menu hidden md:block">
+          <button id="userMenuBtn" class="flex flex-col items-center justify-center px-2 md:px-3 relative" style="color:var(--text);" aria-label="Account">
+            <div class="relative">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a8 8 0 0 1 16 0v1"/></svg>
+              <span class="login-badge"></span>
+            </div>
+            <span class="micro mt-1">Account</span>
+          </button>
+          <div class="user-menu-list">
+            <p id="userEmailShow" class="px-4 py-3 text-[10px] tracking-wide2 uppercase"
+              style="color:var(--mut); border-bottom: 1px solid var(--line); word-break: break-all;"></p>
+            <button data-openhistory>My Orders</button>
+            <button data-openpast>Order History</button>
+            <button data-membership>⭐ Membership</button>
+            <div class="divider"></div>
+            <button id="logoutBtn" style="color:#DC2626;">Logout</button>
+          </div>
+        </div>
         <button id="wishOpen" class="relative flex flex-col items-center justify-center px-2 md:px-3" style="color:var(--text);" aria-label="Wishlist">
           <div class="relative">
             <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M12 21s-7.5-4.7-10-9.3C.5 8 2.6 4.5 6.2 4.5c2.2 0 3.7 1.2 4.6 2.6.9-1.4 2.4-2.6 4.6-2.6 3.6 0 5.7 3.5 4.2 7.2C19.5 16.3 12 21 12 21z"/></svg>
@@ -1337,7 +1394,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
     </nav>
   </header>
 
-  <!-- ═══ MOBILE MENU ═══ -->
+  <!-- Mobile Menu -->
   <div id="mobileMenu" class="fixed inset-0 z-[60] hidden w-full">
     <div class="absolute inset-0 bg-black/70 backdrop-blur-md" data-close="mobileMenu"></div>
     <div class="absolute left-0 top-0 h-full w-[88%] max-w-sm overflow-y-auto flex flex-col border-r hairline"
@@ -1363,7 +1420,6 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
     </div>
   </div>
 
-  <!-- ═══ MAIN ═══ -->
   <main class="w-full">
     <section id="heroSec" class="relative overflow-hidden w-full" aria-label="Hero" style="background:var(--bg);">
       <div id="heroSlides" class="w-full"></div>
@@ -1413,7 +1469,6 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
     </section>
   </main>
 
-  <!-- ═══ FOOTER ═══ -->
   <footer class="w-full border-t hairline" style="background:var(--bg); color:var(--text);" id="contact">
     <div class="wrap py-14 md:py-16 grid sm:grid-cols-2 lg:grid-cols-5 gap-8 md:gap-10">
       <div>
@@ -1497,7 +1552,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
     </div>
   </footer>
 
-  <!-- ═══ BOTTOM NAV ═══ -->
+  <!-- Bottom Nav -->
   <nav id="bottomNav"
     class="fixed bottom-0 inset-x-0 z-50 glassbar border-t hairline shadow-bar grid grid-cols-5 w-full">
     <button class="flex flex-col items-center py-2.5" style="color:var(--text);" data-bnav="home"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 11l9-8 9 8v10h-6v-6H9v6H3z"/></svg><span class="micro mt-1">Home</span></button>
@@ -1507,7 +1562,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
     <button class="flex flex-col items-center py-2.5" style="color:var(--mut);" data-bnav="history"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span class="micro mt-1">History</span></button>
   </nav>
 
-  <!-- ═══ CART DRAWER ═══ -->
+  <!-- Cart Drawer -->
   <div id="cartDrawer" class="fixed inset-0 z-[70] hidden w-full">
     <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" data-close="cartDrawer"></div>
     <aside class="sheet-wrap absolute right-0 top-0 h-full w-full flex justify-end pointer-events-none">
@@ -1592,7 +1647,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
     </aside>
   </div>
 
-  <!-- ═══ WISHLIST DRAWER ═══ -->
+  <!-- Wishlist Drawer -->
   <div id="wishDrawer" class="fixed inset-0 z-[70] hidden w-full">
     <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" data-close="wishDrawer"></div>
     <aside class="sheet-wrap absolute left-0 top-0 h-full w-full flex justify-start pointer-events-none">
@@ -1607,7 +1662,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
     </aside>
   </div>
 
-  <!-- ═══ PRODUCT MODAL ═══ -->
+  <!-- Product Modal -->
   <div id="productModal" class="fixed inset-0 z-[80] hidden overflow-y-auto w-full">
     <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" data-close="productModal"></div>
     <div class="pm-wrap relative max-w-6xl mx-auto my-0 md:my-4 px-0 md:px-4 w-full md:h-[calc(100vh-32px)]">
@@ -1616,7 +1671,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
     </div>
   </div>
 
-  <!-- ═══ TRACK MODAL ═══ -->
+  <!-- Track Modal -->
   <div id="trackModal" class="fixed inset-0 z-[85] hidden flex items-center justify-center px-4 w-full">
     <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" data-close="trackModal"></div>
     <div class="modalcard relative rounded-none p-6 md:p-8 max-w-md w-full"
@@ -1632,7 +1687,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
     </div>
   </div>
 
-  <!-- ═══ MY ORDERS (ACTIVE) ═══ -->
+  <!-- My Orders -->
   <div id="historyModal" class="fixed inset-0 z-[85] hidden overflow-y-auto w-full" style="background:var(--bg);">
     <header class="sticky top-0 z-10 glassbar border-b hairline w-full">
       <div class="wrap flex items-center gap-3 py-3">
@@ -1643,7 +1698,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
     <div id="historyList" class="wrap py-6 space-y-4 w-full"></div>
   </div>
 
-  <!-- ═══ ORDER HISTORY (PAST) ═══ -->
+  <!-- Order History -->
   <div id="pastHistoryModal" class="fixed inset-0 z-[85] hidden overflow-y-auto w-full" style="background:var(--bg);">
     <header class="sticky top-0 z-10 glassbar border-b hairline w-full">
       <div class="wrap flex items-center gap-3 py-3">
@@ -1654,7 +1709,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
     <div id="pastHistoryList" class="wrap py-6 space-y-4 w-full"></div>
   </div>
 
-  <!-- ═══ STAFF/ADMIN ═══ -->
+  <!-- Staff Modal -->
   <div id="staffModal" class="fixed inset-0 z-[95] hidden flex items-center justify-center px-4 w-full">
     <div class="absolute inset-0 bg-black/80 backdrop-blur-md" data-close="staffModal"></div>
     <div class="modalcard relative rounded-none p-6 md:p-8 max-w-lg w-full max-h-[90vh] overflow-y-auto"
@@ -1693,7 +1748,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
     </div>
   </div>
 
-  <!-- ═══ SIZE GUIDE ═══ -->
+  <!-- Size Modal -->
   <div id="sizeModal" class="fixed inset-0 z-[85] hidden flex items-center justify-center px-4 w-full">
     <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" data-close="sizeModal"></div>
     <div class="modalcard relative rounded-none p-6 md:p-8 max-w-md w-full"
@@ -1727,7 +1782,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
     </div>
   </div>
 
-  <!-- ═══ CATEGORY PAGE ═══ -->
+  <!-- Category Page -->
   <div id="catPage" class="fixed inset-0 z-[75] hidden overflow-y-auto w-full"
     style="background:var(--bg); color:var(--text);">
     <header class="sticky top-0 z-10 glassbar border-b hairline w-full">
@@ -1744,7 +1799,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
     </div>
   </div>
 
-  <!-- ═══ MEMBERSHIP MODAL ═══ -->
+  <!-- Membership Modal -->
   <div id="memberModal" class="fixed inset-0 z-[85] hidden flex items-center justify-center px-4 w-full">
     <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" data-close="memberModal"></div>
     <div class="modalcard relative p-6 md:p-8 max-w-md w-full max-h-[90vh] overflow-y-auto"
@@ -1754,7 +1809,27 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
     </div>
   </div>
 
-  <!-- ═══ ORDER DELIVERED POPUP ═══ -->
+  <!-- Login Modal -->
+  <div id="loginModal" class="fixed inset-0 z-[96] hidden flex items-center justify-center px-4 w-full">
+    <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" data-close="loginModal"></div>
+    <div class="modalcard relative p-6 md:p-8 max-w-sm w-full"
+      style="background:var(--bg); color:var(--text); box-shadow:var(--shadow);">
+      <button class="absolute top-3 right-3 w-9 h-9 border hairline" data-close="loginModal" aria-label="Close">✕</button>
+      <div id="loginModalBody"></div>
+    </div>
+  </div>
+
+  <!-- OTP Modal -->
+  <div id="otpModal" class="fixed inset-0 z-[96] hidden flex items-center justify-center px-4 w-full">
+    <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" data-close="otpModal"></div>
+    <div class="modalcard relative p-6 md:p-8 max-w-sm w-full"
+      style="background:var(--bg); color:var(--text); box-shadow:var(--shadow);">
+      <button class="absolute top-3 right-3 w-9 h-9 border hairline" data-close="otpModal" aria-label="Close">✕</button>
+      <div id="otpModalBody"></div>
+    </div>
+  </div>
+
+  <!-- Order Delivered Popup -->
   <div id="orderDeliveredModal" class="fixed inset-0 z-[97] hidden flex items-center justify-center px-4 w-full">
     <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" data-close="orderDeliveredModal"></div>
     <div class="modalcard delivered-pop relative p-8 md:p-10 max-w-sm w-full text-center"
@@ -1776,7 +1851,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
     </div>
   </div>
 
-  <!-- ═══ MEMBERSHIP WELCOME POPUP ═══ -->
+  <!-- Membership Welcome Popup -->
   <div id="memberWelcomeModal" class="fixed inset-0 z-[97] hidden flex items-center justify-center px-4 w-full">
     <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" data-close="memberWelcomeModal"></div>
     <div class="modalcard delivered-pop relative p-8 md:p-10 max-w-sm w-full text-center"
@@ -1799,7 +1874,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
     </div>
   </div>
 
-  <!-- ═══ CANCEL CONFIRMATION ═══ -->
+  <!-- Cancel Confirmation -->
   <div id="confirmCancelModal" class="fixed inset-0 z-[96] hidden flex items-center justify-center px-4 w-full">
     <div id="confirmCancelBackdrop" class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
     <div class="modalcard relative p-6 md:p-8 max-w-sm w-full"
@@ -1822,7 +1897,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
     </div>
   </div>
 
-  <!-- ═══ POLICY MODAL ═══ -->
+  <!-- Policy Modal -->
   <div id="policyModal" class="fixed inset-0 z-[88] hidden overflow-y-auto w-full"
     style="background:var(--bg); color:var(--text);">
     <header class="sticky top-0 z-10 glassbar border-b hairline w-full">
@@ -1836,7 +1911,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
     </div>
   </div>
 
-  <!-- ═══ INVOICE MODAL ═══ -->
+  <!-- Invoice Modal -->
   <div id="invoiceModal" class="fixed inset-0 z-[90] hidden overflow-y-auto w-full" style="background:var(--bg);">
     <div class="invoice-wrap max-w-3xl mx-auto my-4 md:my-8"
       style="background:#fff;color:#0A0A0A;padding:32px 24px;box-shadow:0 10px 40px rgba(0,0,0,.08);">
@@ -1914,11 +1989,9 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
 
   <script>
     /* ═══════════════════════════════════════════════════════════
-   HINCHFIELD — CLEAN & GLITCH-FREE (All 22 bugs fixed)
+   HINCHFIELD — CLEAN CODE (22 Glitches Fixed + Login System)
    ═══════════════════════════════════════════════════════════ */
 'use strict';
-
-/* Scroll restore lock */
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 
 const $ = (s,r=document) => r.querySelector(s);
@@ -1928,7 +2001,6 @@ const debounce = (fn, ms=250) => { let t; return (...a) => { clearTimeout(t); t 
 const safe = (fn, name) => { try { return fn(); } catch(e){ console.error('['+name+']', e); } };
 const WA = '917434053550';
 
-/* ═══ DEVICE ID — deferred ═══ */
 let DEVICE_ID = null;
 async function getDeviceId(){
   if (DEVICE_ID) return DEVICE_ID;
@@ -1945,12 +2017,10 @@ async function getDeviceId(){
   }
   return DEVICE_ID;
 }
-// 🐛 FIX: Defer FP loading
 if ('requestIdleCallback' in window) requestIdleCallback(() => getDeviceId(), { timeout: 3000 });
 else setTimeout(() => getDeviceId(), 2500);
 
-/* ═══ STORAGE ═══ */
-const COOKIE_KEYS = ['membership_full', 'last_phone', 'membership', 'user'];
+const COOKIE_KEYS = ['membership_full', 'last_phone', 'membership', 'user', 'session_key', 'user_email'];
 const store = {
   get(k,d){
     try{ const v = localStorage.getItem('hf_'+k); if (v !== null) return JSON.parse(v); }catch(e){}
@@ -1970,11 +2040,16 @@ const store = {
         document.cookie = 'hf_' + k + '=' + encodeURIComponent(JSON.stringify(v)) + ';expires=' + d.toUTCString() + ';path=/;SameSite=Lax';
       }catch(e){}
     }
+  },
+  del(k){
+    try{ localStorage.removeItem('hf_'+k); }catch(e){}
+    if (COOKIE_KEYS.includes(k)){
+      try{ document.cookie = 'hf_' + k + '=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/'; }catch(e){}
+    }
   }
 };
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-/* ═══ ICONS ═══ */
 const ICONS = {
 cart:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>`,
 check:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`,
@@ -2000,31 +2075,27 @@ tag:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.
 insta:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/></svg>`,
 share:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>`,
 menu:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 7h16M4 12h16M4 17h16"/></svg>`,
-history:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`
+history:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
+user:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a8 8 0 0 1 16 0v1"/></svg>`
 };
 function ic(n,c='w-4 h-4'){ return `<span class="inline-flex items-center justify-center ${c}">${ICONS[n]||''}</span>`; }
-
-/* ═══ UTILS ═══ */
 function fmt(inr){ const n = Number(inr); if (!isFinite(n)) return '₹0'; return '₹' + n.toLocaleString('en-IN'); }
 function memPrice(p){ if (!p) return 0; if (p.memberPrice != null) return p.memberPrice; return Math.floor(p.price * 0.5); }
 function saveAmt(p){ if (!p) return 0; return p.price - memPrice(p); }
 function isMembershipValid(m){ if (!m || !m.code) return false; const exp = new Date(m.expiresAt).getTime(); return !isNaN(exp) && exp > Date.now(); }
 function updateMembershipPrices(){ const mb = $('#memBuyBtn'); if (mb && !mb.disabled) mb.textContent = 'Get Membership'; }
 
-/* ═══ CATEGORIES ═══ */
 const CATMETA = {
 'oversized': { name:'Oversized & Minimal T-Shirts', main:'T-Shirt', views:2 },
 'polo': { name:'Polo T-Shirts', main:'T-Shirt', views:2 }
 };
 const CATKEYS = Object.keys(CATMETA);
-
 const SIZES_STD = ['S','M','L','XL','XXL'];
 const COLORS_STD = [['Black','#0A0A0A'],['Coffee','#6F4E37'],['Basil','#4A5D23'],['Lavender','#B57EDC'],['Cream','#FFFDD0'],['Dusty Rose','#DCAE96'],['Sky Blue','#87CEEB']];
 const COLORS_POLO = [['White','#FFFFFF'],['Black','#0A0A0A'],['Navy Blue','#000080'],['Maroon','#800000'],['Bottle Green','#006A4E']];
 const DESC_STD = 'Pure 100% Cotton · 250 GSM Bio Wash';
 const DESC_POLO = 'Pure 100% Cotton · 270 GSM Bio Wash · With Tipping · Velvet Stip';
 
-/* ═══ PRODUCTS ═══ */
 const PRODUCTS = [];
 function generateProducts() {
   if (PRODUCTS.some(p => p.id === 'p1')) return;
@@ -2062,7 +2133,6 @@ const prodById = id => PRODUCTS.find(p => p.id === id);
 const offPct = p => Math.max(0, Math.round((1 - p.price / p.mrp) * 100));
 const stars = r => { const f = Math.max(0, Math.min(5, Math.round(r || 0))); return '<span style="color:var(--text);font-size:10px;letter-spacing:.15em;">' + '★'.repeat(f) + '☆'.repeat(5-f) + '</span>'; };
 const viewsOf = p => CATMETA[p.cat].views;
-
 function imgURLs(p){
   const catPrefix = {'oversized':'o','polo':'p'};
   const prefix = catPrefix[p.cat] || 'o';
@@ -2079,16 +2149,13 @@ function heroImg(p){
   const real = imgURLs(p)[0];
   return '<img class="w-full h-full object-contain hero-img" src="' + real + '" alt="' + esc(p.name) + '" fetchpriority="high" decoding="async" style="height:100%;width:100%;object-fit:contain;">';
 }
-
-/* ═══ CARD ═══ */
 function card(p, anim, delay){
   anim = anim || 'a-up'; delay = delay || 0;
   const wished = wish.includes(p.id);
   const tag = p.tags === 'new' ? ['NEW','background:var(--text);color:var(--bg);'] : p.tags === 'hot' ? ['HOT','background:var(--text);color:var(--bg);'] : p.tags === 'best' ? ['BEST','background:var(--text);color:var(--bg);'] : null;
   const multi = viewsOf(p) > 1;
   const mp = memPrice(p);
-  return `
-<article class="card relative ${anim}" style="animation-delay:${delay}ms;">
+  return `<article class="card relative ${anim}" style="animation-delay:${delay}ms;">
 ${tag ? `<span class="absolute top-3 left-3 z-10 chip" style="${tag[1]}">${tag[0]}</span>` : ''}
 <button class="absolute top-3 right-3 z-10 w-8 h-8 flex items-center justify-center border hairline" style="background:var(--card);" data-wish="${p.id}" aria-label="Wishlist">
 <svg class="w-3.5 h-3.5" style="${wished ? 'color:#0A0A0A;' : 'color:var(--mut);'}" viewBox="0 0 24 24" fill="${wished ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="1.4"><path d="M12 21s-7.5-4.7-10-9.3C.5 8 2.6 4.5 6.2 4.5c2.2 0 3.7 1.2 4.6 2.6.9-1.4 2.4-2.6 4.6-2.6 3.6 0 5.7 3.5 4.2 7.2C19.5 16.3 12 21 12 21z"/></svg>
@@ -2112,7 +2179,6 @@ ${multi ? imgTag(p,p.colors[0][0],0,'swap front','',true) + imgTag(p,p.colors[0]
 }
 generateProducts();
 
-/* ═══ STATE ═══ */
 let cart = store.get('cart', []);
 let wish = store.get('wish', []);
 let appliedMembership = null;
@@ -2120,6 +2186,10 @@ if (!Array.isArray(cart)) cart = [];
 if (!Array.isArray(wish)) wish = [];
 cart = cart.filter(l => l && prodById(l.id));
 store.set('cart', cart);
+
+/* ═══ AUTH STATE ═══ */
+function isLoggedIn(){ return !!store.get('session_key', null) && !!store.get('user_email', null); }
+function getUserEmail(){ return store.get('user_email', null); }
 
 /* ═══ FEATURED ═══ */
 function renderFeatured(){
@@ -2137,7 +2207,6 @@ function renderFeatured(){
   $('#featuredCats').innerHTML = html;
 }
 
-/* ═══ FAQ ═══ */
 function renderFAQ(){
   const items = [
     { q:'What is Hinchfield Membership?', a:'Yearly membership ₹599 — Flat 50% off on all orders + FREE delivery for 365 days. Get your code instantly after purchase.' },
@@ -2154,15 +2223,11 @@ function renderFAQ(){
     { q:'What is the fabric quality?', a:'Oversized & Minimal: 100% Pure Cotton, 250 GSM Bio Wash. Polo: 100% Pure Cotton, 270 GSM Bio Wash with Tipping & Velvet Strip.' },
     { q:'How do I track my HinchField order?', a:'Use "My Orders" or "Track" from the menu to see real-time stages.' }
   ];
-  $('#faqList').innerHTML = items.map(it => `
-<details class="faq card p-5">
-<summary class="flex justify-between items-center font-medium text-sm">${esc(it.q)}<span class="faqicon text-[var(--text)] text-lg">+</span></summary>
-<p class="text-xs mt-3 leading-relaxed" style="color:var(--mut);">${esc(it.a)}</p>
-</details>`).join('');
+  $('#faqList').innerHTML = items.map(it => `<details class="faq card p-5"><summary class="flex justify-between items-center font-medium text-sm">${esc(it.q)}<span class="faqicon text-[var(--text)] text-lg">+</span></summary><p class="text-xs mt-3 leading-relaxed" style="color:var(--mut);">${esc(it.a)}</p></details>`).join('');
 }
 
-/* ═══ MOBILE NAV ═══ */
 function renderMobileNav(){
+  const email = getUserEmail();
   const top = [
     { l:'Oversized & Minimal', a:'data-catpage="oversized"', i:ic('tshirt') },
     { l:'Polo T-Shirts', a:'data-catpage="polo"', i:ic('shirt') },
@@ -2171,18 +2236,19 @@ function renderMobileNav(){
     { l:'All Products', a:'data-catpage=""', i:ic('bag') },
     { l:'My Orders', a:'data-openhistory', i:ic('box') },
     { l:'History', a:'data-openpast', i:ic('history') },
-    { l:'Membership', a:'data-membership', i:'<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a8 8 0 0 1 16 0v1"/></svg>' },
+    { l:'Membership', a:'data-membership', i:ic('user') },
+    email ? { l:'Logout', a:'id="mobileLogoutBtn"', i:ic('lock') } : { l:'Login', a:'id="mobileLoginBtn"', i:ic('user') },
     { l:'Contact', a:'href="#contact" data-close="mobileMenu"', i:ic('chat') }
   ];
-  $('#mobileNav').innerHTML = top.map((it,idx) => `
-<a class="w-full flex items-center justify-between px-4 py-3.5 border hairline transition active:scale-[0.99] text-left" style="background:var(--card); animation:fadeUp .5s both; animation-delay:${idx*40}ms;" ${it.a}>
+  $('#mobileNav').innerHTML = top.map((it,idx) => `<a class="w-full flex items-center justify-between px-4 py-3.5 border hairline transition active:scale-[0.99] text-left" style="background:var(--card); animation:fadeUp .5s both; animation-delay:${idx*40}ms;" ${it.a}>
 <span class="flex items-center gap-3 min-w-0"><span class="w-8 h-8 flex items-center justify-center text-base shrink-0 text-[var(--text)]">${it.i}</span><span class="disp text-[14px] font-normal truncate">${esc(it.l)}</span></span>
 <span class="micro shrink-0">→</span>
 </a>`).join('');
   $('#footCats').innerHTML = CATKEYS.map(c => '<li><button class="hover:opacity-60 transition" data-catpage="' + c + '">' + esc(CATMETA[c].name) + '</button></li>').join('');
+  const mLogin = $('#mobileLoginBtn'); if (mLogin) mLogin.onclick = () => { closeAll(true); openLoginModal(); };
+  const mLogout = $('#mobileLogoutBtn'); if (mLogout) mLogout.onclick = () => { closeAll(true); doLogout(); };
 }
 
-/* ═══ SHOP CATS ═══ */
 function renderShopCats() {
   const shortNames = {'oversized':'Oversized & Minimal','polo':'Polo T-Shirts'};
   $('#shopCats').innerHTML = CATKEYS.map((c, i) => {
@@ -2192,17 +2258,13 @@ function renderShopCats() {
 <div class="cat-card-overlay"></div>
 <div class="absolute top-3 left-3 z-10"><span class="cat-card-no">${String(i + 1).padStart(2, '0')}</span></div>
 </div>
-<div class="cat-card-content">
-<div class="flex items-center justify-between gap-3">
+<div class="cat-card-content"><div class="flex items-center justify-between gap-3">
 <div class="min-w-0"><p class="text-[13px] md:text-[14px] font-normal leading-tight truncate tracking-tight" style="color:var(--text);">${esc(shortNames[c] || CATMETA[c].name)}</p><p class="text-[10px] mt-1 tracking-wide2 uppercase" style="color:var(--mut);">Explore</p></div>
 <span class="cat-card-arrow shrink-0">→</span>
-</div>
-</div>
+</div></div>
 </button>`;
   }).join('');
 }
-
-/* ═══ INSTAGRAM ═══ */
 function renderInsta(){
   const ids = PRODUCTS.slice(0, 6).map(p => p.id);
   $('#instaRow').innerHTML = ids.map(id => {
@@ -2211,8 +2273,6 @@ function renderInsta(){
     return '<a href="https://www.instagram.com/hinchfield_official?stkn=NHExem1hbnA2eGs=" target="_blank" rel="noopener" class="relative overflow-hidden group aspect-square">' + imgTag(p, p.colors[0][0], 0, 'w-full h-full object-contain group-hover:scale-105') + '<span class="absolute inset-0 bg-black/45 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white">' + ic('insta','w-7 h-7') + '</span></a>';
   }).join('');
 }
-
-/* ═══ HERO ═══ */
 let sIdx = 0, sTimer;
 function buildSlides(){
   const S = [];
@@ -2234,7 +2294,7 @@ function renderHero(){
 <span class="ha-up micro inline-block" style="color:var(--mut);">${esc(meta.name)}</span>
 <h1 class="ha-up editorial-h font-luxe leading-[1.05]" style="font-size:var(--fs-hero); color:var(--hero-ink); animation-delay:.05s;">${esc(p.name)}</h1>
 <div class="ha-up grid grid-cols-2 border hairline max-w-md mx-auto md:mx-0" style="animation-delay:.1s;">
-<div class="p-3 md:p-4 text-center"><p class="text-[9px] md:text-[10px] tracking-wide2 uppercase mb-1" style="color:var(--mut);">Regular</p><b class="disp text-xl md:text-2xl hero-price" style="color:var(--text); font-weight:500;">${fmt(p.price)}</b></div>
+<div class="p-3 md:p-4 text-center"><p class="text-[9px] md:text-[10px] tracking-wide2 uppercase mb-1" style="color:var(--mut);">Regular</p><b class="disp text-xl md:text-2xl" style="color:var(--text); font-weight:500;">${fmt(p.price)}</b></div>
 <div class="p-3 md:p-4 text-center border-l hairline" style="background:var(--text); color:var(--bg);"><p class="text-[9px] md:text-[10px] tracking-wide2 uppercase mb-1">⭐ Member</p><b class="disp text-xl md:text-2xl" style="font-weight:500;">${fmt(memPrice(p))}</b></div>
 </div>
 <p class="ha-up text-[10px] text-center md:text-left py-2 tracking-wide2 uppercase" style="color:var(--text); animation-delay:.15s;">💡 Save ${fmt(saveAmt(p))} with Membership</p>
@@ -2276,21 +2336,16 @@ function startSlider(){ if (reduceMotion) return; clearInterval(sTimer); sTimer 
 function sizeHero(){
   const hh = $('#header') ? $('#header').offsetHeight : 0;
   const avail = Math.max(320, window.innerHeight - hh);
-  const sec = $('#heroSec');
-  if (sec) sec.style.minHeight = avail + 'px';
+  const sec = $('#heroSec'); if (sec) sec.style.minHeight = avail + 'px';
   $$('.hero-slide').forEach(s => { s.style.minHeight = avail + 'px'; });
 }
 function reveal(){
   const els = $$('[data-reveal]');
   if (!('IntersectionObserver' in window)){ els.forEach(el => el.classList.add('revealed')); return; }
-  const io = new IntersectionObserver(es => es.forEach(e => {
-    if (e.isIntersecting){ const el = e.target; setTimeout(() => el.classList.add('revealed'), +el.dataset.delay || 0); io.unobserve(el); }
-  }), { threshold:0.05, rootMargin:'0px 0px -40px 0px' });
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting){ const el = e.target; setTimeout(() => el.classList.add('revealed'), +el.dataset.delay || 0); io.unobserve(el); } }), { threshold:0.05, rootMargin:'0px 0px -40px 0px' });
   els.forEach(el => io.observe(el));
   setTimeout(() => { $$('[data-reveal]:not(.revealed)').forEach(el => el.classList.add('revealed')); }, 2000);
 }
-
-/* ═══ TOAST ═══ */
 function toast(msg, iconName){
   try{
     const t = document.createElement('div');
@@ -2301,32 +2356,24 @@ function toast(msg, iconName){
     setTimeout(() => { t.style.transition = 'all .4s'; t.style.opacity = 0; t.style.transform = 'translateX(30px)'; setTimeout(() => t.remove(), 400); }, 2400);
   }catch(e){}
 }
-
-/* ═══ CART ═══ */
 const key = (id,c,s,ex) => id + '|' + c + '|' + s + '|' + (ex ? (ex.custom ? ex.custom.note+'|'+ex.custom.pos : '') + '|' + (ex.colorChoice||'') : '');
 function addToCart(id,color,size,qty,ex){
-  const p = prodById(id);
-  if (!p) return;
-  color = color || p.colors[0][0];
-  size = size || p.sizes[0];
+  const p = prodById(id); if (!p) return;
+  color = color || p.colors[0][0]; size = size || p.sizes[0];
   qty = Math.max(1, Math.min(9, Number(qty) || 1));
   const k = key(id,color,size,ex);
   const line = cart.find(l => l.key === k);
   if (line) line.qty = Math.min(9, line.qty + qty);
   else cart.push({ key:k, id, color, size, qty, custom: ex ? ex.custom : null, colorChoice: ex ? ex.colorChoice : '' });
-  store.set('cart', cart);
-  renderCart();
+  store.set('cart', cart); renderCart();
   toast(p.name + ' — added to cart', 'cart');
 }
 function totals(){
   const sub = cart.reduce((a,l) => { const p = prodById(l.id); return a + (p ? p.price * (Number(l.qty)||0) : 0); }, 0);
   let discount = 0;
-  if (appliedMembership && sub > 0) {
-    discount = cart.reduce((a,l) => { const p = prodById(l.id); if (!p) return a; return a + saveAmt(p) * (Number(l.qty) || 0); }, 0);
-  }
+  if (appliedMembership && sub > 0) { discount = cart.reduce((a,l) => { const p = prodById(l.id); if (!p) return a; return a + saveAmt(p) * (Number(l.qty) || 0); }, 0); }
   const discountedSub = sub - discount;
   let del = 0;
-  // 🐛 FIX: test1 no longer free delivery
   if (cart.length > 0 && !appliedMembership) {
     if (discountedSub >= 1499) del = 0;
     else if (discountedSub >= 999) del = 49;
@@ -2346,8 +2393,7 @@ function renderCart(){
     appliedMembership = null;
     const mc = $('#memberCode'); if (mc) mc.value = '';
     const na=$('#memberNotApplied'),ap=$('#memberApplied');
-    if (na) na.classList.remove('hidden');
-    if (ap) ap.classList.add('hidden');
+    if (na) na.classList.remove('hidden'); if (ap) ap.classList.add('hidden');
   }
   $('#cartCount').textContent = n;
   $('#cartN').textContent = n ? '(' + n + ')' : '';
@@ -2361,28 +2407,20 @@ function renderCart(){
     box.innerHTML = '<div class="text-center py-16 flex flex-col items-center" style="color:var(--mut);"><span class="mb-4 a-float text-[var(--text)]">' + ic('bag','w-14 h-14') + '</span><p class="text-sm font-medium">Your cart is empty</p><button class="pill btn-ink px-6 py-3 mt-5" data-close="cartDrawer" data-catpage="">Start Shopping</button></div>';
   } else {
     box.innerHTML = cart.map(l => {
-      const p = prodById(l.id);
-      if (!p) return '';
+      const p = prodById(l.id); if (!p) return '';
       return '<div class="flex gap-3 border hairline p-3 a-up w-full" style="background:var(--card);">' +
         '<div class="w-20 h-24 overflow-hidden shrink-0 cursor-pointer" style="background:var(--bg2);" data-open-product="' + p.id + '">' + imgTag(p, l.color, 0, 'w-full h-full object-contain') + '</div>' +
-        '<div class="flex-1 min-w-0">' +
-        '<h4 class="text-xs font-medium truncate">' + esc(p.name) + '</h4>' +
+        '<div class="flex-1 min-w-0"><h4 class="text-xs font-medium truncate">' + esc(p.name) + '</h4>' +
         '<p class="text-[10px] mt-0.5 tracking-wide2 uppercase" style="color:var(--mut);">Size: ' + esc(l.size) + ' • Colour: ' + esc(l.color) + (l.colorChoice ? ' • ' + esc(l.colorChoice) : '') + (l.custom ? ' • Custom' : '') + '</p>' +
-        '<div class="flex items-center justify-between mt-3">' +
-        '<div class="flex items-center gap-2"><button class="qtybtn" data-cq="' + l.key + '" data-d="-1">−</button><b class="text-xs w-4 text-center">' + l.qty + '</b><button class="qtybtn" data-cq="' + l.key + '" data-d="1">+</button></div>' +
-        '<b class="disp">' + fmt(p.price * l.qty) + '</b>' +
-        '</div></div>' +
-        '<button class="self-start" style="color:var(--mut);" data-cr="' + l.key + '" aria-label="Remove">✕</button>' +
-        '</div>';
+        '<div class="flex items-center justify-between mt-3"><div class="flex items-center gap-2"><button class="qtybtn" data-cq="' + l.key + '" data-d="-1">−</button><b class="text-xs w-4 text-center">' + l.qty + '</b><button class="qtybtn" data-cq="' + l.key + '" data-d="1">+</button></div>' +
+        '<b class="disp">' + fmt(p.price * l.qty) + '</b></div></div>' +
+        '<button class="self-start" style="color:var(--mut);" data-cr="' + l.key + '" aria-label="Remove">✕</button></div>';
     }).join('');
   }
   $('#sumSub').textContent = fmt(t.sub);
-  const oldD = document.getElementById('sumDiscountRow');
-  if (oldD) oldD.remove();
+  const oldD = document.getElementById('sumDiscountRow'); if (oldD) oldD.remove();
   if (t.discount > 0){
-    const dr = document.createElement('div');
-    dr.id = 'sumDiscountRow';
-    dr.className = 'flex justify-between text-sm';
+    const dr = document.createElement('div'); dr.id = 'sumDiscountRow'; dr.className = 'flex justify-between text-sm';
     dr.innerHTML = '<span style="color:var(--text);">⭐ Member Discount (50%)</span><b style="color:var(--text);">−' + fmt(t.discount) + '</b>';
     $('#sumSub').parentElement.parentElement.insertBefore(dr, $('#sumSub').parentElement.nextElementSibling);
   }
@@ -2390,13 +2428,10 @@ function renderCart(){
   $('#sumDel').innerHTML = t.del ? fmt(t.del) : '<span style="color:var(--text);">FREE</span>';
   $('#sumTotal').textContent = fmt(t.total);
 }
-
-/* ═══ WISHLIST ═══ */
 function toggleWish(id){
   const i = wish.indexOf(id);
   if (i > -1) wish.splice(i,1); else wish.push(id);
-  store.set('wish', wish);
-  renderWish();
+  store.set('wish', wish); renderWish();
   safe(renderFeatured, 'wish.featured');
   if ($('#catPage') && !$('#catPage').classList.contains('hidden')) safe(drawCatPage, 'wish.cat');
 }
@@ -2405,37 +2440,26 @@ function renderWish(){
   const box = $('#wishItems');
   if (!wish.length){ box.innerHTML = '<div class="text-center py-16 flex flex-col items-center" style="color:var(--mut);"><span class="mb-4 a-float">' + ic('heart','w-14 h-14') + '</span><p class="text-sm font-medium">Nothing saved yet</p></div>'; return; }
   box.innerHTML = wish.map(id => {
-    const p = prodById(id);
-    if (!p) return '';
-    return '<div class="flex gap-3 border hairline p-3 a-left w-full" style="background:var(--card);">' +
-      '<div class="w-20 h-24 overflow-hidden cursor-pointer" style="background:var(--bg2);" data-open-product="' + p.id + '">' + imgTag(p, p.colors[0][0], 0, 'w-full h-full object-contain') + '</div>' +
-      '<div class="flex-1 min-w-0">' +
-      '<h4 class="text-xs font-medium truncate">' + esc(p.name) + '</h4>' +
-      '<b class="disp text-sm">' + fmt(p.price) + '</b> <s class="text-[10px]" style="color:var(--mut);">' + fmt(p.mrp) + '</s>' +
-      '<div class="flex gap-2 mt-3"><button class="pill btn-ink px-4 py-2 text-[10px]" data-add="' + p.id + '">Add</button><button class="pill btn-line px-4 py-2 text-[10px]" data-wish="' + p.id + '">Remove</button></div>' +
-      '</div></div>';
+    const p = prodById(id); if (!p) return '';
+    return '<div class="flex gap-3 border hairline p-3 a-left w-full" style="background:var(--card);"><div class="w-20 h-24 overflow-hidden cursor-pointer" style="background:var(--bg2);" data-open-product="' + p.id + '">' + imgTag(p, p.colors[0][0], 0, 'w-full h-full object-contain') + '</div>' +
+      '<div class="flex-1 min-w-0"><h4 class="text-xs font-medium truncate">' + esc(p.name) + '</h4><b class="disp text-sm">' + fmt(p.price) + '</b> <s class="text-[10px]" style="color:var(--mut);">' + fmt(p.mrp) + '</s>' +
+      '<div class="flex gap-2 mt-3"><button class="pill btn-ink px-4 py-2 text-[10px]" data-add="' + p.id + '">Add</button><button class="pill btn-line px-4 py-2 text-[10px]" data-wish="' + p.id + '">Remove</button></div></div></div>';
   }).join('');
 }
-
-/* ═══ PRODUCT MODAL ═══ */
 let pm = { id:null, color:0, size:0, qty:1, angle:0 };
 function openProduct(id, skipRoute){
-  const p = prodById(id);
-  if (!p) return;
+  const p = prodById(id); if (!p) return;
   pm = { id, color:0, size:0, qty:1, angle:0 };
-  drawProduct();
-  openModal('productModal');
+  drawProduct(); openModal('productModal');
   if (!skipRoute) history.pushState({ modal: 'productModal', id }, '', '#product/' + id);
 }
 function drawProduct(){
-  const p = prodById(pm.id);
-  if (!p) return;
+  const p = prodById(pm.id); if (!p) return;
   const cn = p.colors[pm.color] ? p.colors[pm.color][0] : p.colors[0][0];
   const imgs = imgURLs(p);
   const isT = p.cat === 'oversized';
   const mp = memPrice(p);
-  $('#productBody').innerHTML = `
-<div class="grid md:grid-cols-2 w-full md:h-full md:overflow-hidden">
+  $('#productBody').innerHTML = `<div class="grid md:grid-cols-2 w-full md:h-full md:overflow-hidden">
 <div class="p-3 md:p-8 md:overflow-y-auto" style="background:var(--bg2);">
 <div class="md:flex md:gap-4 w-full">
 ${imgs.length > 1 ? '<div class="hidden md:flex flex-col gap-2 order-1">' + imgs.map((im,i) => '<button class="w-14 h-16 overflow-hidden border" style="border-color:' + (i===pm.angle ? 'var(--text)' : 'var(--line)') + ';" data-angle="' + i + '">' + imgTag(p, cn, i, 'w-full h-full object-contain') + '</button>').join('') + '</div>' : ''}
@@ -2457,11 +2481,8 @@ ${imgs.length > 1 ? '<button class="absolute left-2 top-1/2 -translate-y-1/2 w-9
 </div>
 <div class="text-[10px] text-center py-2 tracking-wide2 uppercase hairline border border-t-0" style="color:var(--text);">💡 Save ${fmt(saveAmt(p))} with Hinchfield Membership</div>
 <div class="flex items-center gap-2 mt-2">${stars(p.rating)}<span class="text-xs" style="color:var(--mut);">${p.rating} · ${p.reviews} reviews</span></div>
-<div class="mt-5">
-<p class="micro mb-3">Colour: <span style="color:var(--text);font-weight:500;letter-spacing:.02em;">${esc(cn)}</span></p>
-<div class="flex gap-2.5 flex-wrap items-center">
-${p.colors.map((c,i) => '<button class="swatch ' + (i===pm.color ? 'active' : '') + '" style="background:' + c[1] + ';' + (c[1]==='#FFFFFF' ? 'box-shadow:inset 0 0 0 1px #E6E4E0;' : '') + '" data-pcolor="' + i + '" title="' + esc(c[0]) + '" aria-label="' + esc(c[0]) + '"></button>').join('')}
-</div>
+<div class="mt-5"><p class="micro mb-3">Colour: <span style="color:var(--text);font-weight:500;letter-spacing:.02em;">${esc(cn)}</span></p>
+<div class="flex gap-2.5 flex-wrap items-center">${p.colors.map((c,i) => '<button class="swatch ' + (i===pm.color ? 'active' : '') + '" style="background:' + c[1] + ';' + (c[1]==='#FFFFFF' ? 'box-shadow:inset 0 0 0 1px #E6E4E0;' : '') + '" data-pcolor="' + i + '" title="' + esc(c[0]) + '" aria-label="' + esc(c[0]) + '"></button>').join('')}</div>
 </div>
 <div class="mt-5 flex items-end justify-between gap-3 flex-wrap">
 <div><p class="micro mb-3">Size</p><div class="flex gap-2 flex-wrap">${p.sizes.map((s,i) => '<button class="sizechip ' + (i===pm.size ? 'active' : '') + '" data-psize="' + i + '">' + esc(s) + '</button>').join('')}</div></div>
@@ -2472,13 +2493,8 @@ ${isT ? `
 <div class="mt-5 relative overflow-hidden" style="background:#0A0A0A;color:#fff;">
 <div class="p-5 md:p-6 relative" style="background:linear-gradient(135deg, #0A0A0A 0%, #1A1A1A 100%);">
 <div class="flex items-start gap-3 mb-4">
-<div style="width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-${ic('palette','w-4 h-4')}
-</div>
-<div class="flex-1 min-w-0">
-<p class="text-[10px] tracking-wide2 uppercase mb-1" style="color:rgba(255,255,255,.6);">Personalised Orders</p>
-<p class="font-luxe editorial-h text-lg md:text-xl leading-tight" style="color:#fff;">Want Custom Design?</p>
-</div>
+<div style="width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;">${ic('palette','w-4 h-4')}</div>
+<div class="flex-1 min-w-0"><p class="text-[10px] tracking-wide2 uppercase mb-1" style="color:rgba(255,255,255,.6);">Personalised Orders</p><p class="font-luxe editorial-h text-lg md:text-xl leading-tight" style="color:#fff;">Want Custom Design?</p></div>
 </div>
 <p class="text-[13px] leading-relaxed mb-4" style="color:rgba(255,255,255,.65);">Customization Your Design - Send Us Your Design on WhatsApp or Email. We'll Confirm The Mockup and Apply It On Your Product.</p>
 <div class="grid grid-cols-2 gap-2">
@@ -2488,48 +2504,29 @@ ${ic('palette','w-4 h-4')}
 <a href="mailto:support.hinchfield@gmail.com?subject=Custom T-Shirt Design" class="flex items-center justify-center gap-1.5 py-3 text-[10px] tracking-wide2 uppercase font-medium transition" style="background:transparent;color:#fff;border:1px solid rgba(255,255,255,.3);">
 <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Email
 </a>
-</div>
-</div>
-</div>` : ''}
+</div></div></div>` : ''}
 <div class="mt-5 border hairline" style="background:var(--card);">
 <div class="grid grid-cols-[auto_1fr]">
-<div class="flex items-center justify-center py-6 px-4" style="background:#0A0A0A;">
-<p class="text-[10px] tracking-wide2 uppercase font-semibold" style="color:#fff;writing-mode:vertical-rl;transform:rotate(180deg);letter-spacing:.35em;">Fabric Details</p>
-</div>
+<div class="flex items-center justify-center py-6 px-4" style="background:#0A0A0A;"><p class="text-[10px] tracking-wide2 uppercase font-semibold" style="color:#fff;writing-mode:vertical-rl;transform:rotate(180deg);letter-spacing:.35em;">Fabric Details</p></div>
 <div class="p-5 md:p-6">
-<div class="mb-4">
-<p class="text-[9px] tracking-wide2 uppercase mb-1" style="color:var(--mut);">Fabric</p>
-<p class="disp font-luxe editorial-h text-base md:text-lg" style="color:var(--text);">100% Pure Cotton</p>
-</div>
-<div class="pt-4 border-t hairline">
-<p class="text-[9px] tracking-wide2 uppercase mb-1" style="color:var(--mut);">GSM</p>
-<p class="disp font-luxe editorial-h text-base md:text-lg" style="color:var(--text);">250 GSM Bio Wash</p>
-</div>
-</div>
-</div>
+<div class="mb-4"><p class="text-[9px] tracking-wide2 uppercase mb-1" style="color:var(--mut);">Fabric</p><p class="disp font-luxe editorial-h text-base md:text-lg" style="color:var(--text);">100% Pure Cotton</p></div>
+<div class="pt-4 border-t hairline"><p class="text-[9px] tracking-wide2 uppercase mb-1" style="color:var(--mut);">GSM</p><p class="disp font-luxe editorial-h text-base md:text-lg" style="color:var(--text);">250 GSM Bio Wash</p></div>
+</div></div>
 <div class="p-3 flex items-center justify-center gap-2 border-t hairline">
 <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="color:#DC2626;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
 <p class="text-[10px] tracking-wide2 uppercase font-semibold" style="color:#DC2626;">No Return / No Exchange</p>
-</div>
-</div>
+</div></div>
 <div class="hidden md:grid grid-cols-2 gap-3 mt-6"><button class="pill btn-line py-3.5" data-pm-add>Add to Cart</button><button class="pill btn-gold py-3.5" data-pm-buy>Buy Now</button></div>
 </div></div>
 <div class="md:hidden sticky bottom-0 border-t hairline p-3 flex gap-2 glassbar w-full"><button class="pill btn-line flex-1 py-3.5" data-pm-add>Add</button><button class="pill btn-gold flex-1 py-3.5" data-pm-buy>Buy</button></div>`;
 }
 function readExtras(){ return { custom: null, colorChoice: '' }; }
 
-/* ═══ CATEGORY PAGE ═══ */
 let cp = { cat:'', special:'', sort:'feat' };
 function openCatPage(cat, type, special, skipRoute){
-  cp = { cat: cat || '', special: special || '', sort: 'feat' }; // 🐛 FIX: reset sort
-  drawCatPage();
-  openModal('catPage');
-  if (!skipRoute) {
-    let hash = '#shop';
-    if (special) hash += '/' + special;
-    else if (cat) hash += '/' + cat;
-    try { history.pushState({ modal: 'catPage', cat, special }, '', hash); } catch(e){}
-  }
+  cp = { cat: cat || '', special: special || '', sort: 'feat' };
+  drawCatPage(); openModal('catPage');
+  if (!skipRoute) { let hash = '#shop'; if (special) hash += '/' + special; else if (cat) hash += '/' + cat; try { history.pushState({ modal: 'catPage', cat, special }, '', hash); } catch(e){} }
 }
 function cpItems(){
   let items = [...PRODUCTS];
@@ -2551,18 +2548,10 @@ function drawCatPage(){
   $('#catPageGrid').innerHTML = items.map((p,i) => card(p,'a-up',(i%8)*50)).join('') || '<p class="col-span-full text-center py-20" style="color:var(--mut);">No products found.</p>';
 }
 
-/* ═══ ORDER STATUS ═══ */
-const STAGES = [
-{ t:'Order Placed', icon:'check' },{ t:'Order Confirmed', icon:'chat' },{ t:'In Process', icon:'gear' },{ t:'Order Ready', icon:'box' },{ t:'Dispatched', icon:'truck' },{ t:'Out For Delivery', icon:'truck' },{ t:'Delivered', icon:'check' }
-];
+const STAGES = [{ t:'Order Placed', icon:'check' },{ t:'Order Confirmed', icon:'chat' },{ t:'In Process', icon:'gear' },{ t:'Order Ready', icon:'box' },{ t:'Dispatched', icon:'truck' },{ t:'Out For Delivery', icon:'truck' },{ t:'Delivered', icon:'check' }];
 function getOrderStatus(order){
   const status = order.status || order.manualStatus || 'Order Placed';
-  const STATUS_MAP = {
-    'Order Placed': { icon:'check', color:'var(--mut)' }, 'Order Confirmed': { icon:'check', color:'#0A0A0A' },
-    'In Process': { icon:'gear', color:'#0A0A0A' }, 'Order Ready': { icon:'box', color:'#0A0A0A' },
-    'Dispatched': { icon:'truck', color:'#0A0A0A' }, 'Out For Delivery': { icon:'truck', color:'#0A0A0A' },
-    'Delivered': { icon:'check', color:'#0A0A0A' }, 'Cancelled': { icon:'cross', color:'#DC2626' }
-  };
+  const STATUS_MAP = { 'Order Placed': { icon:'check', color:'var(--mut)' }, 'Order Confirmed': { icon:'check', color:'#0A0A0A' }, 'In Process': { icon:'gear', color:'#0A0A0A' }, 'Order Ready': { icon:'box', color:'#0A0A0A' }, 'Dispatched': { icon:'truck', color:'#0A0A0A' }, 'Out For Delivery': { icon:'truck', color:'#0A0A0A' }, 'Delivered': { icon:'check', color:'#0A0A0A' }, 'Cancelled': { icon:'cross', color:'#DC2626' } };
   const meta = STATUS_MAP[status] || STATUS_MAP['Order Placed'];
   return { text: status, icon: meta.icon, color: meta.color };
 }
@@ -2576,10 +2565,7 @@ function statusTimelineCompact(order){
   const isCancelled = st.text === 'Cancelled';
   const color = isCancelled ? '#DC2626' : '#0A0A0A';
   const iconName = isCancelled ? 'cross' : 'check';
-  return '<div class="flex items-stretch border hairline" style="background:var(--bg2);">' +
-    '<div style="width:64px;display:flex;align-items:center;justify-content:center;background:' + color + ';color:#fff;flex-shrink:0;">' + ic(iconName, 'w-6 h-6') + '</div>' +
-    '<div class="flex-1 py-4 px-5"><p class="text-[10px] tracking-wide2 uppercase mb-1" style="color:var(--mut);">Order</p><p class="disp text-base font-medium" style="color:' + color + ';">' + st.text + '</p></div>' +
-  '</div>';
+  return '<div class="flex items-stretch border hairline" style="background:var(--bg2);"><div style="width:64px;display:flex;align-items:center;justify-content:center;background:' + color + ';color:#fff;flex-shrink:0;">' + ic(iconName, 'w-6 h-6') + '</div><div class="flex-1 py-4 px-5"><p class="text-[10px] tracking-wide2 uppercase mb-1" style="color:var(--mut);">Order</p><p class="disp text-base font-medium" style="color:' + color + ';">' + st.text + '</p></div></div>';
 }
 function statusTimeline(order){
   const ci = currentStageIdx(order);
@@ -2607,11 +2593,7 @@ function buildOrderCard(o, opts){
     '<div class="flex justify-between items-start gap-3 flex-wrap"><div><b class="disp text-sm">' + o.id + '</b><p class="text-[10px] mt-1" style="color:var(--mut);">' + date + '</p></div>' +
     '<div class="flex gap-2 flex-wrap items-center">' + payBadge + (compact ? '' : '<span class="chip border hairline" style="color:' + st.color + ';">' + ic(st.icon,'w-3 h-3') + ' ' + st.text + '</span>') + '</div></div>' +
     timeline +
-    '<div class="border-t hairline pt-3 space-y-2">' + o.items.map(l => {
-      const p = prodById(l.id);
-      if (!p) return '';
-      return '<div class="flex gap-3 items-center"><div class="w-12 h-14 overflow-hidden shrink-0" style="background:var(--bg2);">' + imgTag(p, l.color, 0, 'w-full h-full object-contain') + '</div><div class="flex-1 min-w-0"><p class="text-xs font-medium truncate">' + esc(p.name) + '</p><p class="text-[10px]" style="color:var(--mut);">Size: ' + esc(l.size || '') + ' • ' + esc(l.color || '') + ' • Qty: ' + l.qty + ' • ' + fmt(p.price * l.qty) + '</p></div></div>';
-    }).join('') + '</div>' +
+    '<div class="border-t hairline pt-3 space-y-2">' + o.items.map(l => { const p = prodById(l.id); if (!p) return ''; return '<div class="flex gap-3 items-center"><div class="w-12 h-14 overflow-hidden shrink-0" style="background:var(--bg2);">' + imgTag(p, l.color, 0, 'w-full h-full object-contain') + '</div><div class="flex-1 min-w-0"><p class="text-xs font-medium truncate">' + esc(p.name) + '</p><p class="text-[10px]" style="color:var(--mut);">Size: ' + esc(l.size || '') + ' • ' + esc(l.color || '') + ' • Qty: ' + l.qty + ' • ' + fmt(p.price * l.qty) + '</p></div></div>'; }).join('') + '</div>' +
     '<div class="flex justify-between items-center pt-3 border-t hairline flex-wrap gap-2"><b class="disp text-sm">Total: ' + fmt(o.totals.total) + '</b>' +
     '<div class="flex gap-2"><button class="chip border hairline text-[10px]" style="color:var(--text);" data-download-invoice="' + o.id + '">Download Invoice</button>' + (canCancel ? '<button class="chip border hairline text-[10px]" style="color:#DC2626;" data-cancel-order="' + o.id + '">Cancel</button>' : '') + '</div></div>' +
     (o.otp && st.text !== 'Cancelled' && st.text !== 'Delivered' ? '<p class="text-[10px] font-medium text-center py-2 tracking-wide2 uppercase" style="background:var(--bg2); color:var(--text);">Delivery OTP: ' + o.otp + '</p>' : '') +
@@ -2619,7 +2601,7 @@ function buildOrderCard(o, opts){
     '</div>';
 }
 
-/* ═══ PLACE ORDER (COD) ═══ */
+/* ═══ PLACE ORDER ═══ */
 let lock = false;
 function placeOrder(){
   if (lock) return;
@@ -2656,28 +2638,24 @@ function placeOrder(){
   };
   const orders = store.get('orders', []);
   orders.push(order); store.set('orders', orders);
-  // 🔑 Save user persistently
-  store.set('user', { name, phone });
-  store.set('last_phone', phone);
+  // Save customer info
+  if (isLoggedIn()) {
+    store.set('user', { name, phone, email });
+  }
   notifyNewOrder(order);
   saveOrderToServer(order);
   cart = []; store.set('cart', []);
   renderCart();
-  syncMyOrders();
+  syncOrders();
   closeModal('cartDrawer', true);
   try { history.replaceState(null, '', location.pathname + location.search); } catch(e){}
   toast('Order placed — ' + oid, 'check');
-  // 🐛 FIX: invoice one-time flag
   if (!window.__invoiceOpened) {
     window.__invoiceOpened = true;
-    setTimeout(() => {
-      try { showInvoice(order); } catch(e){ console.error('Invoice error:', e); }
-      setTimeout(() => { window.__invoiceOpened = false; }, 1000);
-    }, 400);
+    setTimeout(() => { try { showInvoice(order); } catch(e){ console.error('Invoice error:', e); } setTimeout(() => { window.__invoiceOpened = false; }, 1000); }, 400);
   }
 }
 
-/* ═══ RAZORPAY ═══ */
 const RAZORPAY_KEY_ID = 'rzp_live_ThrZ8hY3CqJiE8';
 const API_BASE = (window.location.port === '3000' || window.location.port === '') ? '' : (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:3000' : '';
 let selectedPayMethod = 'cod';
@@ -2721,8 +2699,7 @@ function savePaidOrder(customer, t, razorpayResponse){
   };
   const orders = store.get('orders', []);
   orders.push(order); store.set('orders', orders);
-  store.set('user', { name: customer.name, phone: customer.phone });
-  store.set('last_phone', customer.phone);
+  if (isLoggedIn()) store.set('user', { name: customer.name, phone: customer.phone, email: customer.email });
   return order;
 }
 async function handleOnlinePayment(){
@@ -2738,7 +2715,7 @@ async function handleOnlinePayment(){
   btn.textContent = 'Creating Order…';
   try {
     const res = await fetch(`${API_BASE}/api/create-order`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ amount: amountPaise, currency: 'INR', receipt: 'hf_' + Date.now() }) });
-    if (!res.ok) throw new Error('Server error ' + res.status + '. Is backend running?');
+    if (!res.ok) throw new Error('Server error ' + res.status);
     const orderData = await res.json();
     if (!orderData.success) throw new Error(orderData.error || 'Order creation failed');
     const customer = readCustomer();
@@ -2754,30 +2731,25 @@ async function handleOnlinePayment(){
           const vData = await vRes.json();
           if (vData.success){
             const order = savePaidOrder(customer, t, response);
-            notifyNewOrder(order);
-            saveOrderToServer(order);
+            notifyNewOrder(order); saveOrderToServer(order);
             cart = []; store.set('cart', []);
-            renderCart();
-            syncMyOrders();
+            renderCart(); syncOrders();
             closeModal('cartDrawer', true);
             try { history.replaceState(null, '', location.pathname + location.search); } catch(e){}
             toast('Payment successful — ' + order.id, 'check');
             if (!window.__invoiceOpened) {
               window.__invoiceOpened = true;
-              setTimeout(() => {
-                try { showInvoice(order); } catch(e){ console.error('Invoice error:', e); }
-                setTimeout(() => { window.__invoiceOpened = false; }, 1000);
-              }, 400);
+              setTimeout(() => { try { showInvoice(order); } catch(e){} setTimeout(() => { window.__invoiceOpened = false; }, 1000); }, 400);
             }
-          } else { toast('Payment verification failed. Contact support.', 'cross'); }
-        } catch (err){ console.error('Verify error:', err); toast('Verification failed. Share payment ID with support.', 'cross'); }
+          } else { toast('Payment verification failed.', 'cross'); }
+        } catch (err){ console.error('Verify error:', err); toast('Verification failed.', 'cross'); }
       },
       modal: { ondismiss: function (){ toast('Payment cancelled', 'warn'); } }
     };
     const rzp = new Razorpay(options);
-    rzp.on('payment.failed', function (resp){ const desc = (resp && resp.error && resp.error.description) || 'Payment failed'; toast(desc, 'cross'); console.error('Payment failed:', resp); });
+    rzp.on('payment.failed', function (resp){ const desc = (resp && resp.error && resp.error.description) || 'Payment failed'; toast(desc, 'cross'); });
     rzp.open();
-  } catch (err){ console.error('Payment error:', err); toast(err.message || 'Something went wrong. Try again.', 'cross'); }
+  } catch (err){ console.error('Payment error:', err); toast(err.message || 'Something went wrong.', 'cross'); }
   finally { btn.disabled = false; btn.textContent = origText; }
 }
 
@@ -2789,11 +2761,9 @@ async function handleOnlinePayment(){
       localStorage.setItem('hf_is_admin', 'true');
       const clean = window.location.pathname + window.location.hash;
       window.history.replaceState({}, '', clean);
-      console.log('✅ Owner mode activated permanently');
     }
   } catch(e){}
 })();
-
 async function verifyAdminStatus(){
   try {
     const myDeviceId = await getDeviceId();
@@ -2802,116 +2772,228 @@ async function verifyAdminStatus(){
     if (!d.success) return;
     const serverAdminId = d.deviceId;
     const wasAdmin = localStorage.getItem('hf_is_admin') === 'true';
-    if (serverAdminId && serverAdminId === myDeviceId){
-      if (!wasAdmin){ localStorage.setItem('hf_is_admin', 'true'); store.set('orders', []); console.log('✅ Admin verified'); }
-      return;
-    }
-    if (serverAdminId && serverAdminId !== myDeviceId){
-      if (wasAdmin){ localStorage.removeItem('hf_is_admin'); store.set('orders', []); console.log('❌ Admin revoked'); }
-      return;
-    }
-    if (!serverAdminId && wasAdmin){
-      await fetch(`${API_BASE}/api/orders?action=set-admin`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ deviceId: myDeviceId, pwd: 'HF2026' }) });
-    }
-  } catch(e){ /* silent */ }
+    if (serverAdminId && serverAdminId === myDeviceId){ if (!wasAdmin){ localStorage.setItem('hf_is_admin', 'true'); store.set('orders', []); } return; }
+    if (serverAdminId && serverAdminId !== myDeviceId){ if (wasAdmin){ localStorage.removeItem('hf_is_admin'); store.set('orders', []); } return; }
+    if (!serverAdminId && wasAdmin){ await fetch(`${API_BASE}/api/orders?action=set-admin`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ deviceId: myDeviceId, pwd: 'HF2026' }) }); }
+  } catch(e){}
 }
 
-/* ═══ SYNC ORDERS — SERVER-FIRST, COOKIE RECOVERY ═══ */
-async function syncMyOrders(){
+/* ═══ AUTH SYSTEM ═══ */
+function openLoginModal(){
+  const body = $('#loginModalBody');
+  if (!body) return;
+  const currentEmail = store.get('last_phone', '') || '';
+  body.innerHTML = `
+    <div class="text-center mb-6">
+      <svg class="w-12 h-12 mx-auto mb-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a8 8 0 0 1 16 0v1"/></svg>
+      <p class="micro mb-2">HINCHFIELD</p>
+      <h3 class="disp editorial-h font-luxe text-2xl mb-1">Login</h3>
+      <p class="text-xs" style="color:var(--mut);">Login to access your orders & membership on any device</p>
+    </div>
+    <input id="loginEmail" type="email" maxlength="60" class="field mb-3" placeholder="Email address *" value="${esc(currentEmail)}" autocomplete="email">
+    <p id="loginErr" class="text-[11px] hidden mb-3" style="color:#DC2626;"></p>
+    <button id="loginSendOtp" class="pill btn-gold w-full py-4">Send OTP</button>
+    <p class="text-[10px] text-center mt-3" style="color:var(--mut);">We'll send a 6-digit code to your email</p>
+  `;
+  openModal('loginModal');
+  setTimeout(() => { const el = $('#loginEmail'); if (el) el.focus(); }, 200);
+  $('#loginSendOtp').onclick = () => sendOtp();
+  const inp = $('#loginEmail'); if (inp) inp.addEventListener('keydown', e => { if (e.key === 'Enter') sendOtp(); });
+}
+
+async function sendOtp(){
+  const btn = $('#loginSendOtp');
+  if (btn && btn.disabled) return;
+  const email = ($('#loginEmail').value || '').trim().toLowerCase();
+  const err = m => { const e = $('#loginErr'); e.textContent = m; e.classList.remove('hidden'); return false; };
+  $('#loginErr').classList.add('hidden');
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return err('Please enter a valid email address.');
+  if (btn){ btn.disabled = true; btn.textContent = 'Sending OTP…'; }
   try {
-    syncMyOrders._last = Date.now();
+    const r = await fetch(`${API_BASE}/api/orders?action=send-otp`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    const d = await r.json();
+    if (!d.success) throw new Error(d.error || 'Failed to send OTP');
+    closeModal('loginModal', true);
+    openOtpModal(email);
+  } catch(e){
+    err(e.message || 'Something went wrong');
+  } finally {
+    if (btn){ btn.disabled = false; btn.textContent = 'Send OTP'; }
+  }
+}
+
+function openOtpModal(email){
+  const body = $('#otpModalBody');
+  if (!body) return;
+  body.innerHTML = `
+    <div class="text-center mb-6">
+      <svg class="w-12 h-12 mx-auto mb-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      <p class="micro mb-2">HINCHFIELD</p>
+      <h3 class="disp editorial-h font-luxe text-2xl mb-1">Verify OTP</h3>
+      <p class="text-xs" style="color:var(--mut);">We sent a 6-digit code to</p>
+      <p class="text-xs font-medium mt-1" style="color:var(--text);word-break:break-all;">${esc(email)}</p>
+    </div>
+    <input id="otpInput" type="text" inputmode="numeric" maxlength="6" pattern="[0-9]*" class="field mb-3 text-center" placeholder="• • • • • •" style="font-size:1.5rem;letter-spacing:.6em;text-align:center;">
+    <p id="otpErr" class="text-[11px] hidden mb-3" style="color:#DC2626;"></p>
+    <button id="otpVerify" class="pill btn-gold w-full py-4">Verify & Login</button>
+    <button id="otpResend" class="pill btn-line w-full py-3 mt-2 text-[10px]">Resend OTP</button>
+  `;
+  openModal('otpModal');
+  setTimeout(() => { const el = $('#otpInput'); if (el) el.focus(); }, 200);
+  $('#otpInput').addEventListener('input', e => { e.target.value = e.target.value.replace(/[^0-9]/g,''); });
+  $('#otpVerify').onclick = () => verifyOtp(email);
+  $('#otpResend').onclick = async () => {
+    try {
+      await fetch(`${API_BASE}/api/orders?action=send-otp`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email }) });
+      toast('OTP resent', 'check');
+    } catch(e){ toast('Failed to resend', 'cross'); }
+  };
+  $('#otpInput').addEventListener('keydown', e => { if (e.key === 'Enter') verifyOtp(email); });
+}
+
+async function verifyOtp(email){
+  const btn = $('#otpVerify');
+  if (btn && btn.disabled) return;
+  const otp = ($('#otpInput').value || '').trim();
+  const err = m => { const e = $('#otpErr'); e.textContent = m; e.classList.remove('hidden'); return false; };
+  $('#otpErr').classList.add('hidden');
+  if (!/^\d{6}$/.test(otp)) return err('Enter 6-digit OTP');
+  if (btn){ btn.disabled = true; btn.textContent = 'Verifying…'; }
+  try {
+    const deviceId = await getDeviceId();
+    const r = await fetch(`${API_BASE}/api/orders?action=verify-otp`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, otp, deviceId })
+    });
+    const d = await r.json();
+    if (!d.success) throw new Error(d.error || 'Invalid OTP');
+    // Save session
+    store.set('session_key', d.session_key);
+    store.set('user_email', email);
+    if (d.user && d.user.name) store.set('user', { name: d.user.name, phone: d.user.phone || '', email });
+    if (d.user && d.user.phone) store.set('last_phone', d.user.phone);
+    closeModal('otpModal', true);
+    toast('Logged in successfully', 'check');
+    updateAuthUI();
+    await syncOrders(true);
+  } catch(e){
+    err(e.message || 'Invalid OTP');
+  } finally {
+    if (btn){ btn.disabled = false; btn.textContent = 'Verify & Login'; }
+  }
+}
+
+async function doLogout(){
+  const sessionKey = store.get('session_key', null);
+  if (sessionKey){
+    try {
+      await fetch(`${API_BASE}/api/orders?action=logout`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ session_key: sessionKey })
+      });
+    } catch(e){}
+  }
+  // Clear browser data
+  store.del('session_key');
+  store.del('user_email');
+  store.del('orders');
+  store.del('membership_full');
+  store.set('orders', []);
+  appliedMembership = null;
+  updateAuthUI();
+  renderCart();
+  renderHistory();
+  renderPastHistory();
+  toast('Logged out', 'check');
+}
+
+function updateAuthUI(){
+  const loggedIn = isLoggedIn();
+  const email = getUserEmail();
+  const loginBtn = $('#loginBtn');
+  const userMenu = $('#userMenu');
+  if (loggedIn){
+    if (loginBtn) loginBtn.classList.add('hidden');
+    if (userMenu) userMenu.classList.remove('hidden');
+    const em = $('#userEmailShow'); if (em) em.textContent = email || '';
+  } else {
+    if (loginBtn) loginBtn.classList.remove('hidden');
+    if (userMenu) userMenu.classList.add('hidden');
+  }
+  renderMobileNav();
+}
+
+/* ═══ SYNC ORDERS ═══ */
+async function syncOrders(silent){
+  try {
+    syncOrders._last = Date.now();
     const isAdmin = localStorage.getItem('hf_is_admin') === 'true';
-    const user = store.get('user', null);
-    const lastPhone = store.get('last_phone', null);
-    const membership = store.get('membership_full', null);
-    const phone = user?.phone || lastPhone || membership?.phone;
-    
+    const sessionKey = store.get('session_key', null);
+    const email = store.get('user_email', null);
+
     let url;
     if (isAdmin) {
       url = `${API_BASE}/api/orders?action=list&pwd=HF2026`;
+    } else if (sessionKey && email) {
+      url = `${API_BASE}/api/orders?action=user-data&session_key=${encodeURIComponent(sessionKey)}`;
     } else {
-      if (!phone) return;
-      const cleanPhone = String(phone).replace(/[^0-9]/g, '');
-      if (!cleanPhone) return;
-      url = `${API_BASE}/api/orders?action=my-orders&phone=${cleanPhone}`;
+      return; // Not logged in → no fetch
     }
-    
+
     const r = await fetch(url);
     const d = await r.json();
     if (!d.success) return;
-    const serverOrders = d.orders || [];
-    if (!serverOrders.length && !isAdmin) return;
-    
-    const local = store.get('orders', []);
-    const localMap = new Map(local.map(o => [o.id, o]));
-    let changed = false;
-    
-    serverOrders.forEach(serverO => {
-      const existing = localMap.get(serverO.id);
-      if (!existing) {
-        local.push(serverO);
-        changed = true;
-      } else if (!existing._localOnly && existing.status !== serverO.status) {
-        const wasNotDelivered = existing.status !== 'Delivered';
-        existing.status = serverO.status;
-        existing.updatedAt = serverO.updatedAt || Date.now();
-        if (serverO.status === 'Delivered') {
-          existing.deliveredAt = serverO.deliveredAt || Date.now();
-          if (wasNotDelivered) {
-            window.__delivering = window.__delivering || {};
-            window.__delivering[serverO.id] = true;
-            setTimeout(() => {
-              const el = document.querySelector('.card[data-orderid="' + serverO.id + '"]');
-              if (el) el.classList.add('delivering-anim');
-            }, 60);
-            if (!isAdmin && document.visibilityState === 'visible') {
-              setTimeout(() => {
-                if (!window.__delivering || !window.__delivering[serverO.id]) return;
-                const idEl = $('#deliveredOrderId');
-                if (idEl) idEl.textContent = serverO.id;
-                openModal('orderDeliveredModal');
-                setTimeout(() => {
-                  if (window.__delivering) delete window.__delivering[serverO.id];
-                  closeModal('orderDeliveredModal', true);
-                  safe(renderHistory, 'delivered.clear');
-                  safe(renderPastHistory, 'delivered.clear.past');
-                  openModal('pastHistoryModal');
-                  try { history.replaceState({ modal: 'pastHistoryModal' }, '', '#history'); } catch(e){}
-                }, 1800);
-              }, 1000);
-            }
-          }
+
+    if (isAdmin){
+      const serverOrders = d.orders || [];
+      if (!serverOrders.length) return;
+      const local = store.get('orders', []);
+      const localMap = new Map(local.map(o => [o.id, o]));
+      let changed = false;
+      serverOrders.forEach(serverO => {
+        const existing = localMap.get(serverO.id);
+        if (!existing){ local.push(serverO); changed = true; }
+        else if (!existing._localOnly && existing.status !== serverO.status){
+          existing.status = serverO.status;
+          existing.updatedAt = serverO.updatedAt || Date.now();
+          changed = true;
         }
-        changed = true;
+      });
+      if (changed){
+        store.set('orders', local);
+        const hm = $('#historyModal'); if (hm && !hm.classList.contains('hidden')) renderHistory();
+        const ph = $('#pastHistoryModal'); if (ph && !ph.classList.contains('hidden')) renderPastHistory();
       }
-    });
-    
-    if (changed){
-      store.set('orders', local);
-      const hm = $('#historyModal');
-      if (hm && !hm.classList.contains('hidden')) renderHistory();
-      const ph = $('#pastHistoryModal');
-      if (ph && !ph.classList.contains('hidden')) renderPastHistory();
-      if ($('#trackModal') && !$('#trackModal').classList.contains('hidden')) { if ($('#trackInput') && $('#trackInput').value.trim()) track(); }
-      const sm = $('#staffModal');
-      if (sm && !sm.classList.contains('hidden')) {
-        const q = $('#adminSearchId') && $('#adminSearchId').value.trim();
-        if (q && q.length >= 3) $('#adminSearchId').dispatchEvent(new Event('input'));
-      }
+    } else {
+      // Customer with session — server is source of truth
+      const serverOrders = d.orders || [];
+      store.set('orders', serverOrders);
+      if (d.membership) store.set('membership_full', d.membership);
+      if (d.user && d.user.phone) store.set('last_phone', d.user.phone);
+      const hm = $('#historyModal'); if (hm && !hm.classList.contains('hidden')) renderHistory();
+      const ph = $('#pastHistoryModal'); if (ph && !ph.classList.contains('hidden')) renderPastHistory();
     }
   } catch(e){ /* silent */ }
 }
 
-/* ═══ HISTORY / PAST HISTORY ═══ */
+/* ═══ HISTORY ═══ */
 function openHistory(){
+  if (!isLoggedIn() && localStorage.getItem('hf_is_admin') !== 'true'){
+    openLoginModal();
+    toast('Login to view orders', 'warn');
+    return;
+  }
   renderHistory();
   openModal('historyModal');
   try {
-    if (window.location.hash === '#orders') { syncMyOrders(); return; }
+    if (window.location.hash === '#orders') { syncOrders(); return; }
     if (window.location.hash) history.replaceState(null, '', window.location.pathname + window.location.search);
     history.pushState({ modal: 'historyModal' }, '', '#orders');
   } catch(e){}
-  syncMyOrders();
+  syncOrders();
 }
 function renderHistory(){
   const isOwnerDev = localStorage.getItem('hf_is_admin') === 'true';
@@ -2930,14 +3012,19 @@ function renderHistory(){
   box.innerHTML = orders.map(o => buildOrderCard(o, { showCancel: true })).join('');
 }
 function openPastHistory(){
+  if (!isLoggedIn() && localStorage.getItem('hf_is_admin') !== 'true'){
+    openLoginModal();
+    toast('Login to view history', 'warn');
+    return;
+  }
   renderPastHistory();
   openModal('pastHistoryModal');
   try {
-    if (window.location.hash === '#history') { syncMyOrders(); return; }
+    if (window.location.hash === '#history') { syncOrders(); return; }
     if (window.location.hash) history.replaceState(null, '', window.location.pathname + window.location.search);
     history.pushState({ modal: 'pastHistoryModal' }, '', '#history');
   } catch(e){}
-  syncMyOrders();
+  syncOrders();
 }
 function renderPastHistory(){
   const isOwnerDev = localStorage.getItem('hf_is_admin') === 'true';
@@ -2955,7 +3042,6 @@ function renderPastHistory(){
   box.innerHTML = orders.map(o => buildOrderCard(o, { showCancel: false, compact: true })).join('');
 }
 
-/* ═══ SERVER PUSH ═══ */
 function saveOrderToServer(order){
   try { fetch(`${API_BASE}/api/orders?action=save`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ order }) }).catch(() => {}); } catch(e){}
 }
@@ -2965,7 +3051,6 @@ function notifyNewOrder(order){
   } catch(e){}
 }
 
-/* ═══ CANCEL ORDER ═══ */
 let pendingCancelId = null;
 function askCancelOrder(orderId){
   const orders = store.get('orders', []);
@@ -3035,58 +3120,57 @@ function track(){
     $('#trackResult').innerHTML = '<div class="border hairline p-4 mb-4" style="background:var(--card);"><div class="flex justify-between items-center mb-2"><b class="text-sm">' + o.id + '</b><span class="chip border hairline" style="color:' + st.color + ';">' + ic(st.icon,'w-3 h-3') + ' ' + st.text + '</span></div><p class="text-[10px]" style="color:var(--mut);">Placed: ' + new Date(o.timestamp).toLocaleString('en-IN') + '</p></div>' + statusTimeline(o) + '<a class="pill btn-ink w-full py-3 mt-5" href="https://wa.me/' + WA + '?text=' + encodeURIComponent('Hi! Track my order ' + id) + '" target="_blank" rel="noopener">Live Help on WhatsApp</a>';
     return;
   }
-  $('#trackResult').innerHTML = '<p class="text-xs mb-3" style="color:var(--mut);">Order not found on this device. Ask us live on WhatsApp:</p><a class="pill btn-ink w-full py-3" href="https://wa.me/' + WA + '?text=' + encodeURIComponent('Hi! Track my order ' + id) + '" target="_blank" rel="noopener">Live Status on WhatsApp</a>';
+  $('#trackResult').innerHTML = '<p class="text-xs mb-3" style="color:var(--mut);">Order not found. Ask us live on WhatsApp:</p><a class="pill btn-ink w-full py-3" href="https://wa.me/' + WA + '?text=' + encodeURIComponent('Hi! Track my order ' + id) + '" target="_blank" rel="noopener">Live Status on WhatsApp</a>';
 }
 
 /* ═══ POLICIES ═══ */
 const POLICIES = {
-  shipping: { title: 'Shipping & Delivery Policy', updated: 'Last updated · January 2026', intro: 'Hinchfield is committed to delivering premium products safely and on time. This policy covers processing, dispatch, delivery timelines, and charges.', sections: [
-      { h:'Order Processing', p:'All orders are processed within <b>24 hours</b> of confirmation, excluding Sundays and public holidays. You will receive an order confirmation on WhatsApp and email immediately after checkout.' },
+  shipping: { title: 'Shipping & Delivery Policy', intro: 'Hinchfield is committed to delivering premium products safely and on time.', sections: [
+      { h:'Order Processing', p:'All orders are processed within <b>24 hours</b> of confirmation, excluding Sundays and public holidays.' },
       { h:'Delivery Timeline', p:'<b>Within India:</b> 2–5 business days from dispatch.<br><b>International:</b> 7–14 business days, subject to customs clearance.' },
-      { h:'Shipping Charges', p:'<b>Orders below ₹999</b> → ₹99 flat<br><b>Orders ₹999 – ₹1,499</b> → ₹49 flat<br><b>Orders above ₹1,499</b> → FREE delivery across India.<br>Hinchfield Members enjoy <b>FREE delivery on every order</b>, regardless of value.' },
-      { h:'International Shipping', p:'We ship worldwide. International orders are confirmed via WhatsApp with live currency conversion and applicable duties/taxes handled transparently.' },
-      { h:'Order Tracking', p:'Track your order anytime via <b>My Orders</b> or the <b>Track Order</b> page. Live status updates are pushed at every stage.' },
-      { h:'Delivery OTP Verification', p:'Every order is delivered with a <b>4-digit OTP</b> verification to ensure safe handover. Please share the OTP only with the assigned delivery agent.' },
-      { h:'Possible Delays', p:'Delivery timelines may be affected by weather, festivals, regional restrictions, or courier delays. We keep you informed on WhatsApp at every step.' }
+      { h:'Shipping Charges', p:'<b>Below ₹999</b> → ₹99 flat<br><b>₹999 – ₹1,499</b> → ₹49 flat<br><b>Above ₹1,499</b> → FREE delivery across India.<br>Members enjoy <b>FREE delivery on every order</b>.' },
+      { h:'International Shipping', p:'We ship worldwide. International orders are confirmed via WhatsApp with live currency conversion.' },
+      { h:'Order Tracking', p:'Track your order anytime via <b>My Orders</b> or the <b>Track Order</b> page.' },
+      { h:'Delivery OTP Verification', p:'Every order is delivered with a <b>4-digit OTP</b> verification to ensure safe handover.' },
+      { h:'Possible Delays', p:'Delivery timelines may be affected by weather, festivals, regional restrictions, or courier delays.' }
   ]},
-  refund: { title: 'Refund Policy', updated: 'Last updated · January 2026', intro: 'We believe in transparent and fair refund practices.', sections: [
-      { h:'Refund Eligibility', p:'Refunds are applicable <b>only</b> in the following cases:<br>• Order not delivered within the promised timeline<br>• Product received is damaged or defective<br>• Wrong product delivered' },
-      { h:'Non-Refundable Cases', p:'• Products used, washed, or altered<br>• Products without original packaging<br>• Orders cancelled after 24 hours of placement' },
-      { h:'How to Request a Refund', p:'Report the issue within <b>24 hours of delivery</b> via WhatsApp at <b>7434053550</b> with:<br>• Order ID<br>• Unboxing video (mandatory)<br>• Clear photos of the product and packaging' },
-      { h:'Verification Process', p:'Our support team verifies the claim within <b>48 hours</b>. Once approved, the refund is initiated to the original payment method or via UPI / bank transfer.' },
-      { h:'Refund Timeline', p:'• UPI / Wallet → 24–48 hours<br>• Cards / Netbanking → 5–7 business days<br>• COD orders → Refunded via UPI or bank transfer only' },
+  refund: { title: 'Refund Policy', intro: 'We believe in transparent and fair refund practices.', sections: [
+      { h:'Refund Eligibility', p:'Refunds are applicable <b>only</b> in:<br>• Order not delivered within promised timeline<br>• Product damaged or defective<br>• Wrong product delivered' },
+      { h:'Non-Refundable Cases', p:'• Products used, washed, or altered<br>• Products without original packaging<br>• Orders cancelled after 24 hours' },
+      { h:'How to Request', p:'Report within <b>24 hours of delivery</b> via WhatsApp at <b>7434053550</b> with:<br>• Order ID<br>• Unboxing video (mandatory)<br>• Clear photos' },
+      { h:'Verification', p:'Our support team verifies within <b>48 hours</b>. Once approved, the refund is initiated.' },
+      { h:'Refund Timeline', p:'• UPI / Wallet → 24–48 hours<br>• Cards / Netbanking → 5–7 business days<br>• COD → Refunded via UPI or bank transfer' },
       { h:'Cancellation Refunds', p:'Orders cancelled within <b>24 hours</b> of placement are eligible for a full refund.' }
   ]},
-  privacy: { title: 'Privacy Policy', updated: 'Last updated · January 2026', intro: 'Your privacy matters to us.', sections: [
-      { h:'Information We Collect', p:'When you shop with Hinchfield, we collect:<br>• Full name, phone number, email address<br>• Delivery address (city, state, PIN / ZIP)<br>• Order history and product preferences<br>• Payment info — processed securely via <b>Razorpay</b>' },
-      { h:'How We Use Your Information', p:'• To process and deliver your orders<br>• To send order updates via WhatsApp, email, or SMS<br>• To provide customer support<br>• To improve our products and shopping experience' },
+  privacy: { title: 'Privacy Policy', intro: 'Your privacy matters to us.', sections: [
+      { h:'Information We Collect', p:'• Full name, phone number, email address<br>• Delivery address<br>• Order history<br>• Payment info — processed securely via <b>Razorpay</b>' },
+      { h:'How We Use', p:'• To process and deliver your orders<br>• To send order updates<br>• To provide customer support<br>• To improve our products' },
       { h:'Data Sharing', p:'We <b>never sell</b> your data.' },
-      { h:'Cookies & Local Storage', p:'We use browser local storage and cookies to remember your cart, wishlist, and delivery preferences.' },
+      { h:'Cookies & Local Storage', p:'We use browser local storage and cookies to remember your cart, wishlist, and login session.' },
       { h:'Data Security', p:'All transactions are encrypted. Payment data is handled exclusively by Razorpay.' },
-      { h:'Your Rights', p:'You may request access, correction, or deletion of your personal data by emailing <b>support.hinchfield@gmail.com</b>.' },
-      { h:'Marketing Communication', p:'We only contact you for order-related updates and optional offers.' }
+      { h:'Your Rights', p:'Request access, correction, or deletion by emailing <b>support.hinchfield@gmail.com</b>.' },
+      { h:'Marketing', p:'We only contact you for order updates and optional offers.' }
   ]},
-  'no-return': { title: 'No Return / No Exchange Policy', updated: 'Last updated · January 2026', intro: 'Hinchfield follows a strict No Return / No Exchange policy across all product categories.', sections: [
-      { h:'Strict Policy Notice', p:'All orders are <b>final</b> once delivered and accepted.' },
+  'no-return': { title: 'No Return / No Exchange Policy', intro: 'Hinchfield follows a strict No Return / No Exchange policy.', sections: [
+      { h:'Strict Policy Notice', p:'All orders are <b>final</b> once delivered.' },
       { h:'Why This Policy', p:'Our T-Shirts are made-to-order and often customised.' },
-      { h:'Exceptions We Do Support', p:'We resolve the following cases at <b>no extra cost</b>:<br>• Product damaged in transit<br>• Wrong product delivered<br>• Product with manufacturing defect' },
-      { h:'Reporting Window', p:'Any issue must be reported within <b>24 hours of delivery</b> via WhatsApp at <b>7434053550</b> with an unboxing video and clear photos.' },
+      { h:'Exceptions We Support', p:'• Product damaged in transit<br>• Wrong product delivered<br>• Product with manufacturing defect' },
+      { h:'Reporting Window', p:'Any issue must be reported within <b>24 hours of delivery</b> via WhatsApp at <b>7434053550</b>.' },
       { h:'Resolution', p:'On verification, we will provide a <b>replacement or refund</b> — at our sole discretion.' },
-      { h:'Customer Responsibility', p:'Please review <b>size (S/M/L/XL/XXL)</b>, colour, and delivery address carefully before placing the order.' }
+      { h:'Customer Responsibility', p:'Please review <b>size (S/M/L/XL/XXL)</b>, colour, and delivery address before ordering.' }
   ]},
-  membership: { title: 'Membership Policy', updated: 'Last updated · January 2026', intro: 'Hinchfield Yearly Membership gives you unbeatable value — Flat 50% OFF + FREE delivery for 365 days.', sections: [
-      { h:'Membership Benefits', p:'• <b>Flat 50% OFF</b> on all products<br>• <b>FREE delivery</b> on every order<br>• Priority customer support<br>• Early access to new drops' },
-      { h:'Membership Fee & Validity', p:'One-time fee of <b>₹599</b> for <b>365 days</b> from the date of activation.' },
-      { h:'How to Use', p:'After purchase, you receive a unique <b>4-digit code</b> instantly. Enter this code in the cart → Membership section → click <b>Apply</b>.' },
-      { h:'Device Binding', p:'Each membership code is bound to <b>one device</b> and <b>one phone number</b>.' },
+  membership: { title: 'Membership Policy', intro: 'Hinchfield Yearly Membership gives you unbeatable value.', sections: [
+      { h:'Benefits', p:'• <b>Flat 50% OFF</b> on all products<br>• <b>FREE delivery</b> on every order<br>• Priority support<br>• Early access to new drops' },
+      { h:'Fee & Validity', p:'One-time fee of <b>₹599</b> for <b>365 days</b>.' },
+      { h:'How to Use', p:'After purchase, you receive a unique <b>4-digit code</b>. Enter this code in the cart → Membership section → click <b>Apply</b>.' },
+      { h:'Device Binding', p:'Each code is bound to <b>one device</b> and <b>one phone number</b>.' },
       { h:'Non-Transferable', p:'Membership is strictly non-transferable.' },
       { h:'Cancellation & Refund', p:'Membership is <b>non-refundable</b> once activated.' },
-      { h:'Lost Code Recovery', p:'If you lose your code, log in from the same device or contact us on WhatsApp.' }
+      { h:'Lost Code Recovery', p:'Contact us on WhatsApp with your registered phone number to retrieve it.' }
   ]}
 };
 function openPolicy(key, skipRoute){
-  const p = POLICIES[key];
-  if (!p) return;
+  const p = POLICIES[key]; if (!p) return;
   $('#policyTitle').textContent = p.title;
   let html = `<div class="text-center mb-10 md:mb-14"><p class="micro mb-3">Hinchfield · Legal</p><h1 class="disp editorial-h font-luxe text-2xl md:text-3xl mb-3">${p.title}</h1></div><p class="text-[13px] md:text-sm leading-relaxed mb-8 md:mb-10 text-center max-w-2xl mx-auto" style="color:var(--mut);">${p.intro}</p><div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5 items-stretch">`;
   p.sections.forEach((s, i) => {
@@ -3098,7 +3182,7 @@ function openPolicy(key, skipRoute){
   if (!skipRoute) { try { history.pushState({ modal:'policyModal', key }, '', '#policy/' + key); } catch(e){} }
 }
 
-/* ═══ MEMBERSHIP BUILDERS ═══ */
+/* ═══ MEMBERSHIP ═══ */
 function buildMemberActiveHTML(saved){
   return `<div class="text-center mb-6"><svg class="w-14 h-14 mx-auto mb-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6l4 4 6-8 6 8 4-4v12H2z"/><path d="M2 18h20"/></svg><p class="micro mb-2">HINCHFIELD</p><h3 class="disp editorial-h font-luxe text-2xl mb-1">Active Member</h3><p class="text-xs" style="color:var(--mut);">Welcome back!</p></div><div class="border hairline p-5 mb-5 text-center" style="background:var(--bg2);"><p class="micro mb-2">YOUR MEMBERSHIP CODE</p><p class="disp" style="font-size:2.4rem;letter-spacing:.4em;font-weight:500;">${esc(saved.code)}</p><p class="text-xs mt-3" style="color:var(--mut);">${esc(saved.name || '')}</p><p class="text-xs" style="color:var(--mut);">Valid till: ${new Date(saved.expiresAt).toLocaleDateString('en-IN')}</p></div><div class="grid grid-cols-2 gap-2 mb-3"><button data-member-action="copy" class="pill btn-line py-3.5">Copy Code</button><button data-member-action="share" class="pill btn-ink py-3.5">Share</button></div><button data-member-action="shop" class="pill btn-gold w-full py-3.5">Shop & Save 50%</button>`;
 }
@@ -3113,8 +3197,7 @@ function renderMemberModal(){
   const saved = store.get('membership_full', null);
   const isValid = isMembershipValid(saved);
   const isExpired = saved && saved.code && !isValid;
-  const body = $('#memberModalBody');
-  if (!body) return;
+  const body = $('#memberModalBody'); if (!body) return;
   if (isValid){ body.innerHTML = buildMemberActiveHTML(saved); }
   else if (isExpired){ body.innerHTML = buildMemberExpiredHTML(saved); }
   else { body.innerHTML = buildMemberBuyHTML(); }
@@ -3122,49 +3205,24 @@ function renderMemberModal(){
 async function openMemberModal(skipRoute){
   renderMemberModal();
   openModal('memberModal');
-  if (!skipRoute) {
-    try {
-      if (window.location.hash === '#menu') { history.replaceState({ modal:'memberModal' }, '', '#membership'); }
-      else { history.pushState({ modal:'memberModal' }, '', '#membership'); }
-    } catch(e){}
-  }
+  if (!skipRoute) { try { if (window.location.hash === '#menu') { history.replaceState({ modal:'memberModal' }, '', '#membership'); } else { history.pushState({ modal:'memberModal' }, '', '#membership'); } } catch(e){} }
   try {
     const deviceId = await getDeviceId();
     const r = await fetch(`${API_BASE}/api/membership-check-device`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ deviceId }) });
     const d = await r.json();
     const saved = store.get('membership_full', null);
-    if (d.success && d.membership){
-      const deviceMembership = d.membership;
-      if (!saved || saved.code !== deviceMembership.code){
-        store.set('membership_full', deviceMembership);
-        renderMemberModal();
-      }
-    }
-  } catch(e){ console.error(e); }
+    if (d.success && d.membership){ if (!saved || saved.code !== d.membership.code){ store.set('membership_full', d.membership); renderMemberModal(); } }
+  } catch(e){}
 }
 document.addEventListener('click', async (e) => {
   const t = e.target.closest('[data-member-action]');
   if (!t) return;
   const action = t.getAttribute('data-member-action');
   const saved = store.get('membership_full', null);
-  if (action === 'copy'){
-    if (!saved || !saved.code) return;
-    try { navigator.clipboard.writeText(saved.code); toast('Code copied!', 'check'); } catch(e){ toast('Copy failed', 'cross'); }
-    return;
-  }
-  if (action === 'share'){
-    if (!saved || !saved.code) return;
-    const txt = '⭐ HINCHFIELD Membership\n\nMy Code: ' + saved.code + '\n\nFlat 50% OFF + Free delivery on hinchfield.store';
-    if (navigator.share){ navigator.share({ title:'HinchField Membership', text: txt }).catch(()=>{}); }
-    else { try { navigator.clipboard.writeText(txt); toast('Copied — share anywhere', 'check'); } catch(e){} }
-    return;
-  }
+  if (action === 'copy'){ if (!saved || !saved.code) return; try { navigator.clipboard.writeText(saved.code); toast('Code copied!', 'check'); } catch(e){ toast('Copy failed', 'cross'); } return; }
+  if (action === 'share'){ if (!saved || !saved.code) return; const txt = '⭐ HINCHFIELD Membership\n\nMy Code: ' + saved.code + '\n\nFlat 50% OFF + Free delivery on hinchfield.store'; if (navigator.share){ navigator.share({ title:'HinchField Membership', text: txt }).catch(()=>{}); } else { try { navigator.clipboard.writeText(txt); toast('Copied', 'check'); } catch(e){} } return; }
   if (action === 'shop'){ closeAll(true); openCatPage('', '', ''); return; }
-  if (action === 'renew'){
-    const body = $('#memberModalBody');
-    if (body) body.innerHTML = buildMemberBuyHTML({ name: saved?.name || '', phone: saved?.phone || '' });
-    return;
-  }
+  if (action === 'renew'){ const body = $('#memberModalBody'); if (body) body.innerHTML = buildMemberBuyHTML({ name: saved?.name || '', phone: saved?.phone || '' }); return; }
   if (action === 'buy'){
     if (t.disabled) return;
     const err = m => { const el = $('#memBuyErr'); if (el) { el.textContent=m; el.classList.remove('hidden'); } return false; };
@@ -3174,9 +3232,7 @@ document.addEventListener('click', async (e) => {
     if (!/^[A-Za-z .]{3,60}$/.test(name)) return err('Enter valid name');
     if (!/^\d{10,15}$/.test(phone.replace(/[^0-9]/g,''))) return err('Enter valid WhatsApp number');
     if (typeof Razorpay === 'undefined') return err('Payment SDK missing');
-    t.disabled = true;
-    const orig = t.textContent;
-    t.textContent = 'Opening Razorpay…';
+    t.disabled = true; const orig = t.textContent; t.textContent = 'Opening Razorpay…';
     try {
       const r = await fetch(`${API_BASE}/api/membership-order`, { method:'POST' });
       const d = await r.json();
@@ -3187,33 +3243,25 @@ document.addEventListener('click', async (e) => {
         image: 'images/logo.png', order_id: d.order_id,
         prefill: { name, contact: phone }, theme: { color: '#0A0A0A' },
         handler: async function(resp){
-          const loadingHtml = `<div class="text-center py-12"><div style="width:56px;height:56px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--text);margin:0 auto 20px;animation:spin 0.8s linear infinite;"></div><p class="micro mb-2">HINCHFIELD</p><p class="disp editorial-h font-luxe text-xl mb-2">Activating Membership…</p><p class="text-xs" style="color:var(--mut);">Please wait a moment</p></div>`;
-          const bodyEl = $('#memberModalBody');
-          if (bodyEl) bodyEl.innerHTML = loadingHtml;
+          const loadingHtml = `<div class="text-center py-12"><div style="width:56px;height:56px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--text);margin:0 auto 20px;animation:spin 0.8s linear infinite;"></div><p class="micro mb-2">HINCHFIELD</p><p class="disp editorial-h font-luxe text-xl mb-2">Activating Membership…</p></div>`;
+          const bodyEl = $('#memberModalBody'); if (bodyEl) bodyEl.innerHTML = loadingHtml;
           openModal('memberModal');
           try {
             const [vRes, deviceId] = await Promise.all([
               fetch(`${API_BASE}/api/verify-payment`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ razorpay_order_id: resp.razorpay_order_id, razorpay_payment_id: resp.razorpay_payment_id, razorpay_signature: resp.razorpay_signature }) }),
               getDeviceId()
             ]);
-            const vd = await vRes.json();
-            if (!vd.success) throw new Error('Verify failed');
-            const c = await fetch(`${API_BASE}/api/membership-create`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ name, phone, deviceId }) });
-            const cd = await c.json();
-            if (!cd.success) throw new Error('Code generation failed');
+            const vd = await vRes.json(); if (!vd.success) throw new Error('Verify failed');
+            const c = await fetch(`${API_BASE}/api/membership-create`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ name, phone, email: getUserEmail(), deviceId }) });
+            const cd = await c.json(); if (!cd.success) throw new Error('Code generation failed');
             const clean = phone.replace(/[^0-9]/g, '');
             const full = { code: cd.code, name, phone: clean, expiresAt: cd.expiresAt };
-            store.set('membership_full', full);
-            store.set('last_phone', clean);
-            if (typeof renderCart === 'function') renderCart();
+            store.set('membership_full', full); store.set('last_phone', clean);
+            renderCart();
             closeModal('memberModal', true);
             openModal('memberWelcomeModal');
             toast('Membership activated!', 'check');
-          } catch(e){
-            console.error(e);
-            toast('Verification failed', 'cross');
-            renderMemberModal();
-          }
+          } catch(e){ console.error(e); toast('Verification failed', 'cross'); renderMemberModal(); }
         },
         modal: { ondismiss: () => { toast('Payment cancelled', 'warn'); renderMemberModal(); } }
       };
@@ -3226,7 +3274,7 @@ document.addEventListener('click', async (e) => {
   }
 });
 
-/* ═══ MODAL MANAGEMENT ═══ */
+/* ═══ MODALS ═══ */
 function openModal(id){ const el = $('#'+id); if (el) el.classList.remove('hidden'); document.body.style.overflow = 'hidden'; }
 function closeModal(id, skipHistory){
   const el = $('#'+id); if (el) el.classList.add('hidden');
@@ -3234,7 +3282,7 @@ function closeModal(id, skipHistory){
   if (!skipHistory && window.location.hash) { try { history.back(); } catch(e){} }
 }
 function closeAll(skipHistory){
-  ['cartDrawer','wishDrawer','productModal','sizeModal','trackModal','catPage','mobileMenu','historyModal','pastHistoryModal','staffModal','memberModal','memberWelcomeModal','confirmCancelModal','policyModal','invoiceModal','orderDeliveredModal'].forEach(id => { const el = $('#'+id); if (el) el.classList.add('hidden'); });
+  ['cartDrawer','wishDrawer','productModal','sizeModal','trackModal','catPage','mobileMenu','historyModal','pastHistoryModal','staffModal','memberModal','memberWelcomeModal','confirmCancelModal','policyModal','invoiceModal','orderDeliveredModal','loginModal','otpModal'].forEach(id => { const el = $('#'+id); if (el) el.classList.add('hidden'); });
   document.body.style.overflow = '';
 }
 function handleRoute(){
@@ -3257,7 +3305,7 @@ function handleRoute(){
   else if (hash.indexOf('#policy/') === 0) { openPolicy(hash.split('/')[1], true); }
   else if (hash === '#admin') { openAdmin(true); }
   else if (hash === '#menu') { openModal('mobileMenu'); }
-  // 🐛 FIX: scroll reset only on no-hash
+  else if (hash === '#login') { openLoginModal(); }
   else { try { window.scrollTo(0, 0); } catch(e){} }
 }
 window.addEventListener('popstate', handleRoute);
@@ -3269,13 +3317,13 @@ document.addEventListener('click', e => {
   if (t.hasAttribute('data-close')){ closeModal(t.getAttribute('data-close')); return; }
   if (t.hasAttribute('data-openhistory')){
     const mobileOpen = $('#mobileMenu') && !$('#mobileMenu').classList.contains('hidden');
-    if (mobileOpen) { closeAll(true); renderHistory(); openModal('historyModal'); history.replaceState({ modal: 'historyModal' }, '', '#orders'); }
+    if (mobileOpen) { closeAll(true); if(!isLoggedIn() && localStorage.getItem('hf_is_admin') !== 'true'){ openLoginModal(); return; } renderHistory(); openModal('historyModal'); history.replaceState({ modal: 'historyModal' }, '', '#orders'); }
     else { closeAll(true); openHistory(); }
     return;
   }
   if (t.hasAttribute('data-openpast')){
     const mobileOpen = $('#mobileMenu') && !$('#mobileMenu').classList.contains('hidden');
-    if (mobileOpen) { closeAll(true); renderPastHistory(); openModal('pastHistoryModal'); history.replaceState({ modal: 'pastHistoryModal' }, '', '#history'); }
+    if (mobileOpen) { closeAll(true); if(!isLoggedIn() && localStorage.getItem('hf_is_admin') !== 'true'){ openLoginModal(); return; } renderPastHistory(); openModal('pastHistoryModal'); history.replaceState({ modal: 'pastHistoryModal' }, '', '#history'); }
     else { closeAll(true); openPastHistory(); }
     return;
   }
@@ -3292,15 +3340,8 @@ document.addEventListener('click', e => {
   if (t.hasAttribute('data-catpage')){
     const v = t.getAttribute('data-catpage');
     const mobileOpen = $('#mobileMenu') && !$('#mobileMenu').classList.contains('hidden');
-    if (mobileOpen) {
-      closeAll(true);
-      if (['new','best'].indexOf(v) > -1) openCatPage('', '', v, true);
-      else openCatPage(v, '', '', true);
-      let hash = '#shop';
-      if (['new','best'].indexOf(v) > -1) hash += '/' + v;
-      else if (v) hash += '/' + v;
-      history.replaceState({ modal: 'catPage' }, '', hash);
-    } else { if (['new','best'].indexOf(v) > -1) openCatPage('', '', v); else openCatPage(v, '', ''); }
+    if (mobileOpen) { closeAll(true); if (['new','best'].indexOf(v) > -1) openCatPage('', '', v, true); else openCatPage(v, '', '', true); let hash = '#shop'; if (['new','best'].indexOf(v) > -1) hash += '/' + v; else if (v) hash += '/' + v; history.replaceState({ modal: 'catPage' }, '', hash); }
+    else { if (['new','best'].indexOf(v) > -1) openCatPage('', '', v); else openCatPage(v, '', ''); }
     return;
   }
   if (t.hasAttribute('data-sizeopen')){ openModal('sizeModal'); try{ history.pushState({ modal: 'sizeModal' }, '', '#size'); }catch(e){} return; }
@@ -3322,13 +3363,18 @@ document.addEventListener('click', e => {
   if (t.hasAttribute('data-pm-buy')){ const p = prodById(pm.id); if (!p) return; addToCart(p.id, p.colors[pm.color][0], p.sizes[pm.size], pm.qty, readExtras(p)); closeAll(true); try{ history.replaceState(null, '', location.pathname + location.search); history.pushState({ modal:'cartDrawer' }, '', '#cart'); handleRoute(); }catch(e){} return; }
   if (t.hasAttribute('data-cq')){ const l = cart.find(x => x.key === t.getAttribute('data-cq')); if (!l) return; l.qty = Math.min(9, Math.max(1, l.qty + (+t.getAttribute('data-d')))); store.set('cart', cart); renderCart(); return; }
   if (t.hasAttribute('data-cr')){ cart = cart.filter(x => x.key !== t.getAttribute('data-cr')); store.set('cart', cart); renderCart(); return; }
-  if (t.hasAttribute('data-download-invoice')){ const id = t.getAttribute('data-download-invoice'); const orders = store.get('orders', []); const order = orders.find(o => o.id === id); if (order) { showInvoice(order); } return; }
+  if (t.hasAttribute('data-download-invoice')){ const id = t.getAttribute('data-download-invoice'); const orders = store.get('orders', []); const order = orders.find(o => o.id === id); if (order) showInvoice(order); return; }
   if (t.hasAttribute('data-cancel-order')){ askCancelOrder(t.getAttribute('data-cancel-order')); return; }
   if (t.hasAttribute('data-policy')){ const key = t.getAttribute('data-policy'); closeAll(true); openPolicy(key); return; }
 });
 
-/* ═══ WIRE TOP-LEVEL ═══ */
+/* ═══ WIRE ═══ */
 function wire(){
+  const lo = $('#loginBtn'); if (lo) lo.onclick = () => { closeAll(true); openLoginModal(); };
+  const um = $('#userMenuBtn'); if (um) um.onclick = (e) => { e.stopPropagation(); $('#userMenu').classList.toggle('open'); };
+  document.addEventListener('click', e => { const m = $('#userMenu'); if (m && !m.contains(e.target)) m.classList.remove('open'); });
+  const lb = $('#logoutBtn'); if (lb) lb.onclick = () => { $('#userMenu').classList.remove('open'); closeAll(true); doLogout(); };
+
   $('#cartOpen').onclick = () => { closeAll(true); renderCart(); try{ history.pushState({ modal:'cartDrawer' }, '', '#cart'); }catch(e){} handleRoute(); };
   $('#wishOpen').onclick = () => { closeAll(true); renderWish(); try{ history.pushState({ modal:'wishDrawer' }, '', '#wishlist'); }catch(e){} handleRoute(); };
   $('#menuOpen').onclick = () => { openModal('mobileMenu'); try{ history.pushState({ modal: 'mobileMenu' }, '', '#menu'); }catch(e){} };
@@ -3342,51 +3388,27 @@ function wire(){
   if ($('#deliveredOk')) $('#deliveredOk').onclick = () => {
     closeModal('orderDeliveredModal', true);
     if (window.__delivering) Object.keys(window.__delivering).forEach(id => delete window.__delivering[id]);
-    closeAll(true);
-    renderPastHistory();
-    openModal('pastHistoryModal');
+    closeAll(true); renderPastHistory(); openModal('pastHistoryModal');
     try { history.replaceState({ modal: 'pastHistoryModal' }, '', '#history'); } catch(e){}
   };
   const dlm = $('#orderDeliveredModal');
-  if (dlm){
-    dlm.querySelectorAll('[data-close="orderDeliveredModal"]').forEach(bd => {
-      bd.addEventListener('click', () => {
-        if (window.__delivering) Object.keys(window.__delivering).forEach(id => delete window.__delivering[id]);
-        safe(renderHistory, 'dlm.backdrop');
-        safe(renderPastHistory, 'dlm.backdrop.past');
-      });
-    });
-  }
-  if ($('#invCloseBtn')) $('#invCloseBtn').onclick = () => {
-    closeModal('invoiceModal', true);
-    const hm = $('#historyModal');
-    if (!hm || hm.classList.contains('hidden')) {
-      setTimeout(() => { if(typeof openHistory==='function') openHistory(); }, 200);
-    }
-  };
-  document.querySelectorAll('input[name="payMethod"]').forEach(radio => {
-    radio.addEventListener('change', (ev) => { selectedPayMethod = ev.target.value; updatePayMethodUI(); });
-  });
-  $$('#payRadCod, #payRadOnline').forEach(lbl => {
-    lbl.addEventListener('click', () => { const val = lbl.querySelector('input').value; selectedPayMethod = val; updatePayMethodUI(); });
-  });
+  if (dlm){ dlm.querySelectorAll('[data-close="orderDeliveredModal"]').forEach(bd => { bd.addEventListener('click', () => { if (window.__delivering) Object.keys(window.__delivering).forEach(id => delete window.__delivering[id]); safe(renderHistory, 'dlm.backdrop'); safe(renderPastHistory, 'dlm.backdrop.past'); }); }); }
+  if ($('#invCloseBtn')) $('#invCloseBtn').onclick = () => { closeModal('invoiceModal', true); const hm = $('#historyModal'); if (!hm || hm.classList.contains('hidden')) { setTimeout(() => { if(typeof openHistory==='function') openHistory(); }, 200); } };
+  document.querySelectorAll('input[name="payMethod"]').forEach(radio => { radio.addEventListener('change', (ev) => { selectedPayMethod = ev.target.value; updatePayMethodUI(); }); });
+  $$('#payRadCod, #payRadOnline').forEach(lbl => { lbl.addEventListener('click', () => { const val = lbl.querySelector('input').value; selectedPayMethod = val; updatePayMethodUI(); }); });
   $('#sortSel').onchange = e => { cp.sort = e.target.value; drawCatPage(); };
   $('#trackGo').onclick = track;
   $('#toTop').onclick = () => window.scrollTo({ top:0, behavior:'smooth' });
   if ($('#openMembership')) $('#openMembership').onclick = () => openMemberModal();
-  if ($('#memWelcomeOk')) $('#memWelcomeOk').onclick = () => {
-    closeModal('memberWelcomeModal', true);
-    renderMemberModal();
-    openModal('memberModal');
-    try { if (window.location.hash !== '#membership') history.replaceState({ modal:'memberModal' }, '', '#membership'); } catch(e){}
-  };
+  if ($('#memWelcomeOk')) $('#memWelcomeOk').onclick = () => { closeModal('memberWelcomeModal', true); renderMemberModal(); openModal('memberModal'); try { if (window.location.hash !== '#membership') history.replaceState({ modal:'memberModal' }, '', '#membership'); } catch(e){} };
+
   function updateMemberUI(){
-    const na=$('#memberNotApplied'),ap=$('#memberApplied');
-    if(!na||!ap)return;
+    const na=$('#memberNotApplied'),ap=$('#memberApplied'); if(!na||!ap)return;
     if(appliedMembership){na.classList.add('hidden');ap.classList.remove('hidden');$('#memCodeTxt').textContent=appliedMembership.code;}
     else{na.classList.remove('hidden');ap.classList.add('hidden');}
   }
   setTimeout(updateMemberUI, 100);
+
   async function applyMemberFn(){
     const btn = $('#memberApply');
     if (btn && btn.disabled) return;
@@ -3394,32 +3416,18 @@ function wire(){
     const code = ($('#memberCode')?.value || '').trim();
     if(!/^\d{4}$/.test(code)) return toast('Enter Your 4-digit code','warn');
     const saved = store.get('membership_full', null);
-    if (isMembershipValid(saved) && saved.code === code){
-      appliedMembership = { code, name: saved.name, expiresAt: saved.expiresAt };
-      updateMemberUI(); renderCart();
-      toast('Member applied — 50% off!','check');
-      return;
-    }
-    if (saved && saved.code === code && !isMembershipValid(saved)){
-      return toast('Membership expired — please renew','warn');
-    }
+    if (isMembershipValid(saved) && saved.code === code){ appliedMembership = { code, name: saved.name, expiresAt: saved.expiresAt }; updateMemberUI(); renderCart(); toast('Member applied — 50% off!','check'); return; }
+    if (saved && saved.code === code && !isMembershipValid(saved)){ return toast('Membership expired — please renew','warn'); }
     const deviceId = await getDeviceId();
     if (btn){
-      btn.disabled = true;
-      const orig = btn.textContent;
-      btn.textContent = '…';
+      btn.disabled = true; const orig = btn.textContent; btn.textContent = '…';
       try {
-        const ctl = new AbortController();
-        const to = setTimeout(() => ctl.abort(), 6000);
+        const ctl = new AbortController(); const to = setTimeout(() => ctl.abort(), 6000);
         const r = await fetch(`${API_BASE}/api/membership-verify`,{ method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ code, deviceId }), signal: ctl.signal });
         clearTimeout(to);
         const d = await r.json();
-        if(d.success){
-          appliedMembership = { code, name: d.name, expiresAt: d.expiresAt };
-          store.set('membership_full', { code, name: d.name, expiresAt: d.expiresAt });
-          updateMemberUI(); renderCart();
-          toast('Member applied — 50% off!','check');
-        } else { toast(d.error || 'Invalid code','cross'); const mc = $('#memberCode'); if (mc) mc.value = ''; }
+        if(d.success){ appliedMembership = { code, name: d.name, expiresAt: d.expiresAt }; store.set('membership_full', { code, name: d.name, expiresAt: d.expiresAt }); updateMemberUI(); renderCart(); toast('Member applied — 50% off!','check'); }
+        else { toast(d.error || 'Invalid code','cross'); const mc = $('#memberCode'); if (mc) mc.value = ''; }
       } catch(e){ toast('Invalid code','cross'); const mc = $('#memberCode'); if (mc) mc.value = ''; }
       finally { btn.disabled = false; btn.textContent = orig; }
     }
@@ -3427,144 +3435,80 @@ function wire(){
   if($('#memberApply'))$('#memberApply').onclick=applyMemberFn;
   if($('#memberRemove'))$('#memberRemove').onclick=()=>{ appliedMembership=null; const mc = $('#memberCode'); if (mc) mc.value = ''; updateMemberUI(); renderCart(); toast('Membership removed','check'); };
   $('#delVerify').onclick = () => {
-    const id = $('#delOrderId').value.trim().toUpperCase();
-    const otp = $('#delOtp').value.trim();
-    const orders = store.get('orders', []);
-    const o = orders.find(x => x.id === id);
+    const id = $('#delOrderId').value.trim().toUpperCase(); const otp = $('#delOtp').value.trim();
+    const orders = store.get('orders', []); const o = orders.find(x => x.id === id);
     if (!o) return toast('Order not found','cross');
-    if (o.otp === otp){
-      o.deliveredAt = Date.now();
-      o.status = 'Delivered';
-      o.updatedAt = Date.now();
-      store.set('orders', orders);
+    if (o.otp === otp){ o.deliveredAt = Date.now(); o.status = 'Delivered'; o.updatedAt = Date.now(); store.set('orders', orders);
       try { fetch(`${API_BASE}/api/orders?action=update`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: o.id, status: 'Delivered', pwd: 'HF2026' }) }).catch(() => {}); } catch(e){}
-      toast('Delivery Confirmed!','check');
-      $('#delOrderId').value = ''; $('#delOtp').value = '';
+      toast('Delivery Confirmed!','check'); $('#delOrderId').value = ''; $('#delOtp').value = '';
     } else { toast('Invalid OTP','cross'); }
   };
   $('#adminLoginBtn').onclick = async () => {
     if ($('#adminPass').value === 'HF2026'){
-      adminAuth = true;
-      localStorage.setItem('hf_is_admin', 'true');
-      store.set('orders', []);
-      $('#adminLoginBox').classList.add('hidden');
-      $('#adminDashBox').classList.remove('hidden');
-      toast('Admin Unlocked — Owner mode active','lock');
-      try {
-        const deviceId = await getDeviceId();
-        await fetch(`${API_BASE}/api/orders?action=set-admin`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ deviceId, pwd: 'HF2026' }) });
-      } catch(e){ console.error(e); }
-      setTimeout(() => { syncMyOrders(); }, 500);
+      adminAuth = true; localStorage.setItem('hf_is_admin', 'true'); store.set('orders', []);
+      $('#adminLoginBox').classList.add('hidden'); $('#adminDashBox').classList.remove('hidden');
+      toast('Admin Unlocked','lock');
+      try { const deviceId = await getDeviceId(); await fetch(`${API_BASE}/api/orders?action=set-admin`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ deviceId, pwd: 'HF2026' }) }); } catch(e){}
+      setTimeout(() => { syncOrders(); }, 500);
     } else { toast('Wrong Passcode','cross'); }
   };
   $('#adminCancelBtn').onclick = async () => {
-    const input = $('#adminCancelInput').value.trim();
-    const result = $('#adminCancelResult');
+    const input = $('#adminCancelInput').value.trim(); const result = $('#adminCancelResult');
     if (!input) { result.innerHTML = '<p class="text-[10px]" style="color:#DC2626;">Enter phone or code</p>'; return; }
-    const isCode = /^\d{4}$/.test(input);
-    const payload = isCode ? { code: input } : { phone: input };
-    $('#adminCancelBtn').disabled = true;
-    $('#adminCancelBtn').textContent = '…';
+    const isCode = /^\d{4}$/.test(input); const payload = isCode ? { code: input } : { phone: input };
+    $('#adminCancelBtn').disabled = true; $('#adminCancelBtn').textContent = '…';
     try {
       const r = await fetch(`${API_BASE}/api/membership-cancel`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
       const d = await r.json();
-      if (d.success) {
-        result.innerHTML = '<p class="text-[10px]" style="color:#0A0A0A;">✅ Membership cancelled (Code: ' + d.code + ')</p>';
-        $('#adminCancelInput').value = '';
-        const saved = store.get('membership_full', null);
-        if (saved && saved.code === d.code) {
-          store.set('membership_full', null);
-          appliedMembership = null;
-          if (typeof renderCart === 'function') renderCart();
-          toast('Membership cancelled', 'cross');
-        }
+      if (d.success) { result.innerHTML = '<p class="text-[10px]" style="color:#0A0A0A;">✅ Membership cancelled (Code: ' + d.code + ')</p>'; $('#adminCancelInput').value = '';
+        const saved = store.get('membership_full', null); if (saved && saved.code === d.code) { store.set('membership_full', null); appliedMembership = null; renderCart(); toast('Membership cancelled', 'cross'); }
       } else { result.innerHTML = '<p class="text-[10px]" style="color:#DC2626;">❌ ' + (d.error || 'Not found') + '</p>'; }
     } catch (e) { result.innerHTML = '<p class="text-[10px]" style="color:#DC2626;">Error: ' + e.message + '</p>'; }
     finally { $('#adminCancelBtn').disabled = false; $('#adminCancelBtn').textContent = 'Cancel'; }
   };
   $('#adminSearchId').addEventListener('input', debounce(() => {
-    const q = $('#adminSearchId').value.trim().toUpperCase();
-    const res = $('#adminResult');
+    const q = $('#adminSearchId').value.trim().toUpperCase(); const res = $('#adminResult');
     if (q.length < 3){ res.innerHTML = ''; return; }
-    const orders = store.get('orders', []);
-    const o = orders.find(x => x.id.indexOf(q) > -1);
+    const orders = store.get('orders', []); const o = orders.find(x => x.id.indexOf(q) > -1);
     if (!o){ res.innerHTML = '<p class="text-xs text-center" style="color:var(--mut);">No order found.</p>'; return; }
     const st = getOrderStatus(o);
-    res.innerHTML = '<div class="border hairline p-4" style="background:var(--card);"><div class="flex justify-between items-center mb-2"><b class="text-sm">' + o.id + '</b><span class="chip border hairline" style="color:' + st.color + ';">' + st.text + '</span></div><p class="text-[10px] mb-3" style="color:var(--mut);">' + o.customer.name + ' • ' + o.customer.phone + '</p><div class="flex gap-2 flex-wrap"><select id="adminStatusSel" class="field text-[10px] py-1 flex-1"><option value="">Auto (Time-Based)</option>' + ['Order Placed','Order Confirmed','In Process','Order Ready','Dispatched','Out For Delivery','Delivered','Cancelled'].map(v => '<option value="' + v + '">' + v + '</option>').join('') + '</select><button id="adminUpdateBtn" class="pill btn-ink px-4 text-[10px]">Update</button></div></div>';
+    res.innerHTML = '<div class="border hairline p-4" style="background:var(--card);"><div class="flex justify-between items-center mb-2"><b class="text-sm">' + o.id + '</b><span class="chip border hairline" style="color:' + st.color + ';">' + st.text + '</span></div><p class="text-[10px] mb-3" style="color:var(--mut);">' + o.customer.name + ' • ' + o.customer.phone + '</p><div class="flex gap-2 flex-wrap"><select id="adminStatusSel" class="field text-[10px] py-1 flex-1"><option value="">Auto</option>' + ['Order Placed','Order Confirmed','In Process','Order Ready','Dispatched','Out For Delivery','Delivered','Cancelled'].map(v => '<option value="' + v + '">' + v + '</option>').join('') + '</select><button id="adminUpdateBtn" class="pill btn-ink px-4 text-[10px]">Update</button></div></div>';
     $('#adminStatusSel').value = o.status || 'Order Placed';
     $('#adminUpdateBtn').onclick = async () => {
       const v = $('#adminStatusSel').value || 'Order Placed';
-      const orders2 = store.get('orders', []);
-      const idx = orders2.findIndex(x => x.id === o.id);
-      if (idx !== -1){
-        orders2[idx].status = v;
-        orders2[idx].updatedAt = Date.now();
-        if (v === 'Delivered') { orders2[idx].deliveredAt = Date.now(); }
-        else { orders2[idx].deliveredAt = null; }
-        store.set('orders', orders2);
-      }
-      try { await fetch(`${API_BASE}/api/orders?action=update`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: o.id, status: v, pwd: 'HF2026' }) }); } catch(e){ console.error(e); }
-      toast('Status Updated','check');
-      $('#adminSearchId').dispatchEvent(new Event('input'));
+      const orders2 = store.get('orders', []); const idx = orders2.findIndex(x => x.id === o.id);
+      if (idx !== -1){ orders2[idx].status = v; orders2[idx].updatedAt = Date.now(); if (v === 'Delivered') { orders2[idx].deliveredAt = Date.now(); } else { orders2[idx].deliveredAt = null; } store.set('orders', orders2); }
+      try { await fetch(`${API_BASE}/api/orders?action=update`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: o.id, status: v, pwd: 'HF2026' }) }); } catch(e){}
+      toast('Status Updated','check'); $('#adminSearchId').dispatchEvent(new Event('input'));
     };
   }, 300));
-  $$('details.faq').forEach(faq => {
-    faq.addEventListener('toggle', () => {
-      if (faq.open){ $$('details.faq').forEach(other => { if (other !== faq) other.open = false; }); }
-    });
-  });
+  $$('details.faq').forEach(faq => { faq.addEventListener('toggle', () => { if (faq.open){ $$('details.faq').forEach(other => { if (other !== faq) other.open = false; }); } }); });
   window.addEventListener('scroll', () => {
-    const s = scrollY > 600;
-    const t = $('#toTop');
-    if (t){ t.style.opacity = s ? 1 : 0; t.style.pointerEvents = s ? 'auto' : 'none'; }
+    const s = scrollY > 600; const t = $('#toTop'); if (t){ t.style.opacity = s ? 1 : 0; t.style.pointerEvents = s ? 'auto' : 'none'; }
     const h = $('#header'); if (h) h.style.boxShadow = scrollY > 8 ? '0 6px 20px -16px rgba(0,0,0,.18)' : '';
   }, { passive:true });
   window.addEventListener('keydown', e => {
     if (e.key === 'Escape'){ closeAll(); if (window.location.hash) { try{ history.back(); }catch(err){} } }
-    const pmod = $('#productModal');
-    if (pmod && !pmod.classList.contains('hidden')){
-      if (e.key === 'ArrowRight'){ pm.angle = (pm.angle+1) % 2; drawProduct(); }
-      if (e.key === 'ArrowLeft'){ pm.angle = (pm.angle+1) % 2; drawProduct(); }
-    }
+    const pmod = $('#productModal'); if (pmod && !pmod.classList.contains('hidden')){ if (e.key === 'ArrowRight'){ pm.angle = (pm.angle+1) % 2; drawProduct(); } if (e.key === 'ArrowLeft'){ pm.angle = (pm.angle+1) % 2; drawProduct(); } }
   });
   window.addEventListener('resize', debounce(sizeHero, 300));
-  // 🐛 FIX: debounced visibility sync
   let _visTimer = null;
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState !== 'visible') return;
     if (_visTimer) clearTimeout(_visTimer);
-    _visTimer = setTimeout(() => {
-      const isAdmin = localStorage.getItem('hf_is_admin') === 'true';
-      const user = store.get('user', null);
-      const lastPhone = store.get('last_phone', null);
-      if (isAdmin || user || lastPhone) syncMyOrders();
-    }, 400);
+    _visTimer = setTimeout(() => { if (isLoggedIn() || localStorage.getItem('hf_is_admin') === 'true') syncOrders(); }, 400);
   });
-  setInterval(() => {
-    if (document.visibilityState === 'visible') {
-      if ($('#trackModal') && !$('#trackModal').classList.contains('hidden')) {
-        const input = $('#trackInput');
-        if (input && input.value.trim()) track();
-      }
-    }
-  }, 1000);
-  // 🐛 FIX: Single debounced sync timer
+  setInterval(() => { if (document.visibilityState === 'visible'){ if ($('#trackModal') && !$('#trackModal').classList.contains('hidden')){ const input = $('#trackInput'); if (input && input.value.trim()) track(); } } }, 1000);
   let _syncTimer = null;
   function scheduleSync(){
     if (_syncTimer) clearTimeout(_syncTimer);
     _syncTimer = setTimeout(() => {
       if (document.visibilityState !== 'visible') { scheduleSync(); return; }
-      const isAdmin = localStorage.getItem('hf_is_admin') === 'true';
-      const user = store.get('user', null);
-      const lastPhone = store.get('last_phone', null);
-      if (!isAdmin && !user && !lastPhone) { scheduleSync(); return; }
-      const hm = $('#historyModal');
-      const hpm = $('#pastHistoryModal');
+      if (!isLoggedIn() && localStorage.getItem('hf_is_admin') !== 'true') { scheduleSync(); return; }
+      const hm = $('#historyModal'); const hpm = $('#pastHistoryModal');
       const isOpen = (hm && !hm.classList.contains('hidden')) || (hpm && !hpm.classList.contains('hidden'));
       const gap = isOpen ? 3000 : 15000;
-      if (Date.now() - (syncMyOrders._last || 0) >= gap - 200) {
-        syncMyOrders();
-      }
+      if (Date.now() - (syncOrders._last || 0) >= gap - 200) syncOrders();
       scheduleSync();
     }, 3000);
   }
@@ -3573,8 +3517,7 @@ function wire(){
 
 /* ═══ INVOICE ═══ */
 function showInvoice(order){
-  const t = order.totals;
-  const c = order.customer;
+  const t = order.totals; const c = order.customer;
   $('#invId').textContent = order.id;
   $('#invDate').textContent = new Date(order.timestamp).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
   const isOnline = order.payment && order.payment.method === 'online';
@@ -3587,7 +3530,7 @@ function showInvoice(order){
     const p = prodById(l.id);
     const name = p ? p.name : 'Product';
     const price = p ? p.price : 0;
-    const extras = (l.size ? '<br><span style="font-size:11px;color:#7C7C7C;">Size: ' + l.size + '</span>' : '') + (l.color ? '<br><span style="font-size:11px;color:#7C7C7C;">Colour: ' + l.color + '</span>' : '') + (l.colorChoice ? '<br><span style="font-size:11px;color:#7C7C7C;">Custom Colour: ' + l.colorChoice + '</span>' : '') + (l.custom ? '<br><span style="font-size:11px;color:#7C7C7C;">Custom (' + l.custom.pos + '): ' + (l.custom.note || '') + '</span>' : '');
+    const extras = (l.size ? '<br><span style="font-size:11px;color:#7C7C7C;">Size: ' + l.size + '</span>' : '') + (l.color ? '<br><span style="font-size:11px;color:#7C7C7C;">Colour: ' + l.color + '</span>' : '');
     return '<tr><td style="padding:14px 10px;border-bottom:1px solid #E6E4E0;font-size:13px;"><b>' + (i+1) + '. ' + name + '</b>' + extras + '</td><td style="padding:14px 10px;border-bottom:1px solid #E6E4E0;text-align:center;font-size:13px;">' + l.qty + '</td><td style="padding:14px 10px;border-bottom:1px solid #E6E4E0;text-align:right;font-size:13px;">₹' + price.toLocaleString('en-IN') + '</td><td style="padding:14px 10px;border-bottom:1px solid #E6E4E0;text-align:right;font-size:13px;font-weight:600;">₹' + (price * l.qty).toLocaleString('en-IN') + '</td></tr>';
   }).join('');
   let totalsHtml = '<tr><td style="padding:8px 10px;text-align:right;font-size:13px;color:#7C7C7C;">Subtotal</td><td style="padding:8px 10px;text-align:right;font-size:13px;width:120px;">₹' + t.sub.toLocaleString('en-IN') + '</td></tr>';
@@ -3614,6 +3557,7 @@ function showInvoice(order){
   reveal();
   startSlider();
   wire();
+  updateAuthUI();
   updatePayMethodUI();
   const heroSec = $('#heroSec');
   let touchStartX = 0;
@@ -3621,37 +3565,15 @@ function showInvoice(order){
     heroSec.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; }, { passive:true });
     heroSec.addEventListener('touchend', e => {
       const diff = touchStartX - e.changedTouches[0].screenX;
-      if (Math.abs(diff) > 50){
-        if (diff > 0) goSlide(sIdx+1);
-        else goSlide(sIdx-1);
-        clearInterval(sTimer); startSlider();
-      }
+      if (Math.abs(diff) > 50){ if (diff > 0) goSlide(sIdx+1); else goSlide(sIdx-1); clearInterval(sTimer); startSlider(); }
     }, { passive:true });
   }
   handleRoute();
   updateMembershipPrices();
-  // 🐛 FIX: Scroll reset only on fresh page (no hash)
-  if (!window.location.hash) {
-    setTimeout(() => { try { window.scrollTo(0, 0); } catch(e){} }, 50);
-  }
-  // 🐛 FIX: Cookie-based phone recovery (browser clear protection)
-  (async () => {
-    const user = store.get('user', null);
-    const lastPhone = store.get('last_phone', null);
-    const membership = store.get('membership_full', null);
-    const cachedPhone = user?.phone || lastPhone || membership?.phone;
-    if (cachedPhone) {
-      if (!user) store.set('user', { name: membership?.name || '', phone: cachedPhone });
-      store.set('last_phone', cachedPhone);
-      console.log('✅ Recovered phone:', cachedPhone);
-    }
-    verifyAdminStatus().then(() => {
-      const isAdmin = localStorage.getItem('hf_is_admin') === 'true';
-      const u = store.get('user', null);
-      const lp = store.get('last_phone', null);
-      if (isAdmin || u || lp) syncMyOrders();
-    });
-  })();
+  if (!window.location.hash) setTimeout(() => { try { window.scrollTo(0, 0); } catch(e){} }, 50);
+  verifyAdminStatus().then(() => {
+    if (isLoggedIn() || localStorage.getItem('hf_is_admin') === 'true') syncOrders();
+  });
 })();
   </script>
 </body>
