@@ -2942,10 +2942,11 @@ async function verifyOtp(email){
     console.log('🔐 Logged in as:', email, '| session:', d.session_key);
     if (d.user && d.user.name) store.set('user', { name: d.user.name, phone: d.user.phone || '', email });
     if (d.user && d.user.phone) store.set('last_phone', d.user.phone);
-    // 🔑 FRESH STATE — clear previous user's data before sync
+        // 🔑 FRESH STATE — clear previous user's data before sync
     store.set('orders', []);
     store.set('membership_full', null);
     appliedMembership = null;
+    syncOrders._firstSync = true;   // ← add this
     closeModal('otpModal', true);
     toast('Logged in successfully', 'check');
     updateAuthUI();
@@ -3035,70 +3036,113 @@ async function syncOrders(silent){
     } else if (sessionKey && email) {
       url = `${API_BASE}/api/orders?action=user-data&session_key=${encodeURIComponent(sessionKey)}`;
     } else {
-      return; // Not logged in → no fetch
+      return;
     }
 
-    // 🔑 Cache busting — 304 response prevent
-    const cacheBuster = '&_t=' + Date.now();
-    const finalUrl = url + (url.includes('?') ? cacheBuster : '?' + cacheBuster.slice(1));
-    const r = await fetch(finalUrl, { cache: 'no-store' });
+    const r = await fetch(url);
     const d = await r.json();
     if (!d.success) return;
 
-    if (isAdmin){
-      const serverOrders = d.orders || [];
-      if (!serverOrders.length) return;
-      const local = store.get('orders', []);
+    const serverOrders = d.orders || [];
+    const local = store.get('orders', []);
+
+    // 🔑 First sync after login → direct overwrite (no transition detect)
+    if (syncOrders._firstSync || local.length === 0){
+      store.set('orders', serverOrders);
+      syncOrders._firstSync = false;
+    } else {
+      // 🔑 Merge with transition detection
       const localMap = new Map(local.map(o => [o.id, o]));
       let changed = false;
+
       serverOrders.forEach(serverO => {
         const existing = localMap.get(serverO.id);
-        if (!existing){ local.push(serverO); changed = true; }
-        else if (!existing._localOnly && existing.status !== serverO.status){
+        if (!existing){
+          // New order from another device
+          local.push(serverO);
+          changed = true;
+        } else if (!existing._localOnly && existing.status !== serverO.status){
+          const wasNotDelivered = existing.status !== 'Delivered';
+          
+          // Update fields
           existing.status = serverO.status;
           existing.updatedAt = serverO.updatedAt || Date.now();
+          if (serverO.status === 'Delivered') existing.deliveredAt = serverO.deliveredAt || Date.now();
+          
+          // 🎉 Delivered transition — trigger animation
+          if (serverO.status === 'Delivered' && wasNotDelivered){
+            handleDeliveredTransition(serverO.id, isAdmin);
+          }
           changed = true;
         }
       });
-      if (changed){
-        store.set('orders', local);
-        const hm = $('#historyModal'); if (hm && !hm.classList.contains('hidden')) renderHistory();
-        const ph = $('#pastHistoryModal'); if (ph && !ph.classList.contains('hidden')) renderPastHistory();
-      }
-    } else {
-      // Customer with session
-      const serverOrders = d.orders || [];
-      const serverMembership = d.membership || null;
 
-      // 🔑 Only overwrite if server has data — otherwise keep local
-      if (serverOrders.length > 0){
-        store.set('orders', serverOrders);
-      } else {
-        // Server empty — check local has pending orders
-        const local = store.get('orders', []);
-        const pending = local.filter(o => o.customer && o.customer.email === email);
-        if (pending.length > 0){
-          console.warn('Server returned 0 but local has', pending.length, 'orders — keeping local');
-        } else {
-          store.set('orders', []);
-        }
-      }
-
-      // Membership: only overwrite if server has data
-      if (serverMembership){
-        store.set('membership_full', serverMembership);
-      }
-      // else: keep local (nothing to overwrite)
-
-      if (d.user && d.user.phone) store.set('last_phone', d.user.phone);
-
-      const hm = $('#historyModal'); if (hm && !hm.classList.contains('hidden')) renderHistory();
-      const ph = $('#pastHistoryModal'); if (ph && !ph.classList.contains('hidden')) renderPastHistory();
-      renderCart();
-
-      console.log('✅ Synced — server orders:', serverOrders.length, '| local orders:', store.get('orders', []).length, '| membership:', !!store.get('membership_full', null));
+      if (changed) store.set('orders', local);
     }
-  } catch(e){ /* silent */ }
+
+    // 🔑 Update membership from server (overwrite — never merge)
+    if (!isAdmin && d.membership !== undefined) {
+      store.set('membership_full', d.membership || null);
+      renderCart();
+    }
+    if (d.user && d.user.phone) store.set('last_phone', d.user.phone);
+
+    // Refresh UI (skip if animation is running)
+    if (!window.__delivering){
+      const hm = $('#historyModal');
+      if (hm && !hm.classList.contains('hidden')) renderHistory();
+      const ph = $('#pastHistoryModal');
+      if (ph && !ph.classList.contains('hidden')) renderPastHistory();
+    }
+  } catch(e){ console.warn('syncOrders:', e); }
+}
+
+/* ═══ DELIVERED TRANSITION — Animation + Popup ═══ */
+function handleDeliveredTransition(orderId, isAdmin){
+  window.__delivering = window.__delivering || {};
+  window.__delivering[orderId] = true;
+
+  // 1️⃣ Re-render to show the delivered card in My Orders
+  safe(renderHistory, 'delivered.render');
+
+  // 2️⃣ Add pulse animation to timeline's last circle
+  setTimeout(() => {
+    const el = document.querySelector('.card[data-orderid="' + orderId + '"]');
+    if (el) el.classList.add('delivering-anim');
+  }, 100);
+
+  // 🔑 Admin device — only animation, no popup
+  if (isAdmin){
+    setTimeout(() => {
+      if (window.__delivering) delete window.__delivering[orderId];
+      safe(renderHistory, 'admin.clear');
+      safe(renderPastHistory, 'admin.clear.past');
+    }, 3000);
+    return;
+  }
+
+  // 🔑 Customer — show popup + auto-redirect
+  if (document.visibilityState === 'visible'){
+    // Wait for timeline animation to complete (2 sec)
+    setTimeout(() => {
+      if (!window.__delivering || !window.__delivering[orderId]) return;
+
+      // Show popup
+      const idEl = $('#deliveredOrderId');
+      if (idEl) idEl.textContent = orderId;
+      openModal('orderDeliveredModal');
+
+      // Auto-redirect after popup animation (1.8s)
+      setTimeout(() => {
+        if (window.__delivering) delete window.__delivering[orderId];
+        closeModal('orderDeliveredModal', true);
+        safe(renderHistory, 'delivered.clear');
+        safe(renderPastHistory, 'delivered.clear.past');
+        openModal('pastHistoryModal');
+        try { history.replaceState({ modal: 'pastHistoryModal' }, '', '#history'); } catch(e){}
+      }, 1800);
+    }, 2000);   // ← 2 sec timeline animation first
+  }
 }
 
 /* ═══ HISTORY ═══ */
@@ -3646,10 +3690,23 @@ function wire(){
     $('#adminStatusSel').value = o.status || 'Order Placed';
     $('#adminUpdateBtn').onclick = async () => {
       const v = $('#adminStatusSel').value || 'Order Placed';
-      const orders2 = store.get('orders', []); const idx = orders2.findIndex(x => x.id === o.id);
-      if (idx !== -1){ orders2[idx].status = v; orders2[idx].updatedAt = Date.now(); if (v === 'Delivered') { orders2[idx].deliveredAt = Date.now(); } else { orders2[idx].deliveredAt = null; } store.set('orders', orders2); }
+      const orders2 = store.get('orders', []);
+      const idx = orders2.findIndex(x => x.id === o.id);
+      const wasNotDelivered = idx !== -1 && orders2[idx].status !== 'Delivered';
+      if (idx !== -1){
+        orders2[idx].status = v;
+        orders2[idx].updatedAt = Date.now();
+        if (v === 'Delivered') { orders2[idx].deliveredAt = Date.now(); }
+        else { orders2[idx].deliveredAt = null; }
+        store.set('orders', orders2);
+      }
       try { await fetch(`${API_BASE}/api/orders?action=update`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: o.id, status: v, pwd: 'HF2026' }) }); } catch(e){}
-      toast('Status Updated','check'); $('#adminSearchId').dispatchEvent(new Event('input'));
+      toast('Status Updated','check');
+      // 🎉 Trigger animation if just set to Delivered
+      if (v === 'Delivered' && wasNotDelivered){
+        handleDeliveredTransition(o.id, true);
+      }
+      $('#adminSearchId').dispatchEvent(new Event('input'));
     };
   }, 300));
   $$('details.faq').forEach(faq => { faq.addEventListener('toggle', () => { if (faq.open){ $$('details.faq').forEach(other => { if (other !== faq) other.open = false; }); } }); });
