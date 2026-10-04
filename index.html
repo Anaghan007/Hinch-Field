@@ -2201,7 +2201,74 @@ function clearAppliedMembershipUI(){
 
     renderCart();
 }
-function updateMembershipPrices(){ const mb = $('#memBuyBtn'); if (mb && !mb.disabled) mb.textContent = 'Get Membership'; }
+
+function clearMembershipCache(){
+    store.del('membership_full');
+
+    try { localStorage.removeItem('hf_membership_full'); } catch(e){}
+    try {
+        document.cookie = 'hf_membership_full=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/';
+    } catch(e){}
+
+    clearAppliedMembershipUI();
+}
+
+async function verifySavedMembershipServer(saved){
+    if (!saved || !saved.code) return false;
+
+    const sessionKey = store.get('session_key', null);
+    const email = store.get('user_email', null);
+
+    // First try logged-in user data
+    if (sessionKey && email){
+        try{
+            const ctl = new AbortController();
+            const to = setTimeout(() => ctl.abort(), 1200);
+
+            const r = await fetch(`${API_BASE}/api/orders?action=user-data&session_key=${encodeURIComponent(sessionKey)}`, {
+                signal: ctl.signal,
+                cache: 'no-store'
+            });
+
+            clearTimeout(to);
+            const d = await r.json();
+
+            if (d.success){
+                const mem = d.membership || null;
+                if (mem && mem.code === saved.code && isMembershipValid(mem)) return true;
+                return false;
+            }
+        }catch(e){}
+    }
+
+    // Fallback direct membership verify
+    try{
+        const deviceId = await getDeviceId();
+
+        const ctl = new AbortController();
+        const to = setTimeout(() => ctl.abort(), 1200);
+
+        const r = await fetch(`${API_BASE}/api/membership-verify`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ code: saved.code, deviceId }),
+            signal: ctl.signal,
+            cache: 'no-store'
+        });
+
+        clearTimeout(to);
+        const d = await r.json();
+
+        return !!d.success;
+    }catch(e){}
+
+    return null;
+}
+
+function updateMembershipPrices(){
+    const mb = $('#memBuyBtn');
+    if (mb && !mb.disabled) mb.textContent = 'Get Membership';
+}
 
 const CATMETA = {
 'oversized': { name:'Oversized & Minimal T-Shirts', main:'T-Shirt', views:2 },
@@ -3092,7 +3159,12 @@ async function verifyOtp(email){
     if (d.user && d.user.name) store.set('user', { name: d.user.name, phone: d.user.phone || '', email });
     if (d.user && d.user.phone) store.set('last_phone', d.user.phone);
     store.set('orders', []);
-    store.set('membership_full', d.membership || null);
+
+    let loginMem = d.membership || null;
+    if (loginMem && ((loginMem.status && String(loginMem.status).toLowerCase() === 'cancelled') || loginMem.cancelled === true)){
+        loginMem = null;
+    }
+    store.set('membership_full', loginMem);
 
     // 🔑 Save pending action (checkout / membership) so we can resume after reload
     if (window.__pendingAction){
@@ -3117,7 +3189,7 @@ async function doLogout(){
   const email = store.get('user_email', null);
   const mem = store.get('membership_full', null);
   // 🔑 Backup membership keyed by email — for 0ms restore on next login
-  if (email && mem && mem.code){
+  if (email && mem && mem.code && isMembershipValid(mem)){
     try {
       const all = store.get('mem_backups', {}) || {};
       all[email] = mem;
@@ -3253,28 +3325,32 @@ async function syncOrders(silent){
       if (changed) store.set('orders', local);
     }
 
-    // 🔑 Membership — always from userData (works on admin device too)
-    if (userData.membership !== undefined) {
-        let mem = userData.membership || null;
+        // 🔑 Membership — always from userData (works on admin device too)
+        if (userData.membership !== undefined) {
+            let mem = userData.membership || null;
 
-        if (mem && mem.status && String(mem.status).toLowerCase() === 'cancelled') mem = null;
-        if (mem && mem.cancelled === true) mem = null;
+            if (mem && ((mem.status && String(mem.status).toLowerCase() === 'cancelled') || mem.cancelled === true)){
+                mem = null;
+            }
 
-        const oldMem = store.get('membership_full', null);
-        const changed = JSON.stringify(mem) !== JSON.stringify(oldMem);
+            const oldMem = store.get('membership_full', null);
 
-        store.set('membership_full', mem);
+            if (!mem){
+                if (oldMem || appliedMembership){
+                    clearMembershipCache();
+                } else {
+                    store.set('membership_full', null);
+                }
+            } else {
+                store.set('membership_full', mem);
 
-        if (!mem && appliedMembership){
-            clearAppliedMembershipUI();
+                if (appliedMembership && appliedMembership.code !== mem.code){
+                    clearAppliedMembershipUI();
+                }
+
+                renderCart();
+            }
         }
-
-        if (mem && appliedMembership && appliedMembership.code !== mem.code){
-            clearAppliedMembershipUI();
-        }
-
-        if (changed) renderCart();
-    }
     if (userData.user && userData.user.phone) store.set('last_phone', userData.user.phone);
 
     if (!window.__delivering){
@@ -3563,7 +3639,7 @@ function renderMemberModal(){
   else if (isExpired){ body.innerHTML = buildMemberExpiredHTML(saved); }
   else { body.innerHTML = buildMemberBuyHTML(); }
 }
-function openMemberModal(skipRoute){
+async function openMemberModal(skipRoute){
     // 🔐 Login check for non-admin
     if (!isLoggedIn() && localStorage.getItem('hf_is_admin') !== 'true'){
         openLoginModal();
@@ -3571,7 +3647,123 @@ function openMemberModal(skipRoute){
         return;
     }
 
-    // ⚡ INSTANT OPEN — no waiting, no checking screen
+    let saved = store.get('membership_full', null);
+
+    // 🔍 Silent server verify before showing modal — no loading UI
+    if (saved && saved.code && isMembershipValid(saved)) {
+        const oldCode = saved.code;
+        const sessionKey = store.get('session_key', null);
+        const email = store.get('user_email', null);
+        let verified = null;
+
+        // First try user-data if logged in
+        if (sessionKey && email){
+            try {
+                const ctl = new AbortController();
+                const to = setTimeout(() => ctl.abort(), 1200);
+
+                const r = await fetch(`${API_BASE}/api/orders?action=user-data&session_key=${encodeURIComponent(sessionKey)}`, {
+                    signal: ctl.signal,
+                    cache: 'no-store'
+                });
+
+                clearTimeout(to);
+                const d = await r.json();
+
+                if (d.success){
+                    const mem = d.membership || null;
+
+                    if (mem && mem.code === oldCode && isMembershipValid(mem)){
+                        verified = true;
+                        saved = Object.assign({}, saved, mem, { status: mem.status || 'active' });
+                        store.set('membership_full', saved);
+                    } else {
+                        verified = false;
+                    }
+                }
+            } catch(e){}
+        }
+
+        // Fallback: direct membership verify
+        if (verified === null){
+            try {
+                const deviceId = await getDeviceId();
+                const ctl = new AbortController();
+                const to = setTimeout(() => ctl.abort(), 1200);
+
+                const r = await fetch(`${API_BASE}/api/membership-verify`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code: oldCode, deviceId }),
+                    signal: ctl.signal,
+                    cache: 'no-store'
+                });
+
+                clearTimeout(to);
+                const d = await r.json();
+
+                if (d.success){
+                    verified = true;
+                    saved = Object.assign({}, saved, {
+                        name: d.name || saved.name,
+                        expiresAt: d.expiresAt || saved.expiresAt,
+                        status: 'active'
+                    });
+                    store.set('membership_full', saved);
+                } else {
+                    verified = false;
+                }
+            } catch(e){}
+        }
+
+        // ❌ Server says not found / cancelled / invalid
+        if (verified === false){
+            store.set('membership_full', null);
+
+            if (appliedMembership && appliedMembership.code === oldCode){
+                if (typeof clearAppliedMembershipUI === 'function'){
+                    clearAppliedMembershipUI();
+                } else {
+                    appliedMembership = null;
+                    const mc = $('#memberCode');
+                    if (mc) mc.value = '';
+                    const na = $('#memberNotApplied');
+                    const ap = $('#memberApplied');
+                    if (na) na.classList.remove('hidden');
+                    if (ap) ap.classList.add('hidden');
+                    renderCart();
+                }
+            }
+
+            saved = null;
+        }
+    }
+
+    // If local saved membership is explicitly cancelled/expired by status
+    if (saved && saved.code && !isMembershipValid(saved)){
+        if ((saved.status && String(saved.status).toLowerCase() === 'cancelled') || saved.cancelled === true){
+            store.set('membership_full', null);
+
+            if (appliedMembership && appliedMembership.code === saved.code){
+                if (typeof clearAppliedMembershipUI === 'function'){
+                    clearAppliedMembershipUI();
+                } else {
+                    appliedMembership = null;
+                    const mc = $('#memberCode');
+                    if (mc) mc.value = '';
+                    const na = $('#memberNotApplied');
+                    const ap = $('#memberApplied');
+                    if (na) na.classList.remove('hidden');
+                    if (ap) ap.classList.add('hidden');
+                    renderCart();
+                }
+            }
+
+            saved = null;
+        }
+    }
+
+    // Direct final render — no loader
     renderMemberModal();
     openModal('memberModal');
 
@@ -3583,64 +3775,6 @@ function openMemberModal(skipRoute){
                 history.pushState({ modal:'memberModal' }, '', '#membership');
             }
         } catch(e){}
-    }
-
-    // 🔄 Background refresh only — popup already open
-    const sessionKey = store.get('session_key', null);
-    const email = store.get('user_email', null);
-
-    if (sessionKey && email){
-        fetch(`${API_BASE}/api/orders?action=user-data&session_key=${encodeURIComponent(sessionKey)}`, {
-            cache: 'no-store'
-        })
-        .then(r => r.json())
-        .then(d => {
-            if (!d.success) return;
-
-            let newMem = d.membership || null;
-
-            if (newMem && newMem.status && String(newMem.status).toLowerCase() === 'cancelled') newMem = null;
-            if (newMem && newMem.cancelled === true) newMem = null;
-
-            const oldMem = store.get('membership_full', null);
-
-            // ⚡ New membership just bought? Don't let slow server sync remove it instantly
-            if (!newMem && oldMem && oldMem.code && oldMem.activatedAt && (Date.now() - oldMem.activatedAt < 60000)) {
-                return;
-            }
-
-            // Keep activatedAt for same code
-            if (newMem && oldMem && oldMem.code === newMem.code && oldMem.activatedAt){
-                newMem.activatedAt = oldMem.activatedAt;
-            }
-
-            const changed = JSON.stringify(newMem) !== JSON.stringify(oldMem);
-            if (!changed) return;
-
-            store.set('membership_full', newMem);
-
-            if (!newMem && appliedMembership){
-                if (typeof clearAppliedMembershipUI === 'function'){
-                    clearAppliedMembershipUI();
-                } else {
-                    appliedMembership = null;
-
-                    const mc = $('#memberCode');
-                    if (mc) mc.value = '';
-
-                    const na = $('#memberNotApplied');
-                    const ap = $('#memberApplied');
-
-                    if (na) na.classList.remove('hidden');
-                    if (ap) ap.classList.add('hidden');
-
-                    renderCart();
-                }
-            }
-
-            renderMemberModal();
-        })
-        .catch(() => {});
     }
 }
 document.addEventListener('click', async (e) => {
@@ -3874,7 +4008,8 @@ async function applyMemberFn(){
                 method:'POST',
                 headers:{'Content-Type':'application/json'},
                 body: JSON.stringify({ code, deviceId }),
-                signal: ctl.signal
+                signal: ctl.signal,
+                cache: 'no-store'
             });
 
             clearTimeout(to);
@@ -3894,19 +4029,19 @@ async function applyMemberFn(){
                     status: 'active'
                 });
 
-                const na = $('#memberNotApplied');
-                const ap = $('#memberApplied');
-                const txt = $('#memCodeTxt');
-
-                if (na) na.classList.add('hidden');
-                if (ap) ap.classList.remove('hidden');
-                if (txt) txt.textContent = code;
-
+                updateMemberUI();
                 renderCart();
                 toast('Member applied — 50% off!','check');
             } else {
-                store.set('membership_full', null);
-                clearAppliedMembershipUI();
+                const savedNow = store.get('membership_full', null);
+
+                if (savedNow && savedNow.code === code){
+                    clearMembershipCache();
+                } else {
+                    const mc = $('#memberCode');
+                    if (mc) mc.value = '';
+                }
+
                 toast(d.error || 'Invalid or cancelled code','cross');
             }
         } catch(e){
@@ -3953,12 +4088,29 @@ async function applyMemberFn(){
     $('#adminCancelBtn').disabled = true;
     $('#adminCancelBtn').textContent = '…';
 
-    const saved = store.get('membership_full', null);
+    const checkAndClearStaleLocal = async (d, isSuccess) => {
+        const saved = store.get('membership_full', null);
+        if (!saved || !saved.code) return;
 
-    const matchLocal = saved && (
-        (isCode && saved.code === input) ||
-        (!isCode && saved.phone && saved.phone === input)
-    );
+        const directMatch =
+            (d && d.code && saved.code === d.code) ||
+            (d && d.phone && saved.phone && saved.phone === d.phone) ||
+            (isCode && saved.code === input) ||
+            (!isCode && saved.phone && saved.phone === input);
+
+        if (directMatch){
+            clearMembershipCache();
+            return;
+        }
+
+        // If server says not found/error, silently verify current local membership
+        if (!isSuccess){
+            const valid = await verifySavedMembershipServer(saved);
+            if (valid === false){
+                clearMembershipCache();
+            }
+        }
+    };
 
     try {
         const r = await fetch(`${API_BASE}/api/membership-cancel`, {
@@ -3972,23 +4124,14 @@ async function applyMemberFn(){
         if (d.success) {
             result.innerHTML = '<p class="text-[10px]" style="color:#0A0A0A;">✅ Membership cancelled (Code: ' + (d.code || input) + ')</p>';
             $('#adminCancelInput').value = '';
-
-            if (matchLocal){
-                store.set('membership_full', null);
-                clearAppliedMembershipUI();
-                toast('Membership cancelled', 'cross');
-            }
+            await checkAndClearStaleLocal(d, true);
         } else {
             result.innerHTML = '<p class="text-[10px]" style="color:#DC2626;">❌ ' + (d.error || 'Not found') + '</p>';
-
-            // Server par not found hoy, pan local cache ma juno code hoy to clear karo
-            if (matchLocal){
-                store.set('membership_full', null);
-                clearAppliedMembershipUI();
-            }
+            await checkAndClearStaleLocal(d, false);
         }
     } catch (e) {
         result.innerHTML = '<p class="text-[10px]" style="color:#DC2626;">Error: ' + e.message + '</p>';
+        await checkAndClearStaleLocal(null, false);
     } finally {
         $('#adminCancelBtn').disabled = false;
         $('#adminCancelBtn').textContent = 'Cancel';
@@ -4127,6 +4270,13 @@ function showInvoice(order){
   wire();
   updateAuthUI();
   updatePayMethodUI();
+  /* One-time membership cache cleanup */
+  if (store.get('membership_cache_version', null) !== 'v5-cancel-fix') {
+      store.del('membership_full');
+      store.del('mem_backups');
+      appliedMembership = null;
+      store.set('membership_cache_version', 'v5-cancel-fix');
+  }
   const heroSec = $('#heroSec');
   let touchStartX = 0;
   if (heroSec){
