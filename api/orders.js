@@ -90,7 +90,7 @@ export default async function handler(req, res) {
         return res.status(400).json({ success: false, error: 'Valid email required' });
       }
       const cleanEmail = email.toLowerCase().trim();
-      const otp = String(Math.floor(100000 + Math.random() * 900000));
+      const otp = String(Math.floor(1000 + Math.random() * 9000));
       await redis.set('otp:' + cleanEmail, { otp, expiresAt: Date.now() + OTP_EXPIRY_MS }, { ex: 300 });
       // Send via Resend
       const KEY = process.env.RESEND_API_KEY;
