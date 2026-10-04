@@ -2707,10 +2707,12 @@ setTimeout(() => { lock = false; btn.disabled = false; }, 4000);
 const t = totals();
 const oid = 'HF' + String(Date.now()).slice(-6);
 const otp = String(Math.floor(1000 + Math.random() * 9000));
+const isAdminDevice = localStorage.getItem('hf_is_admin') === 'true';
 const order = {
   id: oid, otp, timestamp: Date.now(), status: 'Order Placed', updatedAt: Date.now(),
   customer: { name, phone, email, addr, city, state, pin },
-  items: JSON.parse(JSON.stringify(cart)), totals: t, deliveredAt: null, payment: { method: 'cod' }
+  items: JSON.parse(JSON.stringify(cart)), totals: t, deliveredAt: null, payment: { method: 'cod' },
+  byAdmin: isAdminDevice
 };
 const orders = store.get('orders', []);
 orders.push(order); store.set('orders', orders); store.set('user', { name, phone });
@@ -2759,10 +2761,12 @@ function readCustomer(){
 function savePaidOrder(customer, t, razorpayResponse){
   const oid = 'HF' + String(Date.now()).slice(-6);
   const otp = String(Math.floor(1000 + Math.random() * 9000));
+  const isAdminDevice = localStorage.getItem('hf_is_admin') === 'true';
   const order = {
     id: oid, otp, timestamp: Date.now(), status: 'Order Confirmed', updatedAt: Date.now(),
     customer: { ...customer }, items: JSON.parse(JSON.stringify(cart)), totals: t, deliveredAt: null,
-    payment: { method: 'online', razorpay_order_id: razorpayResponse.razorpay_order_id, razorpay_payment_id: razorpayResponse.razorpay_payment_id, verified: true }
+    payment: { method: 'online', razorpay_order_id: razorpayResponse.razorpay_order_id, razorpay_payment_id: razorpayResponse.razorpay_payment_id, verified: true },
+    byAdmin: isAdminDevice
   };
   const orders = store.get('orders', []);
   orders.push(order); store.set('orders', orders);
@@ -2936,8 +2940,11 @@ function openHistory(){
 }
 
 function renderHistory(){
+  const isOwnerDev = localStorage.getItem('hf_is_admin') === 'true';
   let orders = store.get('orders', []).sort((a,b) => b.timestamp - a.timestamp);
   orders = orders.filter(o => {
+    // Admin device પર admin orders hide કરો
+    if (isOwnerDev && o.byAdmin) return false;
     const st = getOrderStatus(o).text;
     if (window.__delivering && window.__delivering[o.id]) return true;
     return st !== 'Delivered' && st !== 'Cancelled';
