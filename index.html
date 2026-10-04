@@ -3471,36 +3471,49 @@ function renderMemberModal(){
   else { body.innerHTML = buildMemberBuyHTML(); }
 }
 function openMemberModal(skipRoute){
-  // 🔐 Login check for non-admin
   if (!isLoggedIn() && localStorage.getItem('hf_is_admin') !== 'true'){
     openLoginModal();
     toast('Please login to access membership', 'warn');
     return;
   }
 
-  // ⚡ INSTANT: Render + open with current cached data
-  renderMemberModal();
-  openModal('memberModal');
-  if (!skipRoute) { try { if (window.location.hash === '#menu') { history.replaceState({ modal:'memberModal' }, '', '#membership'); } else { history.pushState({ modal:'memberModal' }, '', '#membership'); } } catch(e){} }
-
-  // 🔄 Background: fetch fresh from server and re-render if changed
   const sessionKey = store.get('session_key', null);
   const email = store.get('user_email', null);
+
+  // 🔑 ALWAYS fetch fresh BEFORE rendering — prevents stale code showing after cancel
   if (sessionKey && email){
-    fetch(`${API_BASE}/api/orders?action=user-data&session_key=${encodeURIComponent(sessionKey)}`)
+    const body = $('#memberModalBody');
+    if (body) body.innerHTML =
+      '<div class="text-center py-12">' +
+        '<div style="width:56px;height:56px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--text);margin:0 auto 20px;animation:spin 0.8s linear infinite;"></div>' +
+        '<p class="micro mb-2">HINCHFIELD</p>' +
+        '<p class="disp editorial-h font-luxe text-xl">Loading Membership…</p>' +
+      '</div>';
+    openModal('memberModal');
+    if (!skipRoute){
+      try {
+        if (window.location.hash === '#menu') history.replaceState({ modal:'memberModal' }, '', '#membership');
+        else history.pushState({ modal:'memberModal' }, '', '#membership');
+      } catch(e){}
+    }
+    fetch(`${API_BASE}/api/orders?action=user-data&session_key=${encodeURIComponent(sessionKey)}&_t=${Date.now()}`, { cache:'no-store' })
       .then(r => r.json())
       .then(d => {
-        if (d.success){
-          const newMem = d.membership || null;
-          const oldMem = store.get('membership_full', null);
-          const changed = JSON.stringify(newMem) !== JSON.stringify(oldMem);
-          if (changed){
-            store.set('membership_full', newMem);
-            renderMemberModal();
-          }
-        }
+        if (d.success) store.set('membership_full', d.membership || null);
       })
-      .catch(e => {});
+      .catch(() => {})
+      .finally(() => { renderMemberModal(); });
+    return;
+  }
+
+  // No session — just render
+  renderMemberModal();
+  openModal('memberModal');
+  if (!skipRoute){
+    try {
+      if (window.location.hash === '#menu') history.replaceState({ modal:'memberModal' }, '', '#membership');
+      else history.pushState({ modal:'memberModal' }, '', '#membership');
+    } catch(e){}
   }
 }
 document.addEventListener('click', async (e) => {
