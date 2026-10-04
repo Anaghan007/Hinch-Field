@@ -3010,8 +3010,7 @@ async function verifyOtp(email){
     });
     const d = await r.json();
     if (!d.success) throw new Error(d.error || 'Invalid OTP');
-
-    // 🔑 Clear ALL old user data
+    // 🔑 Force clear ALL old user data BEFORE saving new session
     store.del('session_key');
     store.del('user_email');
     store.del('user');
@@ -3020,44 +3019,44 @@ async function verifyOtp(email){
     store.del('membership_full');
     appliedMembership = null;
 
-    // Save new session
+    // Now save new session
     store.set('session_key', d.session_key);
     store.set('user_email', email);
+    console.log('🔐 Logged in as:', email, '| session:', d.session_key);
     if (d.user && d.user.name) store.set('user', { name: d.user.name, phone: d.user.phone || '', email });
     if (d.user && d.user.phone) store.set('last_phone', d.user.phone);
+        // 🔑 FRESH STATE — clear previous user's data before sync
     store.set('orders', []);
-    store.set('membership_full', d.membership || null);
-
-    // 🔑 Save pending action (checkout / membership) so we can resume after reload
-    if (window.__pendingAction){
-      try { localStorage.setItem('hf_pending_action', window.__pendingAction); } catch(_){}
-    }
-
+    store.set('membership_full', null);
+    appliedMembership = null;
+    syncOrders._firstSync = true;   // ← add this
     closeModal('otpModal', true);
     toast('Logged in successfully', 'check');
+    updateAuthUI();
+    await syncOrders(true);
 
-    // 🔑 MAGIC — reload page. Init syncs fresh data from server.
-    setTimeout(() => { location.reload(); }, 350);
-    return;
-
+    // 🔄 Resume pending action
+    const pending = window.__pendingAction;
+    window.__pendingAction = null;
+    if (pending === 'checkout'){
+      setTimeout(() => {
+        const co = $('#coName'); if (co && !co.value) co.value = (store.get('user', null)?.name || '');
+        const cp = $('#coPhone'); if (cp && !cp.value) cp.value = (store.get('last_phone', '') || '');
+        const ce = $('#coEmail'); if (ce && !ce.value) ce.value = getUserEmail() || '';
+        renderCart();
+        openModal('cartDrawer');
+        toast('Continue your order', 'check');
+      }, 400);
+    }
   } catch(e){
     err(e.message || 'Invalid OTP');
+  } finally {
     if (btn){ btn.disabled = false; btn.textContent = 'Verify & Login'; }
   }
 }
 
 async function doLogout(){
   const sessionKey = store.get('session_key', null);
-  const email = store.get('user_email', null);
-  const mem = store.get('membership_full', null);
-  // 🔑 Backup membership keyed by email — for 0ms restore on next login
-  if (email && mem && mem.code){
-    try {
-      const all = store.get('mem_backups', {}) || {};
-      all[email] = mem;
-      store.set('mem_backups', all);
-    } catch(_){}
-  }
   if (sessionKey){
     try {
       await fetch(`${API_BASE}/api/orders?action=logout`, {
@@ -3459,7 +3458,8 @@ function buildMemberExpiredHTML(saved){
   return `<div class="text-center mb-6"><svg class="w-14 h-14 mx-auto mb-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><p class="micro mb-2">HINCHFIELD</p><h3 class="disp editorial-h font-luxe text-2xl mb-1" style="color:#DC2626;">Membership Expired</h3><p class="text-xs" style="color:var(--mut);">Renew to continue saving 50% OFF</p></div><div class="border p-5 mb-5 text-center" style="background:#FEF2F2;border-color:#FECACA;"><p class="micro mb-3" style="color:#DC2626;">EXPIRED ON</p><p class="disp text-lg" style="font-weight:500;color:var(--text);">${new Date(saved.expiresAt).toLocaleDateString('en-IN')}</p></div><div class="border hairline p-4 space-y-2.5 mb-5" style="background:var(--bg2);"><p class="text-xs">✅ <b>Flat 50% OFF</b> on ALL products</p><p class="text-xs">✅ <b>FREE delivery</b> on every order</p><p class="text-xs">✅ Fresh 4-digit code instantly</p><p class="text-xs">✅ Valid for 365 days</p></div><button data-member-action="renew" class="pill btn-gold w-full py-4">Renew — ₹599</button>`;
 }
 function buildMemberBuyHTML(prefill){
-  return `<div class="text-center mb-6"><p class="micro mb-2">HINCHFIELD</p><h3 class="disp editorial-h font-luxe text-2xl mb-2">Yearly Membership</h3><div class="flex items-baseline justify-center gap-3 my-4"><b class="disp text-3xl" style="font-weight:500;">${fmt(599)}</b><s class="text-sm" style="color:var(--mut);">${fmt(1199)}</s><span class="chip" style="background:var(--text); color:var(--bg);">50%</span></div><p class="text-xs" style="color:var(--mut);">1 year validity · Instant digital delivery</p></div><div class="border hairline p-4 space-y-2.5 mb-5" style="background:var(--bg2);"><p class="text-xs">✅ <b>Flat 50% OFF</b> on ALL products</p><p class="text-xs">✅ <b>FREE delivery</b> on every order</p><p class="text-xs">✅ Unique 4-digit code instantly after payment</p><p class="text-xs">✅ Valid for 365 days</p></div><p id="memBuyErr" class="text-[11px] hidden mb-3" style="color:#DC2626;"></p><button data-member-action="buy" class="pill btn-gold w-full py-4">Get Membership — ${fmt(599)}</button><p class="text-[10px] text-center mt-3" style="color:var(--mut);">Secure payment · Razorpay</p>`;
+  prefill = prefill || {};
+  return `<div class="text-center mb-6"><p class="micro mb-2">HINCHFIELD</p><h3 class="disp editorial-h font-luxe text-2xl mb-2">Yearly Membership</h3><div class="flex items-baseline justify-center gap-3 my-4"><b class="disp text-3xl" style="font-weight:500;">${fmt(599)}</b><s class="text-sm" style="color:var(--mut);">${fmt(1199)}</s><span class="chip" style="background:var(--text); color:var(--bg);">50%</span></div><p class="text-xs" style="color:var(--mut);">1 year validity · Instant digital delivery</p></div><div class="border hairline p-4 space-y-2.5 mb-5" style="background:var(--bg2);"><p class="text-xs">✅ <b>Flat 50% OFF</b> on ALL products</p><p class="text-xs">✅ <b>FREE delivery</b> on every order</p><p class="text-xs">✅ Unique 4-digit code instantly after payment</p><p class="text-xs">✅ Valid for 365 days</p></div><input id="memBuyName" maxlength="60" class="field mb-3" placeholder="Full Name *" value="${esc(prefill.name || '')}"><input id="memBuyPhone" inputmode="numeric" maxlength="15" class="field mb-3" placeholder="Number *" value="${esc(prefill.phone || '')}"><p id="memBuyErr" class="text-[11px] hidden mb-3" style="color:#DC2626;"></p><button data-member-action="buy" class="pill btn-gold w-full py-4">Get Membership — ${fmt(599)}</button><p class="text-[10px] text-center mt-3" style="color:var(--mut);">Secure payment · Razorpay</p>`;
 }
 function renderMemberModal(){
   const saved = store.get('membership_full', null);
@@ -3523,10 +3523,11 @@ document.addEventListener('click', async (e) => {
       return;
     }
     const err = m => { const el = $('#memBuyErr'); if (el) { el.textContent=m; el.classList.remove('hidden'); } return false; };
-    // 🔑 Name & phone from logged-in session (inputs removed)
-    const sessionUser = store.get('user', null) || {};
-    const name = (sessionUser.name || '').trim() || 'Member';
-    const phone = (sessionUser.phone || store.get('last_phone', '') || '').replace(/[^0-9]/g,'') || '0000000000';
+    const nameEl = $('#memBuyName'); const phoneEl = $('#memBuyPhone');
+    if (!nameEl || !phoneEl) return;
+    const name = nameEl.value.trim(); const phone = phoneEl.value.trim();
+    if (!/^[A-Za-z .]{3,60}$/.test(name)) return err('Enter valid name');
+    if (!/^\d{10,15}$/.test(phone.replace(/[^0-9]/g,''))) return err('Enter valid WhatsApp number');
     if (typeof Razorpay === 'undefined') return err('Payment SDK missing');
     t.disabled = true; const orig = t.textContent; t.textContent = 'Opening Razorpay…';
     try {
@@ -3909,26 +3910,8 @@ function showInvoice(order){
   handleRoute();
   updateMembershipPrices();
   if (!window.location.hash) setTimeout(() => { try { window.scrollTo(0, 0); } catch(e){} }, 50);
-    verifyAdminStatus().then(async () => {
-    if (isLoggedIn() || localStorage.getItem('hf_is_admin') === 'true') {
-      await syncOrders(true);   // 🔑 wait for fresh data BEFORE anything else
-    }
-    // 🔑 Resume pending action after reload
-    let pending = null;
-    try { pending = localStorage.getItem('hf_pending_action'); localStorage.removeItem('hf_pending_action'); } catch(_){}
-    if (pending === 'checkout'){
-      setTimeout(() => {
-        const u = store.get('user', null) || {};
-        const co = $('#coName'); if (co && !co.value) co.value = u.name || '';
-        const cp = $('#coPhone'); if (cp && !cp.value) cp.value = (store.get('last_phone', '') || u.phone || '');
-        const ce = $('#coEmail'); if (ce && !ce.value) ce.value = getUserEmail() || '';
-        renderCart();
-        openModal('cartDrawer');
-        toast('Continue your order', 'check');
-      }, 400);
-    } else if (pending === 'membership'){
-      setTimeout(() => { openMemberModal(); }, 400);
-    }
+  verifyAdminStatus().then(() => {
+    if (isLoggedIn() || localStorage.getItem('hf_is_admin') === 'true') syncOrders();
   });
 })();
   </script>
