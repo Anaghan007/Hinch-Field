@@ -2264,8 +2264,12 @@ function generateProducts() {
     const colors = isPolo ? COLORS_POLO.map(c=>[...c]) : COLORS_STD.map(c=>[...c]);
     const desc = isPolo ? DESC_POLO : DESC_STD;
     names[cat].forEach((name, i) => {
+      // 🎨 Alternating default colors for variety
+      const defaultColorIdx = i % colors.length;
+      
       PRODUCTS.push({
         id: 'p' + (pid++), cat, name, price, mrp,
+        defaultColorIdx: defaultColorIdx,
         rating: +(4.5 + (i % 5) * 0.1).toFixed(1),
         reviews: 50 + (i * 13) % 150,
         tags: i < 3 ? 'new' : (i < 6 ? 'best' : (i < 8 ? 'hot' : '')),
@@ -2306,7 +2310,7 @@ ${tag ? `<span class="absolute top-3 left-3 z-10 chip" style="${tag[1]}">${tag[0
 <svg class="w-3.5 h-3.5" style="${wished ? 'color:#0A0A0A;' : 'color:var(--mut);'}" viewBox="0 0 24 24" fill="${wished ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="1.4"><path d="M12 21s-7.5-4.7-10-9.3C.5 8 2.6 4.5 6.2 4.5c2.2 0 3.7 1.2 4.6 2.6.9-1.4 2.4-2.6 4.6-2.6 3.6 0 5.7 3.5 4.2 7.2C19.5 16.3 12 21 12 21z"/></svg>
 </button>
 <div class="cardimg relative aspect-[4/5] overflow-hidden cursor-pointer" style="background:var(--bg2);" data-open-product="${p.id}">
-${multi ? imgTag(p,p.colors[0][0],0,'swap front','',true) + imgTag(p,p.colors[0][0],1,'swap back') : imgTag(p,p.colors[0][0],0,'w-full h-full object-contain','',true)}
+${multi ? imgTag(p,(p.colors[p.defaultColorIdx || 0] || p.colors[0])[0],0,'swap front','',true) + imgTag(p,(p.colors[p.defaultColorIdx || 0] || p.colors[0])[0],1,'swap back') : imgTag(p,(p.colors[p.defaultColorIdx || 0] || p.colors[0])[0],0,'w-full h-full object-contain','',true)}
 <span class="absolute inset-x-0 bottom-0 quickadd text-center py-3">${multi ? 'Front ⇄ Back' : 'Quick View'}</span>
 </div>
 <div class="p-3 md:p-4">
@@ -2416,7 +2420,7 @@ function renderShopCats() {
   $('#shopCats').innerHTML = CATKEYS.map((c, i) => {
     const prod = PRODUCTS.find(p => p.cat === c);
     return `<button class="cat-card group" data-catpage="${c}" aria-label="Shop ${esc(shortNames[c] || CATMETA[c].name)}">
-<div class="cat-card-img">${prod ? imgTag(prod, prod.colors[0][0], 0, 'w-full h-full object-contain', '', true) : ''}
+<div class="cat-card-img">${prod ? imgTag(prod, (prod.colors[prod.defaultColorIdx || 0] || prod.colors[0])[0], 0, 'w-full h-full object-contain', '', true) : ''}
 <div class="cat-card-overlay"></div>
 <div class="absolute top-3 left-3 z-10"><span class="cat-card-no">${String(i + 1).padStart(2, '0')}</span></div>
 </div>
@@ -2432,7 +2436,7 @@ function renderInsta(){
   $('#instaRow').innerHTML = ids.map(id => {
     const p = prodById(id);
     if (!p) return '';
-    return '<a href="https://www.instagram.com/hinchfield_official?stkn=NHExem1hbnA2eGs=" target="_blank" rel="noopener" class="relative overflow-hidden group aspect-square">' + imgTag(p, p.colors[0][0], 0, 'w-full h-full object-contain group-hover:scale-105') + '<span class="absolute inset-0 bg-black/45 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white">' + ic('insta','w-7 h-7') + '</span></a>';
+    return '<a href="https://www.instagram.com/hinchfield_official?stkn=NHExem1hbnA2eGs=" target="_blank" rel="noopener" class="relative overflow-hidden group aspect-square">' + imgTag(p, (p.colors[p.defaultColorIdx || 0] || p.colors[0])[0], 0, 'w-full h-full object-contain group-hover:scale-105') + '<span class="absolute inset-0 bg-black/45 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white">' + ic('insta','w-7 h-7') + '</span></a>';
   }).join('');
 }
 let sIdx = 0, sTimer;
@@ -2620,7 +2624,7 @@ function renderWish(){
   if (!wish.length){ box.innerHTML = '<div class="text-center py-16 flex flex-col items-center" style="color:var(--mut);"><span class="mb-4 a-float">' + ic('heart','w-14 h-14') + '</span><p class="text-sm font-medium">Nothing saved yet</p></div>'; return; }
   box.innerHTML = wish.map(id => {
     const p = prodById(id); if (!p) return '';
-    return '<div class="flex gap-3 border hairline p-3 a-left w-full" style="background:var(--card);"><div class="w-20 h-24 overflow-hidden cursor-pointer" style="background:var(--bg2);" data-open-product="' + p.id + '">' + imgTag(p, p.colors[0][0], 0, 'w-full h-full object-contain') + '</div>' +
+    return '<div class="flex gap-3 border hairline p-3 a-left w-full" style="background:var(--card);"><div class="w-20 h-24 overflow-hidden cursor-pointer" style="background:var(--bg2);" data-open-product="' + p.id + '">' + imgTag(p, (p.colors[p.defaultColorIdx || 0] || p.colors[0])[0], 0, 'w-full h-full object-contain') + '</div>' +
       '<div class="flex-1 min-w-0"><h4 class="text-xs font-medium truncate">' + esc(p.name) + '</h4><b class="disp text-sm">' + fmt(p.price) + '</b> <s class="text-[10px]" style="color:var(--mut);">' + fmt(p.mrp) + '</s>' +
       '<div class="flex gap-2 mt-3"><button class="pill btn-ink px-4 py-2 text-[10px]" data-add="' + p.id + '">Add</button><button class="pill btn-line px-4 py-2 text-[10px]" data-wish="' + p.id + '">Remove</button></div></div></div>';
   }).join('');
