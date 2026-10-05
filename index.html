@@ -2286,21 +2286,21 @@ function imgURLs(p){
   const catPrefix = {'oversized':'o','minimal':'m','polo':'p'};
   const prefix = catPrefix[p.cat] || 'o';
   const idx = p.defaultColorIdx || 0;
-  return ['images/' + prefix + (idx + 1) + '-1.jpg', 'images/' + prefix + (idx + 1) + '-2.jpg'];
+  return ['images/' + prefix + (idx + 1) + '-1.png', 'images/' + prefix + (idx + 1) + '-2.png'];
 }
 function imgTag(p, color, a, cls, extra, eager){
   const catPrefix = {'oversized':'o','minimal':'m','polo':'p'};
   const prefix = catPrefix[p.cat] || 'o';
   const colorIdx = p.colors.findIndex(c => c[0] === color);
   const idx = colorIdx >= 0 ? colorIdx : 0;
-  const src = 'images/' + prefix + (idx + 1) + '-' + (a + 1) + '.jpg';
+  const src = 'images/' + prefix + (idx + 1) + '-' + (a + 1) + '.png';
   return '<img ' + (extra||'') + ' class="' + cls + '" src="' + src + '" alt="' + esc(p.name) + ' ' + (['Front','Back'][a]||'') + '" loading="' + (eager?'eager':'lazy') + '" decoding="async" fetchpriority="' + (eager?'high':'low') + '" style="height:100%;width:100%;object-fit:contain;">';
 }
 function heroImg(p){
   const catPrefix = {'oversized':'o','minimal':'m','polo':'p'};
   const prefix = catPrefix[p.cat] || 'o';
   const idx = p.defaultColorIdx || 0;
-  const src = 'images/' + prefix + (idx + 1) + '-1.jpg';
+  const src = 'images/' + prefix + (idx + 1) + '-1.png';
   return '<img class="w-full h-full object-contain hero-img" src="' + src + '" alt="' + esc(p.name) + '" fetchpriority="high" decoding="async" style="height:100%;width:100%;object-fit:contain;">';
 }
 function card(p, anim, delay){
