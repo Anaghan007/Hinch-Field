@@ -2281,12 +2281,7 @@ PRODUCTS.push({
   colors: [['Default', '#0A0A0A']], hasColors: false
 });
 const prodById = id => PRODUCTS.find(p => p.id === id);
-const offPct = p => {
-    if (!p || !p.mrp || p.mrp === 0) return 0;
-    // સૌથી ઓછી કિંમત (Member Price કે Regular Price) ને MRP સાથે સરખાવીને ઓટોમેટિક ડિસ્કાઉન્ટ કાઢશે
-    const bestPrice = (p.memberPrice != null && p.memberPrice < p.price) ? p.memberPrice : p.price;
-    return Math.max(0, Math.round((1 - bestPrice / p.mrp) * 100));
-};
+const offPct = p => Math.max(0, Math.round((1 - p.price / p.mrp) * 100));
 const stars = r => { const f = Math.max(0, Math.min(5, Math.round(r || 0))); return '<span style="color:var(--text);font-size:10px;letter-spacing:.15em;">' + '★'.repeat(f) + '☆'.repeat(5-f) + '</span>'; };
 const viewsOf = p => CATMETA[p.cat].views;
 function imgURLs(p){
@@ -2308,11 +2303,7 @@ function heroImg(p){
 function card(p, anim, delay){
   anim = anim || 'a-up'; delay = delay || 0;
   const wished = wish.includes(p.id);
-  const discountPercent = offPct(p);
-  const tag = p.tags === 'new' ? ['NEW','background:var(--text);color:var(--bg);'] : 
-              p.tags === 'hot' ? ['HOT','background:var(--text);color:var(--bg);'] : 
-              p.tags === 'best' ? ['BEST','background:var(--text);color:var(--bg);'] : 
-              (discountPercent > 0 ? ['−' + discountPercent + '% OFF','background:#DC2626;color:#fff;'] : null);
+  const tag = p.tags === 'new' ? ['NEW','background:var(--text);color:var(--bg);'] : p.tags === 'hot' ? ['HOT','background:var(--text);color:var(--bg);'] : p.tags === 'best' ? ['BEST','background:var(--text);color:var(--bg);'] : null;
   const multi = viewsOf(p) > 1;
   const mp = memPrice(p);
   return `<article class="card relative ${anim}" style="animation-delay:${delay}ms;">
@@ -2672,7 +2663,7 @@ ${imgs.length > 1 ? '<button class="absolute left-2 top-1/2 -translate-y-1/2 w-9
 <div class="p-3 text-center"><p class="text-[10px] tracking-wide2 uppercase mb-1" style="color:var(--mut);">Regular Price</p><b class="disp text-xl md:text-2xl" style="font-weight:500;">${fmt(p.price)}</b></div>
 <div class="p-3 text-center border-l hairline" style="background:var(--text); color:var(--bg);"><p class="text-[10px] tracking-wide2 uppercase mb-1">⭐ Member Price</p><b class="disp text-xl md:text-2xl" style="font-weight:500;">${fmt(mp)}</b></div>
 </div>
-<div class="text-[10px] text-center py-2 tracking-wide2 uppercase hairline border border-t-0" style="color:var(--text);">💡 Save ${fmt(saveAmt(p))} (${offPct(p)}% OFF) with Hinchfield Membership</div>
+<div class="text-[10px] text-center py-2 tracking-wide2 uppercase hairline border border-t-0" style="color:var(--text);">💡 Save ${fmt(saveAmt(p))} with Hinchfield Membership</div>
 <div class="flex items-center gap-2 mt-2">${stars(p.rating)}<span class="text-xs" style="color:var(--mut);">${p.rating} · ${p.reviews} reviews</span></div>
 <div class="mt-5"><p class="micro mb-3">Colour: <span style="color:var(--text);font-weight:500;letter-spacing:.02em;">${esc(cn)}</span></p>
 <div class="flex gap-2.5 flex-wrap items-center">${p.colors.map((c,i) => '<button class="swatch ' + (i===pm.color ? 'active' : '') + '" style="background:' + c[1] + ';' + (c[1]==='#FFFFFF' ? 'box-shadow:inset 0 0 0 1px #E6E4E0;' : '') + '" data-pcolor="' + i + '" title="' + esc(c[0]) + '" aria-label="' + esc(c[0]) + '"></button>').join('')}</div>
