@@ -2285,7 +2285,8 @@ const viewsOf = p => CATMETA[p.cat].views;
 function imgURLs(p){
   const catPrefix = {'oversized':'o','minimal':'m','polo':'p'};
   const prefix = catPrefix[p.cat] || 'o';
-  return p.colors.map((c, idx) => 'images/' + prefix + (idx + 1) + '-').map(base => [base + '1.jpg', base + '2.jpg']);
+  const idx = p.defaultColorIdx || 0;
+  return ['images/' + prefix + (idx + 1) + '-1.jpg', 'images/' + prefix + (idx + 1) + '-2.jpg'];
 }
 function imgTag(p, color, a, cls, extra, eager){
   const catPrefix = {'oversized':'o','minimal':'m','polo':'p'};
