@@ -11,7 +11,7 @@ export default async function handler(req, res) {
       key_secret: process.env.RAZORPAY_KEY_SECRET,
     });
     const order = await razorpay.orders.create({
-      amount: 99900,
+      amount: 100,
       currency: 'INR',
       receipt: `mem_${Date.now()}`,
       notes: { type: 'membership' }
