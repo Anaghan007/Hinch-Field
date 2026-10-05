@@ -3028,7 +3028,6 @@ function openLoginModal(prefillEmail){
     <input id="loginEmail" type="email" maxlength="60" class="field mb-3" placeholder="Email address *" value="${esc(currentEmail)}" autocomplete="email">
     <p id="loginErr" class="text-[11px] hidden mb-3" style="color:#DC2626;"></p>
     <button id="loginSendOtp" class="pill btn-gold w-full py-4">Send OTP</button>
-    <p class="text-[10px] text-center mt-3" style="color:var(--mut);">We'll send a 6-digit code to your email</p>
   `;
   openModal('loginModal');
   setTimeout(() => { const el = $('#loginEmail'); if (el) el.focus(); }, 200);
@@ -3574,7 +3573,7 @@ function buildMemberExpiredHTML(saved){
   return `<div class="text-center mb-6"><svg class="w-14 h-14 mx-auto mb-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><p class="micro mb-2">HINCHFIELD</p><h3 class="disp editorial-h font-luxe text-2xl mb-1" style="color:#DC2626;">Membership Expired</h3><p class="text-xs" style="color:var(--mut);">Renew to continue saving 50% OFF</p></div><div class="border p-5 mb-5 text-center" style="background:#FEF2F2;border-color:#FECACA;"><p class="micro mb-3" style="color:#DC2626;">EXPIRED ON</p><p class="disp text-lg" style="font-weight:500;color:var(--text);">${new Date(saved.expiresAt).toLocaleDateString('en-IN')}</p></div><div class="border hairline p-4 space-y-2.5 mb-5" style="background:var(--bg2);"><p class="text-xs">✅ <b>Flat 50% OFF</b> on ALL products</p><p class="text-xs">✅ <b>FREE delivery</b> on every order</p><p class="text-xs">✅ Fresh 4-digit code instantly</p><p class="text-xs">✅ Valid for 365 days</p></div><button data-member-action="renew" class="pill btn-gold w-full py-4">Renew — ₹599</button>`;
 }
 function buildMemberBuyHTML(prefill){
-  return `<div class="text-center mb-6"><p class="micro mb-2">HINCHFIELD</p><h3 class="disp editorial-h font-luxe text-2xl mb-2">Yearly Membership</h3><div class="flex items-baseline justify-center gap-3 my-4"><b class="disp text-3xl" style="font-weight:500;">${fmt(599)}</b><s class="text-sm" style="color:var(--mut);">${fmt(1199)}</s><span class="chip" style="background:var(--text); color:var(--bg);">50%</span></div><p class="text-xs" style="color:var(--mut);">1 year validity · Instant digital delivery</p></div><div class="border hairline p-4 space-y-2.5 mb-5" style="background:var(--bg2);"><p class="text-xs">✅ <b>Flat 50% OFF</b> on ALL products</p><p class="text-xs">✅ <b>FREE delivery</b> on every order</p><p class="text-xs">✅ Unique 4-digit code instantly after payment</p><p class="text-xs">✅ Valid for 365 days</p></div><p id="memBuyErr" class="text-[11px] hidden mb-3" style="color:#DC2626;"></p><button data-member-action="buy" class="pill btn-gold w-full py-4">Get Membership — ${fmt(599)}</button><p class="text-[10px] text-center mt-3" style="color:var(--mut);">Secure payment · Razorpay</p>`;
+  return `<div class="text-center mb-6"><p class="micro mb-2">HINCHFIELD</p><h3 class="disp editorial-h font-luxe text-2xl mb-2">Yearly Membership</h3><div class="flex items-baseline justify-center gap-3 my-4"><b class="disp text-3xl" style="font-weight:500;">${fmt(599)}</b><s class="text-sm" style="color:var(--mut);">${fmt(1199)}</s><span class="chip" style="background:var(--text); color:var(--bg);">50%</span></div><p class="text-xs" style="color:var(--mut);">1 year validity · Instant digital delivery</p></div><div class="border hairline p-4 space-y-2.5 mb-5" style="background:var(--bg2);"><p class="text-xs">✅ <b>Flat 50% OFF</b> on ALL products</p><p class="text-xs">✅ <b>FREE delivery</b> on every order</p><p class="text-xs">✅ Unique 4-digit code instantly after payment</p><p class="text-xs">✅ Valid for 365 days</p></div><p id="memBuyErr" class="text-[11px] hidden mb-3" style="color:#DC2626;"></p><button data-member-action="buy" class="pill btn-gold w-full py-4">Get Membership</button><p class="text-[10px] text-center mt-3" style="color:var(--mut);">Secure payment · Razorpay</p>`;
 }
 function renderMemberModal(){
   const saved = store.get('membership_full', null);
@@ -3684,7 +3683,7 @@ document.addEventListener('click', async (e) => {
     const name = (sessionUser.name || '').trim() || 'Member';
     const phone = (sessionUser.phone || store.get('last_phone', '') || '').replace(/[^0-9]/g,'') || '0000000000';
     if (typeof Razorpay === 'undefined') return err('Payment SDK missing');
-    t.disabled = true; const orig = t.textContent; t.textContent = 'Opening Razorpay…';
+    t.disabled = true; const orig = t.textContent; t.textContent = 'Processing…';
     try {
       const r = await fetch(`${API_BASE}/api/membership-order`, { method:'POST' });
       const d = await r.json();
