@@ -700,6 +700,28 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       border-color: var(--text);
     }
 
+    .swatch-card {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all .2s;
+      flex: none;
+      padding: 0;
+      position: relative;
+      border: 0;
+    }
+    .swatch-card:hover {
+      transform: scale(1.15);
+    }
+    .swatch-card.active::after {
+      content: '';
+      position: absolute;
+      inset: -3px;
+      border-radius: 50%;
+      border: 1.5px solid var(--text);
+    }
+    
     .swatch:hover {
       transform: scale(1.08);
     }
@@ -2282,20 +2304,20 @@ const prodById = id => PRODUCTS.find(p => p.id === id);
 const offPct = p => Math.max(0, Math.round((1 - p.price / p.mrp) * 100));
 const stars = r => { const f = Math.max(0, Math.min(5, Math.round(r || 0))); return '<span style="color:var(--text);font-size:10px;letter-spacing:.15em;">' + '★'.repeat(f) + '☆'.repeat(5-f) + '</span>'; };
 const viewsOf = p => CATMETA[p.cat].views;
-function imgURLs(p){
+function imgURLs(p, colorIdx){
   const catPrefix = {'oversized':'o','minimal':'m','polo':'p'};
   const prefix = catPrefix[p.cat] || 'o';
-  const catProducts = PRODUCTS.filter(x => x.cat === p.cat);
-  let imgIndex = catProducts.findIndex(x => x.id === p.id) + 1;
-  if (!imgIndex || imgIndex < 1) { const pidNum = parseInt(p.id.replace('p',''),10) || 1; imgIndex = ((pidNum - 1) % 10) + 1; }
-  const base = 'images/' + prefix + imgIndex + '-';
-  return Array.from({ length: viewsOf(p) }, (_, i) => base + (i + 1) + '.jpg');
+  const cIdx = (typeof colorIdx === 'number') ? colorIdx : (p.defaultColorIdx || 0);
+  const imgNum = cIdx + 1;
+  const base = 'images/' + prefix + imgNum + '-';
+  return Array.from({ length: viewsOf(p) }, (_, i) => base + (i + 1) + '.jpeg');
 }
-function imgTag(p,color,a,cls,extra,eager){
-  return '<img ' + (extra||'') + ' class="' + cls + '" src="' + imgURLs(p)[a] + '" alt="' + esc(p.name) + ' ' + (['Front','Back'][a]||'') + '" loading="' + (eager?'eager':'lazy') + '" decoding="async" fetchpriority="' + (eager?'high':'low') + '" style="height:100%;width:100%;object-fit:contain;">';
+function imgTag(p,color,a,cls,extra,eager,colorIdx){
+  return '<img ' + (extra||'') + ' class="' + cls + '" src="' + imgURLs(p, colorIdx)[a] + '" alt="' + esc(p.name) + ' ' + (['Front','Back'][a]||'') + '" loading="' + (eager?'eager':'lazy') + '" decoding="async" fetchpriority="' + (eager?'high':'low') + '" style="height:100%;width:100%;object-fit:contain;">';
 }
-function heroImg(p){
-  const real = imgURLs(p)[0];
+function heroImg(p, colorIdx){
+  const cIdx = (typeof colorIdx === 'number') ? colorIdx : (p.defaultColorIdx || 0);
+  const real = imgURLs(p, cIdx)[0];
   return '<img class="w-full h-full object-contain hero-img" src="' + real + '" alt="' + esc(p.name) + '" fetchpriority="high" decoding="async" style="height:100%;width:100%;object-fit:contain;">';
 }
 function card(p, anim, delay){
@@ -2303,6 +2325,8 @@ function card(p, anim, delay){
   const wished = wish.includes(p.id);
   const tag = p.tags === 'new' ? ['NEW','background:var(--text);color:var(--bg);'] : p.tags === 'hot' ? ['HOT','background:var(--text);color:var(--bg);'] : p.tags === 'best' ? ['BEST','background:var(--text);color:var(--bg);'] : null;
   const multi = viewsOf(p) > 1;
+  const selectedColorIdx = window.__cardColor[p.id] !== undefined ? window.__cardColor[p.id] : (p.defaultColorIdx || 0);
+  const selectedColor = (p.colors[selectedColorIdx] || p.colors[0])[0];
   const mp = memPrice(p);
   return `<article class="card relative ${anim}" style="animation-delay:${delay}ms;">
 ${tag ? `<span class="absolute top-3 left-3 z-10 chip" style="${tag[1]}">${tag[0]}</span>` : ''}
@@ -2310,7 +2334,7 @@ ${tag ? `<span class="absolute top-3 left-3 z-10 chip" style="${tag[1]}">${tag[0
 <svg class="w-3.5 h-3.5" style="${wished ? 'color:#0A0A0A;' : 'color:var(--mut);'}" viewBox="0 0 24 24" fill="${wished ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="1.4"><path d="M12 21s-7.5-4.7-10-9.3C.5 8 2.6 4.5 6.2 4.5c2.2 0 3.7 1.2 4.6 2.6.9-1.4 2.4-2.6 4.6-2.6 3.6 0 5.7 3.5 4.2 7.2C19.5 16.3 12 21 12 21z"/></svg>
 </button>
 <div class="cardimg relative aspect-[4/5] overflow-hidden cursor-pointer" style="background:var(--bg2);" data-open-product="${p.id}">
-${multi ? imgTag(p,(p.colors[p.defaultColorIdx || 0] || p.colors[0])[0],0,'swap front','',true) + imgTag(p,(p.colors[p.defaultColorIdx || 0] || p.colors[0])[0],1,'swap back') : imgTag(p,(p.colors[p.defaultColorIdx || 0] || p.colors[0])[0],0,'w-full h-full object-contain','',true)}
+${multi ? imgTag(p,selectedColor,0,'swap front','',true,selectedColorIdx) + imgTag(p,selectedColor,1,'swap back','',false,selectedColorIdx) : imgTag(p,selectedColor,0,'w-full h-full object-contain','',true,selectedColorIdx)}
 <span class="absolute inset-x-0 bottom-0 quickadd text-center py-3">${multi ? 'Front ⇄ Back' : 'Quick View'}</span>
 </div>
 <div class="p-3 md:p-4">
@@ -2322,6 +2346,7 @@ ${multi ? imgTag(p,(p.colors[p.defaultColorIdx || 0] || p.colors[0])[0],0,'swap 
 <div class="p-2 text-center border-l hairline" style="background:var(--text); color:var(--bg);"><p class="text-[9px] tracking-wide2 uppercase mb-1">⭐ Member</p><b class="disp text-[15px] md:text-base">${fmt(mp)}</b></div>
 </div>
 <div class="text-[9px] text-center py-1.5 tracking-wide2 uppercase hairline border border-t-0" style="color:var(--text);">Save ${fmt(saveAmt(p))} with Membership</div>
+<div class="flex gap-1.5 flex-wrap items-center mt-3 justify-center">${p.colors.map((c,i) => `<button class="swatch-card ${i===selectedColorIdx ? 'active' : ''}" style="background:${c[1]};${c[1]==='#FFFFFF' ? 'box-shadow:inset 0 0 0 1px #E6E4E0;' : ''}" data-card-color="${p.id}|${i}" title="${esc(c[0])}" aria-label="${esc(c[0])}"></button>`).join('')}</div>
 <button class="pill btn-line w-full mt-3 py-2.5 text-[10px] flex items-center justify-center gap-1.5" data-add="${p.id}">${ic('cart','w-3 h-3')} Add to Cart</button>
 </div>
 </article>`;
@@ -2420,7 +2445,7 @@ function renderShopCats() {
   $('#shopCats').innerHTML = CATKEYS.map((c, i) => {
     const prod = PRODUCTS.find(p => p.cat === c);
     return `<button class="cat-card group" data-catpage="${c}" aria-label="Shop ${esc(shortNames[c] || CATMETA[c].name)}">
-<div class="cat-card-img">${prod ? imgTag(prod, (prod.colors[prod.defaultColorIdx || 0] || prod.colors[0])[0], 0, 'w-full h-full object-contain', '', true) : ''}
+<div class="cat-card-img">${prod ? imgTag(prod, (prod.colors[prod.defaultColorIdx || 0] || prod.colors[0])[0], 0, 'w-full h-full object-contain', '', true, prod.defaultColorIdx || 0) : ''}
 <div class="cat-card-overlay"></div>
 <div class="absolute top-3 left-3 z-10"><span class="cat-card-no">${String(i + 1).padStart(2, '0')}</span></div>
 </div>
@@ -2436,7 +2461,7 @@ function renderInsta(){
   $('#instaRow').innerHTML = ids.map(id => {
     const p = prodById(id);
     if (!p) return '';
-    return '<a href="https://www.instagram.com/hinchfield_official?stkn=NHExem1hbnA2eGs=" target="_blank" rel="noopener" class="relative overflow-hidden group aspect-square">' + imgTag(p, (p.colors[p.defaultColorIdx || 0] || p.colors[0])[0], 0, 'w-full h-full object-contain group-hover:scale-105') + '<span class="absolute inset-0 bg-black/45 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white">' + ic('insta','w-7 h-7') + '</span></a>';
+    return '<a href="https://www.instagram.com/hinchfield_official?stkn=NHExem1hbnA2eGs=" target="_blank" rel="noopener" class="relative overflow-hidden group aspect-square">' + imgTag(p, (p.colors[p.defaultColorIdx || 0] || p.colors[0])[0], 0, 'w-full h-full object-contain group-hover:scale-105', '', false, p.defaultColorIdx || 0) + '<span class="absolute inset-0 bg-black/45 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white">' + ic('insta','w-7 h-7') + '</span></a>';
   }).join('');
 }
 let sIdx = 0, sTimer;
@@ -2477,7 +2502,7 @@ function renderHero(){
 </div>
 <div class="order-1 md:order-2 flex justify-center md:justify-end">
 <div class="ha-zoom relative w-full max-w-[280px] md:max-w-[400px]">
-<div class="relative aspect-[4/5] overflow-hidden shadow-lift border hairline" style="background:var(--card);">${heroImg(p)}</div>
+<div class="relative aspect-[4/5] overflow-hidden shadow-lift border hairline" style="background:var(--card);">${heroImg(p, p.defaultColorIdx || 0)}</div>
 <span class="absolute top-3 right-3 chip hero-off-badge" style="background:var(--text); color:var(--bg);">−${offPct(p)}%</span>
 </div>
 </div>
@@ -2592,7 +2617,7 @@ function renderCart(){
     box.innerHTML = cart.map(l => {
       const p = prodById(l.id); if (!p) return '';
       return '<div class="flex gap-3 border hairline p-3 a-up w-full" style="background:var(--card);">' +
-        '<div class="w-20 h-24 overflow-hidden shrink-0 cursor-pointer" style="background:var(--bg2);" data-open-product="' + p.id + '">' + imgTag(p, l.color, 0, 'w-full h-full object-contain') + '</div>' +
+        '<div class="w-20 h-24 overflow-hidden shrink-0 cursor-pointer" style="background:var(--bg2);" data-open-product="' + p.id + '">' + imgTag(p, l.color, 0, 'w-full h-full object-contain', '', false, p.colors.findIndex(c => c[0] === l.color)) + '</div>' +
         '<div class="flex-1 min-w-0"><h4 class="text-xs font-medium truncate">' + esc(p.name) + '</h4>' +
         '<p class="text-[10px] mt-0.5 tracking-wide2 uppercase" style="color:var(--mut);">Size: ' + esc(l.size) + ' • Colour: ' + esc(l.color) + (l.colorChoice ? ' • ' + esc(l.colorChoice) : '') + (l.custom ? ' • Custom' : '') + '</p>' +
         '<div class="flex items-center justify-between mt-3"><div class="flex items-center gap-2"><button class="qtybtn" data-cq="' + l.key + '" data-d="-1">−</button><b class="text-xs w-4 text-center">' + l.qty + '</b><button class="qtybtn" data-cq="' + l.key + '" data-d="1">+</button></div>' +
@@ -2624,7 +2649,7 @@ function renderWish(){
   if (!wish.length){ box.innerHTML = '<div class="text-center py-16 flex flex-col items-center" style="color:var(--mut);"><span class="mb-4 a-float">' + ic('heart','w-14 h-14') + '</span><p class="text-sm font-medium">Nothing saved yet</p></div>'; return; }
   box.innerHTML = wish.map(id => {
     const p = prodById(id); if (!p) return '';
-    return '<div class="flex gap-3 border hairline p-3 a-left w-full" style="background:var(--card);"><div class="w-20 h-24 overflow-hidden cursor-pointer" style="background:var(--bg2);" data-open-product="' + p.id + '">' + imgTag(p, (p.colors[p.defaultColorIdx || 0] || p.colors[0])[0], 0, 'w-full h-full object-contain') + '</div>' +
+    return '<div class="flex gap-3 border hairline p-3 a-left w-full" style="background:var(--card);"><div class="w-20 h-24 overflow-hidden cursor-pointer" style="background:var(--bg2);" data-open-product="' + p.id + '">' + imgTag(p, (p.colors[p.defaultColorIdx || 0] || p.colors[0])[0], 0, 'w-full h-full object-contain', '', false, p.defaultColorIdx || 0) + '</div>' +
       '<div class="flex-1 min-w-0"><h4 class="text-xs font-medium truncate">' + esc(p.name) + '</h4><b class="disp text-sm">' + fmt(p.price) + '</b> <s class="text-[10px]" style="color:var(--mut);">' + fmt(p.mrp) + '</s>' +
       '<div class="flex gap-2 mt-3"><button class="pill btn-ink px-4 py-2 text-[10px]" data-add="' + p.id + '">Add</button><button class="pill btn-line px-4 py-2 text-[10px]" data-wish="' + p.id + '">Remove</button></div></div></div>';
   }).join('');
@@ -2645,11 +2670,11 @@ function drawProduct(){
   $('#productBody').innerHTML = `<div class="grid md:grid-cols-2 w-full md:h-full md:overflow-hidden">
 <div class="p-3 md:p-8 md:overflow-y-auto" style="background:var(--bg2);">
 <div class="md:flex md:gap-4 w-full">
-${imgs.length > 1 ? '<div class="hidden md:flex flex-col gap-2 order-1">' + imgs.map((im,i) => '<button class="w-14 h-16 overflow-hidden border" style="border-color:' + (i===pm.angle ? 'var(--text)' : 'var(--line)') + ';" data-angle="' + i + '">' + imgTag(p, cn, i, 'w-full h-full object-contain') + '</button>').join('') + '</div>' : ''}
+${imgs.length > 1 ? '<div class="hidden md:flex flex-col gap-2 order-1">' + imgs.map((im,i) => '<button class="w-14 h-16 overflow-hidden border" style="border-color:' + (i===pm.angle ? 'var(--text)' : 'var(--line)') + ';" data-angle="' + i + '">' + imgTag(p, cn, i, 'w-full h-full object-contain', '', false, pm.color) + '</button>').join('') + '</div>' : ''}
 <div class="relative flex-1 order-2 min-w-0">
 <span class="absolute top-3 left-3 z-10 chip" style="background:var(--text); color:var(--bg);">COD</span>
 <button class="absolute top-3 right-3 z-10 w-9 h-9 border hairline" style="background:var(--card);" data-share>${ic('share','w-4 h-4')}</button>
-<div class="overflow-hidden aspect-[4/5] w-full">${imgTag(p, cn, pm.angle, 'w-full h-full object-contain','id="pmMain"')}</div>
+<div class="overflow-hidden aspect-[4/5] w-full">${imgTag(p, cn, pm.angle, 'w-full h-full object-contain','id="pmMain"', false, pm.color)}</div>
 ${imgs.length > 1 ? '<button class="absolute left-2 top-1/2 -translate-y-1/2 w-9 h-9 border hairline" style="background:var(--card);" data-angle="-1">‹</button><button class="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 border hairline" style="background:var(--card);" data-angle="1">›</button>' : ''}
 <p class="text-[10px] text-center mt-3 tracking-wide2 uppercase" style="color:var(--mut);">View ${pm.angle+1}/2 • ${['FRONT','BACK'][pm.angle]||''}</p>
 </div></div></div>
@@ -2817,7 +2842,7 @@ function buildOrderCard(o, opts){
     '<div class="flex justify-between items-start gap-3 flex-wrap"><div><b class="disp text-sm">' + o.id + '</b><p class="text-[10px] mt-1" style="color:var(--mut);">' + date + '</p></div>' +
     '<div class="flex gap-2 flex-wrap items-center">' + payBadge + (compact ? '' : '<span class="chip border hairline" style="color:' + st.color + ';">' + ic(st.icon,'w-3 h-3') + ' ' + st.text + '</span>') + '</div></div>' +
     timeline +
-    '<div class="border-t hairline pt-3 space-y-2">' + o.items.map(l => { const p = prodById(l.id); if (!p) return ''; return '<div class="flex gap-3 items-center"><div class="w-12 h-14 overflow-hidden shrink-0" style="background:var(--bg2);">' + imgTag(p, l.color, 0, 'w-full h-full object-contain') + '</div><div class="flex-1 min-w-0"><p class="text-xs font-medium truncate">' + esc(p.name) + '</p><p class="text-[10px]" style="color:var(--mut);">Size: ' + esc(l.size || '') + ' • ' + esc(l.color || '') + ' • Qty: ' + l.qty + ' • ' + fmt(p.price * l.qty) + '</p></div></div>'; }).join('') + '</div>' +
+    '<div class="border-t hairline pt-3 space-y-2">' + o.items.map(l => { const p = prodById(l.id); if (!p) return ''; return '<div class="flex gap-3 items-center"><div class="w-12 h-14 overflow-hidden shrink-0" style="background:var(--bg2);">' + imgTag(p, l.color, 0, 'w-full h-full object-contain', '', false, p.colors.findIndex(c => c[0] === l.color)) + '</div><div class="flex-1 min-w-0"><p class="text-xs font-medium truncate">' + esc(p.name) + '</p><p class="text-[10px]" style="color:var(--mut);">Size: ' + esc(l.size || '') + ' • ' + esc(l.color || '') + ' • Qty: ' + l.qty + ' • ' + fmt(p.price * l.qty) + '</p></div></div>'; }).join('') + '</div>' +
     '<div class="flex justify-between items-center pt-3 border-t hairline flex-wrap gap-2"><b class="disp text-sm">Total: ' + fmt(o.totals.total) + '</b>' +
     '<div class="flex gap-2"><button class="chip border hairline text-[10px]" style="color:var(--text);" data-download-invoice="' + o.id + '">Download Invoice</button>' + (canCancel ? '<button class="chip border hairline text-[10px]" style="color:#DC2626;" data-cancel-order="' + o.id + '">Cancel</button>' : '') + '</div></div>' +
     (o.otp && st.text !== 'Cancelled' && st.text !== 'Delivered' ? '<p class="text-[10px] font-medium text-center py-2 tracking-wide2 uppercase" style="background:var(--bg2); color:var(--text);">Delivery OTP: ' + o.otp + '</p>' : '') +
@@ -3784,6 +3809,25 @@ window.addEventListener('popstate', handleRoute);
 document.addEventListener('click', e => {
   const t = e.target.closest('[data-open-product],[data-add],[data-wish],[data-close],[data-slide-go],[data-catpage],[data-angle],[data-psize],[data-pcolor],[data-pq],[data-pm-add],[data-pm-buy],[data-cq],[data-cr],[data-bnav],[data-share],[data-sizeopen],[data-cancel-order],[data-download-invoice],[data-openhistory],[data-openpast],[data-membership],[data-policy]');
   if (!t) return;
+    // 🎨 Card color swatch click
+  const cc = e.target.closest('[data-card-color]');
+  if (cc){
+    e.stopPropagation();
+    e.preventDefault();
+    const parts = cc.getAttribute('data-card-color').split('|');
+    const pid = parts[0];
+    const cidx = parseInt(parts[1], 10);
+    window.__cardColor = window.__cardColor || {};
+    window.__cardColor[pid] = cidx;
+    const cardEl = cc.closest('.card');
+    const p = prodById(pid);
+    if (cardEl && p){
+      const temp = document.createElement('div');
+      temp.innerHTML = card(p);
+      cardEl.replaceWith(temp.firstElementChild);
+    }
+    return;
+  }
   if (t.hasAttribute('data-close')){ closeModal(t.getAttribute('data-close')); return; }
   if (t.hasAttribute('data-openhistory')){
     const mobileOpen = $('#mobileMenu') && !$('#mobileMenu').classList.contains('hidden');
