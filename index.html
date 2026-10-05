@@ -1723,7 +1723,6 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
               <div class="flex gap-2">
                 <input id="memberCode" maxlength="4" inputmode="numeric" class="field flex-1" placeholder="4-digit code"><button id="memberApply" class="pill btn-ink px-5 text-[10px]">Apply</button>
               </div>
-              <p class="text-[10px] mt-2" style="color:var(--mut);">Flat 50% off on All products</p>
             </div>
             <div id="memberApplied" class="hidden">
               <div class="flex items-center justify-between gap-3 p-3" style="background:var(--text); color:var(--bg);">
@@ -2210,7 +2209,7 @@ user:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1
 };
 function ic(n,c='w-4 h-4'){ return `<span class="inline-flex items-center justify-center ${c}">${ICONS[n]||''}</span>`; }
 function fmt(inr){ const n = Number(inr); if (!isFinite(n)) return '₹0'; return '₹' + n.toLocaleString('en-IN'); }
-function memPrice(p){ if (!p) return 0; if (p.memberPrice != null) return p.memberPrice; return Math.floor(p.price * 0.5); }
+function memPrice(p){ if (!p) return 0; return Math.floor(p.price * 0.5); }
 function saveAmt(p){ if (!p) return 0; return p.price - memPrice(p); }
 function isMembershipValid(m){
     if (!m || !m.code) return false;
@@ -2258,14 +2257,13 @@ function generateProducts() {
   for (const cat of CATKEYS) {
     const isPolo = cat === 'polo';
     const price = isPolo ? 1199 : 1099;
-    const memberPrice = isPolo ? 599 : 549;
     const mrp = isPolo ? 2399 : 2199;
     const sizes = [...SIZES_STD];
     const colors = isPolo ? COLORS_POLO.map(c=>[...c]) : COLORS_STD.map(c=>[...c]);
     const desc = isPolo ? DESC_POLO : DESC_STD;
     names[cat].forEach((name, i) => {
       PRODUCTS.push({
-        id: 'p' + (pid++), cat, name, price, memberPrice, mrp,
+        id: 'p' + (pid++), cat, name, price, mrp,
         rating: +(4.5 + (i % 5) * 0.1).toFixed(1),
         reviews: 50 + (i * 13) % 150,
         tags: i < 3 ? 'new' : (i < 6 ? 'best' : (i < 8 ? 'hot' : '')),
@@ -2276,7 +2274,7 @@ function generateProducts() {
 }
 PRODUCTS.push({
   id: 'test1', cat: 'oversized', name: '🧪 TEST ORDER ₹1',
-  price: 1, memberPrice: 1, mrp: 500, rating: 5.0, reviews: 1, tags: 'new',
+  price: 1, mrp: 500, rating: 5.0, reviews: 1, tags: 'new',
   sizes: [...SIZES_STD], desc: 'Internal test product for Razorpay live testing.',
   colors: [['Default', '#0A0A0A']], hasColors: false
 });
@@ -3582,7 +3580,7 @@ function buildMemberExpiredHTML(saved){
   return `<div class="text-center mb-6"><svg class="w-14 h-14 mx-auto mb-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><p class="micro mb-2">HINCHFIELD</p><h3 class="disp editorial-h font-luxe text-2xl mb-1" style="color:#DC2626;">Membership Expired</h3><p class="text-xs" style="color:var(--mut);">Renew to continue saving 50% OFF</p></div><div class="border p-5 mb-5 text-center" style="background:#FEF2F2;border-color:#FECACA;"><p class="micro mb-3" style="color:#DC2626;">EXPIRED ON</p><p class="disp text-lg" style="font-weight:500;color:var(--text);">${new Date(saved.expiresAt).toLocaleDateString('en-IN')}</p></div><div class="border hairline p-4 space-y-2.5 mb-5" style="background:var(--bg2);"><p class="text-xs">✅ <b>Flat 50% OFF</b> on ALL products</p><p class="text-xs">✅ Fresh 4-digit code instantly</p><p class="text-xs">✅ Valid for 365 days</p></div><button data-member-action="renew" class="pill btn-gold w-full py-4">Renew</button>`;
 }
 function buildMemberBuyHTML(prefill){
-  return `<div class="text-center mb-6"><p class="micro mb-2">HINCHFIELD</p><h3 class="disp editorial-h font-luxe text-2xl mb-2">Yearly Membership</h3><div class="flex items-baseline justify-center gap-3 my-4"><b class="disp text-3xl" style="font-weight:500;">${fmt(999)}</b><s class="text-sm" style="color:var(--mut);">${fmt(1199)}</s><span class="chip" style="background:var(--text); color:var(--bg);">50%</span></div><p class="text-xs" style="color:var(--mut);">1 year validity · Instant digital delivery</p></div><div class="border hairline p-4 space-y-2.5 mb-5" style="background:var(--bg2);"><p class="text-xs">✅ <b>Flat 50% OFF</b> on ALL products</p><p class="text-xs">✅ <b>Priority support</b></p><p class="text-xs">✅ Unique 4-digit code instantly after payment</p><p class="text-xs">✅ Valid for 365 days</p></div><p id="memBuyErr" class="text-[11px] hidden mb-3" style="color:#DC2626;"></p><button data-member-action="buy" class="pill btn-gold w-full py-4">Get Membership</button><p class="text-[10px] text-center mt-3" style="color:var(--mut);">Secure payment · Razorpay</p>`;
+  return `<div class="text-center mb-6"><p class="micro mb-2">HINCHFIELD</p><h3 class="disp editorial-h font-luxe text-2xl mb-2">Yearly Membership</h3><div class="flex items-baseline justify-center gap-3 my-4"><b class="disp text-3xl" style="font-weight:500;">${fmt(999)}</b><s class="text-sm" style="color:var(--mut);">${fmt(1199)}</s><span class="chip" style="background:var(--text); color:var(--bg);">${Math.round((1 - 999/1199) * 100)}%</span></div><p class="text-xs" style="color:var(--mut);">1 year validity · Instant digital delivery</p></div><div class="border hairline p-4 space-y-2.5 mb-5" style="background:var(--bg2);"><p class="text-xs">✅ <b>Flat 50% OFF</b> on ALL products</p><p class="text-xs">✅ <b>Priority support</b></p><p class="text-xs">✅ Unique 4-digit code instantly after payment</p><p class="text-xs">✅ Valid for 365 days</p></div><p id="memBuyErr" class="text-[11px] hidden mb-3" style="color:#DC2626;"></p><button data-member-action="buy" class="pill btn-gold w-full py-4">Get Membership</button><p class="text-[10px] text-center mt-3" style="color:var(--mut);">Secure payment · Razorpay</p>`;
 }
 function renderMemberModal(){
   const saved = store.get('membership_full', null);
