@@ -2250,10 +2250,10 @@ const DESC_POLO = 'Pure 100% Cotton · 270 GSM Bio Wash · With Tipping · Velve
 const PRODUCTS = [];
 function generateProducts() {
   if (PRODUCTS.some(p => p.id === 'p1')) return;
-    const names = {
-    'oversized': ['Washed Black Oversized Tee','Acid Wash Vintage Oversized','Bold Typography Back Print Tee','Retro 90s College Oversized','Sun-Faded Streetwear Oversized','Y2K Chrome Graphic Oversized','Distressed Grunge Boxy Tee','Essential Plain Heavyweight Tee','Premium Solid Crew Tee','Statement Oversized Print Tee','Sunset Gradient Oversized','Clean Block Text Tee','Essential Heavyweight T-Shirt','Vintage Washed Minimal Tee','Tonal Embroidered T-Shirt'],
-    'minimal': ['Clean Street Minimal Tee','Tonal Neutral Minimal Tee','Micro Chest Logo Tee','Clean Serif Typography Tee','Small Signature Script Tee','Minimal Wave Print Tee','Clean Text Statement Tee','Micro Dot Graphic Tee','Signature Chest Print Tee','Minimal Arrow Print Tee'],
-    'polo': ['Solid Pique Cotton Polo','Classic Solid Polo T-Shirt','Premium Heavyweight Polo','Slim Fit Signature Polo','Navy Heritage Polo','Contrast Tipping Collar Polo','Two-Tone Collar Polo','Colorblock Sporty Polo','Maroon Signature Polo','Striped Retro Rugby Polo','Bottle Green Classic Polo','Striped Summer Polo','Textured Jacquard Knit Polo','Embroidered Logo Polo','Textured Cotton Polo','Big Logo Embroidered Polo','Summer Breathable Polo','Classic Heritage Polo']
+  const names = {
+    'oversized': ['HinchField Washed Black Oversized Tee','HinchField Acid Drop Oversized','HinchField Bold Print Boxy Tee','HinchField Retro Street Oversized','HinchField Sun-Faded Drop Shoulder','HinchField Chrome Graphic Oversized','HinchField Grunge Boxy Fit Tee','HinchField Heavyweight Crew Tee','HinchField Statement Back Print','HinchField Sunset Gradient Oversized','HinchField Signature Print Oversized','HinchField Clean Block Boxy Tee'],
+    'minimal': ['HinchField Micro Logo Tee','HinchField Clean Serif Minimal','HinchField Small Script Signature','HinchField Tonal Embroidery Tee','HinchField Minimal Wave Print','HinchField Micro Dot Tee','HinchField Clean Text Minimal','HinchField Signature Chest Hit','HinchField Minimal Arrow Tee','HinchField Neutral Tonal Tee'],
+    'polo': ['HinchField Solid Pique Polo','HinchField Classic Collar Polo','HinchField Premium Heavyweight Polo','HinchField Slim Signature Polo','HinchField Heritage Navy Polo','HinchField Contrast Tipping Polo','HinchField Two-Tone Collar Polo','HinchField Sporty Colorblock Polo','HinchField Embroidered Logo Polo','HinchField Textured Knit Polo','HinchField Summer Breathable Polo','HinchField Classic Heritage Polo']
   };
   let pid = 1;
   for (const cat of CATKEYS) {
