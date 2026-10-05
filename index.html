@@ -2632,7 +2632,7 @@ function renderWish(){
 let pm = { id:null, color:0, size:0, qty:1, angle:0 };
 function openProduct(id, skipRoute){
   const p = prodById(id); if (!p) return;
-  pm = { id, color:0, size:0, qty:1, angle:0 };
+  pm = { id, color: (p.defaultColorIdx || 0), size:0, qty:1, angle:0 };
   drawProduct(); openModal('productModal');
   if (!skipRoute) history.pushState({ modal: 'productModal', id }, '', '#product/' + id);
 }
