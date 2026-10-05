@@ -3746,7 +3746,10 @@ function openModal(id){ const el = $('#'+id); if (el) el.classList.remove('hidde
 function closeModal(id, skipHistory){
   const el = $('#'+id); if (el) el.classList.add('hidden');
   document.body.style.overflow = '';
-  if (!skipHistory && window.location.hash) { try { history.back(); } catch(e){} }
+  // 🔧 Just clear the hash — don't go back in history
+  if (!skipHistory && window.location.hash) { 
+    try { history.replaceState(null, '', location.pathname + location.search); } catch(e){} 
+  }
 }
 function closeAll(skipHistory){
   ['cartDrawer','wishDrawer','productModal','sizeModal','trackModal','catPage','mobileMenu','historyModal','pastHistoryModal','staffModal','memberModal','memberWelcomeModal','confirmCancelModal','policyModal','invoiceModal','orderDeliveredModal','loginModal','otpModal'].forEach(id => { const el = $('#'+id); if (el) el.classList.add('hidden'); });
