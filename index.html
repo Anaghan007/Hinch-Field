@@ -2291,7 +2291,7 @@ function imgURLs(p){
   let imgIndex = catProducts.findIndex(x => x.id === p.id) + 1;
   if (!imgIndex || imgIndex < 1) { const pidNum = parseInt(p.id.replace('p',''),10) || 1; imgIndex = ((pidNum - 1) % 10) + 1; }
   const base = 'images/' + prefix + imgIndex + '-';
-  return Array.from({ length: viewsOf(p) }, (_, i) => base + (i + 1) + '.jpeg');
+  return Array.from({ length: viewsOf(p) }, (_, i) => base + (i + 1) + '.jpg');
 }
 function imgTag(p,color,a,cls,extra,eager){
   return '<img ' + (extra||'') + ' class="' + cls + '" src="' + imgURLs(p)[a] + '" alt="' + esc(p.name) + ' ' + (['Front','Back'][a]||'') + '" loading="' + (eager?'eager':'lazy') + '" decoding="async" fetchpriority="' + (eager?'high':'low') + '" style="height:100%;width:100%;object-fit:contain;">';
