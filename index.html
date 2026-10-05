@@ -605,6 +605,19 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
     .cardimg {
       position: relative;
       overflow: hidden;
+      aspect-ratio: 4/5;
+      width: 100%;
+      background: var(--bg2);
+    }
+
+    .cardimg img,
+    .cardimg .swap {
+      position: absolute !important;
+      inset: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: contain !important;
+      object-position: center !important;
     }
 
     .quickadd {
@@ -2294,7 +2307,7 @@ function imgTag(p, color, a, cls, extra, eager){
   const colorIdx = p.colors.findIndex(c => c[0] === color);
   const idx = colorIdx >= 0 ? colorIdx : 0;
   const src = 'images/' + prefix + (idx + 1) + '-' + (a + 1) + '.png';
-  return '<img ' + (extra||'') + ' class="' + cls + '" src="' + src + '" alt="' + esc(p.name) + ' ' + (['Front','Back'][a]||'') + '" loading="' + (eager?'eager':'lazy') + '" decoding="async" fetchpriority="' + (eager?'high':'low') + '" style="height:100%;width:100%;object-fit:contain;">';
+  return '<img ' + (extra||'') + ' class="' + cls + '" src="' + src + '" alt="' + esc(p.name) + ' ' + (['Front','Back'][a]||'') + '" loading="' + (eager?'eager':'lazy') + '" decoding="async" fetchpriority="' + (eager?'high':'low') + '" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center;background:var(--bg2);">';
 }
 function heroImg(p){
   const catPrefix = {'oversized':'o','minimal':'m','polo':'p'};
@@ -2314,7 +2327,7 @@ ${tag ? `<span class="absolute top-3 left-3 z-10 chip" style="${tag[1]}">${tag[0
 <button class="absolute top-3 right-3 z-10 w-8 h-8 flex items-center justify-center border hairline" style="background:var(--card);" data-wish="${p.id}" aria-label="Wishlist">
 <svg class="w-3.5 h-3.5" style="${wished ? 'color:#0A0A0A;' : 'color:var(--mut);'}" viewBox="0 0 24 24" fill="${wished ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="1.4"><path d="M12 21s-7.5-4.7-10-9.3C.5 8 2.6 4.5 6.2 4.5c2.2 0 3.7 1.2 4.6 2.6.9-1.4 2.4-2.6 4.6-2.6 3.6 0 5.7 3.5 4.2 7.2C19.5 16.3 12 21 12 21z"/></svg>
 </button>
-<div class="cardimg relative aspect-[4/5] overflow-hidden cursor-pointer" style="background:var(--bg2);" data-open-product="${p.id}">
+<div class="cardimg relative aspect-[4/5] overflow-hidden cursor-pointer" style="background:var(--bg2);min-height:0;width:100%;" data-open-product="${p.id}">
 ${multi ? imgTag(p,(p.colors[p.defaultColorIdx || 0] || p.colors[0])[0],0,'swap front','',true) + imgTag(p,(p.colors[p.defaultColorIdx || 0] || p.colors[0])[0],1,'swap back') : imgTag(p,(p.colors[p.defaultColorIdx || 0] || p.colors[0])[0],0,'w-full h-full object-contain','',true)}
 <span class="absolute inset-x-0 bottom-0 quickadd text-center py-3">${multi ? 'Front ⇄ Back' : 'Quick View'}</span>
 </div>
