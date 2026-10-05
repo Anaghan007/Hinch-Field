@@ -3707,7 +3707,7 @@ document.addEventListener('click', async (e) => {
             const c = await fetch(`${API_BASE}/api/membership-create`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ name, phone, email: getUserEmail(), deviceId, session_key: store.get('session_key', null) }) });
             const cd = await c.json(); if (!cd.success) throw new Error('Code generation failed');
             const clean = phone.replace(/[^0-9]/g, '');
-            const full = { code: cd.code, name, phone: clean, expiresAt: cd.expiresAt, status: 'active', activatedAt: Date.now() };
+            const full = { code: cd.code, name, phone: clean, email: (getUserEmail() || '').toLowerCase().trim(), expiresAt: cd.expiresAt, status: 'active', activatedAt: Date.now() };
             store.set('membership_full', full); store.set('last_phone', clean);
             renderCart();
             closeModal('memberModal', true);
@@ -3876,7 +3876,17 @@ async function applyMemberFn(){
     if(!/^\d{4}$/.test(code)) return toast('Enter Your 4-digit code','warn');
 
     const localMem = store.get('membership_full', null);
-    if (localMem && localMem.code === code && isMembershipValid(localMem)) {
+    const myEmail = (getUserEmail() || '').toLowerCase().trim();
+    const localOwner = (localMem && localMem.email ? String(localMem.email).toLowerCase().trim() : '');
+    
+    // 🔒 Only trust local cache if it belongs to CURRENT logged-in email
+    const localMatchesOwner = localMem && (
+        (!localOwner && myEmail) ? false :   // has email but cache has no owner → don't trust
+        (!localOwner && !myEmail) ? true :   // both missing → allow (legacy)
+        (localOwner === myEmail)              // match
+    );
+    
+    if (localMem && localMem.code === code && isMembershipValid(localMem) && localMatchesOwner) {
         appliedMembership = { code, name: localMem.name || '', expiresAt: localMem.expiresAt };
         store.set('membership_full', Object.assign({}, localMem, { status: 'active', activatedAt: localMem.activatedAt || Date.now() }));
         const na = $('#memberNotApplied');
@@ -3904,7 +3914,12 @@ async function applyMemberFn(){
             const r = await fetch(`${API_BASE}/api/membership-verify`,{
                 method:'POST',
                 headers:{'Content-Type':'application/json'},
-                body: JSON.stringify({ code, deviceId }),
+                body: JSON.stringify({
+                  code,
+                  deviceId,
+                  email: getUserEmail(),
+                  session_key: store.get('session_key', null)
+                }),
                 signal: ctl.signal
             });
 
@@ -3922,6 +3937,7 @@ async function applyMemberFn(){
                     code,
                     name: d.name || '',
                     expiresAt: d.expiresAt,
+                    email: d.email || getUserEmail() || '',
                     status: 'active',
                     activatedAt: Date.now()
                 });
