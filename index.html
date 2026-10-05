@@ -609,7 +609,6 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 8px;
     }
 
     .quickadd {
@@ -644,9 +643,10 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
     .cardimg .swap {
       width: 100% !important;
       height: 100% !important;
-      object-fit: contain !important;
+      object-fit: cover !important;
       object-position: center !important;
       background: transparent;
+      transform: scale(1.15);
     }
 
     .cardimg .swap.back {
