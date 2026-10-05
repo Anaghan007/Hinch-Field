@@ -2282,33 +2282,20 @@ const prodById = id => PRODUCTS.find(p => p.id === id);
 const offPct = p => Math.max(0, Math.round((1 - p.price / p.mrp) * 100));
 const stars = r => { const f = Math.max(0, Math.min(5, Math.round(r || 0))); return '<span style="color:var(--text);font-size:10px;letter-spacing:.15em;">' + '★'.repeat(f) + '☆'.repeat(5-f) + '</span>'; };
 const viewsOf = p => CATMETA[p.cat].views;
-function imgURLs(p, colorName){
+function imgURLs(p){
   const catPrefix = {'oversized':'o','minimal':'m','polo':'p'};
   const prefix = catPrefix[p.cat] || 'o';
   const catProducts = PRODUCTS.filter(x => x.cat === p.cat);
   let imgIndex = catProducts.findIndex(x => x.id === p.id) + 1;
   if (!imgIndex || imgIndex < 1) { const pidNum = parseInt(p.id.replace('p',''),10) || 1; imgIndex = ((pidNum - 1) % 10) + 1; }
-
-  // 🎨 If colorName given, use that color's image index (1-based)
-  let colorIdx = 0;
-  if (colorName && Array.isArray(p.colors)){
-    const found = p.colors.findIndex(c => c[0] === colorName);
-    if (found > -1) colorIdx = found;
-  } else {
-    colorIdx = p.defaultColorIdx || 0;
-  }
-
-  // File naming: prefix + imgIndex + '-' + colorIdx + '-' + view
-  // e.g. o1-1-1.jpeg (product 1, color 1, front view)
-  //      o1-2-1.jpeg (product 1, color 1, back view)
-  const base = 'images/' + prefix + imgIndex + '-' + (colorIdx + 1) + '-';
+  const base = 'images/' + prefix + imgIndex + '-';
   return Array.from({ length: viewsOf(p) }, (_, i) => base + (i + 1) + '.jpg');
 }
 function imgTag(p,color,a,cls,extra,eager){
-  return '<img ' + (extra||'') + ' class="' + cls + '" src="' + imgURLs(p, color)[a] + '" alt="' + esc(p.name) + ' ' + (['Front','Back'][a]||'') + '" loading="' + (eager?'eager':'lazy') + '" decoding="async" fetchpriority="' + (eager?'high':'low') + '" style="height:100%;width:100%;object-fit:contain;">';
+  return '<img ' + (extra||'') + ' class="' + cls + '" src="' + imgURLs(p)[a] + '" alt="' + esc(p.name) + ' ' + (['Front','Back'][a]||'') + '" loading="' + (eager?'eager':'lazy') + '" decoding="async" fetchpriority="' + (eager?'high':'low') + '" style="height:100%;width:100%;object-fit:contain;">';
 }
-function heroImg(p, colorName){
-  const real = imgURLs(p, colorName)[0];
+function heroImg(p){
+  const real = imgURLs(p)[0];
   return '<img class="w-full h-full object-contain hero-img" src="' + real + '" alt="' + esc(p.name) + '" fetchpriority="high" decoding="async" style="height:100%;width:100%;object-fit:contain;">';
 }
 function card(p, anim, delay){
