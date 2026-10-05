@@ -2285,18 +2285,22 @@ const viewsOf = p => CATMETA[p.cat].views;
 function imgURLs(p){
   const catPrefix = {'oversized':'o','minimal':'m','polo':'p'};
   const prefix = catPrefix[p.cat] || 'o';
-  const catProducts = PRODUCTS.filter(x => x.cat === p.cat);
-  let imgIndex = catProducts.findIndex(x => x.id === p.id) + 1;
-  if (!imgIndex || imgIndex < 1) { const pidNum = parseInt(p.id.replace('p',''),10) || 1; imgIndex = ((pidNum - 1) % 10) + 1; }
-  const base = 'images/' + prefix + imgIndex + '-';
-  return Array.from({ length: viewsOf(p) }, (_, i) => base + (i + 1) + '.jpg');
+  return p.colors.map((c, idx) => 'images/' + prefix + (idx + 1) + '-').map(base => [base + '1.jpg', base + '2.jpg']);
 }
-function imgTag(p,color,a,cls,extra,eager){
-  return '<img ' + (extra||'') + ' class="' + cls + '" src="' + imgURLs(p)[a] + '" alt="' + esc(p.name) + ' ' + (['Front','Back'][a]||'') + '" loading="' + (eager?'eager':'lazy') + '" decoding="async" fetchpriority="' + (eager?'high':'low') + '" style="height:100%;width:100%;object-fit:contain;">';
+function imgTag(p, color, a, cls, extra, eager){
+  const catPrefix = {'oversized':'o','minimal':'m','polo':'p'};
+  const prefix = catPrefix[p.cat] || 'o';
+  const colorIdx = p.colors.findIndex(c => c[0] === color);
+  const idx = colorIdx >= 0 ? colorIdx : 0;
+  const src = 'images/' + prefix + (idx + 1) + '-' + (a + 1) + '.jpg';
+  return '<img ' + (extra||'') + ' class="' + cls + '" src="' + src + '" alt="' + esc(p.name) + ' ' + (['Front','Back'][a]||'') + '" loading="' + (eager?'eager':'lazy') + '" decoding="async" fetchpriority="' + (eager?'high':'low') + '" style="height:100%;width:100%;object-fit:contain;">';
 }
 function heroImg(p){
-  const real = imgURLs(p)[0];
-  return '<img class="w-full h-full object-contain hero-img" src="' + real + '" alt="' + esc(p.name) + '" fetchpriority="high" decoding="async" style="height:100%;width:100%;object-fit:contain;">';
+  const catPrefix = {'oversized':'o','minimal':'m','polo':'p'};
+  const prefix = catPrefix[p.cat] || 'o';
+  const idx = p.defaultColorIdx || 0;
+  const src = 'images/' + prefix + (idx + 1) + '-1.jpg';
+  return '<img class="w-full h-full object-contain hero-img" src="' + src + '" alt="' + esc(p.name) + '" fetchpriority="high" decoding="async" style="height:100%;width:100%;object-fit:contain;">';
 }
 function card(p, anim, delay){
   anim = anim || 'a-up'; delay = delay || 0;
