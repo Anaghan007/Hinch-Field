@@ -2665,7 +2665,15 @@ ${imgs.length > 1 ? '<button class="absolute left-2 top-1/2 -translate-y-1/2 w-9
 <div class="text-[10px] text-center py-2 tracking-wide2 uppercase hairline border border-t-0" style="color:var(--text);">💡 Save ${fmt(saveAmt(p))} with Hinchfield Membership</div>
 <div class="flex items-center gap-2 mt-2">${stars(p.rating)}<span class="text-xs" style="color:var(--mut);">${p.rating} · ${p.reviews} reviews</span></div>
 <div class="mt-5"><p class="micro mb-3">Colour: <span style="color:var(--text);font-weight:500;letter-spacing:.02em;">${esc(cn)}</span></p>
-<div class="flex gap-2.5 flex-wrap items-center">${p.colors.map((c,i) => '<button class="swatch ' + (i===pm.color ? 'active' : '') + '" style="background:' + c[1] + ';' + (c[1]==='#FFFFFF' ? 'box-shadow:inset 0 0 0 1px #E6E4E0;' : '') + '" data-pcolor="' + i + '" title="' + esc(c[0]) + '" aria-label="' + esc(c[0]) + '"></button>').join('')}</div>
+<div class="flex gap-2.5 flex-wrap items-center">${(() => {
+  // 🎨 Put selected color FIRST, then rest in original order
+  const idx = pm.color;
+  const order = [idx, ...p.colors.map((_,i) => i).filter(i => i !== idx)];
+  return order.map(origIdx => {
+    const c = p.colors[origIdx];
+    return '<button class="swatch ' + (origIdx===pm.color ? 'active' : '') + '" style="background:' + c[1] + ';' + (c[1]==='#FFFFFF' ? 'box-shadow:inset 0 0 0 1px #E6E4E0;' : '') + '" data-pcolor="' + origIdx + '" title="' + esc(c[0]) + '" aria-label="' + esc(c[0]) + '"></button>';
+  }).join('');
+})()}</div>
 </div>
 <div class="mt-5 flex items-end justify-between gap-3 flex-wrap">
 <div><p class="micro mb-3">Size</p><div class="flex gap-2 flex-wrap">${p.sizes.map((s,i) => '<button class="sizechip ' + (i===pm.size ? 'active' : '') + '" data-psize="' + i + '">' + esc(s) + '</button>').join('')}</div></div>
