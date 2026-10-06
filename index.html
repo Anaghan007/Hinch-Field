@@ -2669,7 +2669,7 @@ ${imgs.length > 1 ? '<div class="hidden md:flex flex-col gap-2 order-1">' + imgs
 <div class="relative flex-1 order-2 min-w-0">
 <span class="absolute top-3 left-3 z-10 chip" style="background:var(--text); color:var(--bg);">COD</span>
 <button class="absolute top-3 right-3 z-10 w-9 h-9 border hairline" style="background:var(--card);" data-share>${ic('share','w-4 h-4')}</button>
-<div class="overflow-hidden aspect-[4/5] w-full" style="background:var(--bg2);">${imgTag(p, cn, pm.angle, 'w-full h-full object-contain','id="pmMain"')}</div>
+<div class="overflow-hidden aspect-[4/5] w-full" style="background:var(--bg2);position:relative;">${imgTag(p, cn, pm.angle, 'w-full h-full object-contain','id="pmMain"','',false)}</div>
 ${imgs.length > 1 ? '<button class="absolute left-2 top-1/2 -translate-y-1/2 w-9 h-9 border hairline" style="background:var(--card);" data-angle="-1">‹</button><button class="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 border hairline" style="background:var(--card);" data-angle="1">›</button>' : ''}
 <p class="text-[10px] text-center mt-3 tracking-wide2 uppercase" style="color:var(--mut);">View ${pm.angle+1}/2 • ${['FRONT','BACK'][pm.angle]||''}</p>
 </div></div></div>
