@@ -3798,7 +3798,30 @@ function handleRoute(){
   else if (hash === '#login') { openLoginModal(); }
   else { try { window.scrollTo(0, 0); } catch(e){} }
 }
-window.addEventListener('popstate', handleRoute);
+window.addEventListener('popstate', function(e){
+  // 🎯 Mobile back button: check if any modal is open
+  const openModals = ['productModal','cartDrawer','wishDrawer','sizeModal','trackModal','catPage','historyModal','pastHistoryModal','staffModal','memberModal','memberWelcomeModal','confirmCancelModal','policyModal','invoiceModal','orderDeliveredModal','loginModal','otpModal','mobileMenu'];
+  
+  // Find the currently open modal (top-most first)
+  let activeModal = null;
+  for (const id of openModals){
+    const el = document.getElementById(id);
+    if (el && !el.classList.contains('hidden')){
+      activeModal = id;
+      break;
+    }
+  }
+  
+  // If a modal is open, just close it (don't navigate)
+  if (activeModal){
+    closeModal(activeModal, true);
+    try { history.replaceState(null, '', location.pathname + location.search); } catch(err){}
+    return;
+  }
+  
+  // No modal open — proceed with normal route handling
+  handleRoute();
+});
 
 /* ═══ GLOBAL CLICK DELEGATION ═══ */
 document.addEventListener('click', e => {
