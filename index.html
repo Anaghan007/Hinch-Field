@@ -2342,7 +2342,7 @@ ${multi ? imgTag(p,(p.colors[p.defaultColorIdx || 0] || p.colors[0])[0],0,'swap 
 <div class="p-2 text-center border-l hairline" style="background:var(--text); color:var(--bg);"><p class="text-[9px] tracking-wide2 uppercase mb-1">⭐ Member</p><b class="disp text-[15px] md:text-base">${fmt(mp)}</b></div>
 </div>
 <div class="text-[9px] text-center py-1.5 tracking-wide2 uppercase hairline border border-t-0" style="color:var(--text);">Save ${fmt(saveAmt(p))} with Membership</div>
-<button class="pill btn-line w-full mt-3 py-2.5 text-[10px] flex items-center justify-center gap-1.5" data-add="${p.id}">${ic('cart','w-3 h-3')} Add to Cart</button>
+<button class="pill btn-line w-full mt-3 py-2.5 text-[10px] flex items-center justify-center gap-1.5" data-add="${p.id}" data-add-color="${p.defaultColorIdx || 0}">${ic('cart','w-3 h-3')} Add to Cart</button>
 </div>
 </article>`;
 }
@@ -2646,7 +2646,7 @@ function renderWish(){
     const p = prodById(id); if (!p) return '';
     return '<div class="flex gap-3 border hairline p-3 a-left w-full" style="background:var(--card);"><div class="w-20 h-24 overflow-hidden cursor-pointer" style="background:var(--bg2);" data-open-product="' + p.id + '">' + imgTag(p, (p.colors[p.defaultColorIdx || 0] || p.colors[0])[0], 0, 'w-full h-full object-contain') + '</div>' +
       '<div class="flex-1 min-w-0"><h4 class="text-xs font-medium truncate">' + esc(p.name) + '</h4><b class="disp text-sm">' + fmt(p.price) + '</b> <s class="text-[10px]" style="color:var(--mut);">' + fmt(p.mrp) + '</s>' +
-      '<div class="flex gap-2 mt-3"><button class="pill btn-ink px-4 py-2 text-[10px]" data-add="' + p.id + '">Add</button><button class="pill btn-line px-4 py-2 text-[10px]" data-wish="' + p.id + '">Remove</button></div></div></div>';
+      '<div class="flex gap-2 mt-3"><button class="pill btn-ink px-4 py-2 text-[10px]" data-add="${p.id}" data-add-color="${p.defaultColorIdx || 0}">Add</button><button class="pill btn-line px-4 py-2 text-[10px]" data-wish="' + p.id + '">Remove</button></div></div></div>';
   }).join('');
 }
 let pm = { id:null, color:0, size:0, qty:1, angle:0 };
@@ -3847,7 +3847,7 @@ document.addEventListener('click', e => {
     return;
   }
   if (t.hasAttribute('data-open-product')){ const id = t.getAttribute('data-open-product'); closeAll(true); openProduct(id); return; }
-  if (t.hasAttribute('data-add')){ const id = t.getAttribute('data-add'); addToCart(id); closeAll(true); try{ history.replaceState(null, '', location.pathname + location.search); history.pushState({ modal:'cartDrawer' }, '', '#cart'); handleRoute(); }catch(err){} return; }
+  if (t.hasAttribute('data-add')){    const id = t.getAttribute('data-add');    const cIdx = parseInt(t.getAttribute('data-add-color') || '0', 10);   const p = prodById(id);   const colorName = p ? (p.colors[cIdx] || p.colors[0])[0] : undefined;   addToCart(id, colorName);    closeAll(true);    try{ history.replaceState(null, '', location.pathname + location.search); history.pushState({ modal:'cartDrawer' }, '', '#cart'); handleRoute(); }catch(err){}    return;  }
   if (t.hasAttribute('data-wish')){ toggleWish(t.getAttribute('data-wish')); return; }
   if (t.hasAttribute('data-slide-go')){ goSlide(+t.getAttribute('data-slide-go')); clearInterval(sTimer); startSlider(); return; }
   if (t.hasAttribute('data-catpage')){
