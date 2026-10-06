@@ -1567,14 +1567,6 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
         id="heroDots"></div>
     </section>
 
-    <section class="py-12 md:hidden w-full" style="background:var(--bg2);" id="shopCatSec">
-      <div class="wrap text-center mb-10">
-        <p class="micro mb-3">Shop by Category</p>
-        <h2 class="disp editorial-h font-luxe" style="font-size:var(--fs-h2);">Find Your Style</h2>
-      </div>
-      <div class="wrap grid grid-cols-2 gap-4 md:gap-6 max-w-2xl mx-auto" id="shopCats"></div>
-    </section>
-
     <section class="py-12 md:py-20 w-full" style="background:var(--bg);" id="sec-featured">
       <div class="wrap space-y-16 md:space-y-24" id="featuredCats"></div>
     </section>
@@ -2435,22 +2427,6 @@ function renderMobileNav(){
   }, 0);
 }
 
-function renderShopCats() {
-  const shortNames = {'oversized':'Oversized','minimal':'Minimal','polo':'Polo T-Shirts'};
-  $('#shopCats').innerHTML = CATKEYS.map((c, i) => {
-    const prod = PRODUCTS.find(p => p.cat === c);
-    return `<button class="cat-card group" data-catpage="${c}" aria-label="Shop ${esc(shortNames[c] || CATMETA[c].name)}">
-<div class="cat-card-img">${prod ? imgTag(prod, (prod.colors[prod.defaultColorIdx || 0] || prod.colors[0])[0], 0, 'w-full h-full object-contain', '', true) : ''}
-<div class="cat-card-overlay"></div>
-<div class="absolute top-3 left-3 z-10"><span class="cat-card-no">${String(i + 1).padStart(2, '0')}</span></div>
-</div>
-<div class="cat-card-content"><div class="flex items-center justify-between gap-3">
-<div class="min-w-0"><p class="text-[13px] md:text-[14px] font-normal leading-tight truncate tracking-tight" style="color:var(--text);">${esc(shortNames[c] || CATMETA[c].name)}</p><p class="text-[10px] mt-1 tracking-wide2 uppercase" style="color:var(--mut);">Explore</p></div>
-<span class="cat-card-arrow shrink-0">→</span>
-</div></div>
-</button>`;
-  }).join('');
-}
 function renderInsta(){
   const ids = PRODUCTS.slice(0, 6).map(p => p.id);
   $('#instaRow').innerHTML = ids.map(id => {
@@ -4218,7 +4194,6 @@ function showInvoice(order){
   safe(generateProducts, 'generateProducts');
   safe(renderFAQ, 'renderFAQ');
   safe(renderMobileNav, 'renderMobileNav');
-  safe(renderShopCats, 'renderShopCats');
   safe(renderInsta, 'renderInsta');
   safe(renderFeatured, 'renderFeatured');
   safe(renderHero, 'renderHero');
