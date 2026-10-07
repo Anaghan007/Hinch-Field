@@ -1884,38 +1884,153 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
   </div>
 
   <!-- Size Modal -->
-  <div id="sizeModal" class="fixed inset-0 z-[85] hidden flex items-center justify-center px-4 w-full">
-    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" data-close="sizeModal"></div>
-    <div class="modalcard relative rounded-none p-6 md:p-8 max-w-md w-full"
-      style="background:var(--bg); color:var(--text); box-shadow:var(--shadow);">
-      <div class="flex justify-between items-center mb-4">
-        <h3 class="disp editorial-h font-luxe text-xl">Size Guide</h3>
-        <button data-close="sizeModal" class="w-9 h-9 border hairline" aria-label="Close">✕</button>
-      </div>
-      <table class="w-full text-xs">
-        <thead>
-          <tr class="border-b hairline text-left micro">
-            <th class="py-2">Item</th>
-            <th>Size</th>
-            <th>Note</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="border-b hairline">
-            <td class="py-2 font-medium">Oversized / Minimal T-Shirts</td>
-            <td>S / M / L / XL / XXL</td>
-            <td>Relaxed oversized fit</td>
-          </tr>
-          <tr>
-            <td class="py-2 font-medium">Polo T-Shirts</td>
-            <td>S / M / L / XL / XXL</td>
-            <td>Regular fit</td>
-          </tr>
-        </tbody>
-      </table>
-      <p class="text-[11px] mt-4" style="color:var(--mut);">Please select the correct size. No Return / No Exchange.</p>
+<div id="sizeModal" class="fixed inset-0 z-[85] hidden flex items-center justify-center px-4 w-full">
+  <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" data-close="sizeModal"></div>
+  <div class="modalcard relative rounded-none p-6 md:p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+    style="background:var(--bg); color:var(--text); box-shadow:var(--shadow);">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="disp editorial-h font-luxe text-xl">Size Guide</h3>
+      <button data-close="sizeModal" class="w-9 h-9 border hairline" aria-label="Close">✕</button>
     </div>
+
+    <!-- ═══ OVERSIZED T-SHIRTS ═══ -->
+    <p class="micro mb-3" style="color:var(--text);">Oversized T-Shirts (Relaxed Fit)</p>
+    <table class="w-full text-xs mb-6 border hairline">
+      <thead>
+        <tr class="border-b hairline text-left micro" style="background:var(--bg2);">
+          <th class="py-2 px-3">Size</th>
+          <th class="py-2 px-3">Chest (in)</th>
+          <th class="py-2 px-3">Length (in)</th>
+          <th class="py-2 px-3">Shoulder (in)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="border-b hairline">
+          <td class="py-2 px-3 font-medium">S</td>
+          <td class="py-2 px-3">40</td>
+          <td class="py-2 px-3">27</td>
+          <td class="py-2 px-3">18</td>
+        </tr>
+        <tr class="border-b hairline">
+          <td class="py-2 px-3 font-medium">M</td>
+          <td class="py-2 px-3">42</td>
+          <td class="py-2 px-3">28</td>
+          <td class="py-2 px-3">19</td>
+        </tr>
+        <tr class="border-b hairline">
+          <td class="py-2 px-3 font-medium">L</td>
+          <td class="py-2 px-3">44</td>
+          <td class="py-2 px-3">29</td>
+          <td class="py-2 px-3">20</td>
+        </tr>
+        <tr class="border-b hairline">
+          <td class="py-2 px-3 font-medium">XL</td>
+          <td class="py-2 px-3">46</td>
+          <td class="py-2 px-3">30</td>
+          <td class="py-2 px-3">21</td>
+        </tr>
+        <tr>
+          <td class="py-2 px-3 font-medium">XXL</td>
+          <td class="py-2 px-3">48</td>
+          <td class="py-2 px-3">31</td>
+          <td class="py-2 px-3">22</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ═══ MINIMAL T-SHIRTS ═══ -->
+    <p class="micro mb-3" style="color:var(--text);">Minimal T-Shirts (Regular Fit)</p>
+    <table class="w-full text-xs mb-6 border hairline">
+      <thead>
+        <tr class="border-b hairline text-left micro" style="background:var(--bg2);">
+          <th class="py-2 px-3">Size</th>
+          <th class="py-2 px-3">Chest (in)</th>
+          <th class="py-2 px-3">Length (in)</th>
+          <th class="py-2 px-3">Shoulder (in)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="border-b hairline">
+          <td class="py-2 px-3 font-medium">S</td>
+          <td class="py-2 px-3">38</td>
+          <td class="py-2 px-3">27</td>
+          <td class="py-2 px-3">17</td>
+        </tr>
+        <tr class="border-b hairline">
+          <td class="py-2 px-3 font-medium">M</td>
+          <td class="py-2 px-3">40</td>
+          <td class="py-2 px-3">28</td>
+          <td class="py-2 px-3">18</td>
+        </tr>
+        <tr class="border-b hairline">
+          <td class="py-2 px-3 font-medium">L</td>
+          <td class="py-2 px-3">42</td>
+          <td class="py-2 px-3">29</td>
+          <td class="py-2 px-3">19</td>
+        </tr>
+        <tr class="border-b hairline">
+          <td class="py-2 px-3 font-medium">XL</td>
+          <td class="py-2 px-3">44</td>
+          <td class="py-2 px-3">30</td>
+          <td class="py-2 px-3">20</td>
+        </tr>
+        <tr>
+          <td class="py-2 px-3 font-medium">XXL</td>
+          <td class="py-2 px-3">46</td>
+          <td class="py-2 px-3">31</td>
+          <td class="py-2 px-3">21</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ═══ POLO T-SHIRTS ═══ -->
+    <p class="micro mb-3" style="color:var(--text);">Polo T-Shirts (Regular Fit)</p>
+    <table class="w-full text-xs mb-4 border hairline">
+      <thead>
+        <tr class="border-b hairline text-left micro" style="background:var(--bg2);">
+          <th class="py-2 px-3">Size</th>
+          <th class="py-2 px-3">Chest (in)</th>
+          <th class="py-2 px-3">Length (in)</th>
+          <th class="py-2 px-3">Shoulder (in)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="border-b hairline">
+          <td class="py-2 px-3 font-medium">S</td>
+          <td class="py-2 px-3">38</td>
+          <td class="py-2 px-3">27</td>
+          <td class="py-2 px-3">17</td>
+        </tr>
+        <tr class="border-b hairline">
+          <td class="py-2 px-3 font-medium">M</td>
+          <td class="py-2 px-3">40</td>
+          <td class="py-2 px-3">28</td>
+          <td class="py-2 px-3">18</td>
+        </tr>
+        <tr class="border-b hairline">
+          <td class="py-2 px-3 font-medium">L</td>
+          <td class="py-2 px-3">42</td>
+          <td class="py-2 px-3">29</td>
+          <td class="py-2 px-3">19</td>
+        </tr>
+        <tr class="border-b hairline">
+          <td class="py-2 px-3 font-medium">XL</td>
+          <td class="py-2 px-3">44</td>
+          <td class="py-2 px-3">30</td>
+          <td class="py-2 px-3">20</td>
+        </tr>
+        <tr>
+          <td class="py-2 px-3 font-medium">XXL</td>
+          <td class="py-2 px-3">46</td>
+          <td class="py-2 px-3">31</td>
+          <td class="py-2 px-3">21</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p class="text-[11px] mt-4" style="color:var(--mut);">📏 All measurements are in inches. Please select the correct size. No Return / No Exchange.</p>
   </div>
+</div>
 
   <!-- Category Page -->
   <div id="catPage" class="fixed inset-0 z-[75] hidden overflow-y-auto w-full"
