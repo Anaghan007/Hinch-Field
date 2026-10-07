@@ -2737,7 +2737,7 @@ function renderWish(){
     const p = prodById(id); if (!p) return '';
     return '<div class="flex gap-3 border hairline p-3 a-left w-full" style="background:var(--card);"><div class="w-20 h-24 overflow-hidden cursor-pointer" style="background:var(--bg2);" data-open-product="' + p.id + '">' + imgTag(p, (p.colors[p.defaultColorIdx || 0] || p.colors[0])[0], 0, 'w-full h-full object-contain') + '</div>' +
       '<div class="flex-1 min-w-0"><h4 class="text-xs font-medium truncate">' + esc(p.name) + '</h4><b class="disp text-sm">' + fmt(p.price) + '</b> <s class="text-[10px]" style="color:var(--mut);">' + fmt(p.mrp) + '</s>' +
-      '<div class="flex gap-2 mt-3"><button class="pill btn-ink px-4 py-2 text-[10px]" data-add="${p.id}" data-add-color="${p.defaultColorIdx || 0}">Add</button><button class="pill btn-line px-4 py-2 text-[10px]" data-wish="' + p.id + '">Remove</button></div></div></div>';
+      '<div class="flex gap-2 mt-3"><button class="pill btn-ink px-4 py-2 text-[10px]" data-add="' + p.id + '" data-add-color="' + (p.defaultColorIdx || 0) + '">Add</button><button class="pill btn-line px-4 py-2 text-[10px]" data-wish="' + p.id + '">Remove</button></div></div></div>';
   }).join('');
 }
 let pm = { id:null, color:0, size:0, qty:1, angle:0 };
