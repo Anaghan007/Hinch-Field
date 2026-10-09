@@ -2932,51 +2932,55 @@ function buildOrderCard(o, opts){
 /* ═══ PLACE ORDER ═══ */
 let lock = false;
 function placeOrder(){
-  if (lock) return;
-  const err = m => { const e = $('#coErr'); e.textContent = m; e.classList.remove('hidden'); };
-  $('#coErr').classList.add('hidden');
-  if (!cart.length) return err('Cart is empty — add products first.');
-  if (!isLoggedIn() && localStorage.getItem('hf_is_admin') !== 'true'){
-    window.__pendingAction = 'checkout';
-    const loginEmail = $('#coEmail') ? $('#coEmail').value.trim() : '';
-    openLoginModal(loginEmail);
-    toast('Please login to place order', 'warn');
-    return;
-  }
-  if ($('#coHoney').value) return;
-  if (!validateCheckoutForm()) return;
-  lock = true;
-  const btn = $('#placeOrder'); btn.disabled = true;
-  setTimeout(() => { lock = false; btn.disabled = false; }, 4000);
-  const t = totals();
-  const oid = 'HF' + String(Date.now()).slice(-6);
-  const otp = String(Math.floor(1000 + Math.random() * 9000));
-  const isAdminDevice = localStorage.getItem('hf_is_admin') === 'true';
-  const accountEmail = getUserEmail();
-  const invoiceEmail = email;
+if (lock) return;
+const err = m => { const e = $('#coErr'); e.textContent = m; e.classList.remove('hidden'); };
+$('#coErr').classList.add('hidden');
+if (!cart.length) return err('Cart is empty — add products first.');
+if (!isLoggedIn() && localStorage.getItem('hf_is_admin') !== 'true'){
+window.__pendingAction = 'checkout';
+const loginEmail = $('#coEmail') ? $('#coEmail').value.trim() : '';
+openLoginModal(loginEmail);
+toast('Please login to place order', 'warn');
+return;
+}
+if ($('#coHoney').value) return;
 
-  const order = {
-    id: oid, otp, timestamp: Date.now(), status: 'Order Placed', updatedAt: Date.now(),
-    customer: { name, phone, email: invoiceEmail, accountEmail: accountEmail, addr, city, state, pin },
-    items: JSON.parse(JSON.stringify(cart)), totals: t, deliveredAt: null, payment: { method: 'cod' },
-    byAdmin: isAdminDevice
-  };
-  const orders = store.get('orders', []);
-  orders.push(order); store.set('orders', orders);
-  if (isLoggedIn()) store.set('user', { name, phone, email });
-  notifyNewOrder(order);
-  saveOrderToServer(order);
-  cart = []; store.set('cart', []);
-  clearCheckoutFields(); // FIX: clear now (order placed) not on empty cart
-  renderCart();
-  setTimeout(() => syncOrders(), 2000);
-  closeModal('cartDrawer', true);
-  try { history.replaceState(null, '', location.pathname + location.search); } catch(e){}
-  toast('Order placed — ' + oid, 'check');
-  if (!window.__invoiceOpened) {
-    window.__invoiceOpened = true;
-    setTimeout(() => { try { showInvoice(order); } catch(e){ console.error('Invoice error:', e); } setTimeout(() => { window.__invoiceOpened = false; }, 1000); }, 400);
-  }
+// ✅ નવું ફ્રોડ વેલિડેશન
+if (!validateCheckoutForm()) return;
+
+// ✅ FIX: readCustomer() થી વેલ્યુ લો (જૂના વેરિએબલ્સ હવે નથી)
+const cust = readCustomer();
+
+lock = true;
+const btn = $('#placeOrder'); btn.disabled = true;
+setTimeout(() => { lock = false; btn.disabled = false; }, 4000);
+const t = totals();
+const oid = 'HF' + String(Date.now()).slice(-6);
+const otp = String(Math.floor(1000 + Math.random() * 9000));
+const isAdminDevice = localStorage.getItem('hf_is_admin') === 'true';
+const accountEmail = getUserEmail();
+const order = {
+id: oid, otp, timestamp: Date.now(), status: 'Order Placed', updatedAt: Date.now(),
+customer: { ...cust, accountEmail: accountEmail },
+items: JSON.parse(JSON.stringify(cart)), totals: t, deliveredAt: null, payment: { method: 'cod' },
+byAdmin: isAdminDevice
+};
+const orders = store.get('orders', []);
+orders.push(order); store.set('orders', orders);
+if (isLoggedIn()) store.set('user', { name: cust.name, phone: cust.phone, email: cust.email });
+notifyNewOrder(order);
+saveOrderToServer(order);
+cart = []; store.set('cart', []);
+clearCheckoutFields();
+renderCart();
+setTimeout(() => syncOrders(), 2000);
+closeModal('cartDrawer', true);
+try { history.replaceState(null, '', location.pathname + location.search); } catch(e){}
+toast('Order placed — ' + oid, 'check');
+if (!window.__invoiceOpened) {
+window.__invoiceOpened = true;
+setTimeout(() => { try { showInvoice(order); } catch(e){ console.error('Invoice error:', e); } setTimeout(() => { window.__invoiceOpened = false; }, 1000); }, 400);
+}
 }
 
 const RAZORPAY_KEY_ID = 'rzp_live_ThrZ8hY3CqJiE8';
