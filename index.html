@@ -1745,54 +1745,32 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
               <button type="button" id="cartLoginBtn" class="pill btn-ink px-3 py-1.5 text-[10px]">Login</button>
             </div>
             <p class="micro" style="color:var(--text);">Delivery Details</p>
-
             <input id="coName" maxlength="60" class="field" placeholder="Full name *">
-
-            <!-- EMAIL + VERIFY -->
-            <div>
-              <div class="flex gap-2">
-                <input id="coEmail" type="email" maxlength="60" class="field flex-1" placeholder="Email address *" autocomplete="email">
-                <button type="button" id="verifyEmailBtn" class="pill btn-ink px-4 text-[10px] whitespace-nowrap shrink-0">Verify</button>
-              </div>
-              <p id="emailVerifiedMsg" class="text-[10px] mt-1.5 hidden" style="color:#16a34a;font-weight:500;">✓ Email
-                verified</p>
+            <input id="coPhone" inputmode="numeric" maxlength="15" class="field" placeholder="Mobile / WhatsApp number *">
+            <input id="coEmail" type="email" maxlength="60" class="field" placeholder="Email address * (for order updates)">
+            <textarea id="coAddr" maxlength="200" rows="2" class="field" placeholder="Full address *"></textarea>
+            <div class="grid grid-cols-2 gap-3">
+              <input id="coCity" maxlength="40" class="field" placeholder="City *">
+              <input id="coState" maxlength="40" class="field" placeholder="State / Province *">
             </div>
-
-            <!-- PHONE (no verification) -->
-            <input id="coPhone" inputmode="numeric" maxlength="10" class="field" placeholder="Mobile / WhatsApp number *">
-
-            <!-- REST OF FORM (locked until email verified) -->
-            <div id="restForm" class="space-y-3" style="opacity:.4;pointer-events:none;">
-              <textarea id="coAddr" maxlength="200" rows="2" class="field" placeholder="Full address *"></textarea>
-              <div class="grid grid-cols-2 gap-3">
-                <input id="coCity" maxlength="40" class="field" placeholder="City *">
-                <input id="coState" maxlength="40" class="field" placeholder="State / Province *">
-              </div>
-              <input id="coPin" maxlength="6" inputmode="numeric" class="field" placeholder="6-digit PIN *">
-            </div>
-
+            <input id="coPin" maxlength="10" class="field" placeholder="PIN / ZIP *">
             <input type="text" name="website" id="coHoney" class="hidden" tabindex="-1" autocomplete="off" aria-hidden="true">
             <p id="coErr" class="text-[11px] hidden" style="color:#DC2626;"></p>
-
-            <!-- PAYMENT (locked until email verified) -->
-            <div id="paymentSection" style="opacity:.4;pointer-events:none;">
-              <p class="micro pt-2" style="color:var(--text);">Payment Method</p>
-              <div class="space-y-2">
-                <label class="pay-radio active" id="payRadCod">
-      <input type="radio" name="payMethod" value="cod" checked>
-      <div class="flex-1"><p class="text-xs font-medium">Cash on Delivery</p><p class="text-[10px]" style="color:var(--mut);">Pay at your doorstep (India only)</p></div>
-      <span class="chip" style="background:var(--text); color:var(--bg);">COD</span>
-    </label>
-                <label class="pay-radio" id="payRadOnline">
-      <input type="radio" name="payMethod" value="online">
-      <div class="flex-1"><p class="text-xs font-medium">Pay Online</p><p class="text-[10px]" style="color:var(--mut);">UPI · Cards · Netbanking · Wallets</p></div>
-      <span class="chip" style="background:#0A0A0A; color:#fff;">Secure</span>
-    </label>
-              </div>
+            <p class="micro pt-2" style="color:var(--text);">Payment Method</p>
+            <div class="space-y-2">
+              <label class="pay-radio active" id="payRadCod">
+                <input type="radio" name="payMethod" value="cod" checked>
+                <div class="flex-1"><p class="text-xs font-medium">Cash on Delivery</p><p class="text-[10px]" style="color:var(--mut);">Pay at your doorstep (India only)</p></div>
+                <span class="chip" style="background:var(--text); color:var(--bg);">COD</span>
+              </label>
+              <label class="pay-radio" id="payRadOnline">
+                <input type="radio" name="payMethod" value="online">
+                <div class="flex-1"><p class="text-xs font-medium">Pay Online</p><p class="text-[10px]" style="color:var(--mut);">UPI · Cards · Netbanking · Wallets</p></div>
+                <span class="chip" style="background:#0A0A0A; color:#fff;">Secure</span>
+              </label>
             </div>
-
-            <button type="button" id="placeOrder" class="pill btn-gold w-full py-4" disabled style="opacity:.5;">Place Order (COD)</button>
-            <button type="button" id="payOnline" class="pill btn-gold w-full py-4 hidden" disabled style="opacity:.5;">Pay Online</button>
+            <button type="button" id="placeOrder" class="pill btn-gold w-full py-4">Place Order (COD)</button>
+            <button type="button" id="payOnline" class="pill btn-gold w-full py-4 hidden">Pay Online</button>
             <p class="text-[10px] text-center" style="color:var(--mut);">No Return / No Exchange • Secure checkout</p>
           </div>
         </div>
@@ -2951,194 +2929,66 @@ function buildOrderCard(o, opts){
     '</div>';
 }
 
-/* ═══ ORDER PLACEMENT — Email OTP verification only ═══ */
-
-let __verifiedOrderEmail = null;
-
-function showCoErr(m) {
-  const e = $('#coErr');
-  if (e) { e.textContent = m; e.classList.remove('hidden'); }
-}
-function hideCoErr() { const e = $('#coErr'); if (e) e.classList.add('hidden'); }
-
-/* ─── EMAIL VERIFY ─── */
-async function verifyEmailInline() {
-  hideCoErr();
-  const email = ($('#coEmail').value || '').trim().toLowerCase();
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return showCoErr('Please enter a valid email address.');
-
-  const btn = $('#verifyEmailBtn');
-  if (btn) { btn.disabled = true; btn.textContent = '...'; }
-  try {
-    const r = await fetch(`${API_BASE}/api/orders?action=send-otp`, {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email })
-    });
-    const d = await r.json();
-    if (!d.success) throw new Error(d.error || 'Failed to send OTP');
-    openEmailVerifyModal(email);
-  } catch(e) {
-    showCoErr(e.message || 'Failed to send OTP');
-    if (btn) { btn.disabled = false; btn.textContent = 'Verify'; }
-  }
-}
-
-function openEmailVerifyModal(email) {
-  const body = $('#otpModalBody');
-  if (!body) return;
-  body.innerHTML = `
-    <div class="text-center mb-6">
-      <p class="micro mb-2">HINCHFIELD</p>
-      <h3 class="disp editorial-h font-luxe text-2xl mb-1">Verify Email</h3>
-      <p class="text-xs" style="color:var(--mut);">4-digit OTP sent to</p>
-      <p class="text-xs font-medium mt-1" style="color:var(--text);word-break:break-all;">${esc(email)}</p>
-    </div>
-    <input id="evOtpInput" type="text" inputmode="numeric" maxlength="4" class="field mb-3 text-center"
-      placeholder="• • • •" style="font-size:1.5rem;letter-spacing:.6em;text-align:center;" autocomplete="one-time-code">
-    <p id="evOtpErr" class="text-[11px] hidden mb-3" style="color:#DC2626;"></p>
-    <button type="button" id="evOtpVerify" class="pill btn-gold w-full py-4">Verify Email</button>
-    <button type="button" id="evOtpResend" class="pill btn-line w-full py-3 mt-2 text-[10px]">Resend OTP</button>
-    <button type="button" data-close="otpModal" class="pill btn-line w-full py-3 mt-2 text-[10px]">Cancel</button>
-  `;
-  openModal('otpModal');
-  setTimeout(() => $('#evOtpInput')?.focus(), 200);
-  $('#evOtpInput').addEventListener('input', e => e.target.value = e.target.value.replace(/[^0-9]/g,''));
-  $('#evOtpVerify').onclick = () => checkEmailOtp(email);
-  $('#evOtpInput').addEventListener('keydown', e => { if (e.key === 'Enter') checkEmailOtp(email); });
-  $('#evOtpResend').onclick = () => verifyEmailInline();
-}
-
-async function checkEmailOtp(email) {
-  const btn = $('#evOtpVerify');
-  if (btn?.disabled) return;
-  const otp = ($('#evOtpInput').value || '').trim();
-  const err = m => { const e = $('#evOtpErr'); e.textContent = m; e.classList.remove('hidden'); };
-  $('#evOtpErr').classList.add('hidden');
-  if (!/^\d{4}$/.test(otp)) return err('Enter 4-digit OTP');
-  if (btn) { btn.disabled = true; btn.textContent = 'Verifying…'; }
-  try {
-    const deviceId = await getDeviceId();
-    const r = await fetch(`${API_BASE}/api/orders?action=verify-otp`, {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, otp, deviceId })
-    });
-    const d = await r.json();
-    if (!d.success) throw new Error(d.error || 'Invalid OTP');
-    try {
-      if (d.session_key) store.set('session_key', d.session_key);
-      store.set('user_email', email);
-    } catch(_){}
-    closeModal('otpModal', true);
-    markEmailVerified(email);
-    toast('Email verified', 'check');
-  } catch(e) {
-    err(e.message || 'Invalid OTP');
-    if (btn) { btn.disabled = false; btn.textContent = 'Verify Email'; }
-  }
-}
-
-function markEmailVerified(email) {
-  __verifiedOrderEmail = email;
-  const emailInput = $('#coEmail');
-  const btn = $('#verifyEmailBtn');
-  if (emailInput) { emailInput.disabled = true; emailInput.style.background = 'var(--bg2)'; }
-  if (btn) { btn.textContent = '✓'; btn.style.background = '#16a34a'; btn.style.color = '#fff'; btn.disabled = true; }
-  $('#emailVerifiedMsg')?.classList.remove('hidden');
-  // Unlock rest of form
-  const rf = $('#restForm');
-  if (rf) { rf.style.opacity = '1'; rf.style.pointerEvents = 'auto'; }
-  const ps = $('#paymentSection');
-  if (ps) { ps.style.opacity = '1'; ps.style.pointerEvents = 'auto'; }
-  const po = $('#placeOrder');
-  if (po) { po.disabled = false; po.style.opacity = '1'; }
-  const on = $('#payOnline');
-  if (on) { on.disabled = false; on.style.opacity = '1'; }
-  const addr = $('#coAddr'); if (addr) addr.focus();
-}
-
-function resetEmailVerification() {
-  __verifiedOrderEmail = null;
-  const em = $('#coEmail');
-  if (em) { em.disabled = false; em.style.background = ''; }
-  const btn = $('#verifyEmailBtn');
-  if (btn) { btn.textContent = 'Verify'; btn.style.background = ''; btn.style.color = ''; btn.disabled = false; }
-  $('#emailVerifiedMsg')?.classList.add('hidden');
-  const rf = $('#restForm'); if (rf) { rf.style.opacity = '.4'; rf.style.pointerEvents = 'none'; }
-  const ps = $('#paymentSection'); if (ps) { ps.style.opacity = '.4'; ps.style.pointerEvents = 'none'; }
-  const po = $('#placeOrder'); if (po) { po.disabled = true; po.style.opacity = '.5'; }
-  const on = $('#payOnline'); if (on) { on.disabled = true; on.style.opacity = '.5'; }
-}
-
-/* ─── FINAL PLACE ORDER ─── */
+/* ═══ PLACE ORDER ═══ */
 let lock = false;
-function finalPlaceOrder() {
+function placeOrder(){
   if (lock) return;
-  hideCoErr();
-
-  if (!cart.length) return showCoErr('Cart is empty.');
-  if (!isLoggedIn() && localStorage.getItem('hf_is_admin') !== 'true') {
-    openLoginModal($('#coEmail')?.value || '');
+  const err = m => { const e = $('#coErr'); e.textContent = m; e.classList.remove('hidden'); };
+  $('#coErr').classList.add('hidden');
+  if (!cart.length) return err('Cart is empty — add products first.');
+  if (!isLoggedIn() && localStorage.getItem('hf_is_admin') !== 'true'){
+    window.__pendingAction = 'checkout';
+    const loginEmail = $('#coEmail') ? $('#coEmail').value.trim() : '';
+    openLoginModal(loginEmail);
     toast('Please login to place order', 'warn');
     return;
   }
-
-  const email = ($('#coEmail').value || '').trim().toLowerCase();
-  if (__verifiedOrderEmail !== email) return showCoErr('Please verify your email first.');
-
-  const name  = $('#coName').value.trim();
-  const phone = ($('#coPhone').value || '').replace(/[^0-9]/g,'').trim();
-  const addr  = $('#coAddr').value.trim();
-  const city  = $('#coCity').value.trim();
+  if ($('#coHoney').value) return;
+  const name = $('#coName').value.trim();
+  const phone = $('#coPhone').value.trim();
+  const email = $('#coEmail').value.trim();
+  const addr = $('#coAddr').value.trim();
+  const city = $('#coCity').value.trim();
   const state = $('#coState').value.trim();
-  const pin   = $('#coPin').value.trim();
-
-  if (!/^[A-Za-z .]{3,60}$/.test(name)) return showCoErr('Please enter a valid full name.');
-  if (!/^\d{10}$/.test(phone)) return showCoErr('Please enter a valid 10-digit mobile number.');
-  if (addr.length < 10) return showCoErr('Please enter your complete address.');
-  if (!/^[A-Za-z .]{2,40}$/.test(city)) return showCoErr('Please enter a valid city.');
-  if (!state) return showCoErr('Please enter your state / province.');
-  if (!/^\d{6}$/.test(pin)) return showCoErr('Please enter a valid 6-digit PIN code.');
-
+  const pin = $('#coPin').value.trim();
+  if (!/^[A-Za-z .]{3,60}$/.test(name)) return err('Please enter a valid full name.');
+  if (!/^\d{7,15}$/.test(phone.replace(/[^0-9]/g,''))) return err('Please enter a valid mobile / WhatsApp number.');
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return err('Please enter a valid email address.');
+  if (addr.length < 10) return err('Please enter your complete address.');
+  if (!/^[A-Za-z .]{2,40}$/.test(city)) return err('Please enter a valid city.');
+  if (!state) return err('Please enter your state / province.');
+  if (!/^[A-Za-z0-9 -]{4,10}$/.test(pin)) return err('Please enter a valid PIN / ZIP.');
   lock = true;
-  const btn = $('#placeOrder'); if (btn) btn.disabled = true;
-  setTimeout(() => { lock = false; if (btn) btn.disabled = false; }, 4000);
-
+  const btn = $('#placeOrder'); btn.disabled = true;
+  setTimeout(() => { lock = false; btn.disabled = false; }, 4000);
   const t = totals();
   const oid = 'HF' + String(Date.now()).slice(-6);
   const otp = String(Math.floor(1000 + Math.random() * 9000));
   const isAdminDevice = localStorage.getItem('hf_is_admin') === 'true';
   const accountEmail = getUserEmail();
+  const invoiceEmail = email;
 
   const order = {
     id: oid, otp, timestamp: Date.now(), status: 'Order Placed', updatedAt: Date.now(),
-    customer: { name, phone, email, accountEmail, addr, city, state, pin },
-    items: JSON.parse(JSON.stringify(cart)), totals: t, deliveredAt: null,
-    payment: { method: 'cod' }, byAdmin: isAdminDevice,
-    emailVerified: true
+    customer: { name, phone, email: invoiceEmail, accountEmail: accountEmail, addr, city, state, pin },
+    items: JSON.parse(JSON.stringify(cart)), totals: t, deliveredAt: null, payment: { method: 'cod' },
+    byAdmin: isAdminDevice
   };
-
   const orders = store.get('orders', []);
-  orders.push(order);
-  store.set('orders', orders);
+  orders.push(order); store.set('orders', orders);
   if (isLoggedIn()) store.set('user', { name, phone, email });
   notifyNewOrder(order);
   saveOrderToServer(order);
-
   cart = []; store.set('cart', []);
-  clearCheckoutFields();
-  resetEmailVerification();
+  clearCheckoutFields(); // FIX: clear now (order placed) not on empty cart
   renderCart();
   setTimeout(() => syncOrders(), 2000);
   closeModal('cartDrawer', true);
   try { history.replaceState(null, '', location.pathname + location.search); } catch(e){}
   toast('Order placed — ' + oid, 'check');
-
   if (!window.__invoiceOpened) {
     window.__invoiceOpened = true;
-    setTimeout(() => {
-      try { showInvoice(order); } catch(e){ console.error('Invoice error:', e); }
-      setTimeout(() => { window.__invoiceOpened = false; }, 1000);
-    }, 400);
+    setTimeout(() => { try { showInvoice(order); } catch(e){ console.error('Invoice error:', e); } setTimeout(() => { window.__invoiceOpened = false; }, 1000); }, 400);
   }
 }
 
@@ -4159,16 +4009,7 @@ function wire(){
   const mo = $('#menuOpen'); if (mo) mo.onclick = () => { openModal('mobileMenu'); try{ history.pushState({ modal: 'mobileMenu' }, '', '#menu'); }catch(e){} };
   const to2 = $('#trackOpen2'); if (to2) to2.onclick = () => { openModal('trackModal'); try{ history.pushState({ modal: 'trackModal' }, '', '#track'); }catch(e){} };
   const so = $('#sizeOpen'); if (so) so.onclick = () => { openModal('sizeModal'); try{ history.pushState({ modal: 'sizeModal' }, '', '#size'); }catch(e){} };
-  const po = $('#placeOrder'); if (po) po.onclick = finalPlaceOrder;
-  const peb = $('#verifyEmailBtn'); if (peb) peb.onclick = verifyEmailInline;
-  const ppb = $('#verifyPhoneBtn'); if (ppb) ppb.onclick = verifyPhoneInline;
-  const emInp = $('#coEmail'); if (emInp) emInp.addEventListener('input', () => {
-  const cur = emInp.value.trim().toLowerCase();
-  if (__verifiedOrderEmail && __verifiedOrderEmail !== cur) resetEmailVerification();
-});
-const phInp = $('#coPhone'); if (phInp) phInp.addEventListener('input', () => {
-  phInp.value = phInp.value.replace(/[^0-9]/g,'').slice(0,10);
-});
+  const po = $('#placeOrder'); if (po) po.onclick = placeOrder;
   const onl = $('#payOnline'); if (onl) onl.onclick = handleOnlinePayment;
   if ($('#confirmCancelNo')) $('#confirmCancelNo').onclick = () => { pendingCancelId = null; closeModal('confirmCancelModal', true); };
   if ($('#confirmCancelBackdrop')) $('#confirmCancelBackdrop').onclick = () => { pendingCancelId = null; closeModal('confirmCancelModal', true); };
