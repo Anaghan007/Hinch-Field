@@ -31,9 +31,6 @@
   <script src="https://checkout.razorpay.com/v1/checkout.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@4/dist/fp.min.js" defer></script>
 
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-
   <script>
     tailwind.config = {
 theme: { extend: {
@@ -2076,17 +2073,6 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
     </div>
   </div>
 
-  <!-- Phone OTP Modal -->
-  <div id="phoneOtpModal" class="fixed inset-0 z-[96] hidden flex items-center justify-center px-4 w-full">
-  <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" data-close="phoneOtpModal"></div>
-  <div class="modalcard relative p-6 md:p-8 max-w-sm w-full"
-  style="background:var(--bg); color:var(--text); box-shadow:var(--shadow);">
-  <button type="button" class="absolute top-3 right-3 w-9 h-9 border hairline" data-close="phoneOtpModal" aria-label="Close">✕</button>
-  <div id="phoneOtpModalBody"></div>
-  </div>
-  </div>
-  <div id="recaptchaContainer" style="display:none;"></div>
-
   <!-- Order Delivered Popup -->
   <div id="orderDeliveredModal" class="fixed inset-0 z-[97] hidden flex items-center justify-center px-4 w-full">
     <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" data-close="orderDeliveredModal"></div>
@@ -2258,97 +2244,6 @@ const esc = (s='') => String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;
 const debounce = (fn, ms=250) => { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; };
 const safe = (fn, name) => { try { return fn(); } catch(e){ console.error('['+name+']', e); } };
 const WA = '917434053550';
-
-/* ═══════════════════════════════════════════════════════
-   📱 FIREBASE PHONE OTP (Free — 10K/month)
-═══════════════════════════════════════════════════════ */
-const firebaseConfig = {
-apiKey: "AIzaSyBqSbZVFb-zU47V-QG8Xaq0heBhdsSbbts",
-authDomain: "hinchfield.firebaseapp.com",
-projectId: "hinchfield",
-storageBucket: "hinchfield.firebasestorage.app",
-messagingSenderId: "137632136228",
-appId: "1:137632136228:web:bdc311d52086dffdb3acb1",
-measurementId: "G-XFMLH4QT28"
-};
-let fbAuth = null;
-let verifiedPhone = null;        // જે નંબર ઓટીપીથી વેરિફાય થયો
-let phoneConfirmResult = null;
-
-window.addEventListener('load', () => {
-try {
-if (typeof firebase === 'undefined') return;
-if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-fbAuth = firebase.auth();
-window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptchaContainer', { size: 'invisible' });
-} catch(e){ console.warn('Firebase init:', e); }
-});
-
-function startPhoneOtp(phone, onSuccess){
-if (typeof firebase === 'undefined' || !fbAuth){ toast('OTP service not ready — refresh page', 'warn'); return; }
-if (verifiedPhone === phone){ onSuccess(); return; }   // પહેલેથી વેરિફાયડ
-const btn = $('#placeOrder'); btn.disabled = true; btn.textContent = 'Sending OTP…';
-if (!window.recaptchaVerifier){
-try { window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptchaContainer', { size:'invisible' }); } catch(e){}
-}
-fbAuth.signInWithPhoneNumber('+91' + phone, window.recaptchaVerifier)
-.then(conf => {
-phoneConfirmResult = conf;
-btn.disabled = false; btn.textContent = 'Place Order (COD)';
-openPhoneOtpModal(phone, onSuccess);
-toast('OTP sent to ' + phone, 'check');
-})
-.catch(err => {
-console.error('OTP send error:', err);
-btn.disabled = false; btn.textContent = 'Place Order (COD)';
-try { if (window.recaptchaVerifier){ window.recaptchaVerifier.clear(); window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptchaContainer', { size:'invisible' }); } } catch(e){}
-if (err.code === 'auth/too-many-requests') toast('Too many attempts — try after some time', 'warn');
-else toast('OTP send failed. Check number & try again.', 'cross');
-});
-}
-
-function openPhoneOtpModal(phone, onSuccess){
-const body = $('#phoneOtpModalBody'); if (!body) return;
-body.innerHTML = `
-<div class="text-center mb-6">
-<p class="micro mb-2">HINCHFIELD</p>
-<h3 class="disp editorial-h font-luxe text-2xl mb-1">Verify Mobile Number</h3>
-<p class="text-xs" style="color:var(--mut);">6-digit OTP sent to</p>
-<p class="text-xs font-medium mt-1" style="color:var(--text);">+91 ${esc(phone)}</p>
-</div>
-<input id="phOtpInput" type="text" inputmode="numeric" maxlength="6" class="field mb-3 text-center" placeholder="• • • • • •" style="font-size:1.4rem;letter-spacing:.5em;">
-<p id="phOtpErr" class="text-[11px] hidden mb-3" style="color:#DC2626;"></p>
-<button type="button" id="phOtpVerify" class="pill btn-gold w-full py-4">Verify OTP</button>
-<button type="button" id="phOtpResend" class="pill btn-line w-full py-3 mt-2 text-[10px]">Resend OTP</button>
-`;
-openModal('phoneOtpModal');
-setTimeout(() => { const el = $('#phOtpInput'); if (el) el.focus(); }, 200);
-$('#phOtpInput').addEventListener('input', e => { e.target.value = e.target.value.replace(/[^0-9]/g,''); });
-$('#phOtpVerify').onclick = () => verifyPhoneOtp(phone, onSuccess);
-$('#phOtpResend').onclick = () => { closeModal('phoneOtpModal', true); try { if (window.recaptchaVerifier) window.recaptchaVerifier.clear(); } catch(e){} window.recaptchaVerifier = null; setTimeout(() => startPhoneOtp(phone, onSuccess), 300); };
-$('#phOtpInput').addEventListener('keydown', e => { if (e.key === 'Enter') verifyPhoneOtp(phone, onSuccess); });
-}
-
-function verifyPhoneOtp(phone, onSuccess){
-const btn = $('#phOtpVerify'); if (btn && btn.disabled) return;
-const otp = ($('#phOtpInput').value || '').trim();
-const err = m => { const e = $('#phOtpErr'); e.textContent = m; e.classList.remove('hidden'); };
-$('#phOtpErr').classList.add('hidden');
-if (!/^\d{6}$/.test(otp)) return err('Enter the 6-digit OTP');
-if (!phoneConfirmResult) return err('Please request OTP again');
-btn.disabled = true; btn.textContent = 'Verifying…';
-phoneConfirmResult.confirm(otp)
-.then(() => {
-verifiedPhone = phone;
-closeModal('phoneOtpModal', true);
-toast('✓ Mobile number verified', 'check');
-if (typeof onSuccess === 'function') onSuccess();
-})
-.catch(() => {
-btn.disabled = false; btn.textContent = 'Verify OTP';
-err('Invalid OTP — try again');
-});
-}
 
 let DEVICE_ID = null;
 async function getDeviceId(){
@@ -3038,8 +2933,9 @@ function buildOrderCard(o, opts){
 let lock = false;
 function placeOrder(){
 if (lock) return;
+const err = m => { const e = $('#coErr'); e.textContent = m; e.classList.remove('hidden'); };
 $('#coErr').classList.add('hidden');
-if (!cart.length){ const e = $('#coErr'); e.textContent = 'Cart is empty — add products first.'; e.classList.remove('hidden'); return; }
+if (!cart.length) return err('Cart is empty — add products first.');
 if (!isLoggedIn() && localStorage.getItem('hf_is_admin') !== 'true'){
 window.__pendingAction = 'checkout';
 const loginEmail = $('#coEmail') ? $('#coEmail').value.trim() : '';
@@ -3048,25 +2944,17 @@ toast('Please login to place order', 'warn');
 return;
 }
 if ($('#coHoney').value) return;
+
+// ✅ નવું ફ્રોડ વેલિડેશન
 if (!validateCheckoutForm()) return;
 
-// ✅ ફોન નંબર ઓટીપીથી વેરિફાય થયો છે? નહીં તો પહેલા ઓટીપી મોકલો
-const custPhone = $('#coPhone').value.trim();
-if (verifiedPhone !== custPhone){
-startPhoneOtp(custPhone, () => doPlaceOrder());
-return;
-}
-doPlaceOrder();
-}
+// ✅ FIX: readCustomer() થી વેલ્યુ લો (જૂના વેરિએબલ્સ હવે નથી)
+const cust = readCustomer();
 
-/* ✅ ઓટીપી વેરિફિકેશન પછી જ આ ચાલશે */
-function doPlaceOrder(){
-if (lock) return;
 lock = true;
 const btn = $('#placeOrder'); btn.disabled = true;
 setTimeout(() => { lock = false; btn.disabled = false; }, 4000);
 const t = totals();
-const cust = readCustomer();
 const oid = 'HF' + String(Date.now()).slice(-6);
 const otp = String(Math.floor(1000 + Math.random() * 9000));
 const isAdminDevice = localStorage.getItem('hf_is_admin') === 'true';
