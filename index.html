@@ -1763,32 +1763,61 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
               <button type="button" id="cartLoginBtn" class="pill btn-ink px-3 py-1.5 text-[10px]">Login</button>
             </div>
             <p class="micro" style="color:var(--text);">Delivery Details</p>
+
             <input id="coName" maxlength="60" class="field" placeholder="Full name *">
-            <input id="coPhone" inputmode="numeric" maxlength="15" class="field" placeholder="Mobile / WhatsApp number *">
-            <input id="coEmail" type="email" maxlength="60" class="field" placeholder="Email address * (for order updates)">
-            <textarea id="coAddr" maxlength="200" rows="2" class="field" placeholder="Full address *"></textarea>
-            <div class="grid grid-cols-2 gap-3">
-              <input id="coCity" maxlength="40" class="field" placeholder="City *">
-              <input id="coState" maxlength="40" class="field" placeholder="State / Province *">
+
+            <!-- EMAIL + VERIFY -->
+            <div>
+              <div class="flex gap-2">
+                <input id="coEmail" type="email" maxlength="60" class="field flex-1" placeholder="Email address *" autocomplete="email">
+                <button type="button" id="verifyEmailBtn" class="pill btn-ink px-4 text-[10px] whitespace-nowrap shrink-0">Verify</button>
+              </div>
+              <p id="emailVerifiedMsg" class="text-[10px] mt-1.5 hidden" style="color:#16a34a;font-weight:500;">✓ Email
+                verified</p>
             </div>
-            <input id="coPin" maxlength="10" class="field" placeholder="PIN / ZIP *">
+
+            <!-- PHONE + VERIFY -->
+            <div>
+              <div class="flex gap-2">
+                <input id="coPhone" inputmode="numeric" maxlength="10" class="field flex-1" placeholder="Mobile / WhatsApp number *" disabled>
+                <button type="button" id="verifyPhoneBtn" class="pill btn-ink px-4 text-[10px] whitespace-nowrap shrink-0" disabled>Verify</button>
+              </div>
+              <p id="phoneVerifiedMsg" class="text-[10px] mt-1.5 hidden" style="color:#16a34a;font-weight:500;">✓ Phone
+                verified</p>
+            </div>
+
+            <!-- REST OF FORM (locked until phone verified) -->
+            <div id="restForm" class="space-y-3" style="opacity:.4;pointer-events:none;">
+              <textarea id="coAddr" maxlength="200" rows="2" class="field" placeholder="Full address *"></textarea>
+              <div class="grid grid-cols-2 gap-3">
+                <input id="coCity" maxlength="40" class="field" placeholder="City *">
+                <input id="coState" maxlength="40" class="field" placeholder="State / Province *">
+              </div>
+              <input id="coPin" maxlength="6" inputmode="numeric" class="field" placeholder="6-digit PIN *">
+            </div>
+
             <input type="text" name="website" id="coHoney" class="hidden" tabindex="-1" autocomplete="off" aria-hidden="true">
             <p id="coErr" class="text-[11px] hidden" style="color:#DC2626;"></p>
-            <p class="micro pt-2" style="color:var(--text);">Payment Method</p>
-            <div class="space-y-2">
-              <label class="pay-radio active" id="payRadCod">
-                <input type="radio" name="payMethod" value="cod" checked>
-                <div class="flex-1"><p class="text-xs font-medium">Cash on Delivery</p><p class="text-[10px]" style="color:var(--mut);">Pay at your doorstep (India only)</p></div>
-                <span class="chip" style="background:var(--text); color:var(--bg);">COD</span>
-              </label>
-              <label class="pay-radio" id="payRadOnline">
-                <input type="radio" name="payMethod" value="online">
-                <div class="flex-1"><p class="text-xs font-medium">Pay Online</p><p class="text-[10px]" style="color:var(--mut);">UPI · Cards · Netbanking · Wallets</p></div>
-                <span class="chip" style="background:#0A0A0A; color:#fff;">Secure</span>
-              </label>
+
+            <!-- PAYMENT (locked until phone verified) -->
+            <div id="paymentSection" style="opacity:.4;pointer-events:none;">
+              <p class="micro pt-2" style="color:var(--text);">Payment Method</p>
+              <div class="space-y-2">
+                <label class="pay-radio active" id="payRadCod">
+      <input type="radio" name="payMethod" value="cod" checked>
+      <div class="flex-1"><p class="text-xs font-medium">Cash on Delivery</p><p class="text-[10px]" style="color:var(--mut);">Pay at your doorstep (India only)</p></div>
+      <span class="chip" style="background:var(--text); color:var(--bg);">COD</span>
+    </label>
+                <label class="pay-radio" id="payRadOnline">
+      <input type="radio" name="payMethod" value="online">
+      <div class="flex-1"><p class="text-xs font-medium">Pay Online</p><p class="text-[10px]" style="color:var(--mut);">UPI · Cards · Netbanking · Wallets</p></div>
+      <span class="chip" style="background:#0A0A0A; color:#fff;">Secure</span>
+    </label>
+              </div>
             </div>
-            <button type="button" id="placeOrder" class="pill btn-gold w-full py-4">Place Order (COD)</button>
-            <button type="button" id="payOnline" class="pill btn-gold w-full py-4 hidden">Pay Online</button>
+
+            <button type="button" id="placeOrder" class="pill btn-gold w-full py-4" disabled style="opacity:.5;">Place Order (COD)</button>
+            <button type="button" id="payOnline" class="pill btn-gold w-full py-4 hidden" disabled style="opacity:.5;">Pay Online</button>
             <p class="text-[10px] text-center" style="color:var(--mut);">No Return / No Exchange • Secure checkout</p>
           </div>
         </div>
@@ -2948,50 +2977,28 @@ function buildOrderCard(o, opts){
 }
 
 /* ═══ PLACE ORDER ═══ */
-let lock = false;
 /* ═══════════════════════════════════════════════════════════
-   ORDER PLACEMENT — Email OTP + Firebase Phone Auth
+   INLINE ORDER VERIFICATION — Email + Phone (with Verify buttons)
    ═══════════════════════════════════════════════════════════ */
 
+let __verifiedOrderEmail = null;
+let __verifiedOrderPhone = null;
 let __phoneConfirmationResult = null;
-let __pendingOrderData = null;
 
-function placeOrderWithVerification() {
-  const err = m => { const e = $('#coErr'); e.textContent = m; e.classList.remove('hidden'); };
-  $('#coErr').classList.add('hidden');
-
-  if (!cart.length) return err('Cart is empty — add products first.');
-  if (!isLoggedIn() && localStorage.getItem('hf_is_admin') !== 'true') {
-    window.__pendingAction = 'checkout';
-    openLoginModal($('#coEmail')?.value || '');
-    toast('Please login to place order', 'warn');
-    return;
-  }
-  if ($('#coHoney').value) return;
-
-  const name  = $('#coName').value.trim();
-  const phone = $('#coPhone').value.trim();
-  const email = $('#coEmail').value.trim();
-  const addr  = $('#coAddr').value.trim();
-  const city  = $('#coCity').value.trim();
-  const state = $('#coState').value.trim();
-  const pin   = $('#coPin').value.trim();
-
-  if (!/^[A-Za-z .]{3,60}$/.test(name)) return err('Please enter a valid full name.');
-  if (!/^\d{7,15}$/.test(phone.replace(/[^0-9]/g,''))) return err('Please enter a valid mobile number.');
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return err('Please enter a valid email address.');
-  if (addr.length < 10) return err('Please enter your complete address.');
-  if (!/^[A-Za-z .]{2,40}$/.test(city)) return err('Please enter a valid city.');
-  if (!state) return err('Please enter your state / province.');
-  if (!/^\d{6}$/.test(pin)) return err('Please enter a valid 6-digit PIN code.');
-
-  __pendingOrderData = { name, phone, email, addr, city, state, pin };
-  sendOrderEmailOtp(email);
+function showCoErr(m) {
+  const e = $('#coErr');
+  if (e) { e.textContent = m; e.classList.remove('hidden'); }
 }
+function hideCoErr() { const e = $('#coErr'); if (e) e.classList.add('hidden'); }
 
-async function sendOrderEmailOtp(email) {
-  const btn = $('#placeOrder');
-  if (btn) { btn.disabled = true; btn.textContent = 'Sending Email OTP…'; }
+/* ─── EMAIL VERIFY ─── */
+async function verifyEmailInline() {
+  hideCoErr();
+  const email = ($('#coEmail').value || '').trim().toLowerCase();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return showCoErr('Please enter a valid email address.');
+
+  const btn = $('#verifyEmailBtn');
+  if (btn) { btn.disabled = true; btn.textContent = '...'; }
   try {
     const r = await fetch(`${API_BASE}/api/orders?action=send-otp`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -2999,17 +3006,14 @@ async function sendOrderEmailOtp(email) {
     });
     const d = await r.json();
     if (!d.success) throw new Error(d.error || 'Failed to send OTP');
-    openOrderEmailOtpModal(email);
+    openEmailVerifyModal(email);
   } catch(e) {
-    const e2 = $('#coErr');
-    if (e2) { e2.textContent = e.message || 'Failed to send OTP'; e2.classList.remove('hidden'); }
-    toast(e.message || 'Failed to send OTP', 'cross');
-  } finally {
-    if (btn) { btn.disabled = false; btn.textContent = 'Place Order (COD)'; }
+    showCoErr(e.message || 'Failed to send OTP');
+    if (btn) { btn.disabled = false; btn.textContent = 'Verify'; }
   }
 }
 
-function openOrderEmailOtpModal(email) {
+function openEmailVerifyModal(email) {
   const body = $('#otpModalBody');
   if (!body) return;
   body.innerHTML = `
@@ -3019,27 +3023,28 @@ function openOrderEmailOtpModal(email) {
       <p class="text-xs" style="color:var(--mut);">4-digit OTP sent to</p>
       <p class="text-xs font-medium mt-1" style="color:var(--text);word-break:break-all;">${esc(email)}</p>
     </div>
-    <input id="orderEmailOtpInput" type="text" inputmode="numeric" maxlength="4" class="field mb-3 text-center"
+    <input id="evOtpInput" type="text" inputmode="numeric" maxlength="4" class="field mb-3 text-center"
       placeholder="• • • •" style="font-size:1.5rem;letter-spacing:.6em;text-align:center;" autocomplete="one-time-code">
-    <p id="orderEmailOtpErr" class="text-[11px] hidden mb-3" style="color:#DC2626;"></p>
-    <button type="button" id="orderEmailOtpVerify" class="pill btn-gold w-full py-4">Verify Email</button>
-    <button type="button" id="orderEmailOtpResend" class="pill btn-line w-full py-3 mt-2 text-[10px]">Resend OTP</button>
+    <p id="evOtpErr" class="text-[11px] hidden mb-3" style="color:#DC2626;"></p>
+    <button type="button" id="evOtpVerify" class="pill btn-gold w-full py-4">Verify Email</button>
+    <button type="button" id="evOtpResend" class="pill btn-line w-full py-3 mt-2 text-[10px]">Resend OTP</button>
+    <button type="button" data-close="otpModal" class="pill btn-line w-full py-3 mt-2 text-[10px]">Cancel</button>
   `;
   openModal('otpModal');
-  setTimeout(() => { $('#orderEmailOtpInput')?.focus(); }, 200);
-  $('#orderEmailOtpInput').addEventListener('input', e => e.target.value = e.target.value.replace(/[^0-9]/g,''));
-  $('#orderEmailOtpVerify').onclick = () => verifyOrderEmailOtp(email);
-  $('#orderEmailOtpResend').onclick = () => sendOrderEmailOtp(email);
+  setTimeout(() => $('#evOtpInput')?.focus(), 200);
+  $('#evOtpInput').addEventListener('input', e => e.target.value = e.target.value.replace(/[^0-9]/g,''));
+  $('#evOtpVerify').onclick = () => checkEmailOtp(email);
+  $('#evOtpInput').addEventListener('keydown', e => { if (e.key === 'Enter') checkEmailOtp(email); });
+  $('#evOtpResend').onclick = () => verifyEmailInline();
 }
 
-async function verifyOrderEmailOtp(email) {
-  const btn = $('#orderEmailOtpVerify');
-  if (btn && btn.disabled) return;
-  const otp = ($('#orderEmailOtpInput').value || '').trim();
-  const err = m => { const e = $('#orderEmailOtpErr'); e.textContent = m; e.classList.remove('hidden'); return false; };
-  $('#orderEmailOtpErr').classList.add('hidden');
-  if (!/^\d{4}$/.test(otp)) return err('Please enter the 4-digit OTP');
-
+async function checkEmailOtp(email) {
+  const btn = $('#evOtpVerify');
+  if (btn?.disabled) return;
+  const otp = ($('#evOtpInput').value || '').trim();
+  const err = m => { const e = $('#evOtpErr'); e.textContent = m; e.classList.remove('hidden'); };
+  $('#evOtpErr').classList.add('hidden');
+  if (!/^\d{4}$/.test(otp)) return err('Enter 4-digit OTP');
   if (btn) { btn.disabled = true; btn.textContent = 'Verifying…'; }
   try {
     const deviceId = await getDeviceId();
@@ -3049,36 +3054,54 @@ async function verifyOrderEmailOtp(email) {
     });
     const d = await r.json();
     if (!d.success) throw new Error(d.error || 'Invalid OTP');
-
     try {
       if (d.session_key) store.set('session_key', d.session_key);
       store.set('user_email', email);
-    } catch(_) {}
-
+    } catch(_){}
     closeModal('otpModal', true);
-    toast('Email verified! Now verify phone…', 'check');
-    sendPhoneOtpViaFirebase(__pendingOrderData.phone);
+    markEmailVerified(email);
+    toast('Email verified', 'check');
   } catch(e) {
     err(e.message || 'Invalid OTP');
     if (btn) { btn.disabled = false; btn.textContent = 'Verify Email'; }
   }
 }
 
-async function sendPhoneOtpViaFirebase(phone) {
-  const phoneNumber = '+91' + phone.replace(/[^0-9]/g, '').slice(-10);
-  if (!window.__recaptchaVerifier) {
-    window.__recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', { size: 'invisible' });
-  }
+function markEmailVerified(email) {
+  __verifiedOrderEmail = email;
+  const emailInput = $('#coEmail');
+  const btn = $('#verifyEmailBtn');
+  if (emailInput) { emailInput.disabled = true; emailInput.style.background = 'var(--bg2)'; }
+  if (btn) { btn.textContent = '✓'; btn.style.background = '#16a34a'; btn.style.color = '#fff'; btn.disabled = true; }
+  $('#emailVerifiedMsg')?.classList.remove('hidden');
+  // Unlock phone
+  const ph = $('#coPhone'); if (ph) { ph.disabled = false; ph.focus(); }
+  const pb = $('#verifyPhoneBtn'); if (pb) pb.disabled = false;
+}
+
+/* ─── PHONE VERIFY ─── */
+async function verifyPhoneInline() {
+  hideCoErr();
+  const phone = ($('#coPhone').value || '').replace(/[^0-9]/g,'').trim();
+  if (!/^\d{10}$/.test(phone)) return showCoErr('Please enter a valid 10-digit mobile number.');
+
+  const btn = $('#verifyPhoneBtn');
+  if (btn) { btn.disabled = true; btn.textContent = '...'; }
   try {
+    const phoneNumber = '+91' + phone;
+    if (!window.__recaptchaVerifier) {
+      window.__recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', { size: 'invisible' });
+    }
     __phoneConfirmationResult = await firebase.auth().signInWithPhoneNumber(phoneNumber, window.__recaptchaVerifier);
-    openPhoneOtpModal(phone);
+    openPhoneVerifyModal(phone);
   } catch(err) {
     console.error('Firebase Phone error:', err);
-    toast(err.message || 'Failed to send phone OTP', 'cross');
+    showCoErr(err.message || 'Failed to send phone OTP');
+    if (btn) { btn.disabled = false; btn.textContent = 'Verify'; }
   }
 }
 
-function openPhoneOtpModal(phone) {
+function openPhoneVerifyModal(phone) {
   const body = $('#otpModalBody');
   if (!body) return;
   body.innerHTML = `
@@ -3088,88 +3111,156 @@ function openPhoneOtpModal(phone) {
       <p class="text-xs" style="color:var(--mut);">6-digit OTP sent to</p>
       <p class="text-xs font-medium mt-1" style="color:var(--text);">+91 ${esc(phone)}</p>
     </div>
-    <input id="orderPhoneOtpInput" type="text" inputmode="numeric" maxlength="6" class="field mb-3 text-center"
+    <input id="pvOtpInput" type="text" inputmode="numeric" maxlength="6" class="field mb-3 text-center"
       placeholder="• • • • • •" style="font-size:1.5rem;letter-spacing:.5em;text-align:center;" autocomplete="one-time-code">
-    <p id="orderPhoneOtpErr" class="text-[11px] hidden mb-3" style="color:#DC2626;"></p>
-    <button type="button" id="orderPhoneOtpVerify" class="pill btn-gold w-full py-4">Verify & Place Order</button>
-    <button type="button" id="orderPhoneOtpResend" class="pill btn-line w-full py-3 mt-2 text-[10px]">Resend OTP</button>
+    <p id="pvOtpErr" class="text-[11px] hidden mb-3" style="color:#DC2626;"></p>
+    <button type="button" id="pvOtpVerify" class="pill btn-gold w-full py-4">Verify Phone</button>
+    <button type="button" id="pvOtpResend" class="pill btn-line w-full py-3 mt-2 text-[10px]">Resend OTP</button>
+    <button type="button" data-close="otpModal" class="pill btn-line w-full py-3 mt-2 text-[10px]">Cancel</button>
   `;
   openModal('otpModal');
-  setTimeout(() => { $('#orderPhoneOtpInput')?.focus(); }, 200);
-  $('#orderPhoneOtpInput').addEventListener('input', e => e.target.value = e.target.value.replace(/[^0-9]/g,''));
-  $('#orderPhoneOtpVerify').onclick = () => verifyPhoneOtpAndFinalize(phone);
-  $('#orderPhoneOtpResend').onclick = () => sendPhoneOtpViaFirebase(phone);
+  setTimeout(() => $('#pvOtpInput')?.focus(), 200);
+  $('#pvOtpInput').addEventListener('input', e => e.target.value = e.target.value.replace(/[^0-9]/g,''));
+  $('#pvOtpVerify').onclick = () => checkPhoneOtp(phone);
+  $('#pvOtpInput').addEventListener('keydown', e => { if (e.key === 'Enter') checkPhoneOtp(phone); });
+  $('#pvOtpResend').onclick = () => { closeModal('otpModal', true); setTimeout(() => verifyPhoneInline(), 300); };
 }
 
-async function verifyPhoneOtpAndFinalize(phone) {
-  const btn = $('#orderPhoneOtpVerify');
-  if (btn && btn.disabled) return;
-  const otp = ($('#orderPhoneOtpInput').value || '').trim();
-  const err = m => { const e = $('#orderPhoneOtpErr'); e.textContent = m; e.classList.remove('hidden'); return false; };
-  $('#orderPhoneOtpErr').classList.add('hidden');
-  if (!/^\d{6}$/.test(otp)) return err('Please enter the 6-digit OTP');
-
+async function checkPhoneOtp(phone) {
+  const btn = $('#pvOtpVerify');
+  if (btn?.disabled) return;
+  const otp = ($('#pvOtpInput').value || '').trim();
+  const err = m => { const e = $('#pvOtpErr'); e.textContent = m; e.classList.remove('hidden'); };
+  $('#pvOtpErr').classList.add('hidden');
+  if (!/^\d{6}$/.test(otp)) return err('Enter 6-digit OTP');
   if (btn) { btn.disabled = true; btn.textContent = 'Verifying…'; }
   try {
     await __phoneConfirmationResult.confirm(otp);
     closeModal('otpModal', true);
-    toast('Phone verified! Placing order…', 'check');
-    finalizeVerifiedOrder();
-  } catch(err) {
+    markPhoneVerified(phone);
+    toast('Phone verified', 'check');
+  } catch(e) {
     err('Invalid OTP. Please try again.');
-    if (btn) { btn.disabled = false; btn.textContent = 'Verify & Place Order'; }
+    if (btn) { btn.disabled = false; btn.textContent = 'Verify Phone'; }
   }
 }
 
-function finalizeVerifiedOrder() {
-  if (lock) return;
-  lock = true;
+function markPhoneVerified(phone) {
+  __verifiedOrderPhone = phone;
+  const ph = $('#coPhone');
+  const btn = $('#verifyPhoneBtn');
+  if (ph) { ph.disabled = true; ph.style.background = 'var(--bg2)'; }
+  if (btn) { btn.textContent = '✓'; btn.style.background = '#16a34a'; btn.style.color = '#fff'; btn.disabled = true; }
+  $('#phoneVerifiedMsg')?.classList.remove('hidden');
+  // Unlock rest of form
+  const rf = $('#restForm');
+  if (rf) { rf.style.opacity = '1'; rf.style.pointerEvents = 'auto'; }
+  const ps = $('#paymentSection');
+  if (ps) { ps.style.opacity = '1'; ps.style.pointerEvents = 'auto'; }
+  const po = $('#placeOrder');
+  if (po) { po.disabled = false; po.style.opacity = '1'; }
+  const on = $('#payOnline');
+  if (on) { on.disabled = false; on.style.opacity = '1'; }
+  const addr = $('#coAddr'); if (addr) addr.focus();
+}
 
-  const data = __pendingOrderData;
-  const t   = totals();
+/* ─── RESET IF USER EDITS ─── */
+function resetPhoneVerification() {
+  __verifiedOrderPhone = null;
+  __phoneConfirmationResult = null;
+  const ph = $('#coPhone');
+  if (ph) { ph.value = ''; ph.disabled = true; ph.style.background = ''; }
+  const btn = $('#verifyPhoneBtn');
+  if (btn) { btn.textContent = 'Verify'; btn.style.background = ''; btn.style.color = ''; btn.disabled = true; }
+  $('#phoneVerifiedMsg')?.classList.add('hidden');
+  const rf = $('#restForm'); if (rf) { rf.style.opacity = '.4'; rf.style.pointerEvents = 'none'; }
+  const ps = $('#paymentSection'); if (ps) { ps.style.opacity = '.4'; ps.style.pointerEvents = 'none'; }
+  const po = $('#placeOrder'); if (po) { po.disabled = true; po.style.opacity = '.5'; }
+  const on = $('#payOnline'); if (on) { on.disabled = true; on.style.opacity = '.5'; }
+}
+
+function resetEmailVerification() {
+  __verifiedOrderEmail = null;
+  const em = $('#coEmail');
+  if (em) { em.disabled = false; em.style.background = ''; }
+  const btn = $('#verifyEmailBtn');
+  if (btn) { btn.textContent = 'Verify'; btn.style.background = ''; btn.style.color = ''; btn.disabled = false; }
+  $('#emailVerifiedMsg')?.classList.add('hidden');
+  resetPhoneVerification();
+}
+
+/* ─── FINAL PLACE ORDER (no more OTP here — already verified) ─── */
+let lock = false;
+function finalPlaceOrder() {
+  if (lock) return;
+  hideCoErr();
+
+  if (!cart.length) return showCoErr('Cart is empty.');
+  if (!isLoggedIn() && localStorage.getItem('hf_is_admin') !== 'true') {
+    openLoginModal($('#coEmail')?.value || '');
+    toast('Please login to place order', 'warn');
+    return;
+  }
+
+  const email = ($('#coEmail').value || '').trim().toLowerCase();
+  const phone = ($('#coPhone').value || '').replace(/[^0-9]/g,'').trim();
+
+  if (__verifiedOrderEmail !== email) return showCoErr('Please verify your email first.');
+  if (__verifiedOrderPhone !== phone) return showCoErr('Please verify your phone first.');
+
+  const name  = $('#coName').value.trim();
+  const addr  = $('#coAddr').value.trim();
+  const city  = $('#coCity').value.trim();
+  const state = $('#coState').value.trim();
+  const pin   = $('#coPin').value.trim();
+
+  if (!/^[A-Za-z .]{3,60}$/.test(name)) return showCoErr('Please enter a valid full name.');
+  if (addr.length < 10) return showCoErr('Please enter your complete address.');
+  if (!/^[A-Za-z .]{2,40}$/.test(city)) return showCoErr('Please enter a valid city.');
+  if (!state) return showCoErr('Please enter your state / province.');
+  if (!/^\d{6}$/.test(pin)) return showCoErr('Please enter a valid 6-digit PIN code.');
+
+  lock = true;
+  const btn = $('#placeOrder'); if (btn) btn.disabled = true;
+  setTimeout(() => { lock = false; if (btn) btn.disabled = false; }, 4000);
+
+  const t = totals();
   const oid = 'HF' + String(Date.now()).slice(-6);
   const otp = String(Math.floor(1000 + Math.random() * 9000));
   const isAdminDevice = localStorage.getItem('hf_is_admin') === 'true';
-  const accountEmail  = getUserEmail();
+  const accountEmail = getUserEmail();
 
   const order = {
     id: oid, otp, timestamp: Date.now(), status: 'Order Placed', updatedAt: Date.now(),
-    customer: { name: data.name, phone: data.phone, email: data.email, accountEmail, addr: data.addr, city: data.city, state: data.state, pin: data.pin },
+    customer: { name, phone, email, accountEmail, addr, city, state, pin },
     items: JSON.parse(JSON.stringify(cart)), totals: t, deliveredAt: null,
-    payment: { method: 'cod' },
-    byAdmin: isAdminDevice,
-    emailVerified: true,
-    phoneVerified: true
+    payment: { method: 'cod' }, byAdmin: isAdminDevice,
+    emailVerified: true, phoneVerified: true
   };
 
   const orders = store.get('orders', []);
   orders.push(order);
   store.set('orders', orders);
-  if (isLoggedIn()) store.set('user', { name: data.name, phone: data.phone, email: data.email });
+  if (isLoggedIn()) store.set('user', { name, phone, email });
   notifyNewOrder(order);
   saveOrderToServer(order);
 
-  cart = [];
-  store.set('cart', []);
+  cart = []; store.set('cart', []);
   clearCheckoutFields();
+  resetEmailVerification();
   renderCart();
   setTimeout(() => syncOrders(), 2000);
   closeModal('cartDrawer', true);
-  try { history.replaceState(null, '', location.pathname + location.search); } catch(e) {}
+  try { history.replaceState(null, '', location.pathname + location.search); } catch(e){}
   toast('Order placed — ' + oid, 'check');
-
-  __phoneConfirmationResult = null;
-  __pendingOrderData = null;
 
   if (!window.__invoiceOpened) {
     window.__invoiceOpened = true;
     setTimeout(() => {
-      try { showInvoice(order); } catch(e) { console.error('Invoice error:', e); }
+      try { showInvoice(order); } catch(e){ console.error('Invoice error:', e); }
       setTimeout(() => { window.__invoiceOpened = false; }, 1000);
     }, 400);
   }
-
-  lock = false;
 }
 
 const RAZORPAY_KEY_ID = 'rzp_live_ThrZ8hY3CqJiE8';
@@ -4189,7 +4280,18 @@ function wire(){
   const mo = $('#menuOpen'); if (mo) mo.onclick = () => { openModal('mobileMenu'); try{ history.pushState({ modal: 'mobileMenu' }, '', '#menu'); }catch(e){} };
   const to2 = $('#trackOpen2'); if (to2) to2.onclick = () => { openModal('trackModal'); try{ history.pushState({ modal: 'trackModal' }, '', '#track'); }catch(e){} };
   const so = $('#sizeOpen'); if (so) so.onclick = () => { openModal('sizeModal'); try{ history.pushState({ modal: 'sizeModal' }, '', '#size'); }catch(e){} };
-  const po = $('#placeOrder'); if (po) po.onclick = placeOrderWithVerification;
+  const po = $('#placeOrder'); if (po) po.onclick = finalPlaceOrder;
+  const peb = $('#verifyEmailBtn'); if (peb) peb.onclick = verifyEmailInline;
+  const ppb = $('#verifyPhoneBtn'); if (ppb) ppb.onclick = verifyPhoneInline;
+  const emInp = $('#coEmail'); if (emInp) emInp.addEventListener('input', () => {
+  const cur = emInp.value.trim().toLowerCase();
+  if (__verifiedOrderEmail && __verifiedOrderEmail !== cur) resetEmailVerification();
+});
+const phInp = $('#coPhone'); if (phInp) phInp.addEventListener('input', () => {
+  phInp.value = phInp.value.replace(/[^0-9]/g,'').slice(0,10);
+  const cur = phInp.value.replace(/[^0-9]/g,'');
+  if (__verifiedOrderPhone && __verifiedOrderPhone !== cur) resetPhoneVerification();
+});
   const onl = $('#payOnline'); if (onl) onl.onclick = handleOnlinePayment;
   if ($('#confirmCancelNo')) $('#confirmCancelNo').onclick = () => { pendingCancelId = null; closeModal('confirmCancelModal', true); };
   if ($('#confirmCancelBackdrop')) $('#confirmCancelBackdrop').onclick = () => { pendingCancelId = null; closeModal('confirmCancelModal', true); };
