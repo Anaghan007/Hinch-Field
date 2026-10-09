@@ -31,6 +31,23 @@
   <script src="https://checkout.razorpay.com/v1/checkout.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@4/dist/fp.min.js" defer></script>
 
+  <!-- ⚡ Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script>
+    // તમારો Firebase Config (screenshot માંથી લીધેલો)
+    const firebaseConfig = {
+      apiKey: "AIzaSyBqSbZVFb-zU47V-QG8Xaq0heBhdsSbts",
+      authDomain: "hinchfield.firebaseapp.com",
+      projectId: "hinchfield",
+      storageBucket: "hinchfield.firebasestorage.app",
+      messagingSenderId: "137632136228",
+      appId: "1:137632136228:web:cd9dd46df45be150b3acb1",
+      measurementId: "G-RQN4CBNQGZ"
+    };
+    firebase.initializeApp(firebaseConfig);
+  </script>
+
   <script>
     tailwind.config = {
 theme: { extend: {
@@ -1458,6 +1475,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
 </head>
 
 <body class="antialiased" id="home">
+  <div id="recaptcha-container"></div>
   <header id="header" class="sticky top-0 z-50 glassbar border-b hairline transition-shadow w-full">
     <div class="wrap grid grid-cols-[auto_1fr_auto] items-center gap-6 py-3 md:py-4">
       <div class="flex items-center gap-2 min-w-0">
@@ -2931,65 +2949,227 @@ function buildOrderCard(o, opts){
 
 /* ═══ PLACE ORDER ═══ */
 let lock = false;
-function placeOrder(){
-  if (lock) return;
+/* ═══════════════════════════════════════════════════════════
+   ORDER PLACEMENT — Email OTP + Firebase Phone Auth
+   ═══════════════════════════════════════════════════════════ */
+
+let __phoneConfirmationResult = null;
+let __pendingOrderData = null;
+
+function placeOrderWithVerification() {
   const err = m => { const e = $('#coErr'); e.textContent = m; e.classList.remove('hidden'); };
   $('#coErr').classList.add('hidden');
+
   if (!cart.length) return err('Cart is empty — add products first.');
-  if (!isLoggedIn() && localStorage.getItem('hf_is_admin') !== 'true'){
+  if (!isLoggedIn() && localStorage.getItem('hf_is_admin') !== 'true') {
     window.__pendingAction = 'checkout';
-    const loginEmail = $('#coEmail') ? $('#coEmail').value.trim() : '';
-    openLoginModal(loginEmail);
+    openLoginModal($('#coEmail')?.value || '');
     toast('Please login to place order', 'warn');
     return;
   }
   if ($('#coHoney').value) return;
-  const name = $('#coName').value.trim();
+
+  const name  = $('#coName').value.trim();
   const phone = $('#coPhone').value.trim();
   const email = $('#coEmail').value.trim();
-  const addr = $('#coAddr').value.trim();
-  const city = $('#coCity').value.trim();
+  const addr  = $('#coAddr').value.trim();
+  const city  = $('#coCity').value.trim();
   const state = $('#coState').value.trim();
-  const pin = $('#coPin').value.trim();
+  const pin   = $('#coPin').value.trim();
+
   if (!/^[A-Za-z .]{3,60}$/.test(name)) return err('Please enter a valid full name.');
-  if (!/^\d{7,15}$/.test(phone.replace(/[^0-9]/g,''))) return err('Please enter a valid mobile / WhatsApp number.');
+  if (!/^\d{7,15}$/.test(phone.replace(/[^0-9]/g,''))) return err('Please enter a valid mobile number.');
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return err('Please enter a valid email address.');
   if (addr.length < 10) return err('Please enter your complete address.');
   if (!/^[A-Za-z .]{2,40}$/.test(city)) return err('Please enter a valid city.');
   if (!state) return err('Please enter your state / province.');
-  if (!/^[A-Za-z0-9 -]{4,10}$/.test(pin)) return err('Please enter a valid PIN / ZIP.');
+  if (!/^\d{6}$/.test(pin)) return err('Please enter a valid 6-digit PIN code.');
+
+  __pendingOrderData = { name, phone, email, addr, city, state, pin };
+  sendOrderEmailOtp(email);
+}
+
+async function sendOrderEmailOtp(email) {
+  const btn = $('#placeOrder');
+  if (btn) { btn.disabled = true; btn.textContent = 'Sending Email OTP…'; }
+  try {
+    const r = await fetch(`${API_BASE}/api/orders?action=send-otp`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    const d = await r.json();
+    if (!d.success) throw new Error(d.error || 'Failed to send OTP');
+    openOrderEmailOtpModal(email);
+  } catch(e) {
+    const e2 = $('#coErr');
+    if (e2) { e2.textContent = e.message || 'Failed to send OTP'; e2.classList.remove('hidden'); }
+    toast(e.message || 'Failed to send OTP', 'cross');
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = 'Place Order (COD)'; }
+  }
+}
+
+function openOrderEmailOtpModal(email) {
+  const body = $('#otpModalBody');
+  if (!body) return;
+  body.innerHTML = `
+    <div class="text-center mb-6">
+      <p class="micro mb-2">HINCHFIELD</p>
+      <h3 class="disp editorial-h font-luxe text-2xl mb-1">Verify Email</h3>
+      <p class="text-xs" style="color:var(--mut);">4-digit OTP sent to</p>
+      <p class="text-xs font-medium mt-1" style="color:var(--text);word-break:break-all;">${esc(email)}</p>
+    </div>
+    <input id="orderEmailOtpInput" type="text" inputmode="numeric" maxlength="4" class="field mb-3 text-center"
+      placeholder="• • • •" style="font-size:1.5rem;letter-spacing:.6em;text-align:center;" autocomplete="one-time-code">
+    <p id="orderEmailOtpErr" class="text-[11px] hidden mb-3" style="color:#DC2626;"></p>
+    <button type="button" id="orderEmailOtpVerify" class="pill btn-gold w-full py-4">Verify Email</button>
+    <button type="button" id="orderEmailOtpResend" class="pill btn-line w-full py-3 mt-2 text-[10px]">Resend OTP</button>
+  `;
+  openModal('otpModal');
+  setTimeout(() => { $('#orderEmailOtpInput')?.focus(); }, 200);
+  $('#orderEmailOtpInput').addEventListener('input', e => e.target.value = e.target.value.replace(/[^0-9]/g,''));
+  $('#orderEmailOtpVerify').onclick = () => verifyOrderEmailOtp(email);
+  $('#orderEmailOtpResend').onclick = () => sendOrderEmailOtp(email);
+}
+
+async function verifyOrderEmailOtp(email) {
+  const btn = $('#orderEmailOtpVerify');
+  if (btn && btn.disabled) return;
+  const otp = ($('#orderEmailOtpInput').value || '').trim();
+  const err = m => { const e = $('#orderEmailOtpErr'); e.textContent = m; e.classList.remove('hidden'); return false; };
+  $('#orderEmailOtpErr').classList.add('hidden');
+  if (!/^\d{4}$/.test(otp)) return err('Please enter the 4-digit OTP');
+
+  if (btn) { btn.disabled = true; btn.textContent = 'Verifying…'; }
+  try {
+    const deviceId = await getDeviceId();
+    const r = await fetch(`${API_BASE}/api/orders?action=verify-otp`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, otp, deviceId })
+    });
+    const d = await r.json();
+    if (!d.success) throw new Error(d.error || 'Invalid OTP');
+
+    try {
+      if (d.session_key) store.set('session_key', d.session_key);
+      store.set('user_email', email);
+    } catch(_) {}
+
+    closeModal('otpModal', true);
+    toast('Email verified! Now verify phone…', 'check');
+    sendPhoneOtpViaFirebase(__pendingOrderData.phone);
+  } catch(e) {
+    err(e.message || 'Invalid OTP');
+    if (btn) { btn.disabled = false; btn.textContent = 'Verify Email'; }
+  }
+}
+
+async function sendPhoneOtpViaFirebase(phone) {
+  const phoneNumber = '+91' + phone.replace(/[^0-9]/g, '').slice(-10);
+  if (!window.__recaptchaVerifier) {
+    window.__recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', { size: 'invisible' });
+  }
+  try {
+    __phoneConfirmationResult = await firebase.auth().signInWithPhoneNumber(phoneNumber, window.__recaptchaVerifier);
+    openPhoneOtpModal(phone);
+  } catch(err) {
+    console.error('Firebase Phone error:', err);
+    toast(err.message || 'Failed to send phone OTP', 'cross');
+  }
+}
+
+function openPhoneOtpModal(phone) {
+  const body = $('#otpModalBody');
+  if (!body) return;
+  body.innerHTML = `
+    <div class="text-center mb-6">
+      <p class="micro mb-2">HINCHFIELD</p>
+      <h3 class="disp editorial-h font-luxe text-2xl mb-1">Verify Phone</h3>
+      <p class="text-xs" style="color:var(--mut);">6-digit OTP sent to</p>
+      <p class="text-xs font-medium mt-1" style="color:var(--text);">+91 ${esc(phone)}</p>
+    </div>
+    <input id="orderPhoneOtpInput" type="text" inputmode="numeric" maxlength="6" class="field mb-3 text-center"
+      placeholder="• • • • • •" style="font-size:1.5rem;letter-spacing:.5em;text-align:center;" autocomplete="one-time-code">
+    <p id="orderPhoneOtpErr" class="text-[11px] hidden mb-3" style="color:#DC2626;"></p>
+    <button type="button" id="orderPhoneOtpVerify" class="pill btn-gold w-full py-4">Verify & Place Order</button>
+    <button type="button" id="orderPhoneOtpResend" class="pill btn-line w-full py-3 mt-2 text-[10px]">Resend OTP</button>
+  `;
+  openModal('otpModal');
+  setTimeout(() => { $('#orderPhoneOtpInput')?.focus(); }, 200);
+  $('#orderPhoneOtpInput').addEventListener('input', e => e.target.value = e.target.value.replace(/[^0-9]/g,''));
+  $('#orderPhoneOtpVerify').onclick = () => verifyPhoneOtpAndFinalize(phone);
+  $('#orderPhoneOtpResend').onclick = () => sendPhoneOtpViaFirebase(phone);
+}
+
+async function verifyPhoneOtpAndFinalize(phone) {
+  const btn = $('#orderPhoneOtpVerify');
+  if (btn && btn.disabled) return;
+  const otp = ($('#orderPhoneOtpInput').value || '').trim();
+  const err = m => { const e = $('#orderPhoneOtpErr'); e.textContent = m; e.classList.remove('hidden'); return false; };
+  $('#orderPhoneOtpErr').classList.add('hidden');
+  if (!/^\d{6}$/.test(otp)) return err('Please enter the 6-digit OTP');
+
+  if (btn) { btn.disabled = true; btn.textContent = 'Verifying…'; }
+  try {
+    await __phoneConfirmationResult.confirm(otp);
+    closeModal('otpModal', true);
+    toast('Phone verified! Placing order…', 'check');
+    finalizeVerifiedOrder();
+  } catch(err) {
+    err('Invalid OTP. Please try again.');
+    if (btn) { btn.disabled = false; btn.textContent = 'Verify & Place Order'; }
+  }
+}
+
+function finalizeVerifiedOrder() {
+  if (lock) return;
   lock = true;
-  const btn = $('#placeOrder'); btn.disabled = true;
-  setTimeout(() => { lock = false; btn.disabled = false; }, 4000);
-  const t = totals();
+
+  const data = __pendingOrderData;
+  const t   = totals();
   const oid = 'HF' + String(Date.now()).slice(-6);
   const otp = String(Math.floor(1000 + Math.random() * 9000));
   const isAdminDevice = localStorage.getItem('hf_is_admin') === 'true';
-  const accountEmail = getUserEmail();
-  const invoiceEmail = email;
+  const accountEmail  = getUserEmail();
 
   const order = {
     id: oid, otp, timestamp: Date.now(), status: 'Order Placed', updatedAt: Date.now(),
-    customer: { name, phone, email: invoiceEmail, accountEmail: accountEmail, addr, city, state, pin },
-    items: JSON.parse(JSON.stringify(cart)), totals: t, deliveredAt: null, payment: { method: 'cod' },
-    byAdmin: isAdminDevice
+    customer: { name: data.name, phone: data.phone, email: data.email, accountEmail, addr: data.addr, city: data.city, state: data.state, pin: data.pin },
+    items: JSON.parse(JSON.stringify(cart)), totals: t, deliveredAt: null,
+    payment: { method: 'cod' },
+    byAdmin: isAdminDevice,
+    emailVerified: true,
+    phoneVerified: true
   };
+
   const orders = store.get('orders', []);
-  orders.push(order); store.set('orders', orders);
-  if (isLoggedIn()) store.set('user', { name, phone, email });
+  orders.push(order);
+  store.set('orders', orders);
+  if (isLoggedIn()) store.set('user', { name: data.name, phone: data.phone, email: data.email });
   notifyNewOrder(order);
   saveOrderToServer(order);
-  cart = []; store.set('cart', []);
-  clearCheckoutFields(); // FIX: clear now (order placed) not on empty cart
+
+  cart = [];
+  store.set('cart', []);
+  clearCheckoutFields();
   renderCart();
   setTimeout(() => syncOrders(), 2000);
   closeModal('cartDrawer', true);
-  try { history.replaceState(null, '', location.pathname + location.search); } catch(e){}
+  try { history.replaceState(null, '', location.pathname + location.search); } catch(e) {}
   toast('Order placed — ' + oid, 'check');
+
+  __phoneConfirmationResult = null;
+  __pendingOrderData = null;
+
   if (!window.__invoiceOpened) {
     window.__invoiceOpened = true;
-    setTimeout(() => { try { showInvoice(order); } catch(e){ console.error('Invoice error:', e); } setTimeout(() => { window.__invoiceOpened = false; }, 1000); }, 400);
+    setTimeout(() => {
+      try { showInvoice(order); } catch(e) { console.error('Invoice error:', e); }
+      setTimeout(() => { window.__invoiceOpened = false; }, 1000);
+    }, 400);
   }
+
+  lock = false;
 }
 
 const RAZORPAY_KEY_ID = 'rzp_live_ThrZ8hY3CqJiE8';
@@ -4009,7 +4189,7 @@ function wire(){
   const mo = $('#menuOpen'); if (mo) mo.onclick = () => { openModal('mobileMenu'); try{ history.pushState({ modal: 'mobileMenu' }, '', '#menu'); }catch(e){} };
   const to2 = $('#trackOpen2'); if (to2) to2.onclick = () => { openModal('trackModal'); try{ history.pushState({ modal: 'trackModal' }, '', '#track'); }catch(e){} };
   const so = $('#sizeOpen'); if (so) so.onclick = () => { openModal('sizeModal'); try{ history.pushState({ modal: 'sizeModal' }, '', '#size'); }catch(e){} };
-  const po = $('#placeOrder'); if (po) po.onclick = placeOrder;
+  const po = $('#placeOrder'); if (po) po.onclick = placeOrderWithVerification;
   const onl = $('#payOnline'); if (onl) onl.onclick = handleOnlinePayment;
   if ($('#confirmCancelNo')) $('#confirmCancelNo').onclick = () => { pendingCancelId = null; closeModal('confirmCancelModal', true); };
   if ($('#confirmCancelBackdrop')) $('#confirmCancelBackdrop').onclick = () => { pendingCancelId = null; closeModal('confirmCancelModal', true); };
