@@ -2944,20 +2944,7 @@ function placeOrder(){
     return;
   }
   if ($('#coHoney').value) return;
-  const name = $('#coName').value.trim();
-  const phone = $('#coPhone').value.trim();
-  const email = $('#coEmail').value.trim();
-  const addr = $('#coAddr').value.trim();
-  const city = $('#coCity').value.trim();
-  const state = $('#coState').value.trim();
-  const pin = $('#coPin').value.trim();
-  if (!/^[A-Za-z .]{3,60}$/.test(name)) return err('Please enter a valid full name.');
-  if (!/^\d{7,15}$/.test(phone.replace(/[^0-9]/g,''))) return err('Please enter a valid mobile / WhatsApp number.');
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return err('Please enter a valid email address.');
-  if (addr.length < 10) return err('Please enter your complete address.');
-  if (!/^[A-Za-z .]{2,40}$/.test(city)) return err('Please enter a valid city.');
-  if (!state) return err('Please enter your state / province.');
-  if (!/^[A-Za-z0-9 -]{4,10}$/.test(pin)) return err('Please enter a valid PIN / ZIP.');
+  if (!validateCheckoutForm()) return;
   lock = true;
   const btn = $('#placeOrder'); btn.disabled = true;
   setTimeout(() => { lock = false; btn.disabled = false; }, 4000);
@@ -3002,24 +2989,131 @@ function updatePayMethodUI(){
   if (selectedPayMethod === 'cod'){ codBtn.classList.remove('hidden'); onlineBtn.classList.add('hidden'); if (codRad) codRad.classList.add('active'); if (onlineRad) onlineRad.classList.remove('active'); }
   else { codBtn.classList.add('hidden'); onlineBtn.classList.remove('hidden'); if (codRad) codRad.classList.remove('active'); if (onlineRad) onlineRad.classList.add('active'); }
 }
-function validateCheckoutForm(){
-  const err = m => { const e = $('#coErr'); e.textContent = m; e.classList.remove('hidden'); return false; };
-  $('#coErr').classList.add('hidden');
-  if (!cart.length) return err('Cart is empty — add products first.');
-  if ($('#coHoney').value) return false;
-  const name = $('#coName').value.trim(); const phone = $('#coPhone').value.trim();
-  const email = $('#coEmail').value.trim(); const addr = $('#coAddr').value.trim();
-  const city = $('#coCity').value.trim(); const state = $('#coState').value.trim();
-  const pin = $('#coPin').value.trim();
-  if (!/^[A-Za-z .]{3,60}$/.test(name)) return err('Please enter a valid full name.');
-  if (!/^\d{7,15}$/.test(phone.replace(/[^0-9]/g,''))) return err('Please enter a valid mobile / WhatsApp number.');
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return err('Please enter a valid email address.');
-  if (addr.length < 10) return err('Please enter your complete address.');
-  if (!/^[A-Za-z .]{2,40}$/.test(city)) return err('Please enter a valid city.');
-  if (!state) return err('Please enter your state / province.');
-  if (!/^[A-Za-z0-9 -]{4,10}$/.test(pin)) return err('Please enter a valid PIN / ZIP.');
-  return true;
+
+/* ═══════════════════════════════════════════════════════
+   🛡️ FRAUD / FAKE DETAILS VALIDATION
+═══════════════════════════════════════════════════════ */
+
+// ❌ ટેમ્પરરી / ડિસ્પોઝેબલ ઈમેલ ડોમેઈન લિસ્ટ
+const TEMP_EMAIL_DOMAINS = [
+'mailinator.com','guerrillamail.com','guerrillamail.net','guerrillamail.de','grr.la','sharklasers.com',
+'10minutemail.com','10minemail.com','tempmail.com','temp-mail.org','temp-mail.io','tempmails.org',
+'throwawaymail.com','yopmail.com','getnada.com','nada.lol','dispostable.com','trashmail.com',
+'trash-mail.com','mailnesia.com','maildrop.cc','discard.email','fakeinbox.com','tempinbox.com',
+'mohmal.com','mintemail.com','emailondeck.com','spamgourmet.com','mytemp.email','tmpmail.net',
+'tmpmail.org','binkmail.com','burnermail.io','tempmailo.com','mail-temp.com','moakt.com',
+'mailmoat.com','getairmail.com','spam4.me','mailexpire.com','inboxkitten.com','mailsac.com',
+'tempmailer.com','disposablemail.com','mailcatch.com','spambob.com','mailnull.com','sneakemail.com',
+'fakemail.net','trashymail.com','mailzilla.com','tempmailer.net','emailtemp.com','harakirimail.com'
+];
+
+// ઈમેલ ટેમ્પરરી/ફેક છે કે નહીં ચેક કરો
+function isDisposableEmail(email){
+const domain = String(email).split('@')[1];
+if (!domain) return true;
+const d = domain.toLowerCase().trim();
+if (TEMP_EMAIL_DOMAINS.includes(d)) return true;
+// શંકાસ્પદ પેટર્ન
+if (/(temp|trash|fake|junk|disposable|burner|throwaway|guerrilla|10minute|spam)/i.test(d)) return true;
+// ડોમેનમાં TLD હોવો ફરજિયાત (.com, .in વગેરે)
+if (!/\.[a-z]{2,}$/i.test(d)) return true;
+// IP આધારિત ડોમેન ન ચાલે
+if (/^\[?\d+\.\d+\.\d+\.\d+\]?$/.test(d)) return true;
+return false;
 }
+
+// 📱 મોબાઈલ: બરાબર 10 ડિજિટ, 6-9 થી શરૂ, બધા સેમ ડિજિટ ન ચાલે
+function isValidPhoneNum(phone){
+const digits = String(phone).replace(/[^0-9]/g, '');
+if (digits.length !== 10) return false;
+if (!/^[6-9]/.test(digits)) return false;               // ભારતીય મોબાઈલ 6-9થી શરૂ
+if (/^(\d)\1{9}$/.test(digits)) return false;           // 1111111111 જેવા ફેક
+if (/^(0123456789|9876543210|1234567890)/.test(digits)) return false;
+return true;
+}
+
+// 👤 નામ યોગ્ય છે કે નહીં
+function isValidFullName(name){
+const n = String(name).trim();
+if (!/^[A-Za-z .']{3,60}$/.test(n)) return false;       // ફક્ત અંગ્રેજી અક્ષરો
+if (/\d/.test(n)) return false;                          // નંબર ન ચાલે
+if (/(.)\1{3,}/.test(n)) return false;                   // aaaa જેવા રિપીટ ન ચાલે
+const letters = n.replace(/[^A-Za-z]/g, '');
+if (letters.length < 3) return false;
+if (/^(test|asdf|qwer|name|abc|xxx|noname|no name|unknown|null|none)$/i.test(letters)) return false;
+return true;
+}
+
+// 🏠 એડ્રેસ ફેક તો નથી ને
+function isValidFullAddress(addr){
+const a = String(addr).trim();
+if (a.length < 15) return false;                         // વિગત હોવી જ જોઈએ
+if (/(.)\1{4,}/.test(a)) return false;                   // લાંબા રિપીટેડ અક્ષરો ન ચાલે
+const words = a.split(/\s+/).filter(Boolean);
+if (words.length < 4) return false;                      // ઓછામાં ઓછા 4 શબ્દો
+if (new Set(words.map(w => w.toLowerCase())).size < 3) return false; // બધા સેમ શબ્દ ન ચાલે
+if (/^(test|asdf|qwer|abc|no address|na|none|null)$/i.test(a)) return false;
+return true;
+}
+
+// 📮 પિનકોડ: 6 ડિજિટ, પહેલો ડિજિટ 1-9 (ભારતીય નિયમ)
+function isValidPinCode(pin){
+return /^[1-9][0-9]{5}$/.test(String(pin).trim());
+}
+
+// 🌐 પિનકોડથી City + State શોધો (India Post ઓફિશિયલ ફ્રી API)
+async function lookupPincode(pin){
+try {
+const ctl = new AbortController();
+const timer = setTimeout(() => ctl.abort(), 8000);
+const r = await fetch('https://api.postalpincode.in/pincode/' + encodeURIComponent(pin), { signal: ctl.signal });
+clearTimeout(timer);
+const d = await r.json();
+if (d && d[0] && d[0].Status === 'Success' && d[0].PostOffice && d[0].PostOffice.length){
+const po = d[0].PostOffice[0];
+return { city: po.District || po.Block || po.Name || '', state: po.State || '' };
+}
+} catch(e){ console.warn('Pincode lookup failed:', e); }
+return null;
+}
+    
+function validateCheckoutForm(){
+const err = m => { const e = $('#coErr'); e.textContent = m; e.classList.remove('hidden'); return false; };
+$('#coErr').classList.add('hidden');
+if (!cart.length) return err('Cart is empty — add products first.');
+if ($('#coHoney').value) return false;
+
+const name  = $('#coName').value.trim();
+const phone = $('#coPhone').value.trim();
+const email = $('#coEmail').value.trim();
+const addr  = $('#coAddr').value.trim();
+const city  = $('#coCity').value.trim();
+const state = $('#coState').value.trim();
+const pin   = $('#coPin').value.trim();
+
+// 👤 નામ
+if (!isValidFullName(name)) return err('Please enter a valid full name (letters only, no fake/junk name).');
+
+// 📱 મોબાઈલ — બરાબર 10 ડિજિટ
+if (!isValidPhoneNum(phone)) return err('Please enter a valid 10-digit mobile number (starting with 6-9).');
+
+// 📧 ઈમેલ
+if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return err('Please enter a valid email address.');
+if (isDisposableEmail(email)) return err('⚠️ Temporary / disposable email is not allowed. Please use your real email.');
+
+// 🏠 એડ્રેસ
+if (!isValidFullAddress(addr)) return err('Please enter a complete & genuine address (house no, street, area, landmark).');
+
+// City / State
+if (!/^[A-Za-z .]{2,40}$/.test(city)) return err('Please enter a valid city name.');
+if (!state || state.trim().length < 2) return err('Please enter your state / province.');
+
+// 📮 પિનકોડ — 6 ડિજિટ
+if (!isValidPinCode(pin)) return err('PIN code must be exactly 6 digits.');
+
+return true;
+}
+    
 function readCustomer(){
   return { name: $('#coName').value.trim(), phone: $('#coPhone').value.trim(), email: $('#coEmail').value.trim(), addr: $('#coAddr').value.trim(), city: $('#coCity').value.trim(), state: $('#coState').value.trim(), pin: $('#coPin').value.trim() };
 }
@@ -4272,6 +4366,45 @@ async function applyMemberFn(){
   }
   setTimeout(() => scheduleSync(), 3000);
 
+
+  /* ═══ 📮 PINCODE → CITY & STATE AUTO-FILL ═══ */
+const pinEl = $('#coPin');
+if (pinEl){
+pinEl.addEventListener('input', debounce(async function(){
+pinEl.value = pinEl.value.replace(/[^0-9]/g, '').slice(0, 6);
+if (pinEl.value.length !== 6) return;
+if (!isValidPinCode(pinEl.value)){ toast('Invalid PIN code', 'warn'); return; }
+const info = await lookupPincode(pinEl.value);
+const cityEl = $('#coCity'), stateEl = $('#coState');
+if (info){
+if (cityEl) cityEl.value = info.city;
+if (stateEl) stateEl.value = info.state;
+toast('✓ PIN verified — City & State filled', 'pin');
+} else {
+toast('PIN not found — enter City & State manually', 'warn');
+}
+}, 450));
+}
+
+/* ═══ 📱 PHONE: ફક્ત 10 ડિજિટ જ લખી શકાય ═══ */
+const phoneEl = $('#coPhone');
+if (phoneEl){
+phoneEl.addEventListener('input', () => {
+phoneEl.value = phoneEl.value.replace(/[^0-9]/g, '').slice(0, 10);
+});
+}
+
+/* ═══ 📧 EMAIL: ટાઈપ કરતી વખતે ટેમ્પરરી ચેક ═══ */
+const emailEl = $('#coEmail');
+if (emailEl){
+emailEl.addEventListener('blur', () => {
+const v = emailEl.value.trim();
+if (v && /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v) && isDisposableEmail(v)){
+toast('⚠️ Temporary email not allowed', 'warn');
+}
+});
+}
+  
   // FIX: member code digits-only
   const mcInput = $('#memberCode');
   if (mcInput){
