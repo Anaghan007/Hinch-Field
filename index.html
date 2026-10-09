@@ -31,23 +31,6 @@
   <script src="https://checkout.razorpay.com/v1/checkout.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@4/dist/fp.min.js" defer></script>
 
-  <!-- ⚡ Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-  <script>
-    // તમારો Firebase Config (screenshot માંથી લીધેલો)
-    const firebaseConfig = {
-      apiKey: "AIzaSyBqSbZVFb-zU47V-QG8Xaq0heBhdsSbbts",
-      authDomain: "hinchfield.firebaseapp.com",
-      projectId: "hinchfield",
-      storageBucket: "hinchfield.firebasestorage.app",
-      messagingSenderId: "137632136228",
-      appId: "1:137632136228:web:cd9dd46df45be150b3acb1",
-      measurementId: "G-RQN4CBNQGZ"
-    };
-    firebase.initializeApp(firebaseConfig);
-  </script>
-
   <script>
     tailwind.config = {
 theme: { extend: {
@@ -1475,7 +1458,6 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
 </head>
 
 <body class="antialiased" id="home">
-  <div id="recaptcha-container"></div>
   <header id="header" class="sticky top-0 z-50 glassbar border-b hairline transition-shadow w-full">
     <div class="wrap grid grid-cols-[auto_1fr_auto] items-center gap-6 py-3 md:py-4">
       <div class="flex items-center gap-2 min-w-0">
@@ -1776,17 +1758,10 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
                 verified</p>
             </div>
 
-            <!-- PHONE + VERIFY -->
-            <div>
-              <div class="flex gap-2">
-                <input id="coPhone" inputmode="numeric" maxlength="10" class="field flex-1" placeholder="Mobile / WhatsApp number *" disabled>
-                <button type="button" id="verifyPhoneBtn" class="pill btn-ink px-4 text-[10px] whitespace-nowrap shrink-0" disabled>Verify</button>
-              </div>
-              <p id="phoneVerifiedMsg" class="text-[10px] mt-1.5 hidden" style="color:#16a34a;font-weight:500;">✓ Phone
-                verified</p>
-            </div>
+            <!-- PHONE (no verification) -->
+            <input id="coPhone" inputmode="numeric" maxlength="10" class="field" placeholder="Mobile / WhatsApp number *">
 
-            <!-- REST OF FORM (locked until phone verified) -->
+            <!-- REST OF FORM (locked until email verified) -->
             <div id="restForm" class="space-y-3" style="opacity:.4;pointer-events:none;">
               <textarea id="coAddr" maxlength="200" rows="2" class="field" placeholder="Full address *"></textarea>
               <div class="grid grid-cols-2 gap-3">
@@ -1799,7 +1774,7 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
             <input type="text" name="website" id="coHoney" class="hidden" tabindex="-1" autocomplete="off" aria-hidden="true">
             <p id="coErr" class="text-[11px] hidden" style="color:#DC2626;"></p>
 
-            <!-- PAYMENT (locked until phone verified) -->
+            <!-- PAYMENT (locked until email verified) -->
             <div id="paymentSection" style="opacity:.4;pointer-events:none;">
               <p class="micro pt-2" style="color:var(--text);">Payment Method</p>
               <div class="space-y-2">
@@ -2976,14 +2951,9 @@ function buildOrderCard(o, opts){
     '</div>';
 }
 
-/* ═══ PLACE ORDER ═══ */
-/* ═══════════════════════════════════════════════════════════
-   INLINE ORDER VERIFICATION — Email + Phone (with Verify buttons)
-   ═══════════════════════════════════════════════════════════ */
+/* ═══ ORDER PLACEMENT — Email OTP verification only ═══ */
 
 let __verifiedOrderEmail = null;
-let __verifiedOrderPhone = null;
-let __phoneConfirmationResult = null;
 
 function showCoErr(m) {
   const e = $('#coErr');
@@ -3074,84 +3044,6 @@ function markEmailVerified(email) {
   if (emailInput) { emailInput.disabled = true; emailInput.style.background = 'var(--bg2)'; }
   if (btn) { btn.textContent = '✓'; btn.style.background = '#16a34a'; btn.style.color = '#fff'; btn.disabled = true; }
   $('#emailVerifiedMsg')?.classList.remove('hidden');
-  // Unlock phone
-  const ph = $('#coPhone'); if (ph) { ph.disabled = false; ph.focus(); }
-  const pb = $('#verifyPhoneBtn'); if (pb) pb.disabled = false;
-}
-
-/* ─── PHONE VERIFY ─── */
-async function verifyPhoneInline() {
-  hideCoErr();
-  const phone = ($('#coPhone').value || '').replace(/[^0-9]/g,'').trim();
-  if (!/^\d{10}$/.test(phone)) return showCoErr('Please enter a valid 10-digit mobile number.');
-
-  const btn = $('#verifyPhoneBtn');
-  if (btn) { btn.disabled = true; btn.textContent = '...'; }
-  try {
-    const phoneNumber = '+91' + phone;
-    if (!window.__recaptchaVerifier) {
-      window.__recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', { size: 'invisible' });
-    }
-    __phoneConfirmationResult = await firebase.auth().signInWithPhoneNumber(phoneNumber, window.__recaptchaVerifier);
-    openPhoneVerifyModal(phone);
-  } catch(err) {
-    console.error('Firebase Phone error:', err);
-    showCoErr(err.message || 'Failed to send phone OTP');
-    if (btn) { btn.disabled = false; btn.textContent = 'Verify'; }
-  }
-}
-
-function openPhoneVerifyModal(phone) {
-  const body = $('#otpModalBody');
-  if (!body) return;
-  body.innerHTML = `
-    <div class="text-center mb-6">
-      <p class="micro mb-2">HINCHFIELD</p>
-      <h3 class="disp editorial-h font-luxe text-2xl mb-1">Verify Phone</h3>
-      <p class="text-xs" style="color:var(--mut);">6-digit OTP sent to</p>
-      <p class="text-xs font-medium mt-1" style="color:var(--text);">+91 ${esc(phone)}</p>
-    </div>
-    <input id="pvOtpInput" type="text" inputmode="numeric" maxlength="6" class="field mb-3 text-center"
-      placeholder="• • • • • •" style="font-size:1.5rem;letter-spacing:.5em;text-align:center;" autocomplete="one-time-code">
-    <p id="pvOtpErr" class="text-[11px] hidden mb-3" style="color:#DC2626;"></p>
-    <button type="button" id="pvOtpVerify" class="pill btn-gold w-full py-4">Verify Phone</button>
-    <button type="button" id="pvOtpResend" class="pill btn-line w-full py-3 mt-2 text-[10px]">Resend OTP</button>
-    <button type="button" data-close="otpModal" class="pill btn-line w-full py-3 mt-2 text-[10px]">Cancel</button>
-  `;
-  openModal('otpModal');
-  setTimeout(() => $('#pvOtpInput')?.focus(), 200);
-  $('#pvOtpInput').addEventListener('input', e => e.target.value = e.target.value.replace(/[^0-9]/g,''));
-  $('#pvOtpVerify').onclick = () => checkPhoneOtp(phone);
-  $('#pvOtpInput').addEventListener('keydown', e => { if (e.key === 'Enter') checkPhoneOtp(phone); });
-  $('#pvOtpResend').onclick = () => { closeModal('otpModal', true); setTimeout(() => verifyPhoneInline(), 300); };
-}
-
-async function checkPhoneOtp(phone) {
-  const btn = $('#pvOtpVerify');
-  if (btn?.disabled) return;
-  const otp = ($('#pvOtpInput').value || '').trim();
-  const err = m => { const e = $('#pvOtpErr'); e.textContent = m; e.classList.remove('hidden'); };
-  $('#pvOtpErr').classList.add('hidden');
-  if (!/^\d{6}$/.test(otp)) return err('Enter 6-digit OTP');
-  if (btn) { btn.disabled = true; btn.textContent = 'Verifying…'; }
-  try {
-    await __phoneConfirmationResult.confirm(otp);
-    closeModal('otpModal', true);
-    markPhoneVerified(phone);
-    toast('Phone verified', 'check');
-  } catch(e) {
-    err('Invalid OTP. Please try again.');
-    if (btn) { btn.disabled = false; btn.textContent = 'Verify Phone'; }
-  }
-}
-
-function markPhoneVerified(phone) {
-  __verifiedOrderPhone = phone;
-  const ph = $('#coPhone');
-  const btn = $('#verifyPhoneBtn');
-  if (ph) { ph.disabled = true; ph.style.background = 'var(--bg2)'; }
-  if (btn) { btn.textContent = '✓'; btn.style.background = '#16a34a'; btn.style.color = '#fff'; btn.disabled = true; }
-  $('#phoneVerifiedMsg')?.classList.remove('hidden');
   // Unlock rest of form
   const rf = $('#restForm');
   if (rf) { rf.style.opacity = '1'; rf.style.pointerEvents = 'auto'; }
@@ -3164,21 +3056,6 @@ function markPhoneVerified(phone) {
   const addr = $('#coAddr'); if (addr) addr.focus();
 }
 
-/* ─── RESET IF USER EDITS ─── */
-function resetPhoneVerification() {
-  __verifiedOrderPhone = null;
-  __phoneConfirmationResult = null;
-  const ph = $('#coPhone');
-  if (ph) { ph.value = ''; ph.disabled = true; ph.style.background = ''; }
-  const btn = $('#verifyPhoneBtn');
-  if (btn) { btn.textContent = 'Verify'; btn.style.background = ''; btn.style.color = ''; btn.disabled = true; }
-  $('#phoneVerifiedMsg')?.classList.add('hidden');
-  const rf = $('#restForm'); if (rf) { rf.style.opacity = '.4'; rf.style.pointerEvents = 'none'; }
-  const ps = $('#paymentSection'); if (ps) { ps.style.opacity = '.4'; ps.style.pointerEvents = 'none'; }
-  const po = $('#placeOrder'); if (po) { po.disabled = true; po.style.opacity = '.5'; }
-  const on = $('#payOnline'); if (on) { on.disabled = true; on.style.opacity = '.5'; }
-}
-
 function resetEmailVerification() {
   __verifiedOrderEmail = null;
   const em = $('#coEmail');
@@ -3186,10 +3063,13 @@ function resetEmailVerification() {
   const btn = $('#verifyEmailBtn');
   if (btn) { btn.textContent = 'Verify'; btn.style.background = ''; btn.style.color = ''; btn.disabled = false; }
   $('#emailVerifiedMsg')?.classList.add('hidden');
-  resetPhoneVerification();
+  const rf = $('#restForm'); if (rf) { rf.style.opacity = '.4'; rf.style.pointerEvents = 'none'; }
+  const ps = $('#paymentSection'); if (ps) { ps.style.opacity = '.4'; ps.style.pointerEvents = 'none'; }
+  const po = $('#placeOrder'); if (po) { po.disabled = true; po.style.opacity = '.5'; }
+  const on = $('#payOnline'); if (on) { on.disabled = true; on.style.opacity = '.5'; }
 }
 
-/* ─── FINAL PLACE ORDER (no more OTP here — already verified) ─── */
+/* ─── FINAL PLACE ORDER ─── */
 let lock = false;
 function finalPlaceOrder() {
   if (lock) return;
@@ -3203,18 +3083,17 @@ function finalPlaceOrder() {
   }
 
   const email = ($('#coEmail').value || '').trim().toLowerCase();
-  const phone = ($('#coPhone').value || '').replace(/[^0-9]/g,'').trim();
-
   if (__verifiedOrderEmail !== email) return showCoErr('Please verify your email first.');
-  if (__verifiedOrderPhone !== phone) return showCoErr('Please verify your phone first.');
 
   const name  = $('#coName').value.trim();
+  const phone = ($('#coPhone').value || '').replace(/[^0-9]/g,'').trim();
   const addr  = $('#coAddr').value.trim();
   const city  = $('#coCity').value.trim();
   const state = $('#coState').value.trim();
   const pin   = $('#coPin').value.trim();
 
   if (!/^[A-Za-z .]{3,60}$/.test(name)) return showCoErr('Please enter a valid full name.');
+  if (!/^\d{10}$/.test(phone)) return showCoErr('Please enter a valid 10-digit mobile number.');
   if (addr.length < 10) return showCoErr('Please enter your complete address.');
   if (!/^[A-Za-z .]{2,40}$/.test(city)) return showCoErr('Please enter a valid city.');
   if (!state) return showCoErr('Please enter your state / province.');
@@ -3235,7 +3114,7 @@ function finalPlaceOrder() {
     customer: { name, phone, email, accountEmail, addr, city, state, pin },
     items: JSON.parse(JSON.stringify(cart)), totals: t, deliveredAt: null,
     payment: { method: 'cod' }, byAdmin: isAdminDevice,
-    emailVerified: true, phoneVerified: true
+    emailVerified: true
   };
 
   const orders = store.get('orders', []);
@@ -4289,8 +4168,6 @@ function wire(){
 });
 const phInp = $('#coPhone'); if (phInp) phInp.addEventListener('input', () => {
   phInp.value = phInp.value.replace(/[^0-9]/g,'').slice(0,10);
-  const cur = phInp.value.replace(/[^0-9]/g,'');
-  if (__verifiedOrderPhone && __verifiedOrderPhone !== cur) resetPhoneVerification();
 });
   const onl = $('#payOnline'); if (onl) onl.onclick = handleOnlinePayment;
   if ($('#confirmCancelNo')) $('#confirmCancelNo').onclick = () => { pendingCancelId = null; closeModal('confirmCancelModal', true); };
