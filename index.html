@@ -1749,11 +1749,11 @@ letterSpacing: { wide2:'.14em', luxe:'.32em' }
             <input id="coPhone" inputmode="numeric" maxlength="10" class="field" placeholder="Mobile number *">
             <input id="coEmail" type="email" maxlength="60" class="field" placeholder="Email address * (for order updates)">
             <textarea id="coAddr" maxlength="200" rows="2" class="field" placeholder="Full address *"></textarea>
-            <input id="coPin" inputmode="numeric" maxlength="6" class="field" placeholder="PIN / ZIP *">
             <div class="grid grid-cols-2 gap-3">
               <input id="coCity" maxlength="40" class="field" placeholder="City *">
               <input id="coState" maxlength="40" class="field" placeholder="State / Province *">
             </div>
+            <input id="coPin" inputmode="numeric" maxlength="6" class="field" placeholder="PIN / ZIP *">
             <input type="text" name="website" id="coHoney" class="hidden" tabindex="-1" autocomplete="off" aria-hidden="true">
             <p id="coErr" class="text-[11px] hidden" style="color:#DC2626;"></p>
             <p class="micro pt-2" style="color:var(--text);">Payment Method</p>
@@ -2929,169 +2929,6 @@ function buildOrderCard(o, opts){
     '</div>';
 }
 
-/* ═══ CHECKOUT VALIDATION (STRICT) ═══ */
-const FAKE_EMAIL_DOMAINS = new Set([
-  'tempmail.com','temp-mail.org','10minutemail.com','guerrillamail.com',
-  'mailinator.com','yopmail.com','throwawaymail.com','fakeinbox.com',
-  'maildrop.cc','trashmail.com','sharklasers.com','getnada.com',
-  'dispostable.com','tempinbox.com','mailnesia.com','spam4.me','grr.la',
-  'guerrillamail.info','guerrillamail.biz','guerrillamail.net',
-  'guerrillamail.org','guerrillamail.de','temp-mail.io','tempail.com',
-  'mohmal.com','mytemp.email','fake-email.com','emailondeck.com',
-  'moakt.com','tempr.email','luxusmail.org','1secmail.com','1secmail.net',
-  '1secmail.org','instantemailaddress.com','tempemail.net','tempmail.net',
-  'fakeinbox.net','mailcatch.com','mailexpire.com','mailforspam.com',
-  'mailinator.net','mailinator2.com','mailmoat.com','mailnull.com',
-  'mailtemp.info','mymail-in.net','mytrashmail.com','mytempemail.com',
-  'mytempmail.com','throwawaymail.net','throwawaymail.org','tempmailo.com',
-  'tempmail.plus','tempmailaddress.com','temp-mails.com','fakeinbox.org',
-  'spambox.us','throwam.com','email-temp.com','tempemail.co','tempmail.gg',
-  'emailfake.com','fake-mail.net','mail-temp.com','tempm.com','tmpmail.net',
-  'tmpmail.org','tempmailbox.net','spamgourmet.com','discard.email'
-]);
-
-const HFValid = {
-  name(v){
-    v = String(v||'').trim();
-    if (v.length < 3) return 'Full name is too short (minimum 3 characters).';
-    if (v.length > 60) return 'Full name is too long.';
-    if (!/^[A-Za-z][A-Za-z .'\-]*[A-Za-z]$/.test(v)) return 'Name can only contain letters, spaces, dots, apostrophes and hyphens.';
-    const words = v.split(/\s+/).filter(w => w.length > 0);
-    if (words.length < 2) return 'Please enter your FULL name (first name + last name).';
-    for (const w of words){
-      const letters = w.replace(/[^A-Za-z]/g,'');
-      if (letters.length < 2) return 'Each name part must be at least 2 letters.';
-    }
-    const flat = v.replace(/\s/g,'').toLowerCase();
-    if (/(.)\1{3,}/.test(flat)) return 'Please enter your real name (no repeated characters).';
-    if (/^(asdf|qwer|test|demo|abc|xyz|aaa|bbb|name|yourname|firstname|lastname)$/i.test(flat))
-      return 'Please enter your real name.';
-    return null;
-  },
-  phone(v){
-    const d = String(v||'').replace(/\D/g,'');
-    if (!d) return 'Mobile number is required.';
-    if (d.length !== 10) return 'Mobile number must be exactly 10 digits.';
-    if (!/^[6-9]/.test(d)) return 'Please enter a valid Indian mobile number (starts with 6-9).';
-    if (/^(\d)\1{9}$/.test(d)) return 'Please enter a real mobile number.';
-    if (['1234567890','0987654321','0123456789','9876543210'].includes(d))
-      return 'Please enter a real mobile number.';
-    return null;
-  },
-  email(v){
-    v = String(v||'').trim().toLowerCase();
-    if (!v) return 'Email address is required.';
-    if (!/^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$/i.test(v)) return 'Please enter a valid email address.';
-    const [local, domain] = v.split('@');
-    if (FAKE_EMAIL_DOMAINS.has(domain)) return 'Temporary / disposable emails are not allowed.';
-    const parts = domain.split('.');
-    for (let i = 0; i < parts.length - 1; i++){
-      if (FAKE_EMAIL_DOMAINS.has(parts.slice(i).join('.')))
-        return 'Temporary / disposable emails are not allowed.';
-    }
-    if (local.length < 3) return 'Email username is too short.';
-    if (/^(test|demo|fake|abc|xyz|asdf|qwerty|admin|temp|dummy|mail|user|sample|na|none)$/i.test(local))
-      return 'Please use your real email address.';
-    if (/(.)\1{4,}/.test(local)) return 'Please use your real email address.';
-    return null;
-  },
-  address(v){
-    v = String(v||'').trim();
-    if (v.length < 15) return 'Please enter your complete address (min 15 characters).';
-    if (v.length > 250) return 'Address is too long (max 250 characters).';
-    if (!/\d/.test(v)) return 'Address should include a house / building / plot number.';
-    const words = v.split(/\s+/).filter(w => w.length > 1);
-    if (words.length < 3) return 'Please enter a detailed address (house no., street, area).';
-    const letters = v.replace(/[^A-Za-z]/g,'');
-    if (letters.length < 8) return 'Please enter a real address with proper street / area name.';
-    if (/(.)\1{5,}/.test(v)) return 'Please enter a real address.';
-    if (/^(asdf|qwer|test|demo|abc|xyz|na|n\/a|none|xxx)/i.test(v))
-      return 'Please enter a real address.';
-    return null;
-  },
-  city(v){
-    v = String(v||'').trim();
-    if (v.length < 2) return 'City is required.';
-    if (!/^[A-Za-z][A-Za-z .'\-]{1,40}$/.test(v)) return 'Please enter a valid city.';
-    if (/(.)\1{3,}/i.test(v.replace(/\s/g,''))) return 'Please enter a valid city.';
-    return null;
-  },
-  state(v){
-    v = String(v||'').trim();
-    if (v.length < 2) return 'State is required.';
-    if (!/^[A-Za-z][A-Za-z .'\-]{1,40}$/.test(v)) return 'Please enter a valid state / province.';
-    return null;
-  },
-  pin(v){
-    const d = String(v||'').replace(/\D/g,'');
-    if (d.length !== 6) return 'PIN code must be exactly 6 digits.';
-    if (!/^[1-9]/.test(d)) return 'PIN code cannot start with 0.';
-    if (/^(\d)\1{5}$/.test(d)) return 'Please enter a real PIN code.';
-    return null;
-  }
-};
-
-/* Runs full checkout validation — returns { ok, msg, field, values } */
-function runCheckoutValidation(){
-  const v = {
-    name:  ($('#coName')  || {}).value?.trim() || '',
-    phone: ($('#coPhone') || {}).value?.trim() || '',
-    email: ($('#coEmail') || {}).value?.trim() || '',
-    addr:  ($('#coAddr')  || {}).value?.trim() || '',
-    city:  ($('#coCity')  || {}).value?.trim() || '',
-    state: ($('#coState') || {}).value?.trim() || '',
-    pin:   ($('#coPin')   || {}).value?.trim() || ''
-  };
-  const order = ['name','phone','email','addr','city','state','pin'];
-  for (const k of order){
-    const msg = HFValid[k](v[k]);
-    if (msg) return { ok:false, msg, field:k, values:v };
-  }
-  return { ok:true, values:v };
-}
-
-/* ═══ PINCODE AUTO-FILL (City + State) ═══ */
-async function autofillFromPincode(pin){
-  const p = String(pin||'').replace(/\D/g,'');
-  if (p.length !== 6) return;
-
-  const cityEl = $('#coCity');
-  const stateEl = $('#coState');
-  if (!cityEl || !stateEl) return;
-
-  cityEl.placeholder = 'Fetching city…';
-  stateEl.placeholder = 'Fetching state…';
-  cityEl.style.opacity = '0.7';
-  stateEl.style.opacity = '0.7';
-
-  try {
-    const ctl = new AbortController();
-    const to = setTimeout(() => ctl.abort(), 6000);
-    const r = await fetch('https://api.postalpincode.in/pincode/' + p, { signal: ctl.signal });
-    clearTimeout(to);
-    const d = await r.json();
-
-    if (Array.isArray(d) && d[0] && d[0].Status === 'Success'
-        && Array.isArray(d[0].PostOffice) && d[0].PostOffice.length){
-      const po = d[0].PostOffice[0];
-      const city  = (po.District || po.Block || po.Name || '').trim();
-      const state = (po.State || '').trim();
-      if (city)  cityEl.value  = city;
-      if (state) stateEl.value = state;
-      toast('City & State auto-filled ✓', 'check');
-    } else {
-      toast('Invalid PIN — please enter city/state manually', 'warn');
-    }
-  } catch(e){
-    // silent fail — user can type manually
-  } finally {
-    cityEl.placeholder  = 'City *';
-    stateEl.placeholder = 'State / Province *';
-    cityEl.style.opacity = '';
-    stateEl.style.opacity = '';
-  }
-}
-
 /* ═══ PLACE ORDER ═══ */
 let lock = false;
 function placeOrder(){
@@ -3107,22 +2944,20 @@ function placeOrder(){
     return;
   }
   if ($('#coHoney').value) return;
-  const check = runCheckoutValidation();
-if (!check.ok){
-  err(check.msg);
-  const map = { name:'coName', phone:'coPhone', email:'coEmail', addr:'coAddr',
-                city:'coCity', state:'coState', pin:'coPin' };
-  const el = document.getElementById(map[check.field]);
-  if (el){ try { el.focus({ preventScroll: false }); el.scrollIntoView({ block:'center', behavior:'smooth' }); } catch(_){} }
-  return;
-}
-const name  = check.values.name;
-const phone = check.values.phone;
-const email = check.values.email;
-const addr  = check.values.addr;
-const city  = check.values.city;
-const state = check.values.state;
-const pin   = check.values.pin;
+  const name = $('#coName').value.trim();
+  const phone = $('#coPhone').value.trim();
+  const email = $('#coEmail').value.trim();
+  const addr = $('#coAddr').value.trim();
+  const city = $('#coCity').value.trim();
+  const state = $('#coState').value.trim();
+  const pin = $('#coPin').value.trim();
+  if (!/^[A-Za-z .]{3,60}$/.test(name)) return err('Please enter a valid full name.');
+  if (!/^\d{7,15}$/.test(phone.replace(/[^0-9]/g,''))) return err('Please enter a valid mobile / WhatsApp number.');
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return err('Please enter a valid email address.');
+  if (addr.length < 10) return err('Please enter your complete address.');
+  if (!/^[A-Za-z .]{2,40}$/.test(city)) return err('Please enter a valid city.');
+  if (!state) return err('Please enter your state / province.');
+  if (!/^[A-Za-z0-9 -]{4,10}$/.test(pin)) return err('Please enter a valid PIN / ZIP.');
   lock = true;
   const btn = $('#placeOrder'); btn.disabled = true;
   setTimeout(() => { lock = false; btn.disabled = false; }, 4000);
@@ -3168,23 +3003,21 @@ function updatePayMethodUI(){
   else { codBtn.classList.add('hidden'); onlineBtn.classList.remove('hidden'); if (codRad) codRad.classList.remove('active'); if (onlineRad) onlineRad.classList.add('active'); }
 }
 function validateCheckoutForm(){
-  const err = m => {
-    const e = $('#coErr'); e.textContent = m; e.classList.remove('hidden');
-    return false;
-  };
+  const err = m => { const e = $('#coErr'); e.textContent = m; e.classList.remove('hidden'); return false; };
   $('#coErr').classList.add('hidden');
   if (!cart.length) return err('Cart is empty — add products first.');
   if ($('#coHoney').value) return false;
-
-  const check = runCheckoutValidation();
-  if (!check.ok){
-    err(check.msg);
-    const map = { name:'coName', phone:'coPhone', email:'coEmail', addr:'coAddr',
-                  city:'coCity', state:'coState', pin:'coPin' };
-    const el = document.getElementById(map[check.field]);
-    if (el){ try { el.focus({ preventScroll: false }); } catch(_){} }
-    return false;
-  }
+  const name = $('#coName').value.trim(); const phone = $('#coPhone').value.trim();
+  const email = $('#coEmail').value.trim(); const addr = $('#coAddr').value.trim();
+  const city = $('#coCity').value.trim(); const state = $('#coState').value.trim();
+  const pin = $('#coPin').value.trim();
+  if (!/^[A-Za-z .]{3,60}$/.test(name)) return err('Please enter a valid full name.');
+  if (!/^\d{7,15}$/.test(phone.replace(/[^0-9]/g,''))) return err('Please enter a valid mobile / WhatsApp number.');
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return err('Please enter a valid email address.');
+  if (addr.length < 10) return err('Please enter your complete address.');
+  if (!/^[A-Za-z .]{2,40}$/.test(city)) return err('Please enter a valid city.');
+  if (!state) return err('Please enter your state / province.');
+  if (!/^[A-Za-z0-9 -]{4,10}$/.test(pin)) return err('Please enter a valid PIN / ZIP.');
   return true;
 }
 function readCustomer(){
@@ -4210,35 +4043,6 @@ function wire(){
     else{na.classList.remove('hidden');ap.classList.add('hidden');}
   }
   setTimeout(updateMemberUI, 100);
-
-  /* ── Phone: digits only, max 10 ── */
-const phoneInp = $('#coPhone');
-if (phoneInp){
-  phoneInp.addEventListener('input', e => {
-    e.target.value = e.target.value.replace(/\D/g,'').slice(0,10);
-  });
-}
-
-/* ── PIN: digits only, max 6 + auto-fill trigger ── */
-const pinInp = $('#coPin');
-if (pinInp){
-  let _pinTimer = null;
-  pinInp.addEventListener('input', e => {
-    e.target.value = e.target.value.replace(/\D/g,'').slice(0,6);
-    if (e.target.value.length === 6){
-      clearTimeout(_pinTimer);
-      _pinTimer = setTimeout(() => autofillFromPincode(e.target.value), 450);
-    }
-  });
-  // Also fire on blur if 6 digits & fields empty
-  pinInp.addEventListener('blur', e => {
-    const p = e.target.value.trim();
-    if (p.length === 6){
-      const c = $('#coCity'), s = $('#coState');
-      if (c && s && (!c.value.trim() || !s.value.trim())) autofillFromPincode(p);
-    }
-  });
-}
 
 async function applyMemberFn(){
     const btn = $('#memberApply');
